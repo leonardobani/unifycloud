@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'src/router/app_router.dart';
+import 'src/services/background_service.dart';
+import 'src/services/rclone_service.dart';
+import 'src/services/secure_config_service.dart';
+import 'src/ui/theme/app_theme.dart';
+import 'src/utils/token_utils.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize background services (Android foreground & iOS background tasks)
+  final backgroundService = AppBackgroundService();
+  await backgroundService.initialize();
+
+  // Initialize native Rclone engine and secure configuration bootstrapping
+  final rclone = RcloneService();
+  final secureConfig = SecureConfigService();
+
+  try {
+    final savedConfig = await secureConfig.loadEncryptedConfig();
+    if (savedConfig != null && savedConfig.trim().isNotEmpty) {
+      // Auto-heal any malformed token lines from previous versions
+      final sanitized = TokenUtils.sanitizeIniConfig(savedConfig);
+      if (sanitized != savedConfig) {
+        await secureConfig.saveEncryptedConfig(sanitized);
+      }
+      // Decrypted configuration injected exclusively into RAM memory
+      await rclone.loadConfigInMemory(sanitized);
+    } else {
+      // Initialize zero-disk in-memory mode
+      await rclone.init();
+    }
+  } catch (e) {
+    // Fallback gracefully to default memory mode if error occurs
+    await rclone.init();
+  }
+
+  runApp(
+    ProviderScope(
+      overrides: [
+        rcloneServiceProvider.overrideWithValue(rclone),
+        secureConfigServiceProvider.overrideWithValue(secureConfig),
+        appBackgroundServiceProvider.overrideWithValue(backgroundService),
+      ],
+      child: const UnifyCloudApp(),
+    ),
+  );
+}
+
+/// Root widget for the UnifyCloud application.
+class UnifyCloudApp extends StatelessWidget {
+  const UnifyCloudApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      title: 'UnifyCloud',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.dark,
+      routerConfig: appRouter,
+    );
+  }
+}

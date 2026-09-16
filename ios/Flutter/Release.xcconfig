@@ -1,0 +1,5 @@
+#include "Generated.xcconfig"
+
+LIBRARY_SEARCH_PATHS = $(inherited) "$(SRCROOT)/Libraries"
+HEADER_SEARCH_PATHS = $(inherited) "$(SRCROOT)/Libraries" "$(SRCROOT)/../go_backend"
+OTHER_LDFLAGS = $(inherited) -L"$(SRCROOT)/Libraries" -lrclone_wrapper
