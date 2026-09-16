@@ -224,24 +224,38 @@ func cResponse(resp Response) *C.char {
 	return cJsonString(resp)
 }
 
+func isLocalRemote(remote string) bool {
+	remote = strings.TrimSpace(remote)
+	if strings.EqualFold(remote, "local") {
+		return true
+	}
+	if currentMemStorage != nil {
+		t, ok := currentMemStorage.GetValue(remote, "type")
+		if ok && strings.EqualFold(strings.TrimSpace(t), "local") {
+			return true
+		}
+	}
+	return false
+}
+
 func makeFsTarget(remote, p string) string {
 	remote = strings.TrimSpace(remote)
-	trimmed := strings.TrimSpace(p)
-	isAbs := strings.HasPrefix(trimmed, "/")
-
-	cleanPath := strings.Trim(trimmed, "/")
+	raw := strings.TrimSpace(p)
 
 	if remote == "" {
-		if cleanPath == "" {
-			if isAbs {
-				return "/"
-			}
+		if raw == "" || raw == "." {
 			return "."
 		}
-		if isAbs {
-			return "/" + cleanPath
+		return raw
+	}
+
+	cleanPath := strings.Trim(raw, "/")
+
+	if isLocalRemote(remote) {
+		if cleanPath == "" {
+			return remote + ":/"
 		}
-		return cleanPath
+		return remote + ":/" + cleanPath
 	}
 
 	if strings.HasSuffix(remote, ":") {
@@ -373,6 +387,52 @@ func ListRemotesInternal() Response {
 		})
 	}
 	return ResponseSuccess(list)
+}
+
+// AboutInfo describes storage usage (total, used, free in bytes).
+type AboutInfo struct {
+	Total int64 `json:"total"`
+	Used  int64 `json:"used"`
+	Free  int64 `json:"free"`
+}
+
+func GetRemoteAboutInternal(remote string) Response {
+	target := makeFsTarget(remote, "")
+	ctx := context.Background()
+
+	f, err := fs.NewFs(ctx, target)
+	if err != nil {
+		return ResponseError(fmt.Errorf("failed to open remote %q: %w", target, err))
+	}
+
+	info := AboutInfo{
+		Total: -1,
+		Used:  -1,
+		Free:  -1,
+	}
+
+	doAbout := f.Features().About
+	if doAbout != nil {
+		u, err := doAbout(ctx)
+		if err == nil && u != nil {
+			if u.Total != nil {
+				info.Total = *u.Total
+			}
+			if u.Used != nil {
+				info.Used = *u.Used
+			}
+			if u.Free != nil {
+				info.Free = *u.Free
+			} else if u.Total != nil && u.Used != nil {
+				info.Free = *u.Total - *u.Used
+			}
+			if info.Used == -1 && u.Total != nil && u.Free != nil {
+				info.Used = *u.Total - *u.Free
+			}
+		}
+	}
+
+	return ResponseSuccess(info)
 }
 
 func ListDirectoryInternal(remote, dirPath string) Response {
@@ -895,6 +955,16 @@ func DeleteRemote(remoteName *C.char) *C.char {
 func ListRemotes() *C.char {
 	return cResponse(ListRemotesInternal())
 }
+
+//export GetRemoteAbout
+func GetRemoteAbout(remote *C.char) *C.char {
+	rem := ""
+	if remote != nil {
+		rem = C.GoString(remote)
+	}
+	return cResponse(GetRemoteAboutInternal(rem))
+}
+
 
 //export ListDirectory
 func ListDirectory(remote *C.char, dirPath *C.char) *C.char {

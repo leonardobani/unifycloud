@@ -142,6 +142,21 @@ class RcloneBindings {
   late final _FreeString =
       _FreeStringPtr.asFunction<void Function(ffi.Pointer<ffi.Char>)>();
 
+  ffi.Pointer<ffi.Char> GetRemoteAbout(ffi.Pointer<ffi.Char> remote) {
+    return _GetRemoteAbout(remote);
+  }
+
+  late final _GetRemoteAboutPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>)
+        >
+      >('GetRemoteAbout');
+  late final _GetRemoteAbout =
+      _GetRemoteAboutPtr.asFunction<
+        ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>)
+      >();
+
   ffi.Pointer<ffi.Char> GetTransferProgress(ffi.Pointer<ffi.Char> jobId) {
     return _GetTransferProgress(jobId);
   }

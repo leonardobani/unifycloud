@@ -212,6 +212,34 @@ class RcloneService {
     return response.data ?? [];
   }
 
+  /// Gets storage quota and usage information for [remote].
+  Future<StorageQuota?> getRemoteAbout(String remote) async {
+    if (_isCustomDylib) {
+      return _getRemoteAboutInternal(remote);
+    }
+    return Isolate.run(() {
+      final worker = RcloneService();
+      return worker._getRemoteAboutInternal(remote);
+    });
+  }
+
+  StorageQuota? _getRemoteAboutInternal(String remote) {
+    return using((Arena arena) {
+      final cRemote = remote.toNativeUtf8(allocator: arena).cast<ffi.Char>();
+      final raw = _invokeAndFree(() => _bindings.GetRemoteAbout(cRemote));
+      final response = RcloneResponse.fromJson(raw, (data) {
+        if (data == null) return null;
+        return StorageQuota.fromJson(data as Map<String, dynamic>);
+      });
+
+      if (!response.success) {
+        return null;
+      }
+      return response.data;
+    });
+  }
+
+
   /// Lists files and folders in [remote] at directory [path].
   ///
   /// For local filesystem, [remote] can be empty and [path] can be a directory path.

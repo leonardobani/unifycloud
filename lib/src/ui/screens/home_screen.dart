@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../models/cloud_models.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/file_explorer_provider.dart';
 import '../theme/app_theme.dart';
@@ -81,28 +82,103 @@ class HomeScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Account Cloud Collegati: ${state.remotes.length}',
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: LinearProgressIndicator(
-                        value: state.remotes.isEmpty ? 0.0 : 0.45,
-                        minHeight: 8,
-                        backgroundColor: Colors.grey.withValues(alpha: 0.2),
-                        valueColor: const AlwaysStoppedAnimation(AppTheme.primaryColor),
+                    const SizedBox(height: 14),
+                    if (state.remotes.isEmpty) ...[
+                      const Text(
+                        'Account Cloud Collegati: 0',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      state.remotes.isEmpty
-                          ? 'Nessun account cloud configurato. Tocca "+ Collega Nuovo Cloud" in basso.'
-                          : 'Tutti i token e le credenziali sono archiviati in modo protetto nel Keychain di sistema.',
-                      style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
-                    ),
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: LinearProgressIndicator(
+                          value: 0.0,
+                          minHeight: 8,
+                          backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                          valueColor: const AlwaysStoppedAnimation(AppTheme.primaryColor),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Nessun account cloud configurato. Tocca "+ Collega Nuovo Cloud" in basso.',
+                        style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+                      ),
+                    ] else if (state.hasStorageData) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Account Cloud Collegati: ${state.remotes.length}',
+                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${StorageQuota.formatBytes(state.usedStorageBytes)} / ${StorageQuota.formatBytes(state.totalStorageBytes)}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: LinearProgressIndicator(
+                          value: state.usedStoragePercentage,
+                          minHeight: 10,
+                          backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                          valueColor: AlwaysStoppedAnimation(
+                            state.usedStoragePercentage > 0.9 ? Colors.orange : AppTheme.primaryColor,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '${(state.usedStoragePercentage * 100).toStringAsFixed(1)}% occupato',
+                              style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${StorageQuota.formatBytes(state.freeStorageBytes)} disponibili',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.greenAccent,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ] else ...[
+                      Text(
+                        'Account Cloud Collegati: ${state.remotes.length}',
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: LinearProgressIndicator(
+                          value: null,
+                          minHeight: 8,
+                          backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                          valueColor: const AlwaysStoppedAnimation(AppTheme.primaryColor),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Calcolo quote storage in corso o spazio illimitato...',
+                        style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -200,13 +276,14 @@ class HomeScreen extends ConsumerWidget {
                       maxCrossAxisExtent: 400,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      mainAxisExtent: 160,
+                      mainAxisExtent: 215,
                     ),
                     itemCount: state.remotes.length,
                     itemBuilder: (context, index) {
                       final remote = state.remotes[index];
                       final color = AppTheme.getProviderColor(remote.type);
                       final icon = AppTheme.getProviderIcon(remote.type);
+                      final quota = remote.quota;
 
                       return Card(
                         child: Padding(
@@ -291,6 +368,82 @@ class HomeScreen extends ConsumerWidget {
                                       ),
                                     ],
                                   ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                   if (quota != null && quota.hasData) ...[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            '${StorageQuota.formatBytes(quota.effectiveUsed)} / ${StorageQuota.formatBytes(quota.effectiveTotal)}',
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          '${StorageQuota.formatBytes(quota.effectiveFree)} liberi',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.grey.shade400,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(4),
+                                      child: LinearProgressIndicator(
+                                        value: quota.usedPercentage,
+                                        minHeight: 6,
+                                        backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                                        valueColor: AlwaysStoppedAnimation(
+                                          quota.usedPercentage > 0.9 ? Colors.orange : color,
+                                        ),
+                                      ),
+                                    ),
+                                  ] else ...[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'Storage',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey.shade400,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          'Disponibile',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.grey.shade500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(4),
+                                      child: LinearProgressIndicator(
+                                        value: 0.0,
+                                        minHeight: 6,
+                                        backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                                        valueColor: AlwaysStoppedAnimation(color),
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ),
                               SizedBox(

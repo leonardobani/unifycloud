@@ -156,6 +156,30 @@ host = ffi.example.com
       expect(updated?.status, anyOf(TransferStatus.cancelled, TransferStatus.completed));
     });
 
+    test('getRemoteAbout() and local remote root browsing work correctly', () async {
+      await service.setRemoteConfig(
+        remoteName: 'DiscoLocaleTest',
+        remoteType: 'local',
+        options: {},
+      );
+
+      final quota = await service.getRemoteAbout('DiscoLocaleTest');
+      expect(quota, isNotNull);
+      expect(quota!.total, greaterThan(0));
+      expect(quota.free, greaterThan(0));
+      expect(quota.hasData, isTrue);
+
+      final rootItems = await service.listDirectory(remote: 'DiscoLocaleTest', path: '');
+      expect(rootItems.isNotEmpty, isTrue);
+      final rootNames = rootItems.map((i) => i.name).toList();
+      expect(
+        rootNames.any((n) => n == 'usr' || n == 'etc' || n == 'var' || n == 'home'),
+        isTrue,
+      );
+
+      await service.deleteRemote('DiscoLocaleTest');
+    });
+
     test('Error handling throws informative Exceptions on invalid targets', () async {
       expect(
         () => service.listDirectory(remote: 'non_existent_remote_12345'),

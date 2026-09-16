@@ -19,6 +19,45 @@ class CloudAccountsState {
     this.remotes = const [],
   });
 
+  bool get hasStorageData =>
+      remotes.any((r) => r.quota != null && r.quota!.hasData);
+
+  int get totalStorageBytes {
+    int total = 0;
+    for (final r in remotes) {
+      if (r.quota != null && r.quota!.effectiveTotal > 0) {
+        total += r.quota!.effectiveTotal;
+      }
+    }
+    return total;
+  }
+
+  int get usedStorageBytes {
+    int used = 0;
+    for (final r in remotes) {
+      if (r.quota != null && r.quota!.effectiveUsed > 0) {
+        used += r.quota!.effectiveUsed;
+      }
+    }
+    return used;
+  }
+
+  int get freeStorageBytes {
+    int free = 0;
+    for (final r in remotes) {
+      if (r.quota != null && r.quota!.effectiveFree > 0) {
+        free += r.quota!.effectiveFree;
+      }
+    }
+    return free;
+  }
+
+  double get usedStoragePercentage {
+    final t = totalStorageBytes;
+    if (t <= 0) return 0.0;
+    return (usedStorageBytes / t).clamp(0.0, 1.0);
+  }
+
   CloudAccountsState copyWith({
     bool? isLoading,
     String? error,
@@ -59,7 +98,17 @@ class CloudAccountsNotifier extends Notifier<CloudAccountsState> {
       } catch (_) {}
 
       final list = await _rcloneService.listRemotes();
-      state = state.copyWith(isLoading: false, remotes: list);
+      final remotesWithQuota = await Future.wait(
+        list.map((remote) async {
+          try {
+            final quota = await _rcloneService.getRemoteAbout(remote.name);
+            return remote.copyWith(quota: quota);
+          } catch (_) {
+            return remote;
+          }
+        }),
+      );
+      state = state.copyWith(isLoading: false, remotes: remotesWithQuota);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
@@ -89,8 +138,7 @@ class CloudAccountsNotifier extends Notifier<CloudAccountsState> {
       final exportedIni = await _rcloneService.exportConfigInMemory();
       await _secureConfigService.saveEncryptedConfig(exportedIni);
 
-      final list = await _rcloneService.listRemotes();
-      state = state.copyWith(isLoading: false, remotes: list);
+      await loadRemotes();
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
@@ -105,8 +153,7 @@ class CloudAccountsNotifier extends Notifier<CloudAccountsState> {
       final exportedIni = await _rcloneService.exportConfigInMemory();
       await _secureConfigService.saveEncryptedConfig(exportedIni);
 
-      final list = await _rcloneService.listRemotes();
-      state = state.copyWith(isLoading: false, remotes: list);
+      await loadRemotes();
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
