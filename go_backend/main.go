@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"runtime"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -238,6 +239,27 @@ func isLocalRemote(remote string) bool {
 	return false
 }
 
+func isAndroid() bool {
+	return runtime.GOOS == "android" || os.Getenv("ANDROID_DATA") != "" || os.Getenv("ANDROID_ROOT") != ""
+}
+
+func getLocalBaseDir(remote string) string {
+	if currentMemStorage != nil && remote != "" {
+		if customRoot, ok := currentMemStorage.GetValue(remote, "root"); ok && strings.TrimSpace(customRoot) != "" {
+			return strings.TrimSpace(customRoot)
+		}
+	}
+	if isAndroid() {
+		for _, candidate := range []string{"/storage/emulated/0", "/sdcard"} {
+			if _, err := os.Stat(candidate); err == nil {
+				return candidate
+			}
+		}
+		return "/storage/emulated/0"
+	}
+	return "/"
+}
+
 func makeFsTarget(remote, p string) string {
 	remote = strings.TrimSpace(remote)
 	raw := strings.TrimSpace(p)
@@ -252,10 +274,20 @@ func makeFsTarget(remote, p string) string {
 	cleanPath := strings.Trim(raw, "/")
 
 	if isLocalRemote(remote) {
+		base := getLocalBaseDir(remote)
 		if cleanPath == "" {
-			return remote + ":/"
+			if base == "/" {
+				return remote + ":/"
+			}
+			return remote + ":" + base
 		}
-		return remote + ":/" + cleanPath
+		if base != "/" && (strings.HasPrefix(raw, base) || strings.HasPrefix(raw, "/storage") || strings.HasPrefix(raw, "/data") || strings.HasPrefix(raw, "/mnt")) {
+			return remote + ":" + raw
+		}
+		if base == "/" {
+			return remote + ":/" + cleanPath
+		}
+		return remote + ":" + strings.TrimSuffix(base, "/") + "/" + cleanPath
 	}
 
 	if strings.HasSuffix(remote, ":") {

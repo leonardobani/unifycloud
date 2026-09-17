@@ -25,6 +25,27 @@ find_ndk() {
         echo "$ANDROID_NDK_ROOT"
         return 0
     fi
+
+    local local_props="$PROJECT_ROOT/android/local.properties"
+    if [ -f "$local_props" ]; then
+        local ndk_from_props
+        ndk_from_props=$(grep "^ndk.dir=" "$local_props" 2>/dev/null | cut -d'=' -f2- | tr -d '\r')
+        if [ -n "$ndk_from_props" ] && [ -d "$ndk_from_props" ]; then
+            echo "$ndk_from_props"
+            return 0
+        fi
+        local sdk_from_props
+        sdk_from_props=$(grep "^sdk.dir=" "$local_props" 2>/dev/null | cut -d'=' -f2- | tr -d '\r')
+        if [ -n "$sdk_from_props" ] && [ -d "$sdk_from_props/ndk" ]; then
+            local latest_ndk
+            latest_ndk=$(ls -d "$sdk_from_props/ndk/"* 2>/dev/null | sort -V | tail -n 1)
+            if [ -n "$latest_ndk" ] && [ -d "$latest_ndk" ]; then
+                echo "$latest_ndk"
+                return 0
+            fi
+        fi
+    fi
+
     if [ -n "$ANDROID_HOME" ] && [ -d "$ANDROID_HOME/ndk" ]; then
         # Pick the latest NDK version directory
         local latest_ndk
@@ -34,7 +55,7 @@ find_ndk() {
             return 0
         fi
     fi
-    for standard_path in "$HOME/Android/Sdk/ndk/"* "/usr/local/share/android-sdk/ndk/"* "/opt/android-sdk/ndk/"*; do
+    for standard_path in "$HOME/Android/Sdk/ndk/"* "/var/home/yoga/FlutterDev/android-sdk/ndk/"* "/usr/local/share/android-sdk/ndk/"* "/opt/android-sdk/ndk/"*; do
         if [ -d "$standard_path" ]; then
             echo "$standard_path"
             return 0

@@ -94,6 +94,7 @@ extern char* ExportConfigInMemory(void);
 extern char* SetRemoteConfig(char* remoteName, char* remoteType, char* optionsJson);
 extern char* DeleteRemote(char* remoteName);
 extern char* ListRemotes(void);
+extern char* GetRemoteAbout(char* remote);
 extern char* ListDirectory(char* remote, char* dirPath);
 extern char* CopyFile(char* srcRemote, char* srcPath, char* dstRemote, char* dstPath);
 extern char* DeleteFile(char* remote, char* filePath);
