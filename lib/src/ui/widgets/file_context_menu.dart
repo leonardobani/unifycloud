@@ -41,6 +41,15 @@ class FileContextMenuRegion extends ConsumerWidget {
         Offset.zero & overlay.size,
       ),
       items: [
+        const PopupMenuItem(
+          value: 'select',
+          child: ListTile(
+            leading: Icon(Icons.check_circle_outline),
+            title: Text('Seleziona'),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
         if (!item.isDir)
           const PopupMenuItem(
             value: 'download',
@@ -114,6 +123,9 @@ class FileContextMenuRegion extends ConsumerWidget {
     final currentRemote = ref.read(fileExplorerProvider).currentRemote ?? '';
 
     switch (result) {
+      case 'select':
+        ref.read(fileExplorerProvider.notifier).toggleSelection(item.path);
+        break;
       case 'download':
         _handleDownload(context, ref, currentRemote);
         break;
@@ -311,8 +323,8 @@ class FileContextMenuRegion extends ConsumerWidget {
       onSecondaryTapDown: (details) {
         _showContextMenu(context, ref, details.globalPosition);
       },
-      onLongPressStart: (details) {
-        _showContextMenu(context, ref, details.globalPosition);
+      onLongPress: () {
+        ref.read(fileExplorerProvider.notifier).toggleSelection(item.path);
       },
       child: child,
     );

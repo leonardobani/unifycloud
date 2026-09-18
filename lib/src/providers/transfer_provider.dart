@@ -192,6 +192,24 @@ class TransferNotifier extends Notifier<TransferState> {
     );
   }
 
+  /// Downloads multiple cloud files to the local downloads or custom directory.
+  Future<List<TransferJob>> downloadFiles({
+    required String srcRemote,
+    required List<String> srcPaths,
+    String? customTargetDir,
+  }) async {
+    final jobs = <TransferJob>[];
+    for (final path in srcPaths) {
+      final job = await downloadFile(
+        srcRemote: srcRemote,
+        srcPath: path,
+        customTargetDir: customTargetDir,
+      );
+      jobs.add(job);
+    }
+    return jobs;
+  }
+
   void _checkPollingStatus() {
     if (state.activeTransfers.isNotEmpty) {
       _startPolling();

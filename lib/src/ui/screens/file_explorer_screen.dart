@@ -8,6 +8,7 @@ import '../../models/cloud_models.dart';
 import '../../providers/clipboard_provider.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/file_explorer_provider.dart';
+import '../../providers/settings_provider.dart';
 import '../../providers/transfer_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/add_cloud_dialog.dart';
@@ -100,6 +101,173 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
     }
   }
 
+  void _handleBatchCopy(BuildContext context, WidgetRef ref, FileExplorerState state) {
+    final items = state.selectedItems;
+    final currentRemote = state.currentRemote ?? '';
+    if (items.isEmpty || currentRemote.isEmpty) return;
+
+    ref.read(clipboardProvider.notifier).copyAll(items, currentRemote);
+    ref.read(fileExplorerProvider.notifier).clearSelection();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          items.length == 1
+              ? '"${items.first.name}" copiato negli appunti'
+              : '${items.length} elementi copiati negli appunti',
+        ),
+      ),
+    );
+  }
+
+  void _handleBatchCut(BuildContext context, WidgetRef ref, FileExplorerState state) {
+    final items = state.selectedItems;
+    final currentRemote = state.currentRemote ?? '';
+    if (items.isEmpty || currentRemote.isEmpty) return;
+
+    ref.read(clipboardProvider.notifier).cutAll(items, currentRemote);
+    ref.read(fileExplorerProvider.notifier).clearSelection();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          items.length == 1
+              ? '"${items.first.name}" tagliato (pronto per lo spostamento)'
+              : '${items.length} elementi tagliati (pronti per lo spostamento)',
+        ),
+      ),
+    );
+  }
+
+  void _handleBatchDownload(BuildContext context, WidgetRef ref, FileExplorerState state) async {
+    final items = state.selectedItems;
+    final currentRemote = state.currentRemote ?? '';
+    if (items.isEmpty || currentRemote.isEmpty) return;
+
+    final filesToDownload = items.where((i) => !i.isDir).toList();
+    final dirCount = items.length - filesToDownload.length;
+
+    if (filesToDownload.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Il download diretto delle cartelle non è supportato. Seleziona singoli file.'),
+        ),
+      );
+      return;
+    }
+
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                filesToDownload.length == 1
+                    ? 'Download avviato per "${filesToDownload.first.name}"...'
+                    : 'Avvio download per ${filesToDownload.length} file...',
+              ),
+            ),
+          ],
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
+    final paths = filesToDownload.map((i) {
+      return (state.currentPath.isNotEmpty && !i.path.startsWith(state.currentPath))
+          ? '${state.currentPath}/${i.path}'
+          : i.path;
+    }).toList();
+
+    try {
+      final jobs = await ref.read(transferProvider.notifier).downloadFiles(
+            srcRemote: currentRemote,
+            srcPaths: paths,
+          );
+      ref.read(fileExplorerProvider.notifier).clearSelection();
+
+      final dirNote = dirCount > 0 ? ' ($dirCount cartelle escluse)' : '';
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            '${jobs.length} file aggiunti alla coda di download$dirNote.',
+          ),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } catch (e) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('Errore durante l\'avvio del download: $e')),
+      );
+    }
+  }
+
+  void _handleBatchDelete(BuildContext context, WidgetRef ref, FileExplorerState state) async {
+    final items = state.selectedItems;
+    if (items.isEmpty) return;
+
+    final confirmDelete = ref.read(settingsProvider).confirmDelete;
+    bool shouldDelete = true;
+
+    if (confirmDelete) {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(
+            'Elimina ${items.length == 1 ? (items.first.isDir ? "cartella" : "file") : "${items.length} elementi"}?',
+          ),
+          content: Text(
+            items.length == 1
+                ? 'Sei sicuro di voler eliminare definitivamente "${items.first.name}"?'
+                : 'Sei sicuro di voler eliminare definitivamente i ${items.length} elementi selezionati?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Annulla'),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: Colors.red),
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text('Elimina'),
+            ),
+          ],
+        ),
+      );
+      shouldDelete = confirmed == true;
+    }
+
+    if (shouldDelete) {
+      try {
+        await ref.read(fileExplorerProvider.notifier).deleteSelected();
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                items.length == 1
+                    ? 'Elemento eliminato'
+                    : '${items.length} elementi eliminati',
+              ),
+            ),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Errore durante l\'eliminazione: $e')),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(fileExplorerProvider);
@@ -114,206 +282,271 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
       });
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: _isSearching
-            ? TextField(
-                controller: _searchController,
-                autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Cerca file o cartelle...',
-                  border: InputBorder.none,
-                ),
-                onChanged: (val) {
-                  ref.read(fileExplorerProvider.notifier).setSearchQuery(val);
+    final isSelectionMode = state.isSelectionMode;
+    final allSelected = state.selectedCount == state.displayItems.length &&
+        state.displayItems.isNotEmpty;
+
+    final PreferredSizeWidget appBar = isSelectionMode
+        ? AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.close),
+              tooltip: 'Chiudi selezione',
+              onPressed: () {
+                ref.read(fileExplorerProvider.notifier).clearSelection();
+              },
+            ),
+            title: Text(
+              '${state.selectedCount} selezionati',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            actions: [
+              IconButton(
+                icon: Icon(allSelected ? Icons.deselect : Icons.select_all),
+                tooltip: allSelected ? 'Deseleziona tutti' : 'Seleziona tutti',
+                onPressed: () {
+                  if (allSelected) {
+                    ref.read(fileExplorerProvider.notifier).clearSelection();
+                  } else {
+                    ref.read(fileExplorerProvider.notifier).selectAll();
+                  }
                 },
-              )
-            : DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: state.currentRemote,
-                  hint: const Text('Seleziona Cloud'),
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  items: remotesState.remotes.map((r) {
-                    return DropdownMenuItem<String>(
-                      value: r.name,
-                      child: Text(
-                        r.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (val) {
-                    if (val != null) {
-                      ref.read(fileExplorerProvider.notifier).openRemote(val);
-                    }
-                  },
-                ),
               ),
-        actions: [
-          IconButton(
-            icon: Icon(_isSearching ? Icons.close : Icons.search),
-            onPressed: () {
-              setState(() {
-                if (_isSearching) {
-                  _isSearching = false;
-                  _searchController.clear();
-                  ref.read(fileExplorerProvider.notifier).setSearchQuery('');
-                } else {
-                  _isSearching = true;
-                }
-              });
-            },
-          ),
-          PopupMenuButton<FileSortMode>(
-            icon: const Icon(Icons.sort),
-            tooltip: 'Ordina per',
-            initialValue: state.sortMode,
-            onSelected: (mode) {
-              ref.read(fileExplorerProvider.notifier).setSortMode(mode);
-            },
-            itemBuilder: (ctx) => const [
-              PopupMenuItem(
-                value: FileSortMode.nameAsc,
-                child: Text('Nome (A-Z)'),
+              IconButton(
+                icon: const Icon(Icons.download_outlined),
+                tooltip: 'Scarica selezionati',
+                onPressed: () => _handleBatchDownload(context, ref, state),
               ),
-              PopupMenuItem(
-                value: FileSortMode.nameDesc,
-                child: Text('Nome (Z-A)'),
+              IconButton(
+                icon: const Icon(Icons.copy_rounded),
+                tooltip: 'Copia selezionati',
+                onPressed: () => _handleBatchCopy(context, ref, state),
               ),
-              PopupMenuItem(
-                value: FileSortMode.sizeDesc,
-                child: Text('Dimensione (Grande -> Piccolo)'),
+              IconButton(
+                icon: const Icon(Icons.cut_rounded),
+                tooltip: 'Taglia selezionati',
+                onPressed: () => _handleBatchCut(context, ref, state),
               ),
-              PopupMenuItem(
-                value: FileSortMode.sizeAsc,
-                child: Text('Dimensione (Piccolo -> Grande)'),
-              ),
-              PopupMenuItem(
-                value: FileSortMode.dateDesc,
-                child: Text('Data (Recente prima)'),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, color: Colors.red),
+                tooltip: 'Elimina selezionati',
+                onPressed: () => _handleBatchDelete(context, ref, state),
               ),
             ],
-          ),
-          IconButton(
-            icon: Icon(
-              state.viewMode == FileViewMode.list
-                  ? Icons.grid_view_outlined
-                  : Icons.view_list_outlined,
-            ),
-            tooltip: state.viewMode == FileViewMode.list
-                ? 'Vista Griglia'
-                : 'Vista Lista',
-            onPressed: () {
-              final next = state.viewMode == FileViewMode.list
-                  ? FileViewMode.grid
-                  : FileViewMode.list;
-              ref.read(fileExplorerProvider.notifier).setViewMode(next);
-            },
-          ),
-            IconButton(
-              icon: const Icon(Icons.upload_file_outlined),
-              tooltip: 'Carica File dal dispositivo',
-              onPressed: state.currentRemote == null
-                  ? null
-                  : () async {
-                      final jobs = await ref
-                          .read(transferProvider.notifier)
-                          .pickAndUploadFiles(
-                            dstRemote: state.currentRemote!,
-                            dstPath: state.currentPath,
-                          );
-                      if (context.mounted && jobs.isNotEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              '${jobs.length} ${jobs.length == 1 ? "file aggiunto" : "file aggiunti"} alla coda di caricamento',
-                            ),
-                          ),
-                        );
-                      }
+          )
+        : AppBar(
+            title: _isSearching
+                ? TextField(
+                    controller: _searchController,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      hintText: 'Cerca file o cartelle...',
+                      border: InputBorder.none,
+                    ),
+                    onChanged: (val) {
+                      ref.read(fileExplorerProvider.notifier).setSearchQuery(val);
                     },
-            ),
-            IconButton(
-              icon: const Icon(Icons.create_new_folder_outlined),
-              tooltip: 'Nuova Cartella',
-              onPressed: state.currentRemote == null ? null : _showNewFolderDialog,
-            ),
-          ],
-        ),
-        body: Column(
-          children: [
-            // Breadcrumbs Bar
-            const BreadcrumbsBar(),
-
-            // Cloud-to-Cloud Clipboard Paste Banner
-            _buildClipboardBanner(context, ref, state),
-
-            // Top progress indicator if loading with existing items
-            if (state.isLoading && state.items.isNotEmpty)
-              const LinearProgressIndicator(minHeight: 3),
-
-            // Main files area
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () => ref.read(fileExplorerProvider.notifier).refresh(),
-                child: _buildContent(context, state),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    Widget _buildClipboardBanner(
-      BuildContext context,
-      WidgetRef ref,
-      FileExplorerState state,
-    ) {
-      final clipboard = ref.watch(clipboardProvider);
-      if (!clipboard.hasItem) return const SizedBox.shrink();
-
-      return MaterialBanner(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.12),
-        leading: Icon(
-          clipboard.isCut ? Icons.cut_rounded : Icons.copy_rounded,
-          color: AppTheme.primaryColor,
-        ),
-        content: Text(
-          '${clipboard.actionLabel}: "${clipboard.item!.name}" da [${clipboard.sourceRemote}]',
-          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => ref.read(clipboardProvider.notifier).clear(),
-            child: const Text('Annulla'),
-          ),
-          FilledButton.icon(
-            icon: const Icon(Icons.paste_rounded, size: 16),
-            label: const Text('Incolla qui'),
-            onPressed: state.currentRemote == null
-                ? null
-                : () async {
-                    final job = await ref
-                        .read(clipboardProvider.notifier)
-                        .pasteTo(
-                          targetRemote: state.currentRemote!,
-                          targetPath: state.currentPath,
-                        );
-                    if (context.mounted && job != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Trasferimento avviato per "${job.fileName}" (${job.id})',
+                  )
+                : DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: state.currentRemote,
+                      hint: const Text('Seleziona Cloud'),
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                      items: remotesState.remotes.map((r) {
+                        return DropdownMenuItem<String>(
+                          value: r.name,
+                          child: Text(
+                            r.name,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
-                        ),
-                      );
+                        );
+                      }).toList(),
+                      onChanged: (val) {
+                        if (val != null) {
+                          ref.read(fileExplorerProvider.notifier).openRemote(val);
+                        }
+                      },
+                    ),
+                  ),
+            actions: [
+              IconButton(
+                icon: Icon(_isSearching ? Icons.close : Icons.search),
+                onPressed: () {
+                  setState(() {
+                    if (_isSearching) {
+                      _isSearching = false;
+                      _searchController.clear();
+                      ref.read(fileExplorerProvider.notifier).setSearchQuery('');
+                    } else {
+                      _isSearching = true;
                     }
-                  },
+                  });
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.checklist_rounded),
+                tooltip: 'Selezione multipla',
+                onPressed: state.displayItems.isEmpty
+                    ? null
+                    : () {
+                        ref.read(fileExplorerProvider.notifier).selectAll();
+                      },
+              ),
+              PopupMenuButton<FileSortMode>(
+                icon: const Icon(Icons.sort),
+                tooltip: 'Ordina per',
+                initialValue: state.sortMode,
+                onSelected: (mode) {
+                  ref.read(fileExplorerProvider.notifier).setSortMode(mode);
+                },
+                itemBuilder: (ctx) => const [
+                  PopupMenuItem(
+                    value: FileSortMode.nameAsc,
+                    child: Text('Nome (A-Z)'),
+                  ),
+                  PopupMenuItem(
+                    value: FileSortMode.nameDesc,
+                    child: Text('Nome (Z-A)'),
+                  ),
+                  PopupMenuItem(
+                    value: FileSortMode.sizeDesc,
+                    child: Text('Dimensione (Grande -> Piccolo)'),
+                  ),
+                  PopupMenuItem(
+                    value: FileSortMode.sizeAsc,
+                    child: Text('Dimensione (Piccolo -> Grande)'),
+                  ),
+                  PopupMenuItem(
+                    value: FileSortMode.dateDesc,
+                    child: Text('Data (Recente prima)'),
+                  ),
+                ],
+              ),
+              IconButton(
+                icon: Icon(
+                  state.viewMode == FileViewMode.list
+                      ? Icons.grid_view_outlined
+                      : Icons.view_list_outlined,
+                ),
+                tooltip: state.viewMode == FileViewMode.list
+                    ? 'Vista Griglia'
+                    : 'Vista Lista',
+                onPressed: () {
+                  final next = state.viewMode == FileViewMode.list
+                      ? FileViewMode.grid
+                      : FileViewMode.list;
+                  ref.read(fileExplorerProvider.notifier).setViewMode(next);
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.upload_file_outlined),
+                tooltip: 'Carica File dal dispositivo',
+                onPressed: state.currentRemote == null
+                    ? null
+                    : () async {
+                        final jobs = await ref
+                            .read(transferProvider.notifier)
+                            .pickAndUploadFiles(
+                              dstRemote: state.currentRemote!,
+                              dstPath: state.currentPath,
+                            );
+                        if (context.mounted && jobs.isNotEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                '${jobs.length} ${jobs.length == 1 ? "file aggiunto" : "file aggiunti"} alla coda di caricamento',
+                              ),
+                            ),
+                          );
+                        }
+                      },
+              ),
+              IconButton(
+                icon: const Icon(Icons.create_new_folder_outlined),
+                tooltip: 'Nuova Cartella',
+                onPressed: state.currentRemote == null ? null : _showNewFolderDialog,
+              ),
+            ],
+          );
+
+    return Scaffold(
+      appBar: appBar,
+      body: Column(
+        children: [
+          // Breadcrumbs Bar
+          const BreadcrumbsBar(),
+
+          // Cloud-to-Cloud Clipboard Paste Banner
+          _buildClipboardBanner(context, ref, state),
+
+          // Top progress indicator if loading with existing items
+          if (state.isLoading && state.items.isNotEmpty)
+            const LinearProgressIndicator(minHeight: 3),
+
+          // Main files area
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () => ref.read(fileExplorerProvider.notifier).refresh(),
+              child: _buildContent(context, state),
+            ),
           ),
         ],
-      );
-    }
+      ),
+    );
+  }
+
+  Widget _buildClipboardBanner(
+    BuildContext context,
+    WidgetRef ref,
+    FileExplorerState state,
+  ) {
+    final clipboard = ref.watch(clipboardProvider);
+    if (!clipboard.hasItem) return const SizedBox.shrink();
+
+    final label = clipboard.items.length == 1
+        ? '${clipboard.actionLabel}: "${clipboard.item!.name}" da [${clipboard.sourceRemote}]'
+        : '${clipboard.actionLabel}: ${clipboard.items.length} elementi da [${clipboard.sourceRemote}]';
+
+    return MaterialBanner(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.12),
+      leading: Icon(
+        clipboard.isCut ? Icons.cut_rounded : Icons.copy_rounded,
+        color: AppTheme.primaryColor,
+      ),
+      content: Text(
+        label,
+        style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => ref.read(clipboardProvider.notifier).clear(),
+          child: const Text('Annulla'),
+        ),
+        FilledButton.icon(
+          icon: const Icon(Icons.paste_rounded, size: 16),
+          label: const Text('Incolla qui'),
+          onPressed: state.currentRemote == null
+              ? null
+              : () async {
+                  final jobs = await ref
+                      .read(clipboardProvider.notifier)
+                      .pasteTo(
+                        targetRemote: state.currentRemote!,
+                        targetPath: state.currentPath,
+                      );
+                  if (context.mounted && jobs.isNotEmpty) {
+                    final msg = jobs.length == 1
+                        ? 'Trasferimento avviato per "${jobs.first.fileName}"'
+                        : '${jobs.length} trasferimenti avviati';
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(msg)),
+                    );
+                  }
+                },
+        ),
+      ],
+    );
+  }
 
   Widget _buildContent(BuildContext context, FileExplorerState state) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -490,13 +723,34 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
         separatorBuilder: (context, index) => const Divider(height: 1),
         itemBuilder: (context, index) {
           final item = items[index];
+          final isSelected = state.selectedPaths.contains(item.path);
+
           return FileContextMenuRegion(
             item: item,
             child: ListTile(
-              leading: FileTypeIcon(
-                fileName: item.name,
-                isDir: item.isDir,
-                size: 28,
+              selected: isSelected,
+              selectedTileColor:
+                  colorScheme.primaryContainer.withValues(alpha: 0.35),
+              leading: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (state.isSelectionMode) ...[
+                    Checkbox(
+                      value: isSelected,
+                      onChanged: (_) {
+                        ref
+                            .read(fileExplorerProvider.notifier)
+                            .toggleSelection(item.path);
+                      },
+                    ),
+                    const SizedBox(width: 4),
+                  ],
+                  FileTypeIcon(
+                    fileName: item.name,
+                    isDir: item.isDir,
+                    size: 28,
+                  ),
+                ],
               ),
               title: Text(
                 item.name,
@@ -511,11 +765,22 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
                 '${item.isDir ? "Cartella" : _formatBytes(item.size)} • ${_formatDate(item.modTime)}',
                 style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
               ),
-              trailing: _buildItemMenu(context, ref, item, state),
+              trailing: state.isSelectionMode
+                  ? null
+                  : _buildItemMenu(context, ref, item, state),
               onTap: () {
-                if (item.isDir) {
+                if (state.isSelectionMode) {
+                  ref
+                      .read(fileExplorerProvider.notifier)
+                      .toggleSelection(item.path);
+                } else if (item.isDir) {
                   ref.read(fileExplorerProvider.notifier).navigateTo(item.path);
                 }
+              },
+              onLongPress: () {
+                ref
+                    .read(fileExplorerProvider.notifier)
+                    .toggleSelection(item.path);
               },
             ),
           );
@@ -535,23 +800,57 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
+        final isSelected = state.selectedPaths.contains(item.path);
+
         return FileContextMenuRegion(
           item: item,
           child: Card(
+            color: isSelected
+                ? colorScheme.primaryContainer.withValues(alpha: 0.35)
+                : null,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: isSelected
+                  ? BorderSide(color: colorScheme.primary, width: 2)
+                  : BorderSide.none,
+            ),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () {
-                if (item.isDir) {
+                if (state.isSelectionMode) {
+                  ref
+                      .read(fileExplorerProvider.notifier)
+                      .toggleSelection(item.path);
+                } else if (item.isDir) {
                   ref.read(fileExplorerProvider.notifier).navigateTo(item.path);
                 }
               },
+              onLongPress: () {
+                ref
+                    .read(fileExplorerProvider.notifier)
+                    .toggleSelection(item.path);
+              },
               child: Stack(
                 children: [
-                  Positioned(
-                    top: 2,
-                    right: 2,
-                    child: _buildItemMenu(context, ref, item, state),
-                  ),
+                  if (state.isSelectionMode)
+                    Positioned(
+                      top: 4,
+                      left: 4,
+                      child: Checkbox(
+                        value: isSelected,
+                        onChanged: (_) {
+                          ref
+                              .read(fileExplorerProvider.notifier)
+                              .toggleSelection(item.path);
+                        },
+                      ),
+                    ),
+                  if (!state.isSelectionMode)
+                    Positioned(
+                      top: 2,
+                      right: 2,
+                      child: _buildItemMenu(context, ref, item, state),
+                    ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Center(
@@ -608,6 +907,15 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
       onSelected: (action) =>
           _handleItemAction(context, ref, item, state, action),
       itemBuilder: (context) => [
+        const PopupMenuItem(
+          value: 'select',
+          child: ListTile(
+            leading: Icon(Icons.check_circle_outline),
+            title: Text('Seleziona'),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
         if (!item.isDir)
           const PopupMenuItem(
             value: 'download',
@@ -690,6 +998,10 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
         : item.path;
 
     switch (action) {
+      case 'select':
+        ref.read(fileExplorerProvider.notifier).toggleSelection(item.path);
+        break;
+
       case 'download':
         final messenger = ScaffoldMessenger.of(context);
         messenger.showSnackBar(

@@ -45,6 +45,7 @@ class FileExplorerState {
   final FileSortMode sortMode;
   final String searchQuery;
   final bool showHiddenFiles;
+  final Set<String> selectedPaths;
 
   const FileExplorerState({
     this.currentRemote,
@@ -56,6 +57,7 @@ class FileExplorerState {
     this.sortMode = FileSortMode.nameAsc,
     this.searchQuery = '',
     this.showHiddenFiles = false,
+    this.selectedPaths = const {},
   });
 
   FileExplorerState copyWith({
@@ -68,6 +70,7 @@ class FileExplorerState {
     FileSortMode? sortMode,
     String? searchQuery,
     bool? showHiddenFiles,
+    Set<String>? selectedPaths,
   }) {
     return FileExplorerState(
       currentRemote: currentRemote ?? this.currentRemote,
@@ -79,8 +82,19 @@ class FileExplorerState {
       sortMode: sortMode ?? this.sortMode,
       searchQuery: searchQuery ?? this.searchQuery,
       showHiddenFiles: showHiddenFiles ?? this.showHiddenFiles,
+      selectedPaths: selectedPaths ?? this.selectedPaths,
     );
   }
+
+  /// Whether multi-selection mode is currently active.
+  bool get isSelectionMode => selectedPaths.isNotEmpty;
+
+  /// Number of currently selected items.
+  int get selectedCount => selectedPaths.length;
+
+  /// List of [CloudItem]s currently selected.
+  List<CloudItem> get selectedItems =>
+      items.where((i) => selectedPaths.contains(i.path)).toList();
 
   /// Calculates the breadcrumbs trail from the current remote and path.
   List<BreadcrumbItem> get breadcrumbs {
@@ -179,6 +193,7 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
       isLoading: true,
       error: null,
       searchQuery: '',
+      selectedPaths: const {},
     );
     await refresh();
   }
@@ -191,6 +206,7 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
       isLoading: true,
       error: null,
       searchQuery: '',
+      selectedPaths: const {},
     );
     await refresh();
   }
@@ -208,7 +224,7 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
     final remote = state.currentRemote;
     if (remote == null) return;
 
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true, error: null, selectedPaths: const {});
     try {
       final items = await _rcloneService.listDirectory(
         remote: remote,
@@ -233,6 +249,50 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
   /// Updates live search query for filtering items.
   void setSearchQuery(String query) {
     state = state.copyWith(searchQuery: query);
+  }
+
+  /// Toggles selection state of an item at [path].
+  void toggleSelection(String path) {
+    final current = Set<String>.from(state.selectedPaths);
+    if (current.contains(path)) {
+      current.remove(path);
+    } else {
+      current.add(path);
+    }
+    state = state.copyWith(selectedPaths: current);
+  }
+
+  /// Selects all visible items currently shown in the explorer.
+  void selectAll() {
+    final allPaths = state.displayItems.map((item) => item.path).toSet();
+    state = state.copyWith(selectedPaths: allPaths);
+  }
+
+  /// Clears the current multi-selection.
+  void clearSelection() {
+    if (state.selectedPaths.isEmpty) return;
+    state = state.copyWith(selectedPaths: const {});
+  }
+
+  /// Deletes all currently selected items in batch.
+  Future<void> deleteSelected() async {
+    final remote = state.currentRemote;
+    if (remote == null) return;
+
+    final itemsToDelete = state.selectedItems;
+    if (itemsToDelete.isEmpty) return;
+
+    state = state.copyWith(isLoading: true);
+    try {
+      for (final item in itemsToDelete) {
+        await _rcloneService.deleteFile(remote: remote, filePath: item.path);
+      }
+      clearSelection();
+      await refresh();
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
   }
 
   /// Creates a new directory in the current remote path.
