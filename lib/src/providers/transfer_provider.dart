@@ -3,10 +3,12 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../models/transfer_models.dart';
 import '../services/rclone_service.dart';
+import 'settings_provider.dart';
 
 class TransferState {
   final List<TransferJob> transfers;
@@ -165,29 +167,42 @@ class TransferNotifier extends Notifier<TransferState> {
     return launchedJobs;
   }
 
-  /// Downloads a cloud file to the local system downloads or documents directory.
+  /// Downloads a cloud file to the local system downloads or documents directory (or user-defined custom directory).
   Future<TransferJob> downloadFile({
     required String srcRemote,
     required String srcPath,
     String? customTargetDir,
   }) async {
-    Directory? targetDir;
-    if (customTargetDir != null && customTargetDir.isNotEmpty) {
-      targetDir = Directory(customTargetDir);
+    final customPath =
+        customTargetDir ?? ref.read(settingsProvider).customDownloadPath;
+    Directory targetDir;
+    if (customPath != null && customPath.trim().isNotEmpty) {
+      targetDir = Directory(customPath.trim());
     } else {
+      Directory? sysDir;
       try {
-        targetDir = await getDownloadsDirectory();
+        sysDir = await getDownloadsDirectory();
       } catch (_) {
-        targetDir = null;
+        sysDir = null;
       }
-      targetDir ??= await getApplicationDocumentsDirectory();
+      try {
+        targetDir = sysDir ?? await getApplicationDocumentsDirectory();
+      } catch (_) {
+        targetDir = Directory.systemTemp;
+      }
     }
+
+    await targetDir.create(recursive: true);
+
+    final rawName = p.basename(srcPath.replaceAll(RegExp(r'/+$'), ''));
+    final fileName = rawName.isNotEmpty ? rawName : 'downloaded_file';
+    final localDestination = p.join(targetDir.path, fileName);
 
     return startTransfer(
       srcRemote: srcRemote,
       srcPath: srcPath,
       dstRemote: '',
-      dstPath: targetDir.path,
+      dstPath: localDestination,
       isMove: false,
     );
   }

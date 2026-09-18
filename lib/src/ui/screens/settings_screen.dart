@@ -220,6 +220,11 @@ class SettingsScreen extends ConsumerWidget {
                 fontSize: 12,
               ),
             ),
+            onTap: () => _showCustomDownloadFolderDialog(
+              context,
+              settings,
+              notifier,
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -232,16 +237,112 @@ class SettingsScreen extends ConsumerWidget {
                 FilledButton.tonalIcon(
                   icon: const Icon(Icons.edit_outlined, size: 16),
                   label: const Text('Cambia'),
-                  onPressed: () async {
-                    final selectedPath =
-                        await FilePicker.getDirectoryPath();
-                    if (selectedPath != null && selectedPath.isNotEmpty) {
-                      await notifier.setCustomDownloadPath(selectedPath);
-                    }
-                  },
+                  onPressed: () => _showCustomDownloadFolderDialog(
+                    context,
+                    settings,
+                    notifier,
+                  ),
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Dialog allowing user to select or manually enter a custom download folder.
+  Future<void> _showCustomDownloadFolderDialog(
+    BuildContext context,
+    AppSettings settings,
+    SettingsNotifier notifier,
+  ) async {
+    final controller =
+        TextEditingController(text: settings.customDownloadPath ?? '');
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.folder_outlined),
+            SizedBox(width: 10),
+            Text('Cartella Download'),
+          ],
+        ),
+        content: SizedBox(
+          width: 480,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Seleziona una cartella tramite il selettore del sistema oppure inserisci manualmente il percorso desiderato:',
+                style: TextStyle(fontSize: 13),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      decoration: const InputDecoration(
+                        labelText: 'Percorso cartella',
+                        hintText: 'es. /home/utente/Scaricati',
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                        prefixIcon: Icon(Icons.folder_open, size: 20),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton.filledTonal(
+                    icon: const Icon(Icons.search),
+                    tooltip: 'Sfoglia con selettore di sistema',
+                    onPressed: () async {
+                      try {
+                        final selectedPath =
+                            await FilePicker.getDirectoryPath();
+                        if (selectedPath != null && selectedPath.isNotEmpty) {
+                          controller.text = selectedPath;
+                        }
+                      } catch (e) {
+                        if (ctx.mounted) {
+                          ScaffoldMessenger.of(ctx).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Impossibile aprire il selettore di sistema: $e',
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          if (settings.customDownloadPath != null)
+            TextButton(
+              onPressed: () {
+                notifier.setCustomDownloadPath(null);
+                Navigator.of(ctx).pop();
+              },
+              child: const Text('Ripristina predefinito'),
+            ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Annulla'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final text = controller.text.trim();
+              notifier.setCustomDownloadPath(text.isEmpty ? null : text);
+              Navigator.of(ctx).pop();
+            },
+            child: const Text('Salva'),
           ),
         ],
       ),

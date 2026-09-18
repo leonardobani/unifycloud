@@ -193,6 +193,96 @@ void main() {
 
       expect(find.text('Sostieni UnifyCloud'), findsNothing);
     });
+
+    testWidgets(
+        'Tapping "Cambia" opens download folder dialog and saving updates customDownloadPath',
+        (tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      final container = ProviderContainer(
+        overrides: [
+          settingsProvider.overrideWith(
+            () => SettingsNotifier(const AppSettings()),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(
+            home: SettingsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Tap on 'Cambia' button
+      await tester.tap(find.text('Cambia'));
+      await tester.pumpAndSettle();
+
+      // Verify dialog is open
+      expect(find.text('Cartella Download'), findsOneWidget);
+      expect(find.byType(TextField), findsOneWidget);
+
+      // Enter new path
+      await tester.enterText(find.byType(TextField), '/home/user/CustomDownloads');
+      await tester.pumpAndSettle();
+
+      // Tap Salva
+      await tester.tap(find.text('Salva'));
+      await tester.pumpAndSettle();
+
+      // Verify dialog closed and customDownloadPath updated
+      expect(find.text('Cartella Download'), findsNothing);
+      expect(
+        container.read(settingsProvider).customDownloadPath,
+        equals('/home/user/CustomDownloads'),
+      );
+    });
+
+    testWidgets(
+        'Download folder dialog provides "Ripristina predefinito" to reset path',
+        (tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      final container = ProviderContainer(
+        overrides: [
+          settingsProvider.overrideWith(
+            () => SettingsNotifier(
+              const AppSettings(customDownloadPath: '/custom/existing'),
+            ),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(
+            home: SettingsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Tap on Cambia
+      await tester.tap(find.text('Cambia'));
+      await tester.pumpAndSettle();
+
+      // Tap Ripristina predefinito
+      expect(find.text('Ripristina predefinito'), findsOneWidget);
+      await tester.tap(find.text('Ripristina predefinito'));
+      await tester.pumpAndSettle();
+
+      // Verify dialog closed and customDownloadPath reset to null
+      expect(find.text('Cartella Download'), findsNothing);
+      expect(container.read(settingsProvider).customDownloadPath, isNull);
+    });
   });
 
   group('UrlUtils Tests', () {
