@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'src/providers/settings_provider.dart';
 import 'src/router/app_router.dart';
 import 'src/services/background_service.dart';
 import 'src/services/rclone_service.dart';
@@ -51,17 +52,19 @@ void main() async {
 }
 
 /// Root widget for the UnifyCloud application.
-class UnifyCloudApp extends StatelessWidget {
+class UnifyCloudApp extends ConsumerWidget {
   const UnifyCloudApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+
     return MaterialApp.router(
       title: 'UnifyCloud',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
+      themeMode: settings.themeMode,
       routerConfig: appRouter,
     );
   }

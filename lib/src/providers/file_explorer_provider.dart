@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/cloud_models.dart';
 import '../services/rclone_service.dart';
+import 'settings_provider.dart';
 
 /// Presentation mode for directory items.
 enum FileViewMode { list, grid }
@@ -43,6 +44,7 @@ class FileExplorerState {
   final FileViewMode viewMode;
   final FileSortMode sortMode;
   final String searchQuery;
+  final bool showHiddenFiles;
 
   const FileExplorerState({
     this.currentRemote,
@@ -53,6 +55,7 @@ class FileExplorerState {
     this.viewMode = FileViewMode.list,
     this.sortMode = FileSortMode.nameAsc,
     this.searchQuery = '',
+    this.showHiddenFiles = false,
   });
 
   FileExplorerState copyWith({
@@ -64,6 +67,7 @@ class FileExplorerState {
     FileViewMode? viewMode,
     FileSortMode? sortMode,
     String? searchQuery,
+    bool? showHiddenFiles,
   }) {
     return FileExplorerState(
       currentRemote: currentRemote ?? this.currentRemote,
@@ -74,6 +78,7 @@ class FileExplorerState {
       viewMode: viewMode ?? this.viewMode,
       sortMode: sortMode ?? this.sortMode,
       searchQuery: searchQuery ?? this.searchQuery,
+      showHiddenFiles: showHiddenFiles ?? this.showHiddenFiles,
     );
   }
 
@@ -105,9 +110,13 @@ class FileExplorerState {
     return list;
   }
 
-  /// Returns items filtered by search query and sorted with directories first.
+  /// Returns items filtered by hidden preferences, search query and sorted with directories first.
   List<CloudItem> get displayItems {
     var result = List<CloudItem>.from(items);
+
+    if (!showHiddenFiles) {
+      result = result.where((item) => !item.name.startsWith('.')).toList();
+    }
 
     if (searchQuery.trim().isNotEmpty) {
       final query = searchQuery.toLowerCase().trim();
@@ -151,7 +160,14 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
 
   @override
   FileExplorerState build() {
-    return const FileExplorerState();
+    ref.listen<bool>(
+      settingsProvider.select((s) => s.showHiddenFiles),
+      (previous, next) {
+        state = state.copyWith(showHiddenFiles: next);
+      },
+    );
+    final initialHidden = ref.read(settingsProvider).showHiddenFiles;
+    return FileExplorerState(showHiddenFiles: initialHidden);
   }
 
   /// Sets the active remote and loads its root directory.
@@ -187,7 +203,7 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
     await navigateTo(nextPath);
   }
 
-  /// Reloads items from the remote.
+  /// Refreshes items in the current remote and path.
   Future<void> refresh() async {
     final remote = state.currentRemote;
     if (remote == null) return;
@@ -198,25 +214,28 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
         remote: remote,
         path: state.currentPath,
       );
-      state = state.copyWith(isLoading: false, items: items);
+      state = state.copyWith(items: items, isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
+  /// Changes the layout presentation mode (list or grid).
   void setViewMode(FileViewMode mode) {
     state = state.copyWith(viewMode: mode);
   }
 
+  /// Changes the sorting criterion and direction.
   void setSortMode(FileSortMode mode) {
     state = state.copyWith(sortMode: mode);
   }
 
+  /// Updates live search query for filtering items.
   void setSearchQuery(String query) {
     state = state.copyWith(searchQuery: query);
   }
 
-  /// Creates a directory in the current remote and path.
+  /// Creates a new directory in the current remote path.
   Future<void> createDirectory(String name) async {
     final remote = state.currentRemote;
     if (remote == null) return;
@@ -274,15 +293,21 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
     }
   }
 
-  /// Downloads an item to the local downloads directory.
+  /// Downloads an item to the local downloads directory (or user-defined custom directory).
   Future<File> downloadItem(CloudItem item) async {
     final remote = state.currentRemote;
     if (remote == null) {
       throw StateError('No remote selected');
     }
 
-    final downloadsDir = await getDownloadsDirectory() ??
-        await getApplicationDocumentsDirectory();
+    final customPath = ref.read(settingsProvider).customDownloadPath;
+    final Directory downloadsDir;
+    if (customPath != null && customPath.trim().isNotEmpty) {
+      downloadsDir = Directory(customPath.trim());
+    } else {
+      downloadsDir = await getDownloadsDirectory() ??
+          await getApplicationDocumentsDirectory();
+    }
     await downloadsDir.create(recursive: true);
 
     final localDestination = p.join(downloadsDir.path, item.name);

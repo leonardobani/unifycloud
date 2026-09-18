@@ -19,7 +19,7 @@ class AddCloudDialog extends ConsumerStatefulWidget {
 
 class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
   String _selectedProvider = 'drive';
-  String _authMethod = 'rclone'; // 'rclone' or 'custom'
+  String _authMethod = 'unifycloud'; // 'unifycloud', 'rclone', or 'custom'
   final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
@@ -38,6 +38,8 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
   String? _authUrl;
   bool _browserOpened = false;
   bool _isSaving = false;
+  String? _discoveredDriveId;
+  String? _discoveredDriveType;
 
   final List<Map<String, String>> _availableProviders = const [
     {'type': 'drive', 'name': 'Google Drive', 'subtitle': 'OAuth2 cloud storage'},
@@ -71,6 +73,8 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
   void _onProviderChanged(String type) {
     setState(() {
       _selectedProvider = type;
+      _discoveredDriveId = null;
+      _discoveredDriveType = null;
       switch (type) {
         case 'drive':
           _nameController.text = 'GoogleDrive';
@@ -101,7 +105,23 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
     final String effectiveClientId;
     final String? effectiveClientSecret;
 
-    if (_authMethod == 'rclone') {
+    if (_authMethod == 'unifycloud') {
+      final ucId = OAuthService.getUnifyCloudClientId(_selectedProvider);
+      final ucSecret = OAuthService.getUnifyCloudClientSecret(_selectedProvider);
+
+      if (ucId == null || ucId.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Nessun Client ID UnifyCloud disponibile per questo provider. Usa Rclone o un Client ID personale.',
+            ),
+          ),
+        );
+        return;
+      }
+      effectiveClientId = ucId;
+      effectiveClientSecret = ucSecret;
+    } else if (_authMethod == 'rclone') {
       final rcloneId = OAuthService.getRcloneClientId(_selectedProvider);
       final rcloneSecret =
           OAuthService.getRcloneClientSecret(_selectedProvider);
@@ -168,6 +188,12 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
 
       if (mounted) {
         setState(() {
+          if (tokens.containsKey('drive_id')) {
+            _discoveredDriveId = tokens['drive_id']?.toString();
+          }
+          if (tokens.containsKey('drive_type')) {
+            _discoveredDriveType = tokens['drive_type']?.toString();
+          }
           _tokenController.text =
               TokenUtils.normalizeTokenJson(jsonEncode(tokens));
           _statusMessage = 'Autenticazione completata con successo!';
@@ -208,8 +234,33 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
           }
         }
         if (_tokenController.text.trim().isNotEmpty) {
-          options['token'] =
+          final normToken =
               TokenUtils.normalizeTokenJson(_tokenController.text.trim());
+          options['token'] = normToken;
+
+          // For onedrive, extract drive_id / drive_type from token JSON if present
+          if (_selectedProvider == 'onedrive') {
+            try {
+              final decoded = jsonDecode(normToken);
+              if (decoded is Map) {
+                if (decoded.containsKey('drive_id')) {
+                  options['drive_id'] = decoded['drive_id'].toString();
+                }
+                if (decoded.containsKey('drive_type')) {
+                  options['drive_type'] = decoded['drive_type'].toString();
+                }
+              }
+            } catch (_) {}
+          }
+        }
+        if (_selectedProvider == 'onedrive') {
+          if (_discoveredDriveId != null && _discoveredDriveId!.isNotEmpty) {
+            options['drive_id'] = _discoveredDriveId!;
+          }
+          if (_discoveredDriveType != null &&
+              _discoveredDriveType!.isNotEmpty) {
+            options['drive_type'] = _discoveredDriveType!;
+          }
         }
         break;
       case 'webdav':
@@ -352,18 +403,18 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               border: OutlineInputBorder(),
                               prefixIcon: Icon(Icons.vpn_key_outlined),
                             ),
-                            items: [
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'unifycloud',
+                                child: Text('UnifyCloud (Ufficiale / Consigliato)'),
+                              ),
                               DropdownMenuItem(
                                 value: 'rclone',
-                                child: Text(
-                                  _selectedProvider == 'drive'
-                                      ? 'Client ID di Rclone (Consigliato / Rapido)'
-                                      : 'Client ID Predefinito di Rclone',
-                                ),
+                                child: Text('Rclone (Sconsigliato - Quota condivisa)'),
                               ),
-                              const DropdownMenuItem(
+                              DropdownMenuItem(
                                 value: 'custom',
-                                child: Text('Client ID Personale'),
+                                child: Text('Client ID Personale (Avanzato)'),
                               ),
                             ],
                             onChanged: (val) {
@@ -375,23 +426,66 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             },
                           ),
                           const SizedBox(height: 12),
-                          if (_authMethod == 'rclone') ...[
+                          if (_authMethod == 'unifycloud') ...[
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: AppTheme.primaryColor
-                                    .withValues(alpha: 0.08),
+                                color: Colors.blue.withValues(alpha: 0.08),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                  color: AppTheme.primaryColor
-                                      .withValues(alpha: 0.25),
+                                  color: Colors.blue.withValues(alpha: 0.25),
                                 ),
                               ),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Icon(
-                                    Icons.flash_on_rounded,
+                                    Icons.verified_rounded,
+                                    size: 20,
+                                    color: Colors.blue,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Credenziali Ufficiali UnifyCloud',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Accesso rapido verificato con credenziali dedicate per UnifyCloud. Clicca su "Avvia Accesso nel Browser" per autenticarti senza configurazioni manuali.',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey.shade400,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ] else if (_authMethod == 'rclone') ...[
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.amber.withValues(alpha: 0.3),
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(
+                                    Icons.warning_amber_rounded,
                                     size: 20,
                                     color: Colors.amber,
                                   ),
@@ -401,20 +495,16 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          _selectedProvider == 'drive'
-                                              ? 'Accesso Rapido con Client ID di Rclone'
-                                              : 'Credenziali predefinite di Rclone',
-                                          style: const TextStyle(
+                                        const Text(
+                                          'Client ID Pubblico di Rclone (Sconsigliato)',
+                                          style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 13,
                                           ),
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          _selectedProvider == 'drive'
-                                              ? 'Non è necessario creare un progetto su Google Cloud Console. Clicca direttamente su "Avvia Accesso nel Browser" per autenticarti.'
-                                              : 'Usa il Client ID condiviso di Rclone per questo provider cloud senza configurazioni manuali.',
+                                          'Usa le chiavi pubbliche storiche condivise con tutti gli utenti di Rclone. Potrebbero verificarsi rallentamenti o blocchi aziendali dovuti alle quote condivise.',
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: Colors.grey.shade400,
@@ -427,6 +517,29 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               ),
                             ),
                           ] else ...[
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.teal.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.teal.withValues(alpha: 0.25),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.info_outline, size: 18, color: Colors.teal),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Crea i tuoi ID in autonomia: consulta docs/oauth_setup_guide.md per la guida passo-passo.',
+                                      style: TextStyle(fontSize: 12, color: Colors.grey.shade300),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                             TextFormField(
                               controller: _clientIdController,
                               decoration: InputDecoration(
