@@ -10,6 +10,7 @@ import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/file_explorer_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../providers/transfer_provider.dart';
+import '../../services/file_opener_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/add_cloud_dialog.dart';
 import '../widgets/breadcrumbs_bar.dart';
@@ -437,28 +438,97 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
                   ref.read(fileExplorerProvider.notifier).setViewMode(next);
                 },
               ),
-              IconButton(
+              PopupMenuButton<String>(
                 icon: const Icon(Icons.upload_file_outlined),
-                tooltip: 'Carica File dal dispositivo',
-                onPressed: state.currentRemote == null
-                    ? null
-                    : () async {
-                        final jobs = await ref
-                            .read(transferProvider.notifier)
-                            .pickAndUploadFiles(
-                              dstRemote: state.currentRemote!,
-                              dstPath: state.currentPath,
-                            );
-                        if (context.mounted && jobs.isNotEmpty) {
+                tooltip: 'Carica dal dispositivo',
+                enabled: state.currentRemote != null,
+                onSelected: (choice) async {
+                  if (choice == 'files') {
+                    try {
+                      final jobs = await ref
+                          .read(transferProvider.notifier)
+                          .pickAndUploadFiles(
+                            dstRemote: state.currentRemote!,
+                            dstPath: state.currentPath,
+                          );
+                      if (context.mounted && jobs.isNotEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              '${jobs.length} ${jobs.length == 1 ? "file aggiunto" : "file aggiunti"} alla coda di caricamento',
+                            ),
+                          ),
+                        );
+                        ref.read(fileExplorerProvider.notifier).refresh();
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Errore durante il caricamento: $e'),
+                          ),
+                        );
+                      }
+                    }
+                  } else if (choice == 'folder') {
+                    try {
+                      final jobs = await ref
+                          .read(transferProvider.notifier)
+                          .pickAndUploadFolder(
+                            dstRemote: state.currentRemote!,
+                            dstPath: state.currentPath,
+                          );
+                      if (context.mounted) {
+                        if (jobs.isNotEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                '${jobs.length} ${jobs.length == 1 ? "file aggiunto" : "file aggiunti"} alla coda di caricamento',
+                                'Cartella aggiunta al caricamento (${jobs.length} ${jobs.length == 1 ? "file" : "file"} in coda)',
                               ),
                             ),
                           );
                         }
-                      },
+                        ref.read(fileExplorerProvider.notifier).refresh();
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Errore durante il caricamento della cartella: $e',
+                            ),
+                          ),
+                        );
+                      }
+                    }
+                  }
+                },
+                itemBuilder: (ctx) => [
+                  const PopupMenuItem(
+                    value: 'files',
+                    child: Row(
+                      children: [
+                        Icon(Icons.upload_file_outlined),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text('Carica file'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'folder',
+                    child: Row(
+                      children: [
+                        Icon(Icons.drive_folder_upload_outlined),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text('Carica intera cartella'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               IconButton(
                 icon: const Icon(Icons.create_new_folder_outlined),
@@ -775,6 +845,13 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
                       .toggleSelection(item.path);
                 } else if (item.isDir) {
                   ref.read(fileExplorerProvider.notifier).navigateTo(item.path);
+                } else {
+                  ref.read(fileOpenerServiceProvider).openCloudItem(
+                        context: context,
+                        item: item,
+                        remote: state.currentRemote,
+                        currentPath: state.currentPath,
+                      );
                 }
               },
               onLongPress: () {
@@ -823,6 +900,13 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
                       .toggleSelection(item.path);
                 } else if (item.isDir) {
                   ref.read(fileExplorerProvider.notifier).navigateTo(item.path);
+                } else {
+                  ref.read(fileOpenerServiceProvider).openCloudItem(
+                        context: context,
+                        item: item,
+                        remote: state.currentRemote,
+                        currentPath: state.currentPath,
+                      );
                 }
               },
               onLongPress: () {
@@ -916,7 +1000,16 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
             contentPadding: EdgeInsets.zero,
           ),
         ),
-        if (!item.isDir)
+        if (!item.isDir) ...[
+          const PopupMenuItem(
+            value: 'open_with',
+            child: ListTile(
+              leading: Icon(Icons.open_in_new_rounded),
+              title: Text('Apri con app di sistema'),
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
           const PopupMenuItem(
             value: 'download',
             child: ListTile(
@@ -926,6 +1019,7 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
               contentPadding: EdgeInsets.zero,
             ),
           ),
+        ],
         const PopupMenuItem(
           value: 'copy',
           child: ListTile(
@@ -993,13 +1087,20 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
     String action,
   ) async {
     final currentRemote = state.currentRemote ?? '';
-    final fullSrcPath = (state.currentPath.isNotEmpty && !item.path.startsWith(state.currentPath))
-        ? '${state.currentPath}/${item.path}'
-        : item.path;
+    final fullSrcPath = resolveRemoteItemPath(item.path, state.currentPath);
 
     switch (action) {
       case 'select':
         ref.read(fileExplorerProvider.notifier).toggleSelection(item.path);
+        break;
+
+      case 'open_with':
+        ref.read(fileOpenerServiceProvider).openCloudItem(
+              context: context,
+              item: item,
+              remote: currentRemote,
+              currentPath: state.currentPath,
+            );
         break;
 
       case 'download':

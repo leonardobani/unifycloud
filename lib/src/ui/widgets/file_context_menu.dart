@@ -6,6 +6,7 @@ import '../../models/cloud_models.dart';
 import '../../providers/clipboard_provider.dart';
 import '../../providers/file_explorer_provider.dart';
 import '../../providers/transfer_provider.dart';
+import '../../services/file_opener_service.dart';
 
 /// Wraps a file or folder tile with context menu support (Desktop right-click & Mobile long-press).
 class FileContextMenuRegion extends ConsumerWidget {
@@ -50,7 +51,16 @@ class FileContextMenuRegion extends ConsumerWidget {
             contentPadding: EdgeInsets.zero,
           ),
         ),
-        if (!item.isDir)
+        if (!item.isDir) ...[
+          const PopupMenuItem(
+            value: 'open_with',
+            child: ListTile(
+              leading: Icon(Icons.open_in_new_rounded),
+              title: Text('Apri con app di sistema'),
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
           const PopupMenuItem(
             value: 'download',
             child: ListTile(
@@ -60,6 +70,7 @@ class FileContextMenuRegion extends ConsumerWidget {
               contentPadding: EdgeInsets.zero,
             ),
           ),
+        ],
         const PopupMenuItem(
           value: 'copy',
           child: ListTile(
@@ -126,6 +137,12 @@ class FileContextMenuRegion extends ConsumerWidget {
       case 'select':
         ref.read(fileExplorerProvider.notifier).toggleSelection(item.path);
         break;
+      case 'open_with':
+        ref.read(fileOpenerServiceProvider).openCloudItem(
+              context: context,
+              item: item,
+            );
+        break;
       case 'download':
         _handleDownload(context, ref, currentRemote);
         break;
@@ -164,9 +181,7 @@ class FileContextMenuRegion extends ConsumerWidget {
   void _handleDownload(BuildContext context, WidgetRef ref, String currentRemote) async {
     final messenger = ScaffoldMessenger.of(context);
     final currentPath = ref.read(fileExplorerProvider).currentPath;
-    final fullSrcPath = (currentPath.isNotEmpty && !item.path.startsWith(currentPath))
-        ? '$currentPath/${item.path}'
-        : item.path;
+    final fullSrcPath = resolveRemoteItemPath(item.path, currentPath);
 
     messenger.showSnackBar(
       SnackBar(

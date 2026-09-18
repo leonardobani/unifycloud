@@ -136,6 +136,41 @@ class TransferNotifier extends Notifier<TransferState> {
     );
   }
 
+  /// Uploads a single local file to [dstRemote]:[dstPath], preserving its filename.
+  Future<TransferJob> uploadFile({
+    required File file,
+    required String dstRemote,
+    required String dstPath,
+  }) async {
+    final fileName = p.basename(file.path);
+    final targetDstPath = dstPath.isEmpty ? fileName : '$dstPath/$fileName';
+    return startTransfer(
+      srcRemote: '',
+      srcPath: file.path,
+      dstRemote: dstRemote,
+      dstPath: targetDstPath,
+      isMove: false,
+    );
+  }
+
+  /// Uploads multiple local files to [dstRemote]:[dstPath], preserving their filenames.
+  Future<List<TransferJob>> uploadFiles({
+    required List<File> files,
+    required String dstRemote,
+    required String dstPath,
+  }) async {
+    final launchedJobs = <TransferJob>[];
+    for (final file in files) {
+      final job = await uploadFile(
+        file: file,
+        dstRemote: dstRemote,
+        dstPath: dstPath,
+      );
+      launchedJobs.add(job);
+    }
+    return launchedJobs;
+  }
+
   /// Opens the native file picker to select one or more local files and upload them to [dstRemote]:[dstPath].
   Future<List<TransferJob>> pickAndUploadFiles({
     required String dstRemote,
@@ -149,22 +184,90 @@ class TransferNotifier extends Notifier<TransferState> {
       return [];
     }
 
-    final launchedJobs = <TransferJob>[];
+    final files = <File>[];
     for (final file in result) {
       final localPath = file.path;
       if (localPath != null && localPath.isNotEmpty) {
+        files.add(File(localPath));
+      }
+    }
+
+    return uploadFiles(
+      files: files,
+      dstRemote: dstRemote,
+      dstPath: dstPath,
+    );
+  }
+
+  /// Uploads all files in a local directory recursively to [dstRemote]:[dstPath],
+  /// preserving the directory tree structure under a root folder named after the local folder.
+  Future<List<TransferJob>> uploadDirectory({
+    required Directory directory,
+    required String dstRemote,
+    required String dstPath,
+  }) async {
+    if (!directory.existsSync()) {
+      throw FileSystemException('Directory non esistente', directory.path);
+    }
+
+    final rootDirName = p.basename(directory.path);
+    final cloudRoot = dstPath.isEmpty ? rootDirName : '$dstPath/$rootDirName';
+
+    // Ensure the root remote directory exists (covers empty directories)
+    try {
+      await _rclone.makeDir(remote: dstRemote, dirPath: cloudRoot);
+    } catch (_) {
+      // Ignored if cloud backend handles directories implicitly
+    }
+
+    final launchedJobs = <TransferJob>[];
+    final entities = directory.listSync(recursive: true, followLinks: false);
+
+    for (final entity in entities) {
+      if (entity is File) {
+        final relativePath = p.relative(entity.path, from: directory.path);
+        final normalizedRelPath = p.split(relativePath).join('/');
+        final targetDstPath = '$cloudRoot/$normalizedRelPath';
+
         final job = await startTransfer(
           srcRemote: '',
-          srcPath: localPath,
+          srcPath: entity.path,
           dstRemote: dstRemote,
-          dstPath: dstPath,
+          dstPath: targetDstPath,
           isMove: false,
         );
         launchedJobs.add(job);
+      } else if (entity is Directory) {
+        final relativePath = p.relative(entity.path, from: directory.path);
+        final normalizedRelPath = p.split(relativePath).join('/');
+        final subDirDstPath = '$cloudRoot/$normalizedRelPath';
+        try {
+          await _rclone.makeDir(remote: dstRemote, dirPath: subDirDstPath);
+        } catch (_) {}
       }
     }
 
     return launchedJobs;
+  }
+
+  /// Opens the native directory picker to select a local folder and upload it recursively to [dstRemote]:[dstPath].
+  Future<List<TransferJob>> pickAndUploadFolder({
+    required String dstRemote,
+    required String dstPath,
+  }) async {
+    final selectedDir = await FilePicker.getDirectoryPath(
+      dialogTitle: 'Seleziona la cartella da caricare nel Cloud',
+    );
+
+    if (selectedDir == null || selectedDir.trim().isEmpty) {
+      return [];
+    }
+
+    return uploadDirectory(
+      directory: Directory(selectedDir.trim()),
+      dstRemote: dstRemote,
+      dstPath: dstPath,
+    );
   }
 
   /// Downloads a cloud file to the local system downloads or documents directory (or user-defined custom directory).
