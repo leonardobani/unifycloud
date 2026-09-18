@@ -107,7 +107,11 @@ class FileTypeIcon extends StatelessWidget {
         return Icon(Icons.code_outlined, size: size, color: Colors.cyan.shade400);
 
       default:
-        return Icon(Icons.insert_drive_file_outlined, size: size, color: Colors.grey.shade400);
+        return Icon(
+          Icons.insert_drive_file_outlined,
+          size: size,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        );
     }
   }
 }

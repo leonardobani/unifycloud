@@ -316,19 +316,24 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
     }
 
   Widget _buildContent(BuildContext context, FileExplorerState state) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (state.currentRemote == null) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.cloud_off, size: 64, color: Colors.grey.shade400),
+            Icon(Icons.cloud_off, size: 64, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
             const SizedBox(height: 16),
             const Text(
               'Nessun Cloud Selezionato',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            const Text('Configura un cloud nella schermata Home per iniziare.'),
+            Text(
+              'Configura un cloud nella schermata Home per iniziare.',
+              style: TextStyle(color: colorScheme.onSurfaceVariant),
+            ),
           ],
         ),
       );
@@ -348,7 +353,7 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
-                color: Colors.grey.shade300,
+                color: colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 6),
@@ -356,7 +361,7 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
               'Lettura directory in corso...',
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.grey.shade500,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -411,7 +416,7 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey.shade300,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -466,13 +471,13 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.folder_open_outlined,
-                size: 64, color: Colors.grey.shade400),
+                size: 64, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
             const SizedBox(height: 16),
             Text(
               state.searchQuery.isNotEmpty
                   ? 'Nessun file trovato per "${state.searchQuery}"'
                   : 'Questa cartella è vuota',
-              style: TextStyle(fontSize: 16, color: Colors.grey.shade400),
+              style: TextStyle(fontSize: 16, color: colorScheme.onSurfaceVariant),
             ),
           ],
         ),
@@ -504,7 +509,7 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
               ),
               subtitle: Text(
                 '${item.isDir ? "Cartella" : _formatBytes(item.size)} • ${_formatDate(item.modTime)}',
-                style: const TextStyle(fontSize: 12),
+                style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
               ),
               trailing: _buildItemMenu(context, ref, item, state),
               onTap: () {
@@ -575,7 +580,7 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
                             item.isDir ? 'Cartella' : _formatBytes(item.size),
                             style: TextStyle(
                               fontSize: 11,
-                              color: Colors.grey.shade400,
+                              color: colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],

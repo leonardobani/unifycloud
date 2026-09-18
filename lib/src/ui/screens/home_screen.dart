@@ -16,6 +16,9 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(cloudAccountsProvider);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -94,14 +97,14 @@ class HomeScreen extends ConsumerWidget {
                         child: LinearProgressIndicator(
                           value: 0.0,
                           minHeight: 8,
-                          backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                          backgroundColor: colorScheme.surfaceContainerHighest,
                           valueColor: const AlwaysStoppedAnimation(AppTheme.primaryColor),
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Nessun account cloud configurato. Tocca "+ Collega Nuovo Cloud" in basso.',
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+                        style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
                       ),
                     ] else if (state.hasStorageData) ...[
                       Row(
@@ -130,7 +133,7 @@ class HomeScreen extends ConsumerWidget {
                         child: LinearProgressIndicator(
                           value: state.usedStoragePercentage,
                           minHeight: 10,
-                          backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                          backgroundColor: colorScheme.surfaceContainerHighest,
                           valueColor: AlwaysStoppedAnimation(
                             state.usedStoragePercentage > 0.9 ? Colors.orange : AppTheme.primaryColor,
                           ),
@@ -143,17 +146,17 @@ class HomeScreen extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               '${(state.usedStoragePercentage * 100).toStringAsFixed(1)}% occupato',
-                              style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+                              style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           const SizedBox(width: 8),
                           Text(
                             '${StorageQuota.formatBytes(state.freeStorageBytes)} disponibili',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: Colors.greenAccent,
+                              color: isDark ? const Color(0xFF69F0AE) : const Color(0xFF1B5E20),
                             ),
                           ),
                         ],
@@ -169,14 +172,14 @@ class HomeScreen extends ConsumerWidget {
                         child: LinearProgressIndicator(
                           value: null,
                           minHeight: 8,
-                          backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                          backgroundColor: colorScheme.surfaceContainerHighest,
                           valueColor: const AlwaysStoppedAnimation(AppTheme.primaryColor),
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Calcolo quote storage in corso o spazio illimitato...',
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+                        style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ],
@@ -237,7 +240,7 @@ class HomeScreen extends ConsumerWidget {
                       Icon(
                         Icons.cloud_off_outlined,
                         size: 64,
-                        color: Colors.grey.shade500,
+                        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                       ),
                       const SizedBox(height: 16),
                       const Text(
@@ -248,7 +251,7 @@ class HomeScreen extends ConsumerWidget {
                       Text(
                         'Collega Google Drive, Dropbox, OneDrive, SFTP o WebDAV per iniziare a sincronizzare ed esplorare i tuoi file.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey.shade400),
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
                       ),
                       const SizedBox(height: 20),
                       FilledButton.icon(
@@ -392,7 +395,7 @@ class HomeScreen extends ConsumerWidget {
                                           '${StorageQuota.formatBytes(quota.effectiveFree)} liberi',
                                           style: TextStyle(
                                             fontSize: 11,
-                                            color: Colors.grey.shade400,
+                                            color: colorScheme.onSurfaceVariant,
                                           ),
                                         ),
                                       ],
@@ -403,7 +406,7 @@ class HomeScreen extends ConsumerWidget {
                                       child: LinearProgressIndicator(
                                         value: quota.usedPercentage,
                                         minHeight: 6,
-                                        backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                                        backgroundColor: colorScheme.surfaceContainerHighest,
                                         valueColor: AlwaysStoppedAnimation(
                                           quota.usedPercentage > 0.9 ? Colors.orange : color,
                                         ),
@@ -418,7 +421,7 @@ class HomeScreen extends ConsumerWidget {
                                             'Storage',
                                             style: TextStyle(
                                               fontSize: 12,
-                                              color: Colors.grey.shade400,
+                                              color: colorScheme.onSurfaceVariant,
                                             ),
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -428,7 +431,7 @@ class HomeScreen extends ConsumerWidget {
                                           'Disponibile',
                                           style: TextStyle(
                                             fontSize: 11,
-                                            color: Colors.grey.shade500,
+                                            color: colorScheme.onSurfaceVariant,
                                           ),
                                         ),
                                       ],
@@ -439,7 +442,7 @@ class HomeScreen extends ConsumerWidget {
                                       child: LinearProgressIndicator(
                                         value: 0.0,
                                         minHeight: 6,
-                                        backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                                        backgroundColor: colorScheme.surfaceContainerHighest,
                                         valueColor: AlwaysStoppedAnimation(color),
                                       ),
                                     ),

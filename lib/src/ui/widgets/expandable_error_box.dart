@@ -118,7 +118,7 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
                           _isExpanded ? 'Comprimi' : 'Espandi',
                           style: TextStyle(
                             fontSize: 11,
-                            color: Colors.grey.shade400,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -127,7 +127,7 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
                       Icon(
                         _isExpanded ? Icons.expand_less : Icons.expand_more,
                         size: 18,
-                        color: Colors.grey.shade400,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ],
                   ),
@@ -140,7 +140,7 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
                       style: TextStyle(
                         fontSize: 11,
                         fontFamily: 'monospace',
-                        color: Colors.grey.shade300,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         height: 1.3,
                       ),
                       maxLines: 2,
@@ -151,7 +151,9 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
                       constraints: const BoxConstraints(maxHeight: 220),
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.25),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black.withValues(alpha: 0.3)
+                            : Theme.of(context).colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Scrollbar(
@@ -164,7 +166,9 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
                             style: TextStyle(
                               fontSize: 11,
                               fontFamily: 'monospace',
-                              color: Colors.grey.shade200,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.grey.shade200
+                                  : Theme.of(context).colorScheme.onSurface,
                               height: 1.35,
                             ),
                           ),

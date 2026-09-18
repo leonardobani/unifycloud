@@ -48,7 +48,7 @@ class BreadcrumbsBar extends ConsumerWidget {
         separatorBuilder: (context, index) => Icon(
           Icons.chevron_right,
           size: 18,
-          color: Colors.grey.shade500,
+          color: Theme.of(context).colorScheme.outlineVariant,
         ),
         itemBuilder: (context, index) {
           final item = breadcrumbs[index];
@@ -73,7 +73,9 @@ class BreadcrumbsBar extends ConsumerWidget {
                       Icon(
                         Icons.home_outlined,
                         size: 18,
-                        color: isLast ? Theme.of(context).colorScheme.primary : Colors.grey,
+                        color: isLast
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: 4),
                     ],
@@ -84,7 +86,7 @@ class BreadcrumbsBar extends ConsumerWidget {
                         fontWeight: isLast ? FontWeight.w600 : FontWeight.normal,
                         color: isLast
                             ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).textTheme.bodyMedium?.color,
+                            : Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ],

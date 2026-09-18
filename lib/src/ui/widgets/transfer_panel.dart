@@ -27,7 +27,7 @@ class TransferFloatingBar extends ConsumerWidget {
       child: Material(
         elevation: 6,
         borderRadius: BorderRadius.circular(16),
-        color: AppTheme.surfaceColor,
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
@@ -88,7 +88,8 @@ class TransferFloatingBar extends ConsumerWidget {
                         child: LinearProgressIndicator(
                           value: avgProgress > 0 ? avgProgress : null,
                           minHeight: 4,
-                          backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.surfaceContainerHighest,
                           valueColor: const AlwaysStoppedAnimation(
                               AppTheme.primaryColor),
                         ),
@@ -97,7 +98,11 @@ class TransferFloatingBar extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                const Icon(Icons.expand_less, size: 22, color: Colors.grey),
+                Icon(
+                  Icons.expand_less,
+                  size: 22,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ],
             ),
           ),
@@ -115,12 +120,13 @@ class TransferSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(transferProvider);
     final transfers = state.transfers;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.75,
-      decoration: const BoxDecoration(
-        color: AppTheme.surfaceColor,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainer,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         children: [
@@ -131,7 +137,7 @@ class TransferSheet extends ConsumerWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade600,
+                color: colorScheme.outlineVariant,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -180,8 +186,11 @@ class TransferSheet extends ConsumerWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.cloud_done_outlined,
-                            size: 64, color: Colors.grey.shade600),
+                        Icon(
+                          Icons.cloud_done_outlined,
+                          size: 64,
+                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                        ),
                         const SizedBox(height: 16),
                         const Text(
                           'Nessun trasferimento recente',
@@ -192,7 +201,9 @@ class TransferSheet extends ConsumerWidget {
                         Text(
                           'I download, gli upload e le copie cloud appariranno qui.',
                           style: TextStyle(
-                              fontSize: 13, color: Colors.grey.shade400),
+                            fontSize: 13,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ],
                     ),
@@ -245,7 +256,7 @@ class _TransferCard extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 3),
-                      _buildRouteBadges(),
+                      _buildRouteBadges(context),
                     ],
                   ),
                 ),
@@ -260,7 +271,8 @@ class _TransferCard extends ConsumerWidget {
                 child: LinearProgressIndicator(
                   value: job.percentage > 0 ? job.percentage / 100 : null,
                   minHeight: 6,
-                  backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
                   valueColor:
                       const AlwaysStoppedAnimation(AppTheme.primaryColor),
                 ),
@@ -271,7 +283,10 @@ class _TransferCard extends ConsumerWidget {
                 children: [
                   Text(
                     '${job.percentage}% • ${job.formattedProgress}',
-                    style: const TextStyle(fontSize: 11, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   Text(
                     '${job.formattedSpeed} • ETA ${job.formattedEta}',
@@ -310,7 +325,8 @@ class _TransferCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildRouteBadges() {
+  Widget _buildRouteBadges(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final src = job.srcRemote.isEmpty ? 'Locale' : job.srcRemote;
     final dst = job.dstRemote.isEmpty ? 'Locale' : job.dstRemote;
     final action = job.isMove ? 'Sposta in' : 'Copia in';
@@ -320,19 +336,26 @@ class _TransferCard extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: Colors.grey.withValues(alpha: 0.2),
+            color: colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
             src,
-            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
+            ),
           ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4.0),
           child: Text(
             action,
-            style: const TextStyle(fontSize: 10, color: Colors.grey),
+            style: TextStyle(
+              fontSize: 10,
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
         Container(

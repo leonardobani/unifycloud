@@ -8,6 +8,12 @@ class AppTheme {
   static const backgroundDark = Color(0xFF0D1117);
   static const cardDark = Color(0xFF1A222D);
 
+  static const surfaceLight = Color(0xFFFFFFFF);
+  static const backgroundLight = Color(0xFFF8F9FA);
+  static const cardLight = Color(0xFFFFFFFF);
+  static const borderLight = Color(0xFFE2E8F0);
+  static const borderDark = Color(0xFF2D3748);
+
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
@@ -23,12 +29,14 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(12)),
-          side: BorderSide(color: Color(0xFF2D3748), width: 1),
+          side: BorderSide(color: borderDark, width: 1),
         ),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: backgroundDark,
+        foregroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: false,
       ),
       navigationRailTheme: const NavigationRailThemeData(
@@ -38,6 +46,24 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: surfaceDark,
         indicatorColor: primaryColor.withValues(alpha: 0.2),
+      ),
+      dividerTheme: const DividerThemeData(
+        color: borderDark,
+        thickness: 1,
+        space: 1,
+      ),
+      dialogTheme: const DialogThemeData(
+        backgroundColor: surfaceDark,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: surfaceDark,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
       ),
     );
   }
@@ -49,12 +75,65 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
         brightness: Brightness.light,
+        surface: surfaceLight,
       ),
-      cardTheme: CardThemeData(
+      scaffoldBackgroundColor: backgroundLight,
+      cardTheme: const CardThemeData(
+        color: cardLight,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
-          side: BorderSide(color: Colors.grey.shade200, width: 1),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          side: BorderSide(color: borderLight, width: 1),
+        ),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: backgroundLight,
+        foregroundColor: Color(0xFF1A1C1E),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+      ),
+      navigationRailTheme: NavigationRailThemeData(
+        backgroundColor: backgroundLight,
+        indicatorColor: primaryColor.withValues(alpha: 0.15),
+        selectedIconTheme: const IconThemeData(color: primaryColor),
+        unselectedIconTheme: const IconThemeData(color: Color(0xFF43474E)),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: surfaceLight,
+        indicatorColor: primaryColor.withValues(alpha: 0.15),
+        elevation: 2,
+      ),
+      dividerTheme: const DividerThemeData(
+        color: borderLight,
+        thickness: 1,
+        space: 1,
+      ),
+      dialogTheme: const DialogThemeData(
+        backgroundColor: surfaceLight,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: surfaceLight,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+      ),
+      inputDecorationTheme: const InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          borderSide: BorderSide(color: borderLight),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          borderSide: BorderSide(color: borderLight),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          borderSide: BorderSide(color: primaryColor, width: 1.5),
         ),
       ),
     );

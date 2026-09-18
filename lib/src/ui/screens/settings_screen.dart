@@ -119,7 +119,10 @@ class SettingsScreen extends ConsumerWidget {
             const SizedBox(height: 6),
             Text(
               'Scegli il tema visivo per l\'interfaccia di UnifyCloud:',
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade400),
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 16),
             LayoutBuilder(
@@ -213,7 +216,7 @@ class SettingsScreen extends ConsumerWidget {
               style: TextStyle(
                 color: settings.customDownloadPath != null
                     ? Theme.of(context).colorScheme.primary
-                    : Colors.grey.shade400,
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 12,
               ),
             ),
@@ -366,9 +369,13 @@ class SettingsScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 14, height: 1.4),
               ),
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 'Se trovi utile l\'applicazione nel tuo lavoro o nella tua vita quotidiana, puoi offrire un caffè o fare una donazione per sostenere lo sviluppo continuo, l\'integrazione di nuovi provider e la manutenzione!',
-                style: TextStyle(fontSize: 13, height: 1.4, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: 13,
+                  height: 1.4,
+                  color: Theme.of(ctx).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 20),
               _buildDonationTile(
@@ -445,7 +452,10 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 11, color: Colors.grey.shade400),
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),

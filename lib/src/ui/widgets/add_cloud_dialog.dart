@@ -361,9 +361,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                   Icon(
                                     AppTheme.getProviderIcon(p['type']!),
                                     size: 16,
-                                    color: isSelected
-                                        ? Colors.white
-                                        : AppTheme.getProviderColor(p['type']!),
+                                    color: AppTheme.getProviderColor(p['type']!),
                                   ),
                                   const SizedBox(width: 6),
                                   Text(p['name']!),
@@ -462,7 +460,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                           'Accesso rapido verificato con credenziali dedicate per UnifyCloud. Clicca su "Avvia Accesso nel Browser" per autenticarti senza configurazioni manuali.',
                                           style: TextStyle(
                                             fontSize: 12,
-                                            color: Colors.grey.shade400,
+                                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                                           ),
                                         ),
                                       ],
@@ -507,7 +505,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                           'Usa le chiavi pubbliche storiche condivise con tutti gli utenti di Rclone. Potrebbero verificarsi rallentamenti o blocchi aziendali dovuti alle quote condivise.',
                                           style: TextStyle(
                                             fontSize: 12,
-                                            color: Colors.grey.shade400,
+                                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                                           ),
                                         ),
                                       ],
@@ -534,7 +532,10 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                   Expanded(
                                     child: Text(
                                       'Crea i tuoi ID in autonomia: consulta docs/oauth_setup_guide.md per la guida passo-passo.',
-                                      style: TextStyle(fontSize: 12, color: Colors.grey.shade300),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -653,7 +654,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontFamily: 'monospace',
-                                      color: Colors.grey.shade300,
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                                     ),
                                     maxLines: 2,
                                   ),
