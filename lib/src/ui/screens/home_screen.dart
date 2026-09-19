@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../models/cloud_models.dart';
+import '../../models/sync_rule_model.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/file_explorer_provider.dart';
+import '../../providers/sync_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/add_cloud_dialog.dart';
 import '../widgets/expandable_error_box.dart';
@@ -186,7 +188,63 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
+
+            // Sync & Backup Overview Card
+            Builder(
+              builder: (context) {
+                final syncRules = ref.watch(syncProvider);
+                final enabledCount = syncRules.where((r) => r.isEnabled).length;
+                final isSyncing = syncRules.any((r) => r.lastStatus == SyncStatus.inProgress);
+
+                return Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: colorScheme.primaryContainer,
+                          child: Icon(
+                            Icons.sync,
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Sincronizzazione & Backup',
+                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                syncRules.isEmpty
+                                    ? 'Nessuna regola configurata'
+                                    : '$enabledCount/${syncRules.length} regole attive${isSyncing ? ' • Sincronizzazione in corso...' : ''}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        TextButton.icon(
+                          icon: const Icon(Icons.arrow_forward, size: 16),
+                          label: const Text('Gestisci'),
+                          onPressed: () => context.go('/sync'),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
 
             // Header for Connected Clouds
             Wrap(

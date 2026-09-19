@@ -362,4 +362,67 @@ func TestCreatePublicLinkInternal(t *testing.T) {
 	}
 }
 
+func TestStartSyncInternal_LocalToLocal(t *testing.T) {
+	InitRcloneInternal("")
+	tmpDir := t.TempDir()
+
+	srcDir := filepath.Join(tmpDir, "sync_src")
+	dstDir := filepath.Join(tmpDir, "sync_dst")
+	_ = os.MkdirAll(srcDir, 0755)
+	_ = os.MkdirAll(dstDir, 0755)
+
+	file1 := filepath.Join(srcDir, "doc1.txt")
+	file2 := filepath.Join(srcDir, "photo.jpg")
+	_ = os.WriteFile(file1, []byte("Content of document 1"), 0644)
+	_ = os.WriteFile(file2, []byte("Binary photo data"), 0644)
+
+	// Test 1: StartSyncInternal with "copy" mode (backup)
+	copyResp := StartSyncInternal("", srcDir, "", dstDir, "copy")
+	if !copyResp.Success {
+		t.Fatalf("StartSyncInternal (copy) failed: %s", copyResp.Error)
+	}
+	job, ok := copyResp.Data.(*TransferJob)
+	if !ok || job.ID == "" {
+		t.Fatalf("Expected valid sync job, got %v", copyResp.Data)
+	}
+
+	dstFile1 := filepath.Join(dstDir, "doc1.txt")
+	dstFile2 := filepath.Join(dstDir, "photo.jpg")
+	for i := 0; i < 30; i++ {
+		time.Sleep(100 * time.Millisecond)
+		if _, err := os.Stat(dstFile1); err == nil {
+			if _, err2 := os.Stat(dstFile2); err2 == nil {
+				break
+			}
+		}
+	}
+
+	if _, err := os.Stat(dstFile1); err != nil {
+		t.Errorf("Expected %s to exist after copy sync", dstFile1)
+	}
+	if _, err := os.Stat(dstFile2); err != nil {
+		t.Errorf("Expected %s to exist after copy sync", dstFile2)
+	}
+
+	// Test 2: StartSyncInternal with "sync" (mirror) mode
+	extraFile := filepath.Join(dstDir, "extra_to_delete.txt")
+	_ = os.WriteFile(extraFile, []byte("This should be deleted by mirror sync"), 0644)
+
+	syncResp := StartSyncInternal("", srcDir, "", dstDir, "sync")
+	if !syncResp.Success {
+		t.Fatalf("StartSyncInternal (sync) failed: %s", syncResp.Error)
+	}
+
+	for i := 0; i < 30; i++ {
+		time.Sleep(100 * time.Millisecond)
+		if _, err := os.Stat(extraFile); os.IsNotExist(err) {
+			break
+		}
+	}
+
+	if _, err := os.Stat(extraFile); !os.IsNotExist(err) {
+		t.Errorf("Expected %s to be deleted by mirror sync", extraFile)
+	}
+}
+
 

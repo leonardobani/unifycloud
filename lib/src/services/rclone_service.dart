@@ -433,6 +433,49 @@ class RcloneService {
     });
   }
 
+  /// Starts an asynchronous directory synchronization or incremental backup in a background Go goroutine.
+  ///
+  /// [mode] can be:
+  /// - `'sync'`: Mirror mode (destination is made identical to source, removing deleted files on destination)
+  /// - `'copy'`: Backup mode (incremental copy of new/modified files, preserving all files on destination)
+  Future<TransferJob> startSync({
+    required String srcRemote,
+    required String srcPath,
+    required String dstRemote,
+    required String dstPath,
+    String mode = 'sync',
+  }) async {
+    return using((Arena arena) {
+      final cSrcRemote =
+          srcRemote.toNativeUtf8(allocator: arena).cast<ffi.Char>();
+      final cSrcPath = srcPath.toNativeUtf8(allocator: arena).cast<ffi.Char>();
+      final cDstRemote =
+          dstRemote.toNativeUtf8(allocator: arena).cast<ffi.Char>();
+      final cDstPath = dstPath.toNativeUtf8(allocator: arena).cast<ffi.Char>();
+      final cSyncMode = mode.toNativeUtf8(allocator: arena).cast<ffi.Char>();
+
+      final raw = _invokeAndFree(
+        () => _bindings.StartSync(
+          cSrcRemote,
+          cSrcPath,
+          cDstRemote,
+          cDstPath,
+          cSyncMode,
+        ),
+      );
+
+      final response = RcloneResponse.fromJson(
+        raw,
+        (data) => TransferJob.fromJson(data as Map<String, dynamic>),
+      );
+
+      if (!response.success || response.data == null) {
+        throw Exception('StartSync failed: ${response.error}');
+      }
+      return response.data!;
+    });
+  }
+
   /// Returns the live progress of a specific transfer job by [jobId].
   Future<TransferJob?> getTransferProgress(String jobId) async {
     return using((Arena arena) {

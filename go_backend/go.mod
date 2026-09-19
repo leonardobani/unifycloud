@@ -12,6 +12,7 @@ require (
 	github.com/IBM/go-sdk-core/v5 v5.23.1 // indirect
 	github.com/Max-Sum/base32768 v0.0.0-20230304063302-18e6ce5945fd // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
+	github.com/aalpar/deheap v1.1.2 // indirect
 	github.com/abbot/go-http-auth v0.4.0 // indirect
 	github.com/adrg/xdg v0.5.3 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.43.7 // indirect

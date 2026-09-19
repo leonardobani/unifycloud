@@ -55,6 +55,11 @@ class MainScaffold extends StatelessWidget {
                       label: Text('File Explorer'),
                     ),
                     NavigationRailDestination(
+                      icon: Icon(Icons.sync_outlined),
+                      selectedIcon: Icon(Icons.sync),
+                      label: Text('Sincronizzazione'),
+                    ),
+                    NavigationRailDestination(
                       icon: Icon(Icons.settings_outlined),
                       selectedIcon: Icon(Icons.settings),
                       label: Text('Impostazioni'),
@@ -106,6 +111,11 @@ class MainScaffold extends StatelessWidget {
                 icon: Icon(Icons.folder_outlined),
                 selectedIcon: Icon(Icons.folder),
                 label: 'File',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.sync_outlined),
+                selectedIcon: Icon(Icons.sync),
+                label: 'Backup',
               ),
               NavigationDestination(
                 icon: Icon(Icons.settings_outlined),

@@ -852,6 +852,103 @@ func StartTransferInternal(srcRemote, srcPath, dstRemote, dstPath string, isMove
 	return ResponseSuccess(job)
 }
 
+func StartSyncInternal(srcRemote, srcPath, dstRemote, dstPath, syncMode string) Response {
+	jobID := fmt.Sprintf("sync_%d_%d", time.Now().UnixMilli(), atomic.AddInt64(&globalTransferManager.counter, 1))
+	ctx, cancel := context.WithCancel(context.Background())
+
+	normalizedMode := strings.ToLower(strings.TrimSpace(syncMode))
+	if normalizedMode != "copy" && normalizedMode != "sync" {
+		normalizedMode = "sync"
+	}
+
+	job := &TransferJob{
+		ID:        jobID,
+		SrcRemote: srcRemote,
+		SrcPath:   srcPath,
+		DstRemote: dstRemote,
+		DstPath:   dstPath,
+		IsMove:    false,
+		Status:    "queued",
+		StartTime: time.Now().Format(time.RFC3339),
+		cancel:    cancel,
+	}
+
+	globalTransferManager.mu.Lock()
+	globalTransferManager.jobs[jobID] = job
+	globalTransferManager.jobList = append(globalTransferManager.jobList, jobID)
+	globalTransferManager.mu.Unlock()
+
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				globalTransferManager.mu.Lock()
+				job.Status = "failed"
+				job.Error = fmt.Sprintf("panic: %v", r)
+				job.EndTime = time.Now().Format(time.RFC3339)
+				globalTransferManager.mu.Unlock()
+			}
+		}()
+
+		globalTransferManager.mu.Lock()
+		job.Status = "running"
+		globalTransferManager.mu.Unlock()
+
+		srcTarget := makeFsTarget(srcRemote, srcPath)
+		dstTarget := makeFsTarget(dstRemote, dstPath)
+
+		jobCtx := accounting.WithStatsGroup(ctx, jobID)
+
+		fsrc, err := fs.NewFs(jobCtx, srcTarget)
+		if err != nil {
+			globalTransferManager.mu.Lock()
+			job.Status = "failed"
+			job.Error = fmt.Sprintf("failed to open source directory %q: %v", srcTarget, err)
+			job.EndTime = time.Now().Format(time.RFC3339)
+			globalTransferManager.mu.Unlock()
+			return
+		}
+
+		fdst, err := fs.NewFs(jobCtx, dstTarget)
+		if err != nil {
+			globalTransferManager.mu.Lock()
+			job.Status = "failed"
+			job.Error = fmt.Sprintf("failed to open destination directory %q: %v", dstTarget, err)
+			job.EndTime = time.Now().Format(time.RFC3339)
+			globalTransferManager.mu.Unlock()
+			return
+		}
+
+		var opErr error
+		if normalizedMode == "copy" {
+			opErr = rclonesync.CopyDir(jobCtx, fdst, fsrc, false)
+		} else {
+			opErr = rclonesync.Sync(jobCtx, fdst, fsrc, false)
+		}
+
+		globalTransferManager.mu.Lock()
+		defer globalTransferManager.mu.Unlock()
+		job.EndTime = time.Now().Format(time.RFC3339)
+
+		if opErr != nil {
+			if jobCtx.Err() == context.Canceled {
+				job.Status = "cancelled"
+				job.Error = "Sync cancelled by user"
+			} else {
+				job.Status = "failed"
+				job.Error = opErr.Error()
+			}
+		} else {
+			job.Status = "completed"
+			if job.TotalBytes > 0 {
+				job.Bytes = job.TotalBytes
+			}
+			job.Percentage = 100
+		}
+	}()
+
+	return ResponseSuccess(job)
+}
+
 func GetTransferProgressInternal(jobId string) Response {
 	targetID := strings.TrimSpace(jobId)
 
@@ -1141,6 +1238,31 @@ func CreatePublicLink(remote *C.char, filePath *C.char, unlink C.int) *C.char {
 	}
 	isUnlink := (unlink != 0)
 	return cResponse(CreatePublicLinkInternal(rem, fp, isUnlink))
+}
+
+//export StartSync
+func StartSync(srcRemote *C.char, srcPath *C.char, dstRemote *C.char, dstPath *C.char, syncMode *C.char) *C.char {
+	sRem := ""
+	if srcRemote != nil {
+		sRem = C.GoString(srcRemote)
+	}
+	sPath := ""
+	if srcPath != nil {
+		sPath = C.GoString(srcPath)
+	}
+	dRem := ""
+	if dstRemote != nil {
+		dRem = C.GoString(dstRemote)
+	}
+	dPath := ""
+	if dstPath != nil {
+		dPath = C.GoString(dstPath)
+	}
+	mode := "sync"
+	if syncMode != nil {
+		mode = C.GoString(syncMode)
+	}
+	return cResponse(StartSyncInternal(sRem, sPath, dRem, dPath, mode))
 }
 
 func main() {}

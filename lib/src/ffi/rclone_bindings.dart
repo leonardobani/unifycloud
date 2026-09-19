@@ -349,6 +349,39 @@ class RcloneBindings {
           int,
         )
       >();
+
+  ffi.Pointer<ffi.Char> StartSync(
+    ffi.Pointer<ffi.Char> srcRemote,
+    ffi.Pointer<ffi.Char> srcPath,
+    ffi.Pointer<ffi.Char> dstRemote,
+    ffi.Pointer<ffi.Char> dstPath,
+    ffi.Pointer<ffi.Char> syncMode,
+  ) {
+    return _StartSync(srcRemote, srcPath, dstRemote, dstPath, syncMode);
+  }
+
+  late final _StartSyncPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+          )
+        >
+      >('StartSync');
+  late final _StartSync =
+      _StartSyncPtr.asFunction<
+        ffi.Pointer<ffi.Char> Function(
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+        )
+      >();
 }
 
 typedef GoChan = ffi.Pointer<ffi.Void>;
