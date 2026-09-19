@@ -48,27 +48,83 @@ class FileOpenerService {
   final Future<Directory> Function() _getTempDir;
   final Future<OpenResult> Function(String filePath) _openFile;
 
+  static Future<Directory> _defaultCacheDir() async {
+    if (Platform.isLinux) {
+      final home = Platform.environment['HOME'] ?? '';
+      if (home.isNotEmpty && Directory(home).existsSync()) {
+        final cacheDir = Directory(p.join(home, '.cache'));
+        if (cacheDir.existsSync()) {
+          return cacheDir;
+        }
+      }
+    }
+    return getTemporaryDirectory();
+  }
+
   FileOpenerService({
     required this.rcloneService,
     this.ref,
     Future<Directory> Function()? getTempDir,
     Future<OpenResult> Function(String filePath)? openFile,
-  })  : _getTempDir = getTempDir ?? getTemporaryDirectory,
+  })  : _getTempDir = getTempDir ?? _defaultCacheDir,
         _openFile = openFile ?? openSystemFile;
+
+  /// Checks whether a [CloudItem] is a PDF file based on its name or mimeType.
+  static bool isPdf(CloudItem item) {
+    final name = item.name.toLowerCase();
+    final ext = p.extension(name).toLowerCase();
+    return ext == '.pdf' ||
+        name.endsWith('.pdf') ||
+        item.mimeType?.toLowerCase() == 'application/pdf';
+  }
+
+  static Future<bool> _tryLaunchProcess(String executable, List<String> arguments) async {
+    try {
+      final process = await Process.start(executable, arguments);
+      final exitCode = await process.exitCode.timeout(
+        const Duration(milliseconds: 700),
+        onTimeout: () => 0, // Process stayed running (GUI application launched)
+      );
+      return exitCode == 0;
+    } catch (_) {
+      return false;
+    }
+  }
 
   /// Opens a file with the system default application across platforms.
   ///
   /// On Linux:
-  /// 1. Tries `launchUrl(Uri.file(filePath))` (GTK / GIO / Freedesktop Portal via url_launcher).
-  /// 2. Tries direct system process openers (`/usr/bin/gio open`, `/usr/bin/xdg-open`, `gio open`, `xdg-open`),
-  ///    prioritizing `/usr/bin` to bypass broken container wrappers.
-  /// 3. Falls back to [OpenFilex.open].
+  /// 1. Tries desktop launchers (`/usr/local/bin/xdg-open`, `/usr/bin/distrobox-host-exec xdg-open`,
+  ///    `/usr/bin/gio open`, `gio open`, `xdg-open`).
+  /// 2. Tries `launchUrl(Uri.file(filePath))` (GTK / Portal via url_launcher).
+  /// 3. For PDF files (or when desktop has no default registered PDF handler), automatically
+  ///    falls back to installed system web browsers or standalone viewers (Chrome, Chromium,
+  ///    Firefox, Brave, Edge, Evince, Okular, etc., natively and via host-spawn).
+  /// 4. Falls back to [OpenFilex.open].
   ///
   /// On other platforms (Android, iOS, macOS, Windows):
   /// Uses [OpenFilex.open] to trigger the platform's native intent / controller / handler.
   static Future<OpenResult> openSystemFile(String filePath) async {
     if (Platform.isLinux) {
-      // 1. Try url_launcher (native GTK/GIO/Portal)
+      final isPdfFile = filePath.toLowerCase().endsWith('.pdf');
+
+      // 1. Desktop launchers
+      final desktopLaunchers = [
+        ('/usr/local/bin/xdg-open', [filePath]),
+        ('/usr/bin/distrobox-host-exec', ['xdg-open', filePath]),
+        ('/usr/bin/gio', ['open', filePath]),
+        ('gio', ['open', filePath]),
+        ('/usr/bin/xdg-open', [filePath]),
+        ('xdg-open', [filePath]),
+      ];
+
+      for (final launcher in desktopLaunchers) {
+        if (await _tryLaunchProcess(launcher.$1, launcher.$2)) {
+          return OpenResult(type: ResultType.done, message: 'done');
+        }
+      }
+
+      // 2. Try url_launcher (Portal / GTK)
       try {
         final fileUri = Uri.file(filePath);
         final launched = await launchUrl(
@@ -80,27 +136,48 @@ class FileOpenerService {
         }
       } catch (_) {}
 
-      // 2. Direct process execution prioritizing /usr/bin to avoid broken container wrappers
-      final candidates = [
-        ('/usr/bin/gio', ['open', filePath]),
-        ('/usr/bin/xdg-open', [filePath]),
-        ('gio', ['open', filePath]),
-        ('xdg-open', [filePath]),
-      ];
+      // 3. For PDF files: fallback to dedicated viewers and web browsers
+      // (web browsers have built-in high performance PDF viewers)
+      if (isPdfFile) {
+        final pdfViewers = [
+          'evince',
+          'okular',
+          'firefox',
+          'google-chrome',
+          'google-chrome-stable',
+          'chromium',
+          'chromium-browser',
+          'brave-browser',
+          'brave',
+          'microsoft-edge',
+          'microsoft-edge-stable',
+          'zathura',
+          'qpdfview',
+          'atril',
+          'xreader',
+        ];
 
-      for (final candidate in candidates) {
-        final binary = candidate.$1;
-        final args = candidate.$2;
-        try {
-          final process = await Process.start(binary, args);
-          final exitCode = await process.exitCode.timeout(
-            const Duration(milliseconds: 1500),
-            onTimeout: () => 0, // App launched and running in foreground
-          );
-          if (exitCode == 0) {
+        for (final viewer in pdfViewers) {
+          if (await _tryLaunchProcess(viewer, [filePath])) {
             return OpenResult(type: ResultType.done, message: 'done');
           }
-        } catch (_) {}
+          if (await _tryLaunchProcess('/usr/bin/distrobox-host-exec', [viewer, filePath])) {
+            return OpenResult(type: ResultType.done, message: 'done');
+          }
+        }
+
+        // Also try flatpak browsers/viewers on host
+        final flatpaks = [
+          ['flatpak', 'run', 'org.mozilla.firefox', filePath],
+          ['flatpak', 'run', 'org.gnome.Evince', filePath],
+          ['flatpak', 'run', 'com.google.Chrome', filePath],
+          ['flatpak', 'run', 'org.kde.okular', filePath],
+        ];
+        for (final fp in flatpaks) {
+          if (await _tryLaunchProcess('/usr/bin/distrobox-host-exec', fp)) {
+            return OpenResult(type: ResultType.done, message: 'done');
+          }
+        }
       }
     }
 
@@ -193,6 +270,7 @@ class FileOpenerService {
     required CloudItem item,
     String? remote,
     String? currentPath,
+    bool isQuickPeek = false,
   }) async {
     if (item.isDir) return;
 

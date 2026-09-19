@@ -103,6 +103,7 @@ extern char* StartTransfer(char* srcRemote, char* srcPath, char* dstRemote, char
 extern char* GetTransferProgress(char* jobId);
 extern char* CancelTransfer(char* jobId);
 extern char* ClearCompletedTransfers(void);
+extern char* CreatePublicLink(char* remote, char* filePath, int unlink);
 
 #ifdef __cplusplus
 }

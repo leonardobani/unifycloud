@@ -333,3 +333,33 @@ func TestErrorHandlingInternal(t *testing.T) {
 	}
 }
 
+func TestCreatePublicLinkInternal(t *testing.T) {
+	// 1. Empty remote should fail
+	resp := CreatePublicLinkInternal("", "file.txt", false)
+	if resp.Success {
+		t.Error("Expected CreatePublicLink with empty remote to fail")
+	}
+
+	// 2. Non-existent remote should fail
+	resp = CreatePublicLinkInternal("invalid_fake_remote_123", "file.txt", false)
+	if resp.Success {
+		t.Error("Expected CreatePublicLink with non-existent remote to fail")
+	}
+
+	// 3. Local remote does not support public links
+	tmpDir, err := os.MkdirTemp("", "unify_link_test_*")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	testFile := filepath.Join(tmpDir, "sample.txt")
+	_ = os.WriteFile(testFile, []byte("sample"), 0644)
+
+	resp = CreatePublicLinkInternal("local", testFile, false)
+	if resp.Success {
+		t.Error("Expected CreatePublicLink on local remote to fail as unsupported")
+	}
+}
+
+

@@ -196,5 +196,20 @@ host = ffi.example.com
         throwsA(isA<Exception>()),
       );
     });
+
+    test('createPublicLink() fails gracefully on local/unsupported remotes', () async {
+      expect(
+        () => service.createPublicLink(
+          remote: '',
+          filePath: 'go_backend/main.go',
+        ),
+        throwsA(
+          predicate((e) =>
+              e is Exception &&
+              (e.toString().contains("doesn't support") ||
+                  e.toString().contains("failed"))),
+        ),
+      );
+    });
   });
 }

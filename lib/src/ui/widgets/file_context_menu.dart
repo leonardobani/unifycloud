@@ -7,6 +7,8 @@ import '../../providers/clipboard_provider.dart';
 import '../../providers/file_explorer_provider.dart';
 import '../../providers/transfer_provider.dart';
 import '../../services/file_opener_service.dart';
+import '../../services/rclone_service.dart';
+import 'share_link_dialog.dart';
 
 /// Wraps a file or folder tile with context menu support (Desktop right-click & Mobile long-press).
 class FileContextMenuRegion extends ConsumerWidget {
@@ -71,6 +73,15 @@ class FileContextMenuRegion extends ConsumerWidget {
             ),
           ),
         ],
+        const PopupMenuItem(
+          value: 'share_link',
+          child: ListTile(
+            leading: Icon(Icons.share_outlined),
+            title: Text('Crea link condivisibile'),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
         const PopupMenuItem(
           value: 'copy',
           child: ListTile(
@@ -146,6 +157,9 @@ class FileContextMenuRegion extends ConsumerWidget {
       case 'download':
         _handleDownload(context, ref, currentRemote);
         break;
+      case 'share_link':
+        _handleShareLink(context, ref, currentRemote);
+        break;
       case 'copy':
         ref.read(clipboardProvider.notifier).copy(item, currentRemote);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -214,6 +228,64 @@ class FileContextMenuRegion extends ConsumerWidget {
     } catch (e) {
       messenger.showSnackBar(
         SnackBar(content: Text('Errore durante l\'avvio del download: $e')),
+      );
+    }
+  }
+
+  void _handleShareLink(BuildContext context, WidgetRef ref, String currentRemote) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final currentPath = ref.read(fileExplorerProvider).currentPath;
+    final fullSrcPath = resolveRemoteItemPath(item.path, currentPath);
+
+    if (currentRemote.isEmpty) {
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Nessun cloud selezionato.')),
+      );
+      return;
+    }
+
+    messenger.showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: Text('Generazione del link per "${item.name}"...')),
+          ],
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
+    try {
+      final link = await ref.read(rcloneServiceProvider).createPublicLink(
+            remote: currentRemote,
+            filePath: fullSrcPath,
+          );
+
+      if (!context.mounted) return;
+
+      if (link.trim().isEmpty) {
+        messenger.showSnackBar(
+          const SnackBar(content: Text('Nessun link restituito dal provider.')),
+        );
+        return;
+      }
+
+      await ShareLinkDialog.show(context, item: item, link: link);
+    } catch (e) {
+      if (!context.mounted) return;
+      final errorStr = e.toString();
+      final msg = errorStr.contains("doesn't support public links") ||
+              errorStr.contains('not supported')
+          ? 'Questo provider cloud non supporta la creazione di link pubblici.'
+          : 'Errore durante la creazione del link: $e';
+      messenger.showSnackBar(
+        SnackBar(content: Text(msg)),
       );
     }
   }

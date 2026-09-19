@@ -81,6 +81,33 @@ class RcloneBindings {
         )
       >();
 
+  ffi.Pointer<ffi.Char> CreatePublicLink(
+    ffi.Pointer<ffi.Char> remote,
+    ffi.Pointer<ffi.Char> filePath,
+    int unlink,
+  ) {
+    return _CreatePublicLink(remote, filePath, unlink);
+  }
+
+  late final _CreatePublicLinkPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Int,
+          )
+        >
+      >('CreatePublicLink');
+  late final _CreatePublicLink =
+      _CreatePublicLinkPtr.asFunction<
+        ffi.Pointer<ffi.Char> Function(
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          int,
+        )
+      >();
+
   ffi.Pointer<ffi.Char> DeleteFile(
     ffi.Pointer<ffi.Char> remote,
     ffi.Pointer<ffi.Char> filePath,

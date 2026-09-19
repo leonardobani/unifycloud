@@ -643,6 +643,33 @@ func MakeDirInternal(remote, dirPath string) Response {
 	})
 }
 
+// CreatePublicLinkInternal generates or removes a public shareable link for a file or directory.
+func CreatePublicLinkInternal(remote, filePath string, unlink bool) Response {
+	ctx := context.Background()
+	trimmedRemote := strings.TrimSpace(remote)
+	trimmedPath := strings.TrimSpace(filePath)
+
+	if trimmedRemote == "" {
+		return ResponseError(fmt.Errorf("remote is required for creating a public link"))
+	}
+
+	cleanPath := strings.Trim(trimmedPath, "/")
+	target := makeFsTarget(trimmedRemote, "")
+	f, err := fs.NewFs(ctx, target)
+	if err != nil {
+		return ResponseError(fmt.Errorf("failed to open remote %q: %w", target, err))
+	}
+
+	link, err := operations.PublicLink(ctx, f, cleanPath, fs.DurationOff, unlink)
+	if err != nil {
+		return ResponseError(fmt.Errorf("failed to create public link: %w", err))
+	}
+
+	return ResponseSuccess(map[string]string{
+		"link": link,
+	})
+}
+
 // TransferJob represents an active or past file transfer operation.
 type TransferJob struct {
 	ID         string             `json:"id"`
@@ -1099,6 +1126,20 @@ func CancelTransfer(jobId *C.char) *C.char {
 //export ClearCompletedTransfers
 func ClearCompletedTransfers() *C.char {
 	return cResponse(ClearCompletedTransfersInternal())
+}
+
+//export CreatePublicLink
+func CreatePublicLink(remote *C.char, filePath *C.char, unlink C.int) *C.char {
+	rem := ""
+	if remote != nil {
+		rem = C.GoString(remote)
+	}
+	fp := ""
+	if filePath != nil {
+		fp = C.GoString(filePath)
+	}
+	isUnlink := (unlink != 0)
+	return cResponse(CreatePublicLinkInternal(rem, fp, isUnlink))
 }
 
 func main() {}

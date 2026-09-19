@@ -48,6 +48,7 @@ class FakeFileOpenerService extends FileOpenerService {
     required CloudItem item,
     String? remote,
     String? currentPath,
+    bool isQuickPeek = false,
   }) async {
     recordedOpens.add(item);
   }
@@ -501,6 +502,113 @@ void main() {
 
       expect(fakeFileOpener.recordedOpens.length, equals(1));
       expect(fakeFileOpener.recordedOpens.first.name, equals('document.docx'));
+    });
+
+    testWidgets('Tapping on a .pdf file DOES open it in quick peek',
+        (tester) async {
+      final mockRclone = MockRcloneService();
+      final fakeFileOpener = FakeFileOpenerService(rcloneService: mockRclone);
+
+      final pdfItem = CloudItem(
+        name: 'manual.pdf',
+        path: 'manual.pdf',
+        size: 5000,
+        isDir: false,
+      );
+      final txtItem = CloudItem(
+        name: 'notes.txt',
+        path: 'notes.txt',
+        size: 200,
+        isDir: false,
+      );
+
+      final initialState = FileExplorerState(
+        currentRemote: 'MyDrive',
+        currentPath: '',
+        items: [pdfItem, txtItem],
+        isLoading: false,
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            rcloneServiceProvider.overrideWithValue(mockRclone),
+            fileOpenerServiceProvider.overrideWithValue(fakeFileOpener),
+            fileExplorerProvider.overrideWith(
+              () => FakeFileExplorerNotifier(initialState),
+            ),
+            cloudAccountsProvider.overrideWith(
+              () => FakeCloudAccountsNotifier(
+                const CloudAccountsState(
+                  remotes: [
+                    CloudRemote(name: 'MyDrive', type: 'drive'),
+                  ],
+                ),
+              ),
+            ),
+          ],
+          child: const MaterialApp(
+            home: FileExplorerScreen(),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Tap on the PDF item
+      await tester.tap(find.text('manual.pdf'));
+      await tester.pumpAndSettle();
+
+      // PDF must be opened in quick peek
+      expect(fakeFileOpener.recordedOpens.length, equals(1));
+      expect(fakeFileOpener.recordedOpens.first.name, equals('manual.pdf'));
+
+      // Tap on the text item
+      await tester.tap(find.text('notes.txt'));
+      await tester.pumpAndSettle();
+
+      // Both items are opened
+      expect(fakeFileOpener.recordedOpens.length, equals(2));
+      expect(fakeFileOpener.recordedOpens.last.name, equals('notes.txt'));
+    });
+
+    test('isPdf accurately detects PDF files by extension or mimeType', () {
+      expect(
+        FileOpenerService.isPdf(
+          CloudItem(name: 'doc.pdf', path: 'doc.pdf', size: 10, isDir: false),
+        ),
+        isTrue,
+      );
+      expect(
+        FileOpenerService.isPdf(
+          CloudItem(name: 'REPORT.PDF', path: 'REPORT.PDF', size: 10, isDir: false),
+        ),
+        isTrue,
+      );
+      expect(
+        FileOpenerService.isPdf(
+          CloudItem(
+            name: 'unknown_ext',
+            path: 'unknown_ext',
+            size: 10,
+            isDir: false,
+            mimeType: 'application/pdf',
+          ),
+        ),
+        isTrue,
+      );
+      expect(
+        FileOpenerService.isPdf(
+          CloudItem(name: 'photo.jpg', path: 'photo.jpg', size: 10, isDir: false),
+        ),
+        isFalse,
+      );
+      expect(
+        FileOpenerService.isPdf(
+          CloudItem(name: 'code.dart', path: 'code.dart', size: 10, isDir: false),
+        ),
+        isFalse,
+      );
     });
   });
 }

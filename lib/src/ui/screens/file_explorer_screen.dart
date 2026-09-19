@@ -11,12 +11,14 @@ import '../../providers/file_explorer_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../providers/transfer_provider.dart';
 import '../../services/file_opener_service.dart';
+import '../../services/rclone_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/add_cloud_dialog.dart';
 import '../widgets/breadcrumbs_bar.dart';
 import '../widgets/expandable_error_box.dart';
 import '../widgets/file_context_menu.dart';
 import '../widgets/file_type_icon.dart';
+import '../widgets/share_link_dialog.dart';
 
 /// Full-featured file explorer screen with breadcrumb navigation, search,
 /// sorting, grid/list presentation, pull-to-refresh, and contextual actions.
@@ -1021,6 +1023,15 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
           ),
         ],
         const PopupMenuItem(
+          value: 'share_link',
+          child: ListTile(
+            leading: Icon(Icons.share_outlined),
+            title: Text('Crea link condivisibile'),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+        const PopupMenuItem(
           value: 'copy',
           child: ListTile(
             leading: Icon(Icons.copy_rounded),
@@ -1139,6 +1150,10 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
             SnackBar(content: Text('Errore durante l\'avvio del download: $e')),
           );
         }
+        break;
+
+      case 'share_link':
+        _handleShareLink(context, ref, item, currentRemote, fullSrcPath);
         break;
 
       case 'copy':
@@ -1282,6 +1297,68 @@ class _FileExplorerScreenState extends ConsumerState<FileExplorerScreen> {
           }
         }
         break;
+    }
+  }
+
+  void _handleShareLink(
+    BuildContext context,
+    WidgetRef ref,
+    CloudItem item,
+    String currentRemote,
+    String fullSrcPath,
+  ) async {
+    final messenger = ScaffoldMessenger.of(context);
+
+    if (currentRemote.isEmpty) {
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Nessun cloud selezionato.')),
+      );
+      return;
+    }
+
+    messenger.showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: Text('Generazione del link per "${item.name}"...')),
+          ],
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
+    try {
+      final link = await ref.read(rcloneServiceProvider).createPublicLink(
+            remote: currentRemote,
+            filePath: fullSrcPath,
+          );
+
+      if (!context.mounted) return;
+
+      if (link.trim().isEmpty) {
+        messenger.showSnackBar(
+          const SnackBar(content: Text('Nessun link restituito dal provider.')),
+        );
+        return;
+      }
+
+      await ShareLinkDialog.show(context, item: item, link: link);
+    } catch (e) {
+      if (!context.mounted) return;
+      final errorStr = e.toString();
+      final msg = errorStr.contains("doesn't support public links") ||
+              errorStr.contains('not supported')
+          ? 'Questo provider cloud non supporta la creazione di link pubblici.'
+          : 'Errore durante la creazione del link: $e';
+      messenger.showSnackBar(
+        SnackBar(content: Text(msg)),
+      );
     }
   }
 }

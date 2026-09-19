@@ -361,6 +361,38 @@ class RcloneService {
     });
   }
 
+  /// Generates (or removes if [unlink] is true) a public shareable link for [filePath] on [remote].
+  ///
+  /// Supported by cloud backends like Google Drive, OneDrive, Dropbox, Nextcloud, Box, Mega.
+  Future<String> createPublicLink({
+    required String remote,
+    required String filePath,
+    bool unlink = false,
+  }) async {
+    return using((Arena arena) {
+      final cRemote = remote.toNativeUtf8(allocator: arena).cast<ffi.Char>();
+      final cFilePath = filePath.toNativeUtf8(allocator: arena).cast<ffi.Char>();
+      final cUnlink = unlink ? 1 : 0;
+
+      final raw = _invokeAndFree(
+        () => _bindings.CreatePublicLink(cRemote, cFilePath, cUnlink),
+      );
+
+      final response = RcloneResponse.fromJson(
+        raw,
+        (data) => data as Map<String, dynamic>,
+      );
+
+      if (!response.success) {
+        throw Exception('CreatePublicLink failed: ${response.error}');
+      }
+
+      final data = response.data;
+      final link = data != null ? data['link'] as String? : null;
+      return link ?? '';
+    });
+  }
+
   /// Starts an asynchronous transfer (copy or move) in a background Go goroutine.
   ///
   /// Returns the initial [TransferJob] with status `queued` or `running`.

@@ -23,6 +23,7 @@ functions:
     - 'GetTransferProgress'
     - 'CancelTransfer'
     - 'ClearCompletedTransfers'
+    - 'CreatePublicLink'
     - 'FreeString'
 preamble: |
   // AUTO GENERATED FILE, DO NOT EDIT.
