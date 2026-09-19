@@ -14,12 +14,19 @@ import 'share_link_dialog.dart';
 class FileContextMenuRegion extends ConsumerWidget {
   final CloudItem item;
   final Widget child;
+  final NotifierProvider<FileExplorerNotifier, FileExplorerState>? provider;
+  final NotifierProvider<FileExplorerNotifier, FileExplorerState>? oppositeProvider;
 
   const FileContextMenuRegion({
     super.key,
     required this.item,
     required this.child,
+    this.provider,
+    this.oppositeProvider,
   });
+
+  NotifierProvider<FileExplorerNotifier, FileExplorerState> get _provider =>
+      provider ?? fileExplorerProvider;
 
   String _formatBytes(int bytes) {
     if (bytes <= 0) return '0 B';
@@ -36,6 +43,10 @@ class FileContextMenuRegion extends ConsumerWidget {
   void _showContextMenu(BuildContext context, WidgetRef ref, Offset globalPosition) async {
     final overlay = Overlay.of(context).context.findRenderObject() as RenderBox?;
     if (overlay == null) return;
+
+    final oppositeState = oppositeProvider != null ? ref.read(oppositeProvider!) : null;
+    final hasOppositeRemote = oppositeState?.currentRemote != null &&
+        oppositeState!.currentRemote!.trim().isNotEmpty;
 
     final result = await showMenu<String>(
       context: context,
@@ -82,6 +93,26 @@ class FileContextMenuRegion extends ConsumerWidget {
             contentPadding: EdgeInsets.zero,
           ),
         ),
+        if (hasOppositeRemote) ...[
+          PopupMenuItem(
+            value: 'copy_to_opposite',
+            child: ListTile(
+              leading: const Icon(Icons.drive_file_move_rtl_outlined),
+              title: Text('Copia in ${oppositeState.currentRemote}'),
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
+          PopupMenuItem(
+            value: 'move_to_opposite',
+            child: ListTile(
+              leading: const Icon(Icons.drive_file_move_outlined),
+              title: Text('Sposta in ${oppositeState.currentRemote}'),
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
+        ],
         const PopupMenuItem(
           value: 'copy',
           child: ListTile(
@@ -142,17 +173,25 @@ class FileContextMenuRegion extends ConsumerWidget {
 
     if (!context.mounted || result == null) return;
 
-    final currentRemote = ref.read(fileExplorerProvider).currentRemote ?? '';
+    final currentRemote = ref.read(_provider).currentRemote ?? '';
 
     switch (result) {
       case 'select':
-        ref.read(fileExplorerProvider.notifier).toggleSelection(item.path);
+        ref.read(_provider.notifier).toggleSelection(item.path);
         break;
       case 'open_with':
         ref.read(fileOpenerServiceProvider).openCloudItem(
               context: context,
               item: item,
+              remote: ref.read(_provider).currentRemote,
+              currentPath: ref.read(_provider).currentPath,
             );
+        break;
+      case 'copy_to_opposite':
+        _handleDirectTransfer(context, ref, isMove: false);
+        break;
+      case 'move_to_opposite':
+        _handleDirectTransfer(context, ref, isMove: true);
         break;
       case 'download':
         _handleDownload(context, ref, currentRemote);
@@ -192,9 +231,45 @@ class FileContextMenuRegion extends ConsumerWidget {
     }
   }
 
+  void _handleDirectTransfer(
+    BuildContext context,
+    WidgetRef ref, {
+    required bool isMove,
+  }) async {
+    if (oppositeProvider == null) return;
+    final srcState = ref.read(_provider);
+    final dstState = ref.read(oppositeProvider!);
+    final srcRemote = srcState.currentRemote ?? '';
+    final dstRemote = dstState.currentRemote ?? '';
+    if (srcRemote.isEmpty || dstRemote.isEmpty) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    final actionLabel = isMove ? 'Spostamento' : 'Copia';
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text('$actionLabel di "${item.name}" verso $dstRemote avviato...'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
+    try {
+      await ref.read(_provider.notifier).transferItemsDirectly(
+            items: [item],
+            dstRemote: dstRemote,
+            dstPath: dstState.currentPath,
+            isMove: isMove,
+          );
+      ref.read(oppositeProvider!.notifier).refresh();
+    } catch (e) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('Errore durante il trasferimento: $e')),
+      );
+    }
+  }
+
   void _handleDownload(BuildContext context, WidgetRef ref, String currentRemote) async {
     final messenger = ScaffoldMessenger.of(context);
-    final currentPath = ref.read(fileExplorerProvider).currentPath;
+    final currentPath = ref.read(_provider).currentPath;
     final fullSrcPath = resolveRemoteItemPath(item.path, currentPath);
 
     messenger.showSnackBar(
@@ -234,7 +309,7 @@ class FileContextMenuRegion extends ConsumerWidget {
 
   void _handleShareLink(BuildContext context, WidgetRef ref, String currentRemote) async {
     final messenger = ScaffoldMessenger.of(context);
-    final currentPath = ref.read(fileExplorerProvider).currentPath;
+    final currentPath = ref.read(_provider).currentPath;
     final fullSrcPath = resolveRemoteItemPath(item.path, currentPath);
 
     if (currentRemote.isEmpty) {
@@ -319,7 +394,7 @@ class FileContextMenuRegion extends ConsumerWidget {
 
     if (confirmed == true && controller.text.trim().isNotEmpty && controller.text != item.name) {
       try {
-        await ref.read(fileExplorerProvider.notifier).renameItem(item, controller.text.trim());
+        await ref.read(_provider.notifier).renameItem(item, controller.text.trim());
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -354,7 +429,7 @@ class FileContextMenuRegion extends ConsumerWidget {
 
     if (confirmed == true) {
       try {
-        await ref.read(fileExplorerProvider.notifier).deleteItem(item);
+        await ref.read(_provider.notifier).deleteItem(item);
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -411,7 +486,7 @@ class FileContextMenuRegion extends ConsumerWidget {
         _showContextMenu(context, ref, details.globalPosition);
       },
       onLongPress: () {
-        ref.read(fileExplorerProvider.notifier).toggleSelection(item.path);
+        ref.read(_provider.notifier).toggleSelection(item.path);
       },
       child: child,
     );

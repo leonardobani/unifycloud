@@ -7,6 +7,7 @@ class AppSettings {
   final bool confirmDelete;
   final String? customDownloadPath;
   final int maxConcurrentTransfers;
+  final bool dualPaneEnabled;
 
   const AppSettings({
     this.themeMode = ThemeMode.system,
@@ -14,6 +15,7 @@ class AppSettings {
     this.confirmDelete = true,
     this.customDownloadPath,
     this.maxConcurrentTransfers = 4,
+    this.dualPaneEnabled = true,
   });
 
   AppSettings copyWith({
@@ -22,6 +24,7 @@ class AppSettings {
     bool? confirmDelete,
     String? Function()? customDownloadPath,
     int? maxConcurrentTransfers,
+    bool? dualPaneEnabled,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -32,6 +35,7 @@ class AppSettings {
           : this.customDownloadPath,
       maxConcurrentTransfers:
           maxConcurrentTransfers ?? this.maxConcurrentTransfers,
+      dualPaneEnabled: dualPaneEnabled ?? this.dualPaneEnabled,
     );
   }
 
@@ -42,6 +46,7 @@ class AppSettings {
       'confirm_delete': confirmDelete,
       'custom_download_path': customDownloadPath,
       'max_concurrent_transfers': maxConcurrentTransfers,
+      'dual_pane_enabled': dualPaneEnabled,
     };
   }
 
@@ -61,6 +66,7 @@ class AppSettings {
       customDownloadPath: json['custom_download_path'] as String?,
       maxConcurrentTransfers:
           json['max_concurrent_transfers'] as int? ?? 4,
+      dualPaneEnabled: json['dual_pane_enabled'] as bool? ?? true,
     );
   }
 
@@ -72,7 +78,8 @@ class AppSettings {
         other.showHiddenFiles == showHiddenFiles &&
         other.confirmDelete == confirmDelete &&
         other.customDownloadPath == customDownloadPath &&
-        other.maxConcurrentTransfers == maxConcurrentTransfers;
+        other.maxConcurrentTransfers == maxConcurrentTransfers &&
+        other.dualPaneEnabled == dualPaneEnabled;
   }
 
   @override
@@ -82,6 +89,7 @@ class AppSettings {
         confirmDelete,
         customDownloadPath,
         maxConcurrentTransfers,
+        dualPaneEnabled,
       );
 }
 

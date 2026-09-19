@@ -23,6 +23,7 @@ import (
 	"github.com/rclone/rclone/fs/config"
 	"github.com/rclone/rclone/fs/config/configfile"
 	"github.com/rclone/rclone/fs/operations"
+	rclonesync "github.com/rclone/rclone/fs/sync"
 
 	// Selected Backends for size optimization & required cloud support
 	_ "github.com/rclone/rclone/backend/drive"

@@ -5,8 +5,10 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../models/cloud_models.dart';
+import '../models/transfer_models.dart';
 import '../services/rclone_service.dart';
 import 'settings_provider.dart';
+import 'transfer_provider.dart';
 
 /// Presentation mode for directory items.
 enum FileViewMode { list, grid }
@@ -381,10 +383,72 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
 
     return File(localDestination);
   }
+
+  /// Direct transfer (copy or move) of items from this pane to a target remote and path,
+  /// completely bypassing the clipboard.
+  Future<List<TransferJob>> transferItemsDirectly({
+    required List<CloudItem> items,
+    required String dstRemote,
+    required String dstPath,
+    bool isMove = false,
+  }) async {
+    final remote = state.currentRemote;
+    if (remote == null || items.isEmpty) return [];
+
+    final launchedJobs = <TransferJob>[];
+    for (final item in items) {
+      final src = (state.currentPath.isNotEmpty && !item.path.startsWith(state.currentPath))
+          ? '${state.currentPath}/${item.path}'
+          : item.path;
+      final dst = dstPath.isEmpty ? item.name : '$dstPath/${item.name}';
+      final job = await ref.read(transferProvider.notifier).startTransfer(
+            srcRemote: remote,
+            srcPath: src,
+            dstRemote: dstRemote,
+            dstPath: dst,
+            isMove: isMove,
+          );
+      launchedJobs.add(job);
+    }
+
+    if (isMove) {
+      clearSelection();
+      await refresh();
+    }
+
+    return launchedJobs;
+  }
 }
 
-/// Riverpod provider for [FileExplorerNotifier].
+/// Riverpod provider for the primary [FileExplorerNotifier] (Left / Single pane).
 final fileExplorerProvider =
     NotifierProvider<FileExplorerNotifier, FileExplorerState>(
   FileExplorerNotifier.new,
+);
+
+/// Riverpod provider for the secondary [FileExplorerNotifier] (Right pane in Dual-Pane view).
+final secondaryFileExplorerProvider =
+    NotifierProvider<FileExplorerNotifier, FileExplorerState>(
+  FileExplorerNotifier.new,
+);
+
+/// State notifier managing whether Dual-Pane / Commander mode is active.
+class DualPaneActiveNotifier extends Notifier<bool> {
+  @override
+  bool build() {
+    return ref.watch(settingsProvider.select((s) => s.dualPaneEnabled));
+  }
+
+  void toggle() {
+    state = !state;
+  }
+
+  void set(bool value) {
+    state = value;
+  }
+}
+
+final dualPaneActiveProvider =
+    NotifierProvider<DualPaneActiveNotifier, bool>(
+  DualPaneActiveNotifier.new,
 );

@@ -205,6 +205,14 @@ class SettingsScreen extends ConsumerWidget {
             onChanged: (val) => notifier.setConfirmDelete(val),
           ),
           const Divider(height: 1),
+          SwitchListTile(
+            title: const Text('Doppio Pannello su Desktop e Tablet'),
+            subtitle: const Text('Visualizza due cloud affiancati (Commander View) su schermi larghi'),
+            secondary: const Icon(Icons.splitscreen),
+            value: settings.dualPaneEnabled,
+            onChanged: (val) => notifier.setDualPaneEnabled(val),
+          ),
+          const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.downloading_outlined),
             title: const Text('Cartella Download Predefinita'),

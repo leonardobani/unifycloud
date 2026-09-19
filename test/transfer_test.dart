@@ -92,8 +92,12 @@ void main() {
       expect(job.id, isNotEmpty);
       expect(job.srcPath, srcFile.absolute.path);
 
-      // Wait a moment for background copy to complete
-      await Future<void>.delayed(const Duration(milliseconds: 300));
+      // Wait for background copy to complete
+      final copiedFile = File(dstPath);
+      for (int i = 0; i < 30; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        if (copiedFile.existsSync()) break;
+      }
 
       final allJobs = await service.getAllTransfers();
       expect(allJobs.any((j) => j.id == job.id), isTrue);
@@ -105,7 +109,6 @@ void main() {
       expect(updatedJob!.status, isIn([TransferStatus.running, TransferStatus.completed]));
 
       // Verify copied file exists
-      final copiedFile = File(dstPath);
       expect(copiedFile.existsSync(), isTrue);
       expect(copiedFile.lengthSync(), equals(srcFile.lengthSync()));
     });

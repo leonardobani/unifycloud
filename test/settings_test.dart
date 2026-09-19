@@ -109,7 +109,7 @@ void main() {
     }
 
     testWidgets('Renders all standard settings sections', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      await tester.binding.setSurfaceSize(const Size(800, 1600));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(createSettingsApp());

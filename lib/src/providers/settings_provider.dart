@@ -94,6 +94,11 @@ class SettingsNotifier extends Notifier<AppSettings> {
     await _persist(state.copyWith(maxConcurrentTransfers: max));
   }
 
+  /// Updates preference for dual-pane view on wide screens.
+  Future<void> setDualPaneEnabled(bool enabled) async {
+    await _persist(state.copyWith(dualPaneEnabled: enabled));
+  }
+
   /// Resets all settings to their default values.
   Future<void> resetToDefaults() async {
     await _persist(const AppSettings());
