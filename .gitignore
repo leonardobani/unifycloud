@@ -52,3 +52,7 @@ app.*.map.json
 /packaging/flatpak/build-dir/
 /packaging/flatpak/repo/
 /packaging/flatpak/*.flatpak
+
+# Go backend build artifacts
+go_backend/*.so
+go_backend/*.h
