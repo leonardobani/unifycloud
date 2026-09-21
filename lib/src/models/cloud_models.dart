@@ -75,25 +75,31 @@ class CloudRemote {
   final String name;
   final String type;
   final String? description;
+  final String? remote;
   final StorageQuota? quota;
 
   const CloudRemote({
     required this.name,
     required this.type,
     this.description,
+    this.remote,
     this.quota,
   });
+
+  bool get isCrypt => type.toLowerCase() == 'crypt';
 
   CloudRemote copyWith({
     String? name,
     String? type,
     String? description,
+    String? remote,
     StorageQuota? quota,
   }) {
     return CloudRemote(
       name: name ?? this.name,
       type: type ?? this.type,
       description: description ?? this.description,
+      remote: remote ?? this.remote,
       quota: quota ?? this.quota,
     );
   }
@@ -103,6 +109,7 @@ class CloudRemote {
       name: json['name'] as String? ?? '',
       type: json['type'] as String? ?? '',
       description: json['description'] as String?,
+      remote: json['remote'] as String?,
       quota: json['quota'] != null
           ? StorageQuota.fromJson(json['quota'] as Map<String, dynamic>)
           : null,
@@ -113,11 +120,13 @@ class CloudRemote {
     'name': name,
     'type': type,
     if (description != null) 'description': description,
+    if (remote != null) 'remote': remote,
     if (quota != null) 'quota': quota!.toJson(),
   };
 
   @override
-  String toString() => 'CloudRemote(name: $name, type: $type, quota: $quota)';
+  String toString() =>
+      'CloudRemote(name: $name, type: $type, remote: $remote, quota: $quota)';
 }
 
 

@@ -22,10 +22,12 @@ import (
 	"github.com/rclone/rclone/fs/accounting"
 	"github.com/rclone/rclone/fs/config"
 	"github.com/rclone/rclone/fs/config/configfile"
+	"github.com/rclone/rclone/fs/config/obscure"
 	"github.com/rclone/rclone/fs/operations"
 	rclonesync "github.com/rclone/rclone/fs/sync"
 
 	// Selected Backends for size optimization & required cloud support
+	_ "github.com/rclone/rclone/backend/crypt"
 	_ "github.com/rclone/rclone/backend/drive"
 	_ "github.com/rclone/rclone/backend/dropbox"
 	_ "github.com/rclone/rclone/backend/local"
@@ -61,6 +63,7 @@ type RemoteInfo struct {
 	Name        string `json:"name"`
 	Type        string `json:"type"`
 	Description string `json:"description,omitempty"`
+	Remote      string `json:"remote,omitempty"`
 }
 
 // FileItem describes a file or directory item returned by ListDirectory.
@@ -413,6 +416,17 @@ func SetRemoteConfigInternal(remoteName, remoteType, optionsJson string) Respons
 		if _, ok := opts["skip_links"]; !ok {
 			opts["skip_links"] = "true"
 		}
+	} else if strings.EqualFold(rType, "crypt") {
+		if pass, ok := opts["password"]; ok && pass != "" {
+			if _, err := obscure.Reveal(pass); err != nil {
+				opts["password"] = obscure.MustObscure(pass)
+			}
+		}
+		if pass2, ok := opts["password2"]; ok && pass2 != "" {
+			if _, err := obscure.Reveal(pass2); err != nil {
+				opts["password2"] = obscure.MustObscure(pass2)
+			}
+		}
 	}
 
 	if currentMemStorage == nil {
@@ -450,10 +464,17 @@ func ListRemotesInternal() Response {
 	remotes := config.GetRemotes()
 	list := make([]RemoteInfo, 0, len(remotes))
 	for _, r := range remotes {
+		remoteTarget := ""
+		if currentMemStorage != nil {
+			if val, ok := currentMemStorage.GetValue(r.Name, "remote"); ok {
+				remoteTarget = val
+			}
+		}
 		list = append(list, RemoteInfo{
 			Name:        r.Name,
 			Type:        r.Type,
 			Description: r.Description,
+			Remote:      remoteTarget,
 		})
 	}
 	return ResponseSuccess(list)

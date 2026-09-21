@@ -156,6 +156,8 @@ class AppTheme {
         return const Color(0xFF9C27B0);
       case 'local':
         return const Color(0xFF607D8B);
+      case 'crypt':
+        return const Color(0xFF00BFA5); // Emerald / Teal security accent
       default:
         return primaryColor;
     }
@@ -178,6 +180,8 @@ class AppTheme {
         return Icons.dns_outlined;
       case 'local':
         return Icons.laptop_outlined;
+      case 'crypt':
+        return Icons.lock_outline_rounded;
       default:
         return Icons.cloud_outlined;
     }

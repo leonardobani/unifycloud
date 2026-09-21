@@ -522,6 +522,10 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         : null;
     final hasOppositeRemote = oppositeState?.currentRemote != null &&
         oppositeState!.currentRemote!.trim().isNotEmpty;
+    final currentRemoteObj = remotesState.remotes
+        .where((r) => r.name == state.currentRemote)
+        .firstOrNull;
+    final isCurrentCrypt = currentRemoteObj?.isCrypt ?? false;
 
     // Auto-select remote if none selected yet
     if (state.currentRemote == null && remotesState.remotes.isNotEmpty) {
@@ -720,13 +724,28 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                             items: remotesState.remotes.map((r) {
                               return DropdownMenuItem<String>(
                                 value: r.name,
-                                child: Text(
-                                  r.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (r.isCrypt) ...[
+                                      const Icon(
+                                        Icons.lock_rounded,
+                                        size: 14,
+                                        color: Color(0xFF00BFA5),
+                                      ),
+                                      const SizedBox(width: 4),
+                                    ],
+                                    Flexible(
+                                      child: Text(
+                                        r.name,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             }).toList(),
@@ -740,6 +759,47 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                           ),
                         ),
                       ),
+                      if (isCurrentCrypt) ...[
+                        const SizedBox(width: 6),
+                        Tooltip(
+                          message:
+                              'Crittografia End-to-End attiva (AES-256)\nFile e cartelle cifrati client-side',
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF00BFA5)
+                                  .withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: const Color(0xFF00BFA5)
+                                    .withValues(alpha: 0.4),
+                              ),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.lock,
+                                  size: 12,
+                                  color: Color(0xFF00BFA5),
+                                ),
+                                SizedBox(width: 3),
+                                Text(
+                                  'AES-256',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF00BFA5),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
             actions: [

@@ -11,7 +11,14 @@ import '../theme/app_theme.dart';
 
 /// Modal dialog allowing users to configure and connect a new cloud storage provider.
 class AddCloudDialog extends ConsumerStatefulWidget {
-  const AddCloudDialog({super.key});
+  final String? initialProvider;
+  final String? initialTargetRemote;
+
+  const AddCloudDialog({
+    super.key,
+    this.initialProvider,
+    this.initialTargetRemote,
+  });
 
   @override
   ConsumerState<AddCloudDialog> createState() => _AddCloudDialogState();
@@ -33,6 +40,18 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
   final _passController = TextEditingController();
   final _pathController = TextEditingController();
 
+  // Crypt (E2E Encryption) controllers & state
+  String? _cryptTargetRemote;
+  final _cryptTargetPathController = TextEditingController();
+  final _cryptPasswordController = TextEditingController();
+  final _cryptConfirmPasswordController = TextEditingController();
+  final _cryptSaltController = TextEditingController();
+  String _filenameEncryption = 'standard';
+  bool _directoryNameEncryption = true;
+  bool _obscureCryptPassword = true;
+  bool _obscureCryptConfirmPassword = true;
+  bool _obscureCryptSalt = true;
+
   bool _isAuthenticating = false;
   String? _statusMessage;
   String? _authUrl;
@@ -49,12 +68,19 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
     {'type': 'sftp', 'name': 'SSH / SFTP', 'subtitle': 'Secure remote server'},
     {'type': 's3', 'name': 'Amazon S3 / MinIO', 'subtitle': 'Object storage bucket'},
     {'type': 'local', 'name': 'Disco Locale', 'subtitle': 'Cartella locale di sistema'},
+    {'type': 'crypt', 'name': 'Crittografia E2E (Crypt)', 'subtitle': 'Crittografa file e nomi con AES-256 su qualsiasi cloud'},
   ];
 
   @override
   void initState() {
     super.initState();
-    _nameController.text = 'GoogleDrive';
+    if (widget.initialProvider != null) {
+      _selectedProvider = widget.initialProvider!;
+    }
+    if (widget.initialTargetRemote != null) {
+      _cryptTargetRemote = widget.initialTargetRemote!;
+    }
+    _updateDefaultName(_selectedProvider);
   }
 
   @override
@@ -67,6 +93,10 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
     _userController.dispose();
     _passController.dispose();
     _pathController.dispose();
+    _cryptTargetPathController.dispose();
+    _cryptPasswordController.dispose();
+    _cryptConfirmPasswordController.dispose();
+    _cryptSaltController.dispose();
     super.dispose();
   }
 
@@ -75,30 +105,37 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
       _selectedProvider = type;
       _discoveredDriveId = null;
       _discoveredDriveType = null;
-      switch (type) {
-        case 'drive':
-          _nameController.text = 'GoogleDrive';
-          break;
-        case 'dropbox':
-          _nameController.text = 'Dropbox';
-          break;
-        case 'onedrive':
-          _nameController.text = 'OneDrive';
-          break;
-        case 'webdav':
-          _nameController.text = 'Nextcloud';
-          break;
-        case 'sftp':
-          _nameController.text = 'ServerSFTP';
-          break;
-        case 's3':
-          _nameController.text = 'BucketS3';
-          break;
-        case 'local':
-          _nameController.text = 'DiscoLocale';
-          break;
-      }
+      _updateDefaultName(type);
     });
+  }
+
+  void _updateDefaultName(String type) {
+    switch (type) {
+      case 'drive':
+        _nameController.text = 'GoogleDrive';
+        break;
+      case 'dropbox':
+        _nameController.text = 'Dropbox';
+        break;
+      case 'onedrive':
+        _nameController.text = 'OneDrive';
+        break;
+      case 'webdav':
+        _nameController.text = 'Nextcloud';
+        break;
+      case 'sftp':
+        _nameController.text = 'ServerSFTP';
+        break;
+      case 's3':
+        _nameController.text = 'BucketS3';
+        break;
+      case 'local':
+        _nameController.text = 'DiscoLocale';
+        break;
+      case 'crypt':
+        _nameController.text = 'VaultCifrato';
+        break;
+    }
   }
 
   Future<void> _startOAuthFlow() async {
@@ -282,6 +319,49 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
       case 'local':
         options['copy_links'] = 'true';
         break;
+      case 'crypt':
+        if (_cryptTargetRemote == null || _cryptTargetRemote!.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Seleziona il Cloud di destinazione per il Vault'),
+            ),
+          );
+          return;
+        }
+        if (_cryptPasswordController.text.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('La password di cifratura è obbligatoria'),
+            ),
+          );
+          return;
+        }
+        if (_cryptPasswordController.text !=
+            _cryptConfirmPasswordController.text) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Le password inserite non coincidono'),
+            ),
+          );
+          return;
+        }
+
+        final targetPath = _cryptTargetPathController.text.trim();
+        final cleanPath = targetPath.startsWith('/')
+            ? targetPath.substring(1)
+            : targetPath;
+        final targetRemoteWithColon = _cryptTargetRemote!.contains(':')
+            ? _cryptTargetRemote!
+            : '${_cryptTargetRemote!}:';
+        options['remote'] = '$targetRemoteWithColon$cleanPath';
+        options['password'] = _cryptPasswordController.text;
+        if (_cryptSaltController.text.trim().isNotEmpty) {
+          options['password2'] = _cryptSaltController.text.trim();
+        }
+        options['filename_encryption'] = _filenameEncryption;
+        options['directory_name_encryption'] =
+            _directoryNameEncryption ? 'true' : 'false';
+        break;
     }
 
     setState(() => _isSaving = true);
@@ -364,7 +444,12 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                     color: AppTheme.getProviderColor(p['type']!),
                                   ),
                                   const SizedBox(width: 6),
-                                  Text(p['name']!),
+                                  Flexible(
+                                    child: Text(
+                                      p['name']!,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
                                 ],
                               ),
                               selected: isSelected,
@@ -770,6 +855,242 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                 ],
                               ),
                             ),
+                          ),
+                        ] else if (_selectedProvider == 'crypt') ...[
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF00BFA5).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: const Color(0xFF00BFA5).withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: const Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(Icons.shield_outlined, color: Color(0xFF00BFA5), size: 22),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Crittografia End-to-End Client-Side (AES-256)',
+                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        'I file e i loro nomi vengono crittografati sul tuo dispositivo prima di essere inviati al cloud di destinazione. Nemmeno il provider del cloud potrà leggerli.',
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Consumer(
+                            builder: (context, ref, _) {
+                              final remotes = ref.watch(cloudAccountsProvider).remotes;
+                              final availableRemotes = remotes.where((r) => r.type != 'crypt').toList();
+
+                              if (availableRemotes.isEmpty) {
+                                return Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                                  ),
+                                  child: const Row(
+                                    children: [
+                                      Icon(Icons.warning_amber_rounded, color: Colors.amber),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          'Nessun cloud di destinazione disponibile. Collega prima un altro cloud (es. Google Drive, OneDrive, o Disco Locale) su cui creare il Vault cifrato.',
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+
+                              if (_cryptTargetRemote == null ||
+                                  !availableRemotes.any((r) => r.name == _cryptTargetRemote)) {
+                                _cryptTargetRemote = availableRemotes.first.name;
+                              }
+
+                              return DropdownButtonFormField<String>(
+                                initialValue: _cryptTargetRemote,
+                                isExpanded: true,
+                                decoration: const InputDecoration(
+                                  labelText: 'Cloud di destinazione *',
+                                  helperText: 'Il cloud dove verranno archiviati i file cifrati',
+                                  border: OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.cloud_outlined),
+                                ),
+                                items: availableRemotes.map((r) {
+                                  return DropdownMenuItem<String>(
+                                    value: r.name,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          AppTheme.getProviderIcon(r.type),
+                                          size: 18,
+                                          color: AppTheme.getProviderColor(r.type),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text('${r.name} (${r.type})'),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (val) {
+                                  setState(() {
+                                    _cryptTargetRemote = val;
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          TextFormField(
+                            controller: _cryptTargetPathController,
+                            decoration: const InputDecoration(
+                              labelText: 'Percorso o Cartella di destinazione',
+                              hintText: 'es. vault o secret_data',
+                              helperText: 'Cartella sul cloud remoto in cui salvare i file cifrati (opzionale)',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.folder_outlined),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _cryptPasswordController,
+                            obscureText: _obscureCryptPassword,
+                            decoration: InputDecoration(
+                              labelText: 'Password di Cifratura (Password Principale) *',
+                              helperText: 'Conservala con cura: senza password non sarà possibile recuperare i file',
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.lock_rounded),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureCryptPassword ? Icons.visibility_off : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureCryptPassword = !_obscureCryptPassword;
+                                  });
+                                },
+                              ),
+                            ),
+                            validator: (v) {
+                              if (_selectedProvider == 'crypt' && (v == null || v.isEmpty)) {
+                                return 'Inserisci la password di cifratura';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          TextFormField(
+                            controller: _cryptConfirmPasswordController,
+                            obscureText: _obscureCryptConfirmPassword,
+                            decoration: InputDecoration(
+                              labelText: 'Conferma Password *',
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.lock_outline_rounded),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureCryptConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureCryptConfirmPassword = !_obscureCryptConfirmPassword;
+                                  });
+                                },
+                              ),
+                            ),
+                            validator: (v) {
+                              if (_selectedProvider == 'crypt') {
+                                if (v == null || v.isEmpty) {
+                                  return 'Conferma la password';
+                                }
+                                if (v != _cryptPasswordController.text) {
+                                  return 'Le password non coincidono';
+                                }
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          TextFormField(
+                            controller: _cryptSaltController,
+                            obscureText: _obscureCryptSalt,
+                            decoration: InputDecoration(
+                              labelText: 'Salt / Password Secondaria (Opzionale)',
+                              helperText: 'Aggiunge ulteriore sicurezza contro attacchi brute-force',
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.key_outlined),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureCryptSalt ? Icons.visibility_off : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureCryptSalt = !_obscureCryptSalt;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          DropdownButtonFormField<String>(
+                            initialValue: _filenameEncryption,
+                            isExpanded: true,
+                            decoration: const InputDecoration(
+                              labelText: 'Cifratura dei Nomi File',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.drive_file_rename_outline),
+                            ),
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'standard',
+                                child: Text('Standard (Nomi file completamente cifrati - Consigliato)'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'obfuscate',
+                                child: Text('Offuscamento semplice (Conserva le estensioni)'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'off',
+                                child: Text('Disattivata (Nomi visibili in chiaro)'),
+                              ),
+                            ],
+                            onChanged: (v) {
+                              if (v != null) {
+                                setState(() {
+                                  _filenameEncryption = v;
+                                });
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          SwitchListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text('Cifra anche i nomi delle cartelle'),
+                            subtitle: const Text('Nasconde completamente la struttura delle directory sul cloud'),
+                            value: _directoryNameEncryption,
+                            onChanged: _filenameEncryption == 'off'
+                                ? null
+                                : (v) {
+                                    setState(() {
+                                      _directoryNameEncryption = v;
+                                    });
+                                  },
                           ),
                         ],
                       ],

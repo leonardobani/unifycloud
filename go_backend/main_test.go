@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -495,5 +496,122 @@ func TestListDirectoryInternal_DanglingSymlink(t *testing.T) {
 		t.Fatalf("ListDirectoryInternal failed on directory with dangling symlink: %s", resp.Error)
 	}
 }
+
+func TestCryptBackend(t *testing.T) {
+	InitRcloneInternal("")
+	tmpDir := t.TempDir()
+
+	// 1. Configure local backend pointing to tmpDir
+	respLocal := SetRemoteConfigInternal("test_local", "local", "{}")
+	if !respLocal.Success {
+		t.Fatalf("Failed to configure test_local: %s", respLocal.Error)
+	}
+
+	// 2. Configure crypt backend wrapping test_local:vault
+	vaultSubdir := filepath.Join(tmpDir, "vault")
+	cryptOpts := map[string]string{
+		"remote":                    "test_local:" + vaultSubdir,
+		"password":                  "mySuperSecretPassword123",
+		"filename_encryption":       "standard",
+		"directory_name_encryption": "true",
+	}
+	optsBytes, _ := json.Marshal(cryptOpts)
+	respCrypt := SetRemoteConfigInternal("test_crypt", "crypt", string(optsBytes))
+	if !respCrypt.Success {
+		t.Fatalf("Failed to configure test_crypt: %s", respCrypt.Error)
+	}
+
+	// 3. Verify ListRemotesInternal contains test_crypt with correct remote
+	remotesResp := ListRemotesInternal()
+	if !remotesResp.Success {
+		t.Fatalf("ListRemotesInternal failed: %s", remotesResp.Error)
+	}
+	remotesList, ok := remotesResp.Data.([]RemoteInfo)
+	if !ok {
+		t.Fatalf("Expected []RemoteInfo, got %T", remotesResp.Data)
+	}
+	foundCrypt := false
+	for _, r := range remotesList {
+		if r.Name == "test_crypt" {
+			foundCrypt = true
+			if r.Type != "crypt" {
+				t.Errorf("Expected type 'crypt', got %q", r.Type)
+			}
+			if !strings.Contains(r.Remote, "test_local:") {
+				t.Errorf("Expected remote to contain 'test_local:', got %q", r.Remote)
+			}
+		}
+	}
+	if !foundCrypt {
+		t.Fatalf("test_crypt not found in ListRemotes")
+	}
+
+	// 4. Create a test file and upload it to test_crypt
+	plainContent := "SuperSecretConfidentialData-UnifyCloud-2026"
+	srcFile := filepath.Join(tmpDir, "original.txt")
+	if err := os.WriteFile(srcFile, []byte(plainContent), 0644); err != nil {
+		t.Fatalf("Failed to create src file: %v", err)
+	}
+
+	uploadResp := CopyFileInternal("", srcFile, "test_crypt", "secret_report.txt")
+	if !uploadResp.Success {
+		t.Fatalf("Upload to test_crypt failed: %s", uploadResp.Error)
+	}
+
+	// 5. List directory through test_crypt -> should see decrypted "secret_report.txt"
+	listResp := ListDirectoryInternal("test_crypt", "")
+	if !listResp.Success {
+		t.Fatalf("ListDirectory on test_crypt failed: %s", listResp.Error)
+	}
+	items, ok := listResp.Data.([]FileItem)
+	if !ok {
+		t.Fatalf("Expected []FileItem, got %T", listResp.Data)
+	}
+	foundDecrypted := false
+	for _, it := range items {
+		if it.Name == "secret_report.txt" {
+			foundDecrypted = true
+			break
+		}
+	}
+	if !foundDecrypted {
+		t.Errorf("secret_report.txt not found in test_crypt directory listing")
+	}
+
+	// 6. Verify that raw storage in vaultSubdir is encrypted (ciphertext, no plaintext)
+	rawEntries, err := os.ReadDir(vaultSubdir)
+	if err != nil {
+		t.Fatalf("Failed to read raw vault dir: %v", err)
+	}
+	if len(rawEntries) == 0 {
+		t.Fatalf("Expected encrypted file in raw vault dir, found 0 items")
+	}
+	for _, entry := range rawEntries {
+		if entry.Name() == "secret_report.txt" {
+			t.Errorf("Filename was NOT encrypted on disk!")
+		}
+		rawBytes, err := os.ReadFile(filepath.Join(vaultSubdir, entry.Name()))
+		if err == nil {
+			if strings.Contains(string(rawBytes), plainContent) {
+				t.Errorf("Plaintext was found unencrypted inside ciphertext file!")
+			}
+		}
+	}
+
+	// 7. Download file from test_crypt and verify decrypted content matches exactly
+	downloadDest := filepath.Join(tmpDir, "downloaded.txt")
+	downResp := CopyFileInternal("test_crypt", "secret_report.txt", "", downloadDest)
+	if !downResp.Success {
+		t.Fatalf("Download from test_crypt failed: %s", downResp.Error)
+	}
+	readBytes, err := os.ReadFile(downloadDest)
+	if err != nil {
+		t.Fatalf("Failed to read downloaded file: %v", err)
+	}
+	if string(readBytes) != plainContent {
+		t.Errorf("Downloaded decrypted content mismatch: expected %q, got %q", plainContent, string(readBytes))
+	}
+}
+
 
 

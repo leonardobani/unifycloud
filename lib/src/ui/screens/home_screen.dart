@@ -337,7 +337,7 @@ class HomeScreen extends ConsumerWidget {
                       maxCrossAxisExtent: 400,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      mainAxisExtent: 215,
+                      mainAxisExtent: 225,
                     ),
                     itemCount: state.remotes.length,
                     itemBuilder: (context, index) {
@@ -364,22 +364,73 @@ class HomeScreen extends ConsumerWidget {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          remote.name,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                        Row(
+                                          children: [
+                                            Flexible(
+                                              child: Text(
+                                                remote.name,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            if (remote.isCrypt) ...[
+                                              const SizedBox(width: 6),
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 6,
+                                                  vertical: 2,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xFF00BFA5)
+                                                      .withValues(alpha: 0.2),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  border: Border.all(
+                                                    color: const Color(0xFF00BFA5)
+                                                        .withValues(alpha: 0.5),
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                child: const Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.lock,
+                                                      size: 10,
+                                                      color: Color(0xFF00BFA5),
+                                                    ),
+                                                    SizedBox(width: 3),
+                                                    Text(
+                                                      'E2E',
+                                                      style: TextStyle(
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color:
+                                                            Color(0xFF00BFA5),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ],
                                         ),
                                         Text(
-                                          remote.type.toUpperCase(),
+                                          remote.isCrypt && remote.remote != null
+                                              ? 'VAULT SU ${remote.remote}'
+                                              : remote.type.toUpperCase(),
                                           style: TextStyle(
                                             fontSize: 11,
                                             color: color,
                                             fontWeight: FontWeight.w600,
                                           ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ],
                                     ),
@@ -387,7 +438,15 @@ class HomeScreen extends ConsumerWidget {
                                   PopupMenuButton<String>(
                                     icon: const Icon(Icons.more_vert, size: 20),
                                     onSelected: (action) async {
-                                      if (action == 'delete') {
+                                      if (action == 'create_vault') {
+                                        showDialog(
+                                          context: context,
+                                          builder: (ctx) => AddCloudDialog(
+                                            initialProvider: 'crypt',
+                                            initialTargetRemote: remote.name,
+                                          ),
+                                        );
+                                      } else if (action == 'delete') {
                                         final confirm = await showDialog<bool>(
                                           context: context,
                                           builder: (ctx) => AlertDialog(
@@ -418,6 +477,16 @@ class HomeScreen extends ConsumerWidget {
                                       }
                                     },
                                     itemBuilder: (ctx) => [
+                                      if (!remote.isCrypt)
+                                        const PopupMenuItem(
+                                          value: 'create_vault',
+                                          child: ListTile(
+                                            leading: Icon(Icons.lock_outline, color: Color(0xFF00BFA5)),
+                                            title: Text('Crea Vault Cifrato qui...'),
+                                            dense: true,
+                                            contentPadding: EdgeInsets.zero,
+                                          ),
+                                        ),
                                       const PopupMenuItem(
                                         value: 'delete',
                                         child: ListTile(
