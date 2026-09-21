@@ -1,1 +1,2 @@
 Versione iniziale di UnifyCloud con supporto multi-cloud, crittografia client-side AES-256, vista doppio pannello, sincronizzazione & backup e blocco app.
+

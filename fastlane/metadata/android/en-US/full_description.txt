@@ -7,3 +7,4 @@ Key Features:
 • Automated Sync & Backup: Configure scheduled rules to backup your local photos, documents, or directories to your preferred cloud.
 • App Lock & Biometrics: Protect your credentials and personal files with a 6-digit PIN and Biometric authentication (Fingerprint / Face Unlock).
 • Privacy First: 100% Free and Open Source Software (GPL-3.0). No analytics, no tracking, and all credentials remain securely encrypted on your device.
+

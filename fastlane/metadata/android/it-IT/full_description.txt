@@ -7,3 +7,4 @@ Caratteristiche principali:
 • Sincronizzazione & Backup Automatico: Configura regole periodiche per salvare foto, documenti o cartelle locali sul tuo cloud preferito.
 • Blocco App & Biometria: Proteggi file e credenziali con PIN a 6 cifre e autenticazione biometrica (impronta digitale / sblocco col volto).
 • Massima Privacy: 100% Software Libero e Open Source (GPL-3.0). Nessun tracciamento o telemetria, credenziali protette e cifrate sul dispositivo.
+
