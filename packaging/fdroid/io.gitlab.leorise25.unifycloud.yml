@@ -23,7 +23,7 @@ RepoType: git
 Repo: https://gitlab.com/leorise25/unifycloud.git
 
 Builds:
-  - versionName: '1.0.0'
+  - versionName: 1.0.0
     versionCode: 1
     commit: v1.0.0
     output: build/app/outputs/flutter-apk/app-release.apk
@@ -41,5 +41,5 @@ Builds:
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
 UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
-CurrentVersion: '1.0.0'
+CurrentVersion: 1.0.0
 CurrentVersionCode: 1
