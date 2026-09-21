@@ -7,6 +7,7 @@ import 'src/services/background_service.dart';
 import 'src/services/rclone_service.dart';
 import 'src/services/secure_config_service.dart';
 import 'src/ui/theme/app_theme.dart';
+import 'src/ui/widgets/app_lock_gate.dart';
 import 'src/utils/token_utils.dart';
 
 void main() async {
@@ -65,6 +66,8 @@ class UnifyCloudApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: settings.themeMode,
       routerConfig: appRouter,
+      builder: (context, child) =>
+          AppLockGate(child: child ?? const SizedBox.shrink()),
     );
   }
 }

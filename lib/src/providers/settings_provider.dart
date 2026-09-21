@@ -99,6 +99,21 @@ class SettingsNotifier extends Notifier<AppSettings> {
     await _persist(state.copyWith(dualPaneEnabled: enabled));
   }
 
+  /// Enables or disables App Lock (Biometrics/PIN).
+  Future<void> setAppLockEnabled(bool enabled) async {
+    await _persist(state.copyWith(appLockEnabled: enabled));
+  }
+
+  /// Enables or disables Biometric authentication fallback for App Lock.
+  Future<void> setUseBiometrics(bool use) async {
+    await _persist(state.copyWith(useBiometrics: use));
+  }
+
+  /// Updates inactivity auto-lock timeout in minutes (0 = immediately).
+  Future<void> setAutoLockTimeoutMinutes(int minutes) async {
+    await _persist(state.copyWith(autoLockTimeoutMinutes: minutes));
+  }
+
   /// Resets all settings to their default values.
   Future<void> resetToDefaults() async {
     await _persist(const AppSettings());

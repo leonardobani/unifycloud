@@ -8,6 +8,9 @@ class AppSettings {
   final String? customDownloadPath;
   final int maxConcurrentTransfers;
   final bool dualPaneEnabled;
+  final bool appLockEnabled;
+  final bool useBiometrics;
+  final int autoLockTimeoutMinutes;
 
   const AppSettings({
     this.themeMode = ThemeMode.system,
@@ -16,6 +19,9 @@ class AppSettings {
     this.customDownloadPath,
     this.maxConcurrentTransfers = 4,
     this.dualPaneEnabled = true,
+    this.appLockEnabled = false,
+    this.useBiometrics = true,
+    this.autoLockTimeoutMinutes = 0,
   });
 
   AppSettings copyWith({
@@ -25,6 +31,9 @@ class AppSettings {
     String? Function()? customDownloadPath,
     int? maxConcurrentTransfers,
     bool? dualPaneEnabled,
+    bool? appLockEnabled,
+    bool? useBiometrics,
+    int? autoLockTimeoutMinutes,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -36,6 +45,10 @@ class AppSettings {
       maxConcurrentTransfers:
           maxConcurrentTransfers ?? this.maxConcurrentTransfers,
       dualPaneEnabled: dualPaneEnabled ?? this.dualPaneEnabled,
+      appLockEnabled: appLockEnabled ?? this.appLockEnabled,
+      useBiometrics: useBiometrics ?? this.useBiometrics,
+      autoLockTimeoutMinutes:
+          autoLockTimeoutMinutes ?? this.autoLockTimeoutMinutes,
     );
   }
 
@@ -47,6 +60,9 @@ class AppSettings {
       'custom_download_path': customDownloadPath,
       'max_concurrent_transfers': maxConcurrentTransfers,
       'dual_pane_enabled': dualPaneEnabled,
+      'app_lock_enabled': appLockEnabled,
+      'use_biometrics': useBiometrics,
+      'auto_lock_timeout_minutes': autoLockTimeoutMinutes,
     };
   }
 
@@ -67,6 +83,10 @@ class AppSettings {
       maxConcurrentTransfers:
           json['max_concurrent_transfers'] as int? ?? 4,
       dualPaneEnabled: json['dual_pane_enabled'] as bool? ?? true,
+      appLockEnabled: json['app_lock_enabled'] as bool? ?? false,
+      useBiometrics: json['use_biometrics'] as bool? ?? true,
+      autoLockTimeoutMinutes:
+          json['auto_lock_timeout_minutes'] as int? ?? 0,
     );
   }
 
@@ -79,7 +99,10 @@ class AppSettings {
         other.confirmDelete == confirmDelete &&
         other.customDownloadPath == customDownloadPath &&
         other.maxConcurrentTransfers == maxConcurrentTransfers &&
-        other.dualPaneEnabled == dualPaneEnabled;
+        other.dualPaneEnabled == dualPaneEnabled &&
+        other.appLockEnabled == appLockEnabled &&
+        other.useBiometrics == useBiometrics &&
+        other.autoLockTimeoutMinutes == autoLockTimeoutMinutes;
   }
 
   @override
@@ -90,6 +113,9 @@ class AppSettings {
         customDownloadPath,
         maxConcurrentTransfers,
         dualPaneEnabled,
+        appLockEnabled,
+        useBiometrics,
+        autoLockTimeoutMinutes,
       );
 }
 

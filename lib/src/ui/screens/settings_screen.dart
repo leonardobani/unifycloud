@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/settings_models.dart';
+import '../../providers/app_lock_provider.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/settings_provider.dart';
+import '../../services/app_lock_service.dart';
 import '../../services/secure_config_service.dart';
 import '../../utils/url_utils.dart';
+import '../widgets/pin_setup_dialog.dart';
 
 /// Comprehensive settings, appearance, and developer support screen for UnifyCloud.
 class SettingsScreen extends ConsumerWidget {
@@ -80,7 +83,7 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 16),
 
           // Section 4: Sicurezza & Storage Cifrato
-          _buildSecurityCard(context, ref),
+          _buildSecurityCard(context, ref, settings, settingsNotifier),
           const SizedBox(height: 16),
 
           // Section 5: Informazioni sull'Applicazione
@@ -577,7 +580,15 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   /// Security and encrypted storage management card.
-  Widget _buildSecurityCard(BuildContext context, WidgetRef ref) {
+  Widget _buildSecurityCard(
+    BuildContext context,
+    WidgetRef ref,
+    AppSettings settings,
+    SettingsNotifier notifier,
+  ) {
+    final lockState = ref.watch(appLockProvider);
+    final appLockService = ref.read(appLockServiceProvider);
+
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -605,6 +616,136 @@ class SettingsScreen extends ConsumerWidget {
               style: TextStyle(fontSize: 13, height: 1.4),
             ),
           ),
+          const Divider(height: 16),
+
+          // --- App Lock Section ---
+          SwitchListTile(
+            secondary: const Icon(Icons.lock_outline_rounded),
+            title: const Text(
+              'Blocco Applicazione (PIN / Biometria)',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitle: Text(
+              settings.appLockEnabled
+                  ? 'Attivo all\'avvio e dopo inattività'
+                  : 'Richiedi PIN o Impronta Digitale per accedere',
+            ),
+            value: settings.appLockEnabled,
+            onChanged: (enabled) async {
+              if (enabled) {
+                // Open PIN setup dialog
+                final success = await showDialog<bool>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (ctx) => PinSetupDialog(
+                    mode: PinDialogMode.setup,
+                    onSaveNewPin: (pin) async {
+                      await appLockService.savePin(pin);
+                      await notifier.setAppLockEnabled(true);
+                      await ref.read(appLockProvider.notifier).refreshCapabilities();
+                    },
+                  ),
+                );
+
+                if (success == true && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Blocco applicazione attivato con successo'),
+                    ),
+                  );
+                }
+              } else {
+                // Verify old PIN before disabling
+                final verified = await showDialog<bool>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (ctx) => PinSetupDialog(
+                    mode: PinDialogMode.verify,
+                    onVerifyOldPin: (pin) => appLockService.verifyPin(pin),
+                  ),
+                );
+
+                if (verified == true) {
+                  await notifier.setAppLockEnabled(false);
+                  await appLockService.clearPin();
+                  await ref.read(appLockProvider.notifier).refreshCapabilities();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Blocco applicazione disattivato'),
+                      ),
+                    );
+                  }
+                }
+              }
+            },
+          ),
+
+          if (settings.appLockEnabled) ...[
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.password_rounded),
+              title: const Text('Cambia Codice PIN'),
+              subtitle: const Text('Modifica il codice numerico a 6 cifre'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () async {
+                final success = await showDialog<bool>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (ctx) => PinSetupDialog(
+                    mode: PinDialogMode.change,
+                    onVerifyOldPin: (pin) => appLockService.verifyPin(pin),
+                    onSaveNewPin: (pin) => appLockService.savePin(pin),
+                  ),
+                );
+
+                if (success == true && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Codice PIN modificato con successo'),
+                    ),
+                  );
+                }
+              },
+            ),
+            const Divider(height: 1),
+            SwitchListTile(
+              secondary: const Icon(Icons.fingerprint_rounded),
+              title: const Text('Autenticazione Biometrica'),
+              subtitle: Text(
+                lockState.canCheckBiometrics
+                    ? 'Usa Impronta Digitale o Face Unlock'
+                    : 'Non disponibile o non configurata su questo dispositivo',
+              ),
+              value: settings.useBiometrics && lockState.canCheckBiometrics,
+              onChanged: lockState.canCheckBiometrics
+                  ? (val) => notifier.setUseBiometrics(val)
+                  : null,
+            ),
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.timer_outlined),
+              title: const Text('Blocco Automatico'),
+              subtitle: const Text('Tempo di inattività in background prima di bloccare'),
+              trailing: DropdownButton<int>(
+                value: settings.autoLockTimeoutMinutes,
+                underline: const SizedBox.shrink(),
+                items: const [
+                  DropdownMenuItem(value: 0, child: Text('Immediatamente')),
+                  DropdownMenuItem(value: 1, child: Text('Dopo 1 minuto')),
+                  DropdownMenuItem(value: 5, child: Text('Dopo 5 minuti')),
+                  DropdownMenuItem(value: 15, child: Text('Dopo 15 minuti')),
+                  DropdownMenuItem(value: 30, child: Text('Dopo 30 minuti')),
+                ],
+                onChanged: (val) {
+                  if (val != null) {
+                    notifier.setAutoLockTimeoutMinutes(val);
+                  }
+                },
+              ),
+            ),
+          ],
+
           const Divider(height: 16),
           ListTile(
             leading: const Icon(Icons.sync_outlined),
