@@ -425,4 +425,75 @@ func TestStartSyncInternal_LocalToLocal(t *testing.T) {
 	}
 }
 
+func TestListDirectoryInternal_Symlinks(t *testing.T) {
+	InitRcloneInternal("")
+	tmpDir := t.TempDir()
+
+	realSubDir := filepath.Join(tmpDir, "real_dir")
+	_ = os.MkdirAll(realSubDir, 0755)
+	realFile := filepath.Join(realSubDir, "hello.txt")
+	_ = os.WriteFile(realFile, []byte("world"), 0644)
+
+	symlinkDir := filepath.Join(tmpDir, "symlink_dir")
+	if err := os.Symlink(realSubDir, symlinkDir); err != nil {
+		t.Skipf("Skipping symlink test: symlinks not supported on this platform/filesystem: %v", err)
+	}
+
+	symlinkFile := filepath.Join(tmpDir, "symlink_file.txt")
+	if err := os.Symlink(realFile, symlinkFile); err != nil {
+		t.Skipf("Skipping symlink test: symlinks not supported on this platform/filesystem: %v", err)
+	}
+
+	// Test listing tmpDir via local path
+	resp := ListDirectoryInternal("", tmpDir)
+	if !resp.Success {
+		t.Fatalf("ListDirectoryInternal failed: %s", resp.Error)
+	}
+
+	items, ok := resp.Data.([]FileItem)
+	if !ok {
+		t.Fatalf("Expected []FileItem, got %T", resp.Data)
+	}
+
+	foundSymlinkDir := false
+	foundSymlinkFile := false
+	for _, it := range items {
+		if it.Name == "symlink_dir" {
+			foundSymlinkDir = true
+			if !it.IsDir {
+				t.Errorf("Expected symlink_dir to be reported as IsDir=true, got false")
+			}
+		}
+		if it.Name == "symlink_file.txt" {
+			foundSymlinkFile = true
+			if it.IsDir {
+				t.Errorf("Expected symlink_file.txt to be reported as IsDir=false, got true")
+			}
+		}
+	}
+
+	if !foundSymlinkDir {
+		t.Errorf("symlink_dir was not found in directory listing (was it skipped due to lack of copy_links?)")
+	}
+	if !foundSymlinkFile {
+		t.Errorf("symlink_file.txt was not found in directory listing")
+	}
+}
+
+func TestListDirectoryInternal_DanglingSymlink(t *testing.T) {
+	InitRcloneInternal("")
+	tmpDir := t.TempDir()
+
+	// Create a dangling symlink (pointing to a nonexistent target, like ~/.steampath)
+	brokenSymlink := filepath.Join(tmpDir, ".steampath")
+	if err := os.Symlink("/nonexistent/target/path", brokenSymlink); err != nil {
+		t.Skipf("Skipping symlink test: %v", err)
+	}
+
+	resp := ListDirectoryInternal("", tmpDir)
+	if !resp.Success {
+		t.Fatalf("ListDirectoryInternal failed on directory with dangling symlink: %s", resp.Error)
+	}
+}
+
 

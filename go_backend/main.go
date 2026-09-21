@@ -181,6 +181,13 @@ func (s *MemoryStorage) Serialize() (string, error) {
 	return sb.String(), nil
 }
 
+func init() {
+	_ = os.Setenv("RCLONE_LOCAL_COPY_LINKS", "true")
+	_ = os.Setenv("RCLONE_COPY_LINKS", "true")
+	_ = os.Setenv("RCLONE_LOCAL_SKIP_LINKS", "true")
+	_ = os.Setenv("RCLONE_SKIP_LINKS", "true")
+}
+
 func (s *MemoryStorage) LoadFromIni(content string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -209,6 +216,19 @@ func (s *MemoryStorage) LoadFromIni(content string) error {
 			}
 		}
 	}
+
+	// Ensure any local remote in loaded config has copy_links and skip_links
+	for _, sec := range s.sections {
+		if strings.EqualFold(sec["type"], "local") {
+			if _, ok := sec["copy_links"]; !ok {
+				sec["copy_links"] = "true"
+			}
+			if _, ok := sec["skip_links"]; !ok {
+				sec["skip_links"] = "true"
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -311,6 +331,14 @@ func makeFsTarget(remote, p string) string {
 // --- Pure Go Internal Implementations ---
 
 func InitRcloneInternal(configPath string) Response {
+	// Enable following symlinks on local filesystem by default.
+	// This prevents "NOTICE: <dir>: Can't follow symlink without -L/--copy-links"
+	// and allows proper browsing/copying of symlinked directories (e.g. /bin -> /usr/bin, /lib -> /usr/lib on Linux).
+	_ = os.Setenv("RCLONE_LOCAL_COPY_LINKS", "true")
+	_ = os.Setenv("RCLONE_COPY_LINKS", "true")
+	_ = os.Setenv("RCLONE_LOCAL_SKIP_LINKS", "true")
+	_ = os.Setenv("RCLONE_SKIP_LINKS", "true")
+
 	cfg := strings.TrimSpace(configPath)
 	if cfg != "" {
 		config.SetConfigPath(cfg)
@@ -375,6 +403,15 @@ func SetRemoteConfigInternal(remoteName, remoteType, optionsJson string) Respons
 		}
 		for k, v := range rawMap {
 			opts[k] = fmt.Sprintf("%v", v)
+		}
+	}
+
+	if strings.EqualFold(rType, "local") {
+		if _, ok := opts["copy_links"]; !ok {
+			opts["copy_links"] = "true"
+		}
+		if _, ok := opts["skip_links"]; !ok {
+			opts["skip_links"] = "true"
 		}
 	}
 

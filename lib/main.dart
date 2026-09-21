@@ -20,6 +20,11 @@ void main() async {
   final rclone = RcloneService();
   final secureConfig = SecureConfigService();
 
+  // Always initialize native Rclone engine first (enables copy_links and memory mode)
+  try {
+    await rclone.init();
+  } catch (_) {}
+
   try {
     final savedConfig = await secureConfig.loadEncryptedConfig();
     if (savedConfig != null && savedConfig.trim().isNotEmpty) {
@@ -30,14 +35,8 @@ void main() async {
       }
       // Decrypted configuration injected exclusively into RAM memory
       await rclone.loadConfigInMemory(sanitized);
-    } else {
-      // Initialize zero-disk in-memory mode
-      await rclone.init();
     }
-  } catch (e) {
-    // Fallback gracefully to default memory mode if error occurs
-    await rclone.init();
-  }
+  } catch (_) {}
 
   runApp(
     ProviderScope(

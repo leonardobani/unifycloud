@@ -280,7 +280,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
         options['secret_access_key'] = _passController.text.trim();
         break;
       case 'local':
-        // local doesn't require extra fields
+        options['copy_links'] = 'true';
         break;
     }
 
