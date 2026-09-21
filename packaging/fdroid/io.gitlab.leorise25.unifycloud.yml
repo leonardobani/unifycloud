@@ -28,7 +28,7 @@ Builds:
     commit: v1.0.0
     output: build/app/outputs/flutter-apk/app-release.apk
     srclibs:
-      - flutter@3.24.3
+      - flutter@stable
     prebuild:
       - export PUB_CACHE=$(pwd)/.pub-cache
       - $$flutter$$/bin/flutter config --no-analytics
