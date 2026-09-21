@@ -14,6 +14,7 @@ import '../../providers/transfer_provider.dart';
 import '../../services/file_opener_service.dart';
 import '../../services/rclone_service.dart';
 import '../theme/app_theme.dart';
+import 'adaptive_draggable.dart';
 import 'breadcrumbs_bar.dart';
 import 'expandable_error_box.dart';
 import 'file_context_menu.dart';
@@ -1393,7 +1394,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             ),
           );
 
-          final draggableItem = Draggable<PaneDragData>(
+          final draggableItem = AdaptiveDraggable<PaneDragData>(
             data: dragData,
             feedback: _buildDragFeedback(dragData),
             childWhenDragging: Opacity(
@@ -1555,7 +1556,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
           ),
         );
 
-        final draggableGrid = Draggable<PaneDragData>(
+        final draggableGrid = AdaptiveDraggable<PaneDragData>(
           data: dragData,
           feedback: _buildDragFeedback(dragData),
           childWhenDragging: Opacity(opacity: 0.4, child: gridCard),

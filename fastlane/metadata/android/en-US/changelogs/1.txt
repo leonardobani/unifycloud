@@ -1,0 +1,1 @@
+Initial release of UnifyCloud with multi-cloud support, client-side AES-256 encryption, dual-pane view, sync & backup, and app lock.

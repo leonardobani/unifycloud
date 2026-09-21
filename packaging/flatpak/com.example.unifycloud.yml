@@ -1,0 +1,50 @@
+app-id: com.example.unifycloud
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+command: unifycloud
+
+finish-args:
+  # Network access for cloud APIs and sync (Google Drive, OneDrive, Dropbox, SFTP, WebDAV, S3)
+  - --share=network
+  # Wayland, X11 fallback and IPC display access
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  # Hardware GPU rendering acceleration
+  - --device=dri
+  # Filesystem access for folder backup and local file management
+  - --filesystem=host
+  # Portals for file picker, default app opener, notifications and secure storage
+  - --talk-name=org.freedesktop.portal.FileChooser
+  - --talk-name=org.freedesktop.portal.OpenURI
+  - --talk-name=org.freedesktop.portal.Notification
+  - --talk-name=org.freedesktop.Notifications
+  - --talk-name=org.freedesktop.secrets
+
+modules:
+  - name: unifycloud
+    buildsystem: simple
+    build-commands:
+      # Install main executable binary
+      - install -D -m 0755 unifycloud /app/bin/unifycloud
+      # Install bundled native libraries (libflutter_linux_gtk, librclone_wrapper, plugins)
+      - mkdir -p /app/lib
+      - cp -r lib/* /app/lib/
+      # Install Flutter asset bundles and data files
+      - mkdir -p /app/data
+      - cp -r data/* /app/data/
+      # Desktop environment integration
+      - install -D -m 0644 com.example.unifycloud.desktop /app/share/applications/com.example.unifycloud.desktop
+      - install -D -m 0644 com.example.unifycloud.metainfo.xml /app/share/metainfo/com.example.unifycloud.metainfo.xml
+      - install -D -m 0644 com.example.unifycloud.png /app/share/icons/hicolor/256x256/apps/com.example.unifycloud.png
+    sources:
+      - type: dir
+        path: ../../build/linux/x64/release/bundle
+      - type: file
+        path: com.example.unifycloud.desktop
+      - type: file
+        path: com.example.unifycloud.metainfo.xml
+      - type: file
+        path: com.example.unifycloud.png
+

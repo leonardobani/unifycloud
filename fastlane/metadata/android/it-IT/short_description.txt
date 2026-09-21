@@ -1,0 +1,1 @@
+Gestore multi-cloud con cifratura E2E, sincronizzazione e doppio pannello

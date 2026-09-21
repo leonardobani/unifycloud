@@ -47,5 +47,8 @@ app.*.map.json
 # Widget Preview related
 .widget_preview/
 
-# Flatpak related
-/packaging/
+# Flatpak build artifacts
+/packaging/flatpak/.flatpak-builder/
+/packaging/flatpak/build-dir/
+/packaging/flatpak/repo/
+/packaging/flatpak/*.flatpak

@@ -1,0 +1,9 @@
+UnifyCloud è un gestore di archiviazione multi-cloud e strumento di sincronizzazione veloce, sicuro e rispettoso della privacy basato su Flutter e Rclone.
+
+Caratteristiche principali:
+• Supporto Multi-Cloud: Connetti Google Drive, Microsoft OneDrive, Dropbox, Nextcloud/WebDAV, SFTP, Amazon S3 e Disco Locale.
+• Crittografia End-to-End Client-Side (Crypt): Proteggi qualsiasi cloud con crittografia AES-256 a zero-knowledge. Nemmeno Google, Microsoft o terzi possono leggere i tuoi file o i loro nomi.
+• Vista a Doppio Pannello (Commander View): Trasferisci file direttamente tra due cloud su tablet e schermi ampi con drag-and-drop o pulsanti di azione rapida.
+• Sincronizzazione & Backup Automatico: Configura regole periodiche per salvare foto, documenti o cartelle locali sul tuo cloud preferito.
+• Blocco App & Biometria: Proteggi file e credenziali con PIN a 6 cifre e autenticazione biometrica (impronta digitale / sblocco col volto).
+• Massima Privacy: 100% Software Libero e Open Source (GPL-3.0). Nessun tracciamento o telemetria, credenziali protette e cifrate sul dispositivo.

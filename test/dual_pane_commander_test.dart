@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -448,7 +449,7 @@ void main() {
       final rightPaneCenter = tester.getCenter(dragTargets.last);
       final itemCenter = tester.getCenter(draggableFinder.first);
 
-      final gesture = await tester.startGesture(itemCenter);
+      final gesture = await tester.startGesture(itemCenter, kind: PointerDeviceKind.mouse);
       await gesture.moveTo(rightPaneCenter);
       await tester.pump();
       await gesture.up();

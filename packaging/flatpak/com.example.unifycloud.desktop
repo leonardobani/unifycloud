@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=UnifyCloud
+GenericName=Cloud Storage Manager & Backup
+Comment=Unified multi-cloud manager and automatic backup client powered by Rclone
+Exec=unifycloud %U
+Icon=com.example.unifycloud
+Terminal=false
+Categories=Utility;FileTools;FileManager;Archiving;
+Keywords=cloud;storage;rclone;backup;sync;drive;dropbox;onedrive;sftp;
+StartupNotify=true
+StartupWMClass=unifycloud
+MimeType=application/pdf;
+

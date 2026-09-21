@@ -1,0 +1,1 @@
+Multi-cloud storage manager with client-side E2E encryption and auto-sync
