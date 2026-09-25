@@ -56,3 +56,8 @@ app.*.map.json
 # Go backend build artifacts
 go_backend/*.so
 go_backend/*.h
+
+# Android signing keys
+android/key.properties
+*.jks
+*.keystore
