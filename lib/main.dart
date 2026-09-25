@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'l10n/app_localizations.dart';
 import 'src/providers/settings_provider.dart';
 import 'src/router/app_router.dart';
 import 'src/services/background_service.dart';
@@ -65,6 +66,9 @@ class UnifyCloudApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: settings.themeMode,
+      locale: settings.locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
       routerConfig: appRouter,
       builder: (context, child) =>
           AppLockGate(child: child ?? const SizedBox.shrink()),

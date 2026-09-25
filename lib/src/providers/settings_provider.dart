@@ -114,6 +114,11 @@ class SettingsNotifier extends Notifier<AppSettings> {
     await _persist(state.copyWith(autoLockTimeoutMinutes: minutes));
   }
 
+  /// Changes the application language ('en', 'it', 'system').
+  Future<void> setLanguage(String lang) async {
+    await _persist(state.copyWith(language: lang));
+  }
+
   /// Resets all settings to their default values.
   Future<void> resetToDefaults() async {
     await _persist(const AppSettings());

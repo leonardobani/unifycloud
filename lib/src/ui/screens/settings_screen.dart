@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../models/settings_models.dart';
 import '../../providers/app_lock_provider.dart';
 import '../../providers/cloud_accounts_provider.dart';
@@ -20,34 +21,73 @@ class SettingsScreen extends ConsumerWidget {
   static const String liberapayUrl = 'https://liberapay.com/LeoRise25/';
   static const String paypalUrl = 'https://paypal.me/leorise';
 
+  /// Returns a human-friendly display label for any language code or 'system'.
+  static String getLanguageDisplayName(String code, AppLocalizations l10n) {
+    switch (code) {
+      case 'en':
+        return l10n.langEnglish;
+      case 'it':
+        return l10n.langItalian;
+      case 'system':
+        return l10n.langSystem;
+      case 'de':
+        return 'Deutsch';
+      case 'es':
+        return 'Español';
+      case 'fr':
+        return 'Français';
+      case 'pt':
+        return 'Português';
+      case 'ru':
+        return 'Русский';
+      case 'zh':
+        return '中文';
+      case 'ja':
+        return '日本語';
+      case 'ko':
+        return '한국어';
+      case 'ar':
+        return 'العربية';
+      case 'hi':
+        return 'हिन्दी';
+      case 'nl':
+        return 'Nederlands';
+      case 'pl':
+        return 'Polski';
+      case 'tr':
+        return 'Türkçe';
+      default:
+        return code.toUpperCase();
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
     final settingsNotifier = ref.read(settingsProvider.notifier);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Impostazioni'),
+        title: Text(l10n.settingsTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.restore_outlined),
-            tooltip: 'Ripristina Impostazioni Predefinite',
+            tooltip: l10n.resetDefaultsTooltip,
             onPressed: () async {
               final confirm = await showDialog<bool>(
                 context: context,
                 builder: (ctx) => AlertDialog(
-                  title: const Text('Ripristina Impostazioni'),
-                  content: const Text(
-                    'Vuoi ripristinare tutte le preferenze (tema, cartelle, visualizzazione) ai valori di fabbrica?',
-                  ),
+                  title: Text(l10n.resetDialogTitle),
+                  content: Text(l10n.resetDialogContent),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(ctx).pop(false),
-                      child: const Text('Annulla'),
+                      child: Text(l10n.cancel),
                     ),
                     FilledButton(
                       onPressed: () => Navigator.of(ctx).pop(true),
-                      child: const Text('Ripristina'),
+                      child: Text(l10n.reset),
                     ),
                   ],
                 ),
@@ -57,8 +97,8 @@ class SettingsScreen extends ConsumerWidget {
                 await settingsNotifier.resetToDefaults();
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Impostazioni ripristinate ai valori predefiniti'),
+                    SnackBar(
+                      content: Text(l10n.resetSuccessSnackbar),
                     ),
                   );
                 }
@@ -70,35 +110,36 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         children: [
-          // Section 1: Aspetto & Tema
-          _buildThemeCard(context, settings, settingsNotifier),
+          // Section 1: Aspetto & Tema & Lingua
+          _buildThemeCard(context, settings, settingsNotifier, l10n),
           const SizedBox(height: 16),
 
           // Section 2: File & Esplorazione
-          _buildFilesCard(context, settings, settingsNotifier),
+          _buildFilesCard(context, settings, settingsNotifier, l10n),
           const SizedBox(height: 16),
 
           // Section 3: Sviluppo & Open Source (GitLab & Donazioni)
-          _buildCommunityAndSupportCard(context),
+          _buildCommunityAndSupportCard(context, l10n),
           const SizedBox(height: 16),
 
           // Section 4: Sicurezza & Storage Cifrato
-          _buildSecurityCard(context, ref, settings, settingsNotifier),
+          _buildSecurityCard(context, ref, settings, settingsNotifier, l10n),
           const SizedBox(height: 16),
 
           // Section 5: Informazioni sull'Applicazione
-          _buildAboutCard(context),
+          _buildAboutCard(context, l10n),
           const SizedBox(height: 24),
         ],
       ),
     );
   }
 
-  /// Theme and appearance selection card.
+  /// Theme, appearance, and language selection card.
   Widget _buildThemeCard(
     BuildContext context,
     AppSettings settings,
     SettingsNotifier notifier,
+    AppLocalizations l10n,
   ) {
     return Card(
       child: Padding(
@@ -113,15 +154,15 @@ class SettingsScreen extends ConsumerWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  'Aspetto & Tema',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.appearanceAndTheme,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             const SizedBox(height: 6),
             Text(
-              'Scegli il tema visivo per l\'interfaccia di UnifyCloud:',
+              l10n.chooseVisualThemeSubtitle,
               style: TextStyle(
                 fontSize: 13,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -133,21 +174,21 @@ class SettingsScreen extends ConsumerWidget {
                 return SizedBox(
                   width: double.infinity,
                   child: SegmentedButton<ThemeMode>(
-                    segments: const [
+                    segments: [
                       ButtonSegment<ThemeMode>(
                         value: ThemeMode.system,
-                        icon: Icon(Icons.brightness_auto_outlined),
-                        label: Text('Sistema'),
+                        icon: const Icon(Icons.brightness_auto_outlined),
+                        label: Text(l10n.themeSystem),
                       ),
                       ButtonSegment<ThemeMode>(
                         value: ThemeMode.light,
-                        icon: Icon(Icons.light_mode_outlined),
-                        label: Text('Chiaro'),
+                        icon: const Icon(Icons.light_mode_outlined),
+                        label: Text(l10n.themeLight),
                       ),
                       ButtonSegment<ThemeMode>(
                         value: ThemeMode.dark,
-                        icon: Icon(Icons.dark_mode_outlined),
-                        label: Text('Scuro'),
+                        icon: const Icon(Icons.dark_mode_outlined),
+                        label: Text(l10n.themeDark),
                       ),
                     ],
                     selected: {settings.themeMode},
@@ -156,6 +197,128 @@ class SettingsScreen extends ConsumerWidget {
                         notifier.setThemeMode(newSelection.first);
                       }
                     },
+                  ),
+                );
+              },
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              child: Divider(height: 1),
+            ),
+            Row(
+              children: [
+                Icon(
+                  Icons.language_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  l10n.language,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              l10n.languageSubtitle,
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 16),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final supported = AppLocalizations.supportedLocales;
+                // If 2 or fewer languages (+ system = 3 segments), SegmentedButton fits nicely.
+                // For 3+ languages (scaling up to 10-20+ languages), use DropdownButtonFormField to avoid RenderFlex overflow.
+                if (supported.length <= 2) {
+                  return SizedBox(
+                    width: double.infinity,
+                    child: SegmentedButton<String>(
+                      segments: [
+                        ...supported.map(
+                          (loc) => ButtonSegment<String>(
+                            value: loc.languageCode,
+                            icon: Icon(
+                              loc.languageCode == 'en'
+                                  ? Icons.language
+                                  : Icons.translate,
+                            ),
+                            label: Text(
+                              getLanguageDisplayName(loc.languageCode, l10n),
+                            ),
+                          ),
+                        ),
+                        ButtonSegment<String>(
+                          value: 'system',
+                          icon: const Icon(Icons.auto_mode_outlined),
+                          label: Text(l10n.langSystem),
+                        ),
+                      ],
+                      selected: {
+                        supported.any((l) => l.languageCode == settings.language) ||
+                                settings.language == 'system'
+                            ? settings.language
+                            : 'system',
+                      },
+                      onSelectionChanged: (newSelection) {
+                        if (newSelection.isNotEmpty) {
+                          notifier.setLanguage(newSelection.first);
+                        }
+                      },
+                    ),
+                  );
+                }
+
+                // Scalable Dropdown selector for 10-20+ languages
+                final availableOptions = <String>[
+                  'system',
+                  ...supported.map((l) => l.languageCode),
+                ];
+                final currentSelected = availableOptions.contains(settings.language)
+                    ? settings.language
+                    : 'system';
+
+                return InputDecorator(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
+                    prefixIcon: const Icon(Icons.language_outlined),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      key: const ValueKey('settings_language_dropdown'),
+                      value: currentSelected,
+                      isExpanded: true,
+                      items: availableOptions.map((code) {
+                        return DropdownMenuItem<String>(
+                          value: code,
+                          child: Row(
+                            children: [
+                              Icon(
+                                code == 'system'
+                                    ? Icons.auto_mode_outlined
+                                    : Icons.translate,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(getLanguageDisplayName(code, l10n)),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newVal) {
+                        if (newVal != null) {
+                          notifier.setLanguage(newVal);
+                        }
+                      },
+                    ),
                   ),
                 );
               },
@@ -171,6 +334,7 @@ class SettingsScreen extends ConsumerWidget {
     BuildContext context,
     AppSettings settings,
     SettingsNotifier notifier,
+    AppLocalizations l10n,
   ) {
     return Card(
       child: Column(
@@ -185,32 +349,32 @@ class SettingsScreen extends ConsumerWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  'File & Esplorazione',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.filesAndExploration,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
           ),
           SwitchListTile(
-            title: const Text('Mostra elementi nascosti'),
-            subtitle: const Text('Visualizza file e cartelle con punto iniziale (".")'),
+            title: Text(l10n.showHiddenFiles),
+            subtitle: Text(l10n.showHiddenFilesSubtitle),
             secondary: const Icon(Icons.visibility_outlined),
             value: settings.showHiddenFiles,
             onChanged: (val) => notifier.setShowHiddenFiles(val),
           ),
           const Divider(height: 1),
           SwitchListTile(
-            title: const Text('Conferma prima di eliminare'),
-            subtitle: const Text('Richiedi conferma prima di rimuovere file o cartelle'),
+            title: Text(l10n.confirmBeforeDelete),
+            subtitle: Text(l10n.confirmBeforeDeleteSubtitle),
             secondary: const Icon(Icons.delete_sweep_outlined),
             value: settings.confirmDelete,
             onChanged: (val) => notifier.setConfirmDelete(val),
           ),
           const Divider(height: 1),
           SwitchListTile(
-            title: const Text('Doppio Pannello su Desktop e Tablet'),
-            subtitle: const Text('Visualizza due cloud affiancati (Commander View) su schermi larghi'),
+            title: Text(l10n.dualPaneMode),
+            subtitle: Text(l10n.dualPaneModeSubtitle),
             secondary: const Icon(Icons.splitscreen),
             value: settings.dualPaneEnabled,
             onChanged: (val) => notifier.setDualPaneEnabled(val),
@@ -218,12 +382,12 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.downloading_outlined),
-            title: const Text('Cartella Download Predefinita'),
+            title: Text(l10n.defaultDownloadFolder),
             subtitle: Text(
               settings.customDownloadPath != null &&
                       settings.customDownloadPath!.isNotEmpty
                   ? settings.customDownloadPath!
-                  : 'Cartella Download predefinita del sistema',
+                  : l10n.defaultDownloadFolderSystem,
               style: TextStyle(
                 color: settings.customDownloadPath != null
                     ? Theme.of(context).colorScheme.primary
@@ -235,6 +399,7 @@ class SettingsScreen extends ConsumerWidget {
               context,
               settings,
               notifier,
+              l10n,
             ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
@@ -242,16 +407,17 @@ class SettingsScreen extends ConsumerWidget {
                 if (settings.customDownloadPath != null)
                   IconButton(
                     icon: const Icon(Icons.restore, size: 20),
-                    tooltip: 'Ripristina percorso di sistema',
+                    tooltip: l10n.restoreDefaultPath,
                     onPressed: () => notifier.setCustomDownloadPath(null),
                   ),
                 FilledButton.tonalIcon(
                   icon: const Icon(Icons.edit_outlined, size: 16),
-                  label: const Text('Cambia'),
+                  label: Text(l10n.change),
                   onPressed: () => _showCustomDownloadFolderDialog(
                     context,
                     settings,
                     notifier,
+                    l10n,
                   ),
                 ),
               ],
@@ -267,17 +433,23 @@ class SettingsScreen extends ConsumerWidget {
     BuildContext context,
     AppSettings settings,
     SettingsNotifier notifier,
+    AppLocalizations l10n,
   ) async {
     final controller =
         TextEditingController(text: settings.customDownloadPath ?? '');
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.folder_outlined),
-            SizedBox(width: 10),
-            Text('Cartella Download'),
+            const Icon(Icons.folder_outlined),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                l10n.defaultDownloadFolder,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         content: SizedBox(
@@ -286,9 +458,9 @@ class SettingsScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Seleziona una cartella tramite il selettore del sistema oppure inserisci manualmente il percorso desiderato:',
-                style: TextStyle(fontSize: 13),
+              Text(
+                l10n.customDownloadFolderDialogPrompt,
+                style: const TextStyle(fontSize: 13),
               ),
               const SizedBox(height: 16),
               Row(
@@ -296,19 +468,19 @@ class SettingsScreen extends ConsumerWidget {
                   Expanded(
                     child: TextField(
                       controller: controller,
-                      decoration: const InputDecoration(
-                        labelText: 'Percorso cartella',
-                        hintText: 'es. /home/utente/Scaricati',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.folderPath,
+                        hintText: l10n.folderPathHint,
+                        border: const OutlineInputBorder(),
                         isDense: true,
-                        prefixIcon: Icon(Icons.folder_open, size: 20),
+                        prefixIcon: const Icon(Icons.folder_open, size: 20),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   IconButton.filledTonal(
                     icon: const Icon(Icons.search),
-                    tooltip: 'Sfoglia con selettore di sistema',
+                    tooltip: l10n.browseWithSystemPicker,
                     onPressed: () async {
                       try {
                         final selectedPath =
@@ -321,7 +493,7 @@ class SettingsScreen extends ConsumerWidget {
                           ScaffoldMessenger.of(ctx).showSnackBar(
                             SnackBar(
                               content: Text(
-                                'Impossibile aprire il selettore di sistema: $e',
+                                l10n.errorOpenPicker(e.toString()),
                               ),
                             ),
                           );
@@ -338,14 +510,16 @@ class SettingsScreen extends ConsumerWidget {
           if (settings.customDownloadPath != null)
             TextButton(
               onPressed: () {
-                notifier.setCustomDownloadPath(null);
                 Navigator.of(ctx).pop();
+                notifier.setCustomDownloadPath(null);
               },
-              child: const Text('Ripristina predefinito'),
+              child: Text(
+                l10n.restoreDefault,
+              ),
             ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Annulla'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -353,7 +527,7 @@ class SettingsScreen extends ConsumerWidget {
               notifier.setCustomDownloadPath(text.isEmpty ? null : text);
               Navigator.of(ctx).pop();
             },
-            child: const Text('Salva'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -361,7 +535,10 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   /// Developer support and GitLab repository card.
-  Widget _buildCommunityAndSupportCard(BuildContext context) {
+  Widget _buildCommunityAndSupportCard(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(
@@ -384,9 +561,9 @@ class SettingsScreen extends ConsumerWidget {
                   size: 24,
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  'Community & Sviluppo',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.communityAndSupport,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 Container(
@@ -407,9 +584,9 @@ class SettingsScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 10),
-            const Text(
-              'UnifyCloud è un software libero e indipendente creato per unificare i tuoi dati cloud senza tracker o intermediari proprietari.',
-              style: TextStyle(fontSize: 13, height: 1.4),
+            Text(
+              l10n.openSourceDescription,
+              style: const TextStyle(fontSize: 13, height: 1.4),
             ),
             const SizedBox(height: 16),
             Wrap(
@@ -424,8 +601,8 @@ class SettingsScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   ),
                   icon: const Icon(Icons.coffee_rounded, size: 20),
-                  label: const Text('Sostieni lo Sviluppatore'),
-                  onPressed: () => _showSupportDialog(context),
+                  label: Text(l10n.supportDeveloper),
+                  onPressed: () => _showSupportDialog(context, l10n),
                 ),
 
                 // Pulsante Vedi Codice su GitLab
@@ -434,16 +611,16 @@ class SettingsScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   ),
                   icon: const Icon(Icons.code_rounded, size: 20),
-                  label: const Text('Vedi Codice su GitLab'),
+                  label: Text(l10n.viewSourceOnGitLab),
                   onPressed: () async {
                     final success = await UrlUtils.openWebUrl(
                       Uri.parse(gitlabRepoUrl),
                     );
                     if (!success && context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text(
-                            'Impossibile aprire il browser. Repository: $gitlabRepoUrl',
+                            l10n.errorOpenBrowser(gitlabRepoUrl),
                           ),
                         ),
                       );
@@ -459,15 +636,17 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   /// Interactive dialog with support and donation links.
-  void _showSupportDialog(BuildContext context) {
+  void _showSupportDialog(BuildContext context, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.favorite, color: Colors.pinkAccent),
-            SizedBox(width: 10),
-            Text('Sostieni UnifyCloud'),
+            const Icon(Icons.favorite, color: Colors.pinkAccent),
+            const SizedBox(width: 10),
+            Text(
+              l10n.supportDialogTitle,
+            ),
           ],
         ),
         content: ConstrainedBox(
@@ -476,13 +655,13 @@ class SettingsScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'UnifyCloud è un progetto gratuito e open-source nato per darti il pieno controllo sui tuoi file nei vari cloud.',
-                style: TextStyle(fontSize: 14, height: 1.4),
+              Text(
+                l10n.supportDialogDescription1,
+                style: const TextStyle(fontSize: 14, height: 1.4),
               ),
               const SizedBox(height: 12),
               Text(
-                'Se trovi utile l\'applicazione nel tuo lavoro o nella tua vita quotidiana, puoi offrire un caffè o fare una donazione per sostenere lo sviluppo continuo, l\'integrazione di nuovi provider e la manutenzione!',
+                l10n.supportDialogDescription2,
                 style: TextStyle(
                   fontSize: 13,
                   height: 1.4,
@@ -494,7 +673,7 @@ class SettingsScreen extends ConsumerWidget {
                 context: ctx,
                 icon: Icons.coffee,
                 color: Colors.orange,
-                title: 'Offri un caffè su Ko-fi',
+                title: l10n.supportKofiTitle,
                 subtitle: 'ko-fi.com/leorise',
                 url: kofiUrl,
               ),
@@ -503,7 +682,7 @@ class SettingsScreen extends ConsumerWidget {
                 context: ctx,
                 icon: Icons.volunteer_activism_outlined,
                 color: Colors.amber.shade800,
-                title: 'Dona su Liberapay',
+                title: l10n.supportLiberapayTitle,
                 subtitle: 'liberapay.com/LeoRise25',
                 url: liberapayUrl,
               ),
@@ -512,7 +691,7 @@ class SettingsScreen extends ConsumerWidget {
                 context: ctx,
                 icon: Icons.payment,
                 color: Colors.blue,
-                title: 'Donazione via PayPal',
+                title: l10n.supportPaypalTitle,
                 subtitle: 'paypal.me/leorise',
                 url: paypalUrl,
               ),
@@ -522,7 +701,7 @@ class SettingsScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Chiudi'),
+            child: Text(l10n.close),
           ),
         ],
       ),
@@ -585,6 +764,7 @@ class SettingsScreen extends ConsumerWidget {
     WidgetRef ref,
     AppSettings settings,
     SettingsNotifier notifier,
+    AppLocalizations l10n,
   ) {
     final lockState = ref.watch(appLockProvider);
     final appLockService = ref.read(appLockServiceProvider);
@@ -593,27 +773,24 @@ class SettingsScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Row(
               children: [
-                Icon(Icons.security, color: Colors.green),
-                SizedBox(width: 12),
+                const Icon(Icons.security, color: Colors.green),
+                const SizedBox(width: 12),
                 Text(
-                  'Sicurezza & Cifratura',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  l10n.securityAndEncryption,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: Text(
-              'UnifyCloud adotta un\'architettura Zero-Plaintext. '
-              'Tutti i token OAuth e le credenziali di accesso sono protetti '
-              'nel Keychain/Keystore di sistema e iniettati esclusivamente '
-              'nella memoria RAM del motore Go.',
-              style: TextStyle(fontSize: 13, height: 1.4),
+              l10n.securityArchitectureDescription,
+              style: const TextStyle(fontSize: 13, height: 1.4),
             ),
           ),
           const Divider(height: 16),
@@ -621,14 +798,14 @@ class SettingsScreen extends ConsumerWidget {
           // --- App Lock Section ---
           SwitchListTile(
             secondary: const Icon(Icons.lock_outline_rounded),
-            title: const Text(
-              'Blocco Applicazione (PIN / Biometria)',
-              style: TextStyle(fontWeight: FontWeight.w600),
+            title: Text(
+              l10n.appLock,
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             subtitle: Text(
               settings.appLockEnabled
-                  ? 'Attivo all\'avvio e dopo inattività'
-                  : 'Richiedi PIN o Impronta Digitale per accedere',
+                  ? l10n.appLockActiveSubtitle
+                  : l10n.appLockSubtitle,
             ),
             value: settings.appLockEnabled,
             onChanged: (enabled) async {
@@ -649,8 +826,10 @@ class SettingsScreen extends ConsumerWidget {
 
                 if (success == true && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Blocco applicazione attivato con successo'),
+                    SnackBar(
+                      content: Text(
+                        l10n.appLockEnabledSnackbar,
+                      ),
                     ),
                   );
                 }
@@ -671,8 +850,10 @@ class SettingsScreen extends ConsumerWidget {
                   await ref.read(appLockProvider.notifier).refreshCapabilities();
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Blocco applicazione disattivato'),
+                      SnackBar(
+                        content: Text(
+                          l10n.appLockDisabledSnackbar,
+                        ),
                       ),
                     );
                   }
@@ -685,8 +866,8 @@ class SettingsScreen extends ConsumerWidget {
             const Divider(height: 1),
             ListTile(
               leading: const Icon(Icons.password_rounded),
-              title: const Text('Cambia Codice PIN'),
-              subtitle: const Text('Modifica il codice numerico a 6 cifre'),
+              title: Text(l10n.changePin),
+              subtitle: Text(l10n.changePinSubtitle),
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
                 final success = await showDialog<bool>(
@@ -701,8 +882,10 @@ class SettingsScreen extends ConsumerWidget {
 
                 if (success == true && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Codice PIN modificato con successo'),
+                    SnackBar(
+                      content: Text(
+                        l10n.pinChangedSnackbar,
+                      ),
                     ),
                   );
                 }
@@ -711,11 +894,11 @@ class SettingsScreen extends ConsumerWidget {
             const Divider(height: 1),
             SwitchListTile(
               secondary: const Icon(Icons.fingerprint_rounded),
-              title: const Text('Autenticazione Biometrica'),
+              title: Text(l10n.biometricAuth),
               subtitle: Text(
                 lockState.canCheckBiometrics
-                    ? 'Usa Impronta Digitale o Face Unlock'
-                    : 'Non disponibile o non configurata su questo dispositivo',
+                    ? l10n.biometricAuthSubtitle
+                    : l10n.biometricNotAvailable,
               ),
               value: settings.useBiometrics && lockState.canCheckBiometrics,
               onChanged: lockState.canCheckBiometrics
@@ -725,17 +908,34 @@ class SettingsScreen extends ConsumerWidget {
             const Divider(height: 1),
             ListTile(
               leading: const Icon(Icons.timer_outlined),
-              title: const Text('Blocco Automatico'),
-              subtitle: const Text('Tempo di inattività in background prima di bloccare'),
+              title: Text(l10n.autoLock),
+              subtitle: Text(
+                l10n.autoLockSubtitle,
+              ),
               trailing: DropdownButton<int>(
                 value: settings.autoLockTimeoutMinutes,
                 underline: const SizedBox.shrink(),
-                items: const [
-                  DropdownMenuItem(value: 0, child: Text('Immediatamente')),
-                  DropdownMenuItem(value: 1, child: Text('Dopo 1 minuto')),
-                  DropdownMenuItem(value: 5, child: Text('Dopo 5 minuti')),
-                  DropdownMenuItem(value: 15, child: Text('Dopo 15 minuti')),
-                  DropdownMenuItem(value: 30, child: Text('Dopo 30 minuti')),
+                items: [
+                  DropdownMenuItem(
+                    value: 0,
+                    child: Text(l10n.lockImmediately),
+                  ),
+                  DropdownMenuItem(
+                    value: 1,
+                    child: Text(l10n.lockAfter1Minute),
+                  ),
+                  DropdownMenuItem(
+                    value: 5,
+                    child: Text(l10n.lockAfter5Minutes),
+                  ),
+                  DropdownMenuItem(
+                    value: 15,
+                    child: Text(l10n.lockAfter15Minutes),
+                  ),
+                  DropdownMenuItem(
+                    value: 30,
+                    child: Text(l10n.lockAfter30Minutes),
+                  ),
                 ],
                 onChanged: (val) {
                   if (val != null) {
@@ -749,43 +949,51 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(height: 16),
           ListTile(
             leading: const Icon(Icons.sync_outlined),
-            title: const Text('Sincronizza Account Cloud'),
-            subtitle: const Text('Ricarica le configurazioni dalla memoria protetta'),
+            title: Text(l10n.syncCloudAccounts),
+            subtitle: Text(
+              l10n.syncCloudAccountsSubtitle,
+            ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               ref.read(cloudAccountsProvider.notifier).loadRemotes();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Account cloud ricaricati con successo')),
+                SnackBar(
+                  content: Text(
+                    l10n.syncCloudAccountsSuccess,
+                  ),
+                ),
               );
             },
           ),
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.delete_forever_outlined, color: Colors.red),
-            title: const Text(
-              'Cancella Tutte le Credenziali',
-              style: TextStyle(color: Colors.red),
+            title: Text(
+              l10n.clearAllCredentials,
+              style: const TextStyle(color: Colors.red),
             ),
-            subtitle: const Text(
-              'Rimuove la configurazione cifrata e disconnette tutti i cloud',
+            subtitle: Text(
+              l10n.clearAllCredentialsSubtitle,
             ),
             onTap: () async {
               final confirm = await showDialog<bool>(
                 context: context,
                 builder: (ctx) => AlertDialog(
-                  title: const Text('Attenzione: Reset Credenziali'),
-                  content: const Text(
-                    'Sei sicuro di voler eliminare tutte le credenziali salvate? Dovrai riconnettere i tuoi account cloud.',
+                  title: Text(
+                    l10n.clearCredentialsDialogTitle,
+                  ),
+                  content: Text(
+                    l10n.clearCredentialsDialogContent,
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(ctx).pop(false),
-                      child: const Text('Annulla'),
+                      child: Text(l10n.cancel),
                     ),
                     FilledButton(
                       style: FilledButton.styleFrom(backgroundColor: Colors.red),
                       onPressed: () => Navigator.of(ctx).pop(true),
-                      child: const Text('Elimina Tutto'),
+                      child: Text(l10n.delete),
                     ),
                   ],
                 ),
@@ -796,8 +1004,10 @@ class SettingsScreen extends ConsumerWidget {
                 await ref.read(cloudAccountsProvider.notifier).loadRemotes();
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Credenziali eliminate con successo'),
+                    SnackBar(
+                      content: Text(
+                        l10n.clearCredentialsSuccess,
+                      ),
                     ),
                   );
                 }
@@ -810,35 +1020,39 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   /// App and technology information card.
-  Widget _buildAboutCard(BuildContext context) {
-    return const Card(
+  Widget _buildAboutCard(BuildContext context, AppLocalizations l10n) {
+    return Card(
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.info_outline, color: Colors.blue),
-                SizedBox(width: 12),
+                const Icon(Icons.info_outline, color: Colors.blue),
+                const SizedBox(width: 12),
                 Text(
-                  'Informazioni su UnifyCloud',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  l10n.aboutUnifyCloud,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            SizedBox(height: 12),
-            Text('Versione App: 0.1.0 (Beta)'),
-            SizedBox(height: 4),
-            Text('Sviluppatore: LeoRise (@leorise25)'),
-            SizedBox(height: 4),
-            Text('Motore: Rclone Core CGO (Go v1.22+ / C FFI)'),
-            SizedBox(height: 4),
-            Text('Framework: Flutter (Material 3 Responsive)'),
-            SizedBox(height: 4),
-            Text('Licenza: GNU General Public License v3.0 (GPL-3.0)'),
-            SizedBox(height: 4),
-            Text('Copyright: © 2026 Leonardo Bani'),
+            const SizedBox(height: 12),
+            Text(l10n.appVersion),
+            const SizedBox(height: 4),
+            Text(l10n.developerInfo),
+            const SizedBox(height: 4),
+            Text(
+              l10n.engineInfo,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.frameworkInfo,
+            ),
+            const SizedBox(height: 4),
+            Text(l10n.licenseInfo),
+            const SizedBox(height: 4),
+            Text(l10n.copyrightInfo),
           ],
         ),
       ),

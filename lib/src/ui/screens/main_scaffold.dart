@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../widgets/transfer_panel.dart';
 
 /// Root scaffold providing an adaptive responsive layout:
@@ -23,6 +24,8 @@ class MainScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isDesktop = constraints.maxWidth > 768;
@@ -43,26 +46,26 @@ class MainScaffold extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
-                  destinations: const [
+                  destinations: [
                     NavigationRailDestination(
-                      icon: Icon(Icons.home_outlined),
-                      selectedIcon: Icon(Icons.home),
-                      label: Text('Home'),
+                      icon: const Icon(Icons.home_outlined),
+                      selectedIcon: const Icon(Icons.home),
+                      label: Text(l10n.home),
                     ),
                     NavigationRailDestination(
-                      icon: Icon(Icons.folder_outlined),
-                      selectedIcon: Icon(Icons.folder),
-                      label: Text('File Explorer'),
+                      icon: const Icon(Icons.folder_outlined),
+                      selectedIcon: const Icon(Icons.folder),
+                      label: Text(l10n.explorer),
                     ),
                     NavigationRailDestination(
-                      icon: Icon(Icons.sync_outlined),
-                      selectedIcon: Icon(Icons.sync),
-                      label: Text('Sincronizzazione'),
+                      icon: const Icon(Icons.sync_outlined),
+                      selectedIcon: const Icon(Icons.sync),
+                      label: Text(l10n.sync),
                     ),
                     NavigationRailDestination(
-                      icon: Icon(Icons.settings_outlined),
-                      selectedIcon: Icon(Icons.settings),
-                      label: Text('Impostazioni'),
+                      icon: const Icon(Icons.settings_outlined),
+                      selectedIcon: const Icon(Icons.settings),
+                      label: Text(l10n.settings),
                     ),
                   ],
                 ),
@@ -101,26 +104,26 @@ class MainScaffold extends StatelessWidget {
           bottomNavigationBar: NavigationBar(
             selectedIndex: navigationShell.currentIndex,
             onDestinationSelected: _onDestinationSelected,
-            destinations: const [
+            destinations: [
               NavigationDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home),
-                label: 'Home',
+                icon: const Icon(Icons.home_outlined),
+                selectedIcon: const Icon(Icons.home),
+                label: l10n.home,
               ),
               NavigationDestination(
-                icon: Icon(Icons.folder_outlined),
-                selectedIcon: Icon(Icons.folder),
-                label: 'File',
+                icon: const Icon(Icons.folder_outlined),
+                selectedIcon: const Icon(Icons.folder),
+                label: l10n.explorer,
               ),
               NavigationDestination(
-                icon: Icon(Icons.sync_outlined),
-                selectedIcon: Icon(Icons.sync),
-                label: 'Backup',
+                icon: const Icon(Icons.sync_outlined),
+                selectedIcon: const Icon(Icons.sync),
+                label: l10n.sync,
               ),
               NavigationDestination(
-                icon: Icon(Icons.settings_outlined),
-                selectedIcon: Icon(Icons.settings),
-                label: 'Impostazioni',
+                icon: const Icon(Icons.settings_outlined),
+                selectedIcon: const Icon(Icons.settings),
+                label: l10n.settings,
               ),
             ],
           ),

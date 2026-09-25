@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:unifycloud/l10n/app_localizations.dart';
 import 'package:unifycloud/src/models/cloud_models.dart';
 import 'package:unifycloud/src/models/settings_models.dart';
 import 'package:unifycloud/src/providers/cloud_accounts_provider.dart';
@@ -138,11 +139,16 @@ void main() {
         ProviderScope(
           overrides: [
             settingsProvider.overrideWith(
-              () => SettingsMock(const AppSettings(themeMode: ThemeMode.light)),
+              () => SettingsMock(
+                const AppSettings(themeMode: ThemeMode.light, language: 'it'),
+              ),
             ),
           ],
           child: MaterialApp(
             theme: AppTheme.lightTheme,
+            locale: const Locale('it'),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: const SettingsScreen(),
           ),
         ),

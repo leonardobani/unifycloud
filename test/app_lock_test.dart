@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:unifycloud/l10n/app_localizations.dart';
 import 'package:unifycloud/src/models/settings_models.dart';
 import 'package:unifycloud/src/providers/app_lock_provider.dart';
 import 'package:unifycloud/src/providers/settings_provider.dart';
@@ -565,6 +566,7 @@ void main() {
                   appLockEnabled: true,
                   useBiometrics: true,
                   autoLockTimeoutMinutes: 5,
+                  language: 'it',
                 ),
               ),
             ),
@@ -573,6 +575,9 @@ void main() {
             ),
           ],
           child: const MaterialApp(
+            locale: Locale('it'),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: SettingsScreen(),
           ),
         ),

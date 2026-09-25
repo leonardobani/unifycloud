@@ -11,6 +11,7 @@ class AppSettings {
   final bool appLockEnabled;
   final bool useBiometrics;
   final int autoLockTimeoutMinutes;
+  final String language; // 'en', 'it', or 'system'
 
   const AppSettings({
     this.themeMode = ThemeMode.system,
@@ -22,7 +23,25 @@ class AppSettings {
     this.appLockEnabled = false,
     this.useBiometrics = true,
     this.autoLockTimeoutMinutes = 0,
+    this.language = 'en',
   });
+
+  /// Resolves the configured language to a [Locale], or `null` for system default.
+  /// Scalable to any standard language or region tag (e.g. 'en', 'it', 'es', 'zh_CN').
+  Locale? get locale {
+    if (language == 'system' || language.trim().isEmpty) {
+      return null; // Follows system locale
+    }
+    if (language.contains('_')) {
+      final parts = language.split('_');
+      return Locale(parts[0], parts[1]);
+    }
+    if (language.contains('-')) {
+      final parts = language.split('-');
+      return Locale(parts[0], parts[1]);
+    }
+    return Locale(language);
+  }
 
   AppSettings copyWith({
     ThemeMode? themeMode,
@@ -34,6 +53,7 @@ class AppSettings {
     bool? appLockEnabled,
     bool? useBiometrics,
     int? autoLockTimeoutMinutes,
+    String? language,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -49,6 +69,7 @@ class AppSettings {
       useBiometrics: useBiometrics ?? this.useBiometrics,
       autoLockTimeoutMinutes:
           autoLockTimeoutMinutes ?? this.autoLockTimeoutMinutes,
+      language: language ?? this.language,
     );
   }
 
@@ -63,6 +84,7 @@ class AppSettings {
       'app_lock_enabled': appLockEnabled,
       'use_biometrics': useBiometrics,
       'auto_lock_timeout_minutes': autoLockTimeoutMinutes,
+      'language': language,
     };
   }
 
@@ -87,6 +109,7 @@ class AppSettings {
       useBiometrics: json['use_biometrics'] as bool? ?? true,
       autoLockTimeoutMinutes:
           json['auto_lock_timeout_minutes'] as int? ?? 0,
+      language: json['language'] as String? ?? 'en',
     );
   }
 
@@ -102,7 +125,8 @@ class AppSettings {
         other.dualPaneEnabled == dualPaneEnabled &&
         other.appLockEnabled == appLockEnabled &&
         other.useBiometrics == useBiometrics &&
-        other.autoLockTimeoutMinutes == autoLockTimeoutMinutes;
+        other.autoLockTimeoutMinutes == autoLockTimeoutMinutes &&
+        other.language == language;
   }
 
   @override
@@ -116,6 +140,7 @@ class AppSettings {
         appLockEnabled,
         useBiometrics,
         autoLockTimeoutMinutes,
+        language,
       );
 }
 
