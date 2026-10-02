@@ -209,7 +209,21 @@ flutter run -d ios
 
 ---
 
-## 📖 User Guide & Walkthrough
+## 📚 Official Documentation & GitLab Wiki
+
+Comprehensive documentation is available in the repository at [`docs/wiki/`](docs/wiki/) and published on our **[GitLab Wiki](https://gitlab.com/leorise25/unifycloud/-/wikis/home)**:
+
+- 📦 **[Installation Guide](docs/wiki/Installation-Guide.md)**: Setup instructions for Android (F-Droid & APK), Linux (Flatpak & bundle), Windows, macOS, and iOS.
+- ☁️ **[Configuring Drives](docs/wiki/Configuring-Drives.md)**: Connecting Google Drive, OneDrive, Dropbox, Nextcloud/WebDAV, SFTP, S3, Local Drive, and Crypt E2EE vaults.
+- 🔑 **[OAuth 2.0 Setup Guide](docs/wiki/OAuth-Setup-Guide.md)**: Step-by-step guide to generating custom Client IDs & Secrets for Google Drive, Microsoft Azure, and Dropbox.
+- 🔄 **[Setting Up Sync](docs/wiki/Setting-up-Sync.md)**: Configuring scheduled background incremental backups (`copy`) and mirror sync (`sync`).
+- 📁 **[File Management & Transfers](docs/wiki/File-Management-and-Transfers.md)**: Dual-pane commander mode, direct cloud-to-cloud transfers, and real-time speed monitoring.
+- 🛡️ **[Security & App Lock](docs/wiki/Security-and-App-Lock.md)**: Zero-plaintext in-RAM security, OS keystores, PIN, Biometrics, and AES-256 encryption.
+- ❓ **[Troubleshooting & FAQ](docs/wiki/Troubleshooting-and-FAQ.md)**: Common resolutions, port conflicts, and edge cases.
+
+---
+
+## 📖 Quick User Walkthrough
 
 ### Connecting a Cloud Provider
 1. On the **Home** screen, tap **"Collega Nuovo Cloud"** (Add Cloud).
