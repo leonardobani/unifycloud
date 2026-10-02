@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:unifycloud/l10n/app_localizations.dart';
 import 'package:unifycloud/src/models/cloud_models.dart';
 import 'package:unifycloud/src/providers/cloud_accounts_provider.dart';
 import 'package:unifycloud/src/providers/file_explorer_provider.dart';
@@ -79,6 +80,9 @@ void main() {
             ),
           ],
           child: const MaterialApp(
+            locale: Locale('it'),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: HomeScreen(),
           ),
         ),

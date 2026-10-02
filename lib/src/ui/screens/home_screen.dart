@@ -7,6 +7,7 @@ import '../../models/sync_rule_model.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/file_explorer_provider.dart';
 import '../../providers/sync_provider.dart';
+import '../../../l10n/l10n_extension.dart';
 import '../theme/app_theme.dart';
 import '../widgets/add_cloud_dialog.dart';
 import '../widgets/expandable_error_box.dart';
@@ -17,6 +18,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final state = ref.watch(cloudAccountsProvider);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -29,7 +31,7 @@ class HomeScreen extends ConsumerWidget {
             const Icon(Icons.cloud_sync, color: AppTheme.primaryColor),
             const SizedBox(width: 8),
             Text(
-              'UnifyCloud',
+              l10n.appTitle,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -39,7 +41,7 @@ class HomeScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            tooltip: 'Aggiorna cloud configurati',
+            tooltip: l10n.refreshCloudsTooltip,
             onPressed: () {
               ref.read(cloudAccountsProvider.notifier).loadRemotes();
             },
@@ -71,7 +73,7 @@ class HomeScreen extends ConsumerWidget {
                             const Icon(Icons.pie_chart_outline, color: AppTheme.primaryColor),
                             const SizedBox(width: 8),
                             Text(
-                              'Panoramica Storage Aggregato',
+                              l10n.storageOverviewAggregated,
                               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -80,7 +82,7 @@ class HomeScreen extends ConsumerWidget {
                         ),
                         Chip(
                           avatar: const Icon(Icons.shield_outlined, size: 16, color: Colors.green),
-                          label: const Text('Cifratura RAM Attiva', style: TextStyle(fontSize: 12)),
+                          label: Text(l10n.ramEncryptionActive, style: const TextStyle(fontSize: 12)),
                           backgroundColor: Colors.green.withValues(alpha: 0.1),
                           side: BorderSide.none,
                           visualDensity: VisualDensity.compact,
@@ -89,9 +91,9 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 14),
                     if (state.remotes.isEmpty) ...[
-                      const Text(
-                        'Account Cloud Collegati: 0',
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                      Text(
+                        l10n.connectedAccountsCount(0),
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 8),
                       ClipRRect(
@@ -105,7 +107,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Nessun account cloud configurato. Tocca "+ Collega Nuovo Cloud" in basso.',
+                        l10n.noCloudsConfiguredHint,
                         style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
                       ),
                     ] else if (state.hasStorageData) ...[
@@ -114,7 +116,7 @@ class HomeScreen extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              'Account Cloud Collegati: ${state.remotes.length}',
+                              l10n.connectedAccountsCount(state.remotes.length),
                               style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -147,14 +149,14 @@ class HomeScreen extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              '${(state.usedStoragePercentage * 100).toStringAsFixed(1)}% occupato',
+                              l10n.percentUsed((state.usedStoragePercentage * 100).toStringAsFixed(1)),
                               style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            '${StorageQuota.formatBytes(state.freeStorageBytes)} disponibili',
+                            l10n.availableSpace(StorageQuota.formatBytes(state.freeStorageBytes)),
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -165,7 +167,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ] else ...[
                       Text(
-                        'Account Cloud Collegati: ${state.remotes.length}',
+                        l10n.connectedAccountsCount(state.remotes.length),
                         style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 8),
@@ -180,7 +182,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Calcolo quote storage in corso o spazio illimitato...',
+                        l10n.calculatingQuota,
                         style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
                       ),
                     ],
@@ -215,7 +217,7 @@ class HomeScreen extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Sincronizzazione & Backup',
+                                l10n.syncAndBackup,
                                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -223,8 +225,8 @@ class HomeScreen extends ConsumerWidget {
                               const SizedBox(height: 2),
                               Text(
                                 syncRules.isEmpty
-                                    ? 'Nessuna regola configurata'
-                                    : '$enabledCount/${syncRules.length} regole attive${isSyncing ? ' • Sincronizzazione in corso...' : ''}',
+                                    ? l10n.noRulesConfigured
+                                    : '${l10n.activeRulesCount(enabledCount, syncRules.length)}${isSyncing ? ' • ${l10n.syncInProgress}' : ''}',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -235,7 +237,7 @@ class HomeScreen extends ConsumerWidget {
                         ),
                         TextButton.icon(
                           icon: const Icon(Icons.arrow_forward, size: 16),
-                          label: const Text('Gestisci'),
+                          label: Text(l10n.manage),
                           onPressed: () => context.go('/sync'),
                         ),
                       ],
@@ -254,7 +256,7 @@ class HomeScreen extends ConsumerWidget {
               runSpacing: 8,
               children: [
                 Text(
-                  'Cloud Collegati (${state.remotes.length})',
+                  l10n.connectedCloudsCount(state.remotes.length),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -267,7 +269,7 @@ class HomeScreen extends ConsumerWidget {
                     );
                   },
                   icon: const Icon(Icons.add),
-                  label: const Text('Collega Nuovo Cloud'),
+                  label: Text(l10n.connectNewCloud),
                 ),
               ],
             ),
@@ -301,13 +303,13 @@ class HomeScreen extends ConsumerWidget {
                         color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'Nessun Provider Cloud Collegato',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      Text(
+                        l10n.noCloudProvidersConnected,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Collega Google Drive, Dropbox, OneDrive, SFTP o WebDAV per iniziare a sincronizzare ed esplorare i tuoi file.',
+                        l10n.connectCloudDescription,
                         textAlign: TextAlign.center,
                         style: TextStyle(color: colorScheme.onSurfaceVariant),
                       ),
@@ -320,7 +322,7 @@ class HomeScreen extends ConsumerWidget {
                           );
                         },
                         icon: const Icon(Icons.add),
-                        label: const Text('Aggiungi Primo Cloud'),
+                        label: Text(l10n.addFirstCloud),
                       ),
                     ],
                   ),
@@ -422,7 +424,7 @@ class HomeScreen extends ConsumerWidget {
                                         ),
                                         Text(
                                           remote.isCrypt && remote.remote != null
-                                              ? 'VAULT SU ${remote.remote}'
+                                              ? l10n.vaultOnRemote(remote.remote!.toUpperCase())
                                               : remote.type.toUpperCase(),
                                           style: TextStyle(
                                             fontSize: 11,
@@ -450,21 +452,21 @@ class HomeScreen extends ConsumerWidget {
                                         final confirm = await showDialog<bool>(
                                           context: context,
                                           builder: (ctx) => AlertDialog(
-                                            title: const Text('Disconnetti Cloud'),
+                                            title: Text(l10n.disconnectCloudTitle),
                                             content: Text(
-                                              'Vuoi rimuovere "${remote.name}"? Le credenziali verranno eliminate dallo storage cifrato.',
+                                              l10n.disconnectCloudPrompt(remote.name),
                                             ),
                                             actions: [
                                               TextButton(
                                                 onPressed: () => Navigator.of(ctx).pop(false),
-                                                child: const Text('Annulla'),
+                                                child: Text(l10n.cancel),
                                               ),
                                               FilledButton(
                                                 style: FilledButton.styleFrom(
                                                   backgroundColor: Colors.red,
                                                 ),
                                                 onPressed: () => Navigator.of(ctx).pop(true),
-                                                child: const Text('Disconnetti'),
+                                                child: Text(l10n.disconnect),
                                               ),
                                             ],
                                           ),
@@ -478,20 +480,20 @@ class HomeScreen extends ConsumerWidget {
                                     },
                                     itemBuilder: (ctx) => [
                                       if (!remote.isCrypt)
-                                        const PopupMenuItem(
+                                        PopupMenuItem(
                                           value: 'create_vault',
                                           child: ListTile(
-                                            leading: Icon(Icons.lock_outline, color: Color(0xFF00BFA5)),
-                                            title: Text('Crea Vault Cifrato qui...'),
+                                            leading: const Icon(Icons.lock_outline, color: Color(0xFF00BFA5)),
+                                            title: Text(l10n.createVaultHere),
                                             dense: true,
                                             contentPadding: EdgeInsets.zero,
                                           ),
                                         ),
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                         value: 'delete',
                                         child: ListTile(
-                                          leading: Icon(Icons.delete_outline, color: Colors.red),
-                                          title: Text('Disconnetti', style: TextStyle(color: Colors.red)),
+                                          leading: const Icon(Icons.delete_outline, color: Colors.red),
+                                          title: Text(l10n.disconnect, style: const TextStyle(color: Colors.red)),
                                           dense: true,
                                           contentPadding: EdgeInsets.zero,
                                         ),
@@ -519,7 +521,7 @@ class HomeScreen extends ConsumerWidget {
                                         ),
                                         const SizedBox(width: 8),
                                         Text(
-                                          '${StorageQuota.formatBytes(quota.effectiveFree)} liberi',
+                                          l10n.freeSpace(StorageQuota.formatBytes(quota.effectiveFree)),
                                           style: TextStyle(
                                             fontSize: 11,
                                             color: colorScheme.onSurfaceVariant,
@@ -545,7 +547,7 @@ class HomeScreen extends ConsumerWidget {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            'Storage',
+                                            l10n.storage,
                                             style: TextStyle(
                                               fontSize: 12,
                                               color: colorScheme.onSurfaceVariant,
@@ -555,7 +557,7 @@ class HomeScreen extends ConsumerWidget {
                                         ),
                                         const SizedBox(width: 8),
                                         Text(
-                                          'Disponibile',
+                                          l10n.available,
                                           style: TextStyle(
                                             fontSize: 11,
                                             color: colorScheme.onSurfaceVariant,
@@ -586,7 +588,7 @@ class HomeScreen extends ConsumerWidget {
                                     context.go('/explorer');
                                   },
                                   icon: const Icon(Icons.folder_open, size: 18),
-                                  label: const Text('Esplora File'),
+                                  label: Text(l10n.exploreFiles),
                                 ),
                               ),
                             ],

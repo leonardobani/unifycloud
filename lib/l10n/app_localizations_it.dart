@@ -550,4 +550,858 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get encryptDirNames => 'Cifra nomi delle cartelle';
+
+  @override
+  String get langSpanish => 'Español';
+
+  @override
+  String get langFrench => 'Français';
+
+  @override
+  String get langGerman => 'Deutsch';
+
+  @override
+  String get langPortuguese => 'Português';
+
+  @override
+  String get langRussian => 'Русский';
+
+  @override
+  String get langChinese => '简体中文';
+
+  @override
+  String get langJapanese => '日本語';
+
+  @override
+  String get langKorean => '한국어';
+
+  @override
+  String get langArabic => 'العربية';
+
+  @override
+  String get langHindi => 'हिन्दी';
+
+  @override
+  String get langDutch => 'Nederlands';
+
+  @override
+  String get langPolish => 'Polski';
+
+  @override
+  String get langTurkish => 'Türkçe';
+
+  @override
+  String get selectLanguage => 'Seleziona Lingua';
+
+  @override
+  String get searchLanguageHint => 'Cerca lingua o paese...';
+
+  @override
+  String get currentLanguage => 'Lingua Attuale';
+
+  @override
+  String systemDefaultWithLocale(String locale) {
+    return 'Predefinito di Sistema ($locale)';
+  }
+
+  @override
+  String get refreshCloudsTooltip => 'Aggiorna cloud configurati';
+
+  @override
+  String get storageOverviewAggregated => 'Panoramica Storage Aggregato';
+
+  @override
+  String get ramEncryptionActive => 'Cifratura RAM Attiva';
+
+  @override
+  String connectedAccountsCount(int count) {
+    return 'Account Cloud Collegati: $count';
+  }
+
+  @override
+  String get noCloudsConfiguredHint =>
+      'Nessun account cloud configurato. Tocca \"+ Collega Nuovo Cloud\" in basso.';
+
+  @override
+  String percentUsed(String percent) {
+    return '$percent% occupato';
+  }
+
+  @override
+  String availableSpace(String space) {
+    return '$space disponibili';
+  }
+
+  @override
+  String get calculatingQuota =>
+      'Calcolo quote storage in corso o spazio illimitato...';
+
+  @override
+  String get syncAndBackup => 'Sincronizzazione & Backup';
+
+  @override
+  String get noRulesConfigured => 'Nessuna regola configurata';
+
+  @override
+  String activeRulesCount(int active, int total) {
+    return '$active/$total regole attive';
+  }
+
+  @override
+  String get manage => 'Gestisci';
+
+  @override
+  String connectedCloudsCount(int count) {
+    return 'Cloud Collegati ($count)';
+  }
+
+  @override
+  String get connectNewCloud => 'Collega Nuovo Cloud';
+
+  @override
+  String get noCloudProvidersConnected => 'Nessun Provider Cloud Collegato';
+
+  @override
+  String get connectCloudDescription =>
+      'Collega Google Drive, Dropbox, OneDrive, SFTP o WebDAV per iniziare a sincronizzare ed esplorare i tuoi file.';
+
+  @override
+  String get addFirstCloud => 'Aggiungi Primo Cloud';
+
+  @override
+  String vaultOnRemote(String remote) {
+    return 'VAULT SU $remote';
+  }
+
+  @override
+  String get disconnectCloudTitle => 'Disconnetti Cloud';
+
+  @override
+  String disconnectCloudPrompt(String name) {
+    return 'Vuoi rimuovere \"$name\"? Le credenziali verranno eliminate dallo storage cifrato.';
+  }
+
+  @override
+  String get disconnect => 'Disconnetti';
+
+  @override
+  String freeSpace(String space) {
+    return '$space liberi';
+  }
+
+  @override
+  String get storage => 'Storage';
+
+  @override
+  String get available => 'Disponibile';
+
+  @override
+  String get exploreFiles => 'Esplora File';
+
+  @override
+  String get paneLeft => 'Sinistra';
+
+  @override
+  String get paneRight => 'Destra';
+
+  @override
+  String get folderName => 'Nome cartella';
+
+  @override
+  String errorCreatingFolder(String error) {
+    return 'Errore creazione cartella: $error';
+  }
+
+  @override
+  String get moveAction => 'Spostamento';
+
+  @override
+  String get copyAction => 'Copia';
+
+  @override
+  String transferBatchStarted(String action, int count, String remote) {
+    return '$action di $count elementi verso [$remote] avviato...';
+  }
+
+  @override
+  String errorTransferring(String error) {
+    return 'Errore durante il trasferimento: $error';
+  }
+
+  @override
+  String itemCopiedToClipboard(String name) {
+    return '\"$name\" copiato negli appunti';
+  }
+
+  @override
+  String itemsCopiedToClipboard(int count) {
+    return '$count elementi copiati negli appunti';
+  }
+
+  @override
+  String itemCutToClipboard(String name) {
+    return '\"$name\" tagliato (pronto per lo spostamento)';
+  }
+
+  @override
+  String itemsCutToClipboard(int count) {
+    return '$count elementi tagliati (pronti per lo spostamento)';
+  }
+
+  @override
+  String get noFilesSelectedForDownload =>
+      'Nessun file selezionato per il download.';
+
+  @override
+  String downloadingItems(int count) {
+    return 'Download di $count elementi in corso...';
+  }
+
+  @override
+  String itemsDownloadedSuccess(int count, String path) {
+    return '$count elementi scaricati in \"$path\"';
+  }
+
+  @override
+  String errorStartingDownload(String error) {
+    return 'Errore durante l\'avvio del download: $error';
+  }
+
+  @override
+  String deleteItemsConfirmTitle(int count) {
+    return 'Elimina $count elementi selezionati?';
+  }
+
+  @override
+  String deleteItemsConfirmPrompt(int count) {
+    return 'Vuoi davvero eliminare definitivamente $count elementi selezionati dal cloud?';
+  }
+
+  @override
+  String itemsDeletedSuccess(int count) {
+    return '$count elementi eliminati';
+  }
+
+  @override
+  String errorDeleting(String error) {
+    return 'Errore durante l\'eliminazione: $error';
+  }
+
+  @override
+  String get uploadCompletedSuccess => 'Caricamento completato con successo';
+
+  @override
+  String errorUploading(String error) {
+    return 'Errore durante il caricamento: $error';
+  }
+
+  @override
+  String get folderUploadCompletedSuccess =>
+      'Caricamento cartella completato con successo';
+
+  @override
+  String errorFolderUploading(String error) {
+    return 'Errore durante il caricamento della cartella: $error';
+  }
+
+  @override
+  String get filesAlreadyInDirectory =>
+      'I file si trovano già in questa cartella.';
+
+  @override
+  String dragDropTransferStarted(String action, int count, String remote) {
+    return '$action di $count elementi verso [$remote] avviato...';
+  }
+
+  @override
+  String errorDragDrop(String error) {
+    return 'Errore durante il trasferimento drag-and-drop: $error';
+  }
+
+  @override
+  String get closeSelection => 'Chiudi selezione';
+
+  @override
+  String itemsSelectedCount(int count) {
+    return '$count selezionati';
+  }
+
+  @override
+  String get deselectAll => 'Deseleziona tutti';
+
+  @override
+  String copyToRemote(String remote) {
+    return 'Copia in $remote';
+  }
+
+  @override
+  String moveToRemote(String remote) {
+    return 'Sposta in $remote';
+  }
+
+  @override
+  String get moreActions => 'Altre azioni';
+
+  @override
+  String get downloadSelected => 'Scarica selezionati';
+
+  @override
+  String get copyToClipboard => 'Copia negli appunti';
+
+  @override
+  String get cutToClipboard => 'Taglia negli appunti';
+
+  @override
+  String get selectCloud => 'Seleziona Cloud';
+
+  @override
+  String get closeSearch => 'Chiudi ricerca';
+
+  @override
+  String get uploadFromDevice => 'Carica dal dispositivo';
+
+  @override
+  String get moreOptions => 'Altre opzioni';
+
+  @override
+  String get viewGrid => 'Vista griglia';
+
+  @override
+  String get viewList => 'Vista elenco';
+
+  @override
+  String get multiSelection => 'Selezione multipla';
+
+  @override
+  String get sortNameAsc => 'Nome (A-Z)';
+
+  @override
+  String get sortNameDesc => 'Nome (Z-A)';
+
+  @override
+  String get sortSizeDesc => 'Dimensione (Grande -> Piccolo)';
+
+  @override
+  String get sortSizeAsc => 'Dimensione (Piccolo -> Grande)';
+
+  @override
+  String get sortDateDesc => 'Data (Recente prima)';
+
+  @override
+  String get disableDualPane => 'Disattiva Commander (Singolo Pannello)';
+
+  @override
+  String get enableDualPane => 'Attiva Commander (Due Pannelli)';
+
+  @override
+  String itemsInClipboard(int count) {
+    return '$count elementi negli appunti';
+  }
+
+  @override
+  String get pasteHere => 'Incolla qui';
+
+  @override
+  String get noResults => 'Nessun risultato';
+
+  @override
+  String noMatchingResults(String query) {
+    return 'Nessun file o cartella corrisponde a \"$query\"';
+  }
+
+  @override
+  String get selectACloud => 'Seleziona un Cloud';
+
+  @override
+  String get selectCloudDescription =>
+      'Seleziona un provider cloud dal menu in alto per visualizzare ed esplorare i tuoi file remoti.';
+
+  @override
+  String optionsForItem(String name) {
+    return 'Opzioni per $name';
+  }
+
+  @override
+  String get select => 'Seleziona';
+
+  @override
+  String get openWithSystemApp => 'Apri con app di sistema';
+
+  @override
+  String get downloadToLocal => 'Scarica in locale';
+
+  @override
+  String get cut => 'Taglia (Sposta)';
+
+  @override
+  String get copyPath => 'Copia percorso';
+
+  @override
+  String get info => 'Informazioni';
+
+  @override
+  String generatingShareLink(String name) {
+    return 'Generazione del link per \"$name\"...';
+  }
+
+  @override
+  String errorPublicLink(String error) {
+    return 'Errore link pubblico: $error';
+  }
+
+  @override
+  String get noLinkGenerated => 'Nessun link generato dal provider.';
+
+  @override
+  String errorDownloading(String error) {
+    return 'Errore durante il download: $error';
+  }
+
+  @override
+  String get renameFolderTitle => 'Rinomina cartella';
+
+  @override
+  String get renameFileTitle => 'Rinomina file';
+
+  @override
+  String errorRenaming(String error) {
+    return 'Errore ridenominazione: $error';
+  }
+
+  @override
+  String get pathCopiedToClipboard => 'Percorso copiato negli appunti';
+
+  @override
+  String itemDetailsPath(String path) {
+    return 'Percorso: $path';
+  }
+
+  @override
+  String itemDetailsType(String type) {
+    return 'Tipo: $type';
+  }
+
+  @override
+  String itemDetailsSize(String size) {
+    return 'Dimensione: $size';
+  }
+
+  @override
+  String itemDetailsModified(String date) {
+    return 'Data modifica: $date';
+  }
+
+  @override
+  String get folder => 'Cartella';
+
+  @override
+  String get file => 'File';
+
+  @override
+  String get selectCloudFirstLeft =>
+      'Seleziona prima un cloud nel pannello sinistro.';
+
+  @override
+  String get selectCloudFirstRight =>
+      'Seleziona prima un cloud nel pannello destro.';
+
+  @override
+  String get selectDestinationCloudLeft =>
+      'Seleziona prima un cloud di destinazione nel pannello sinistro.';
+
+  @override
+  String get selectDestinationCloudRight =>
+      'Seleziona prima un cloud di destinazione nel pannello destro.';
+
+  @override
+  String get noFilesToTransfer =>
+      'Nessun file presente o selezionato da trasferire.';
+
+  @override
+  String transferStarted(String action, int count, String src, String dst) {
+    return '$action di $count elementi da [$src] a [$dst] avviato...';
+  }
+
+  @override
+  String get swapPanesTooltip => 'Scambia pannelli (<->)';
+
+  @override
+  String get refreshBothPanesTooltip => 'Aggiorna entrambi i pannelli';
+
+  @override
+  String get copyRight => 'Copia a destra ->';
+
+  @override
+  String get moveRight => 'Sposta a destra ->';
+
+  @override
+  String get copyLeft => '<- Copia a sinistra';
+
+  @override
+  String get moveLeft => '<- Sposta a sinistra';
+
+  @override
+  String copyRightWithCount(int count) {
+    return 'Copia a destra ($count) ->';
+  }
+
+  @override
+  String moveRightWithCount(int count) {
+    return 'Sposta a destra ($count) ->';
+  }
+
+  @override
+  String copyLeftWithCount(int count) {
+    return '<- Copia a sinistra ($count)';
+  }
+
+  @override
+  String moveLeftWithCount(int count) {
+    return '<- Sposta a sinistra ($count)';
+  }
+
+  @override
+  String get deleteRuleTitle => 'Elimina Regola';
+
+  @override
+  String deleteRulePrompt(String name) {
+    return 'Vuoi davvero eliminare la regola di sincronizzazione \"$name\"? I file presenti sia sul dispositivo che sul cloud non verranno cancellati.';
+  }
+
+  @override
+  String get syncAll => 'Sincronizza Tutte';
+
+  @override
+  String get newRuleTooltip => 'Nuova regola';
+
+  @override
+  String get backupBannerTitle => 'Backup Continuo & Sincronizzazione Cloud';
+
+  @override
+  String get backupBannerSubtitle =>
+      'Configura sincronizzazioni pianificate tra cartelle locali e remoti cloud.';
+
+  @override
+  String get noActiveRules => 'Nessuna Regola Attiva';
+
+  @override
+  String get noActiveRulesSubtitle =>
+      'Crea la tua prima regola per eseguire backup automatici dal telefono verso Google Drive, Dropbox, SFTP o qualsiasi altro cloud.';
+
+  @override
+  String get createNewRule => 'Crea Nuova Regola';
+
+  @override
+  String get ruleOptionsTooltip => 'Opzioni regola';
+
+  @override
+  String get syncNow => 'Sincronizza ora';
+
+  @override
+  String get statusWaiting => 'In attesa';
+
+  @override
+  String get statusInProgress => 'In corso...';
+
+  @override
+  String get statusCompleted => 'Completato';
+
+  @override
+  String get statusFailed => 'Errore';
+
+  @override
+  String get editRuleTitle => 'Modifica Regola di Backup';
+
+  @override
+  String get newRuleTitle => 'Nuova Regola di Sincronizzazione';
+
+  @override
+  String get ruleDialogSubtitle =>
+      'Configura backup automatico tra una cartella locale e il cloud.';
+
+  @override
+  String get ruleNameOptional => 'Nome Regola (opzionale)';
+
+  @override
+  String get ruleNameHint => 'Es. Backup Foto DCIM o Documenti Lavoro';
+
+  @override
+  String get sourceLocalFolder => 'Cartella Locale Sorgente';
+
+  @override
+  String get sourceLocalFolderHint =>
+      '/storage/emulated/0/DCIM o /home/utente/Pictures';
+
+  @override
+  String get browseFolders => 'Sfoglia cartelle';
+
+  @override
+  String get selectLocalFolderError =>
+      'Inserisci o seleziona una cartella locale';
+
+  @override
+  String get noCloudsConfiguredSync =>
+      'Nessun cloud configurato. Configura un account cloud dalla Home prima di continuare.';
+
+  @override
+  String get remoteDestinationPath => 'Percorso Remoto di Destinazione';
+
+  @override
+  String get syncMode => 'Modalità di Sincronizzazione';
+
+  @override
+  String get syncModeCopy => 'Backup Incrementale';
+
+  @override
+  String get syncModeCopyDesc =>
+      'Carica file nuovi e modificati preservando sempre i file già presenti sul cloud.';
+
+  @override
+  String get syncModeSync => 'Sincronizzazione Mirror';
+
+  @override
+  String get syncModeSyncDesc =>
+      'Rende la destinazione remota identica alla cartella locale (i file eliminati localmente vengono rimossi dal cloud).';
+
+  @override
+  String get syncFrequency => 'Frequenza di Esecuzione';
+
+  @override
+  String get freqManual => 'Manuale (solo su richiesta)';
+
+  @override
+  String get freq15Min => 'Ogni 15 minuti';
+
+  @override
+  String get freq30Min => 'Ogni 30 minuti';
+
+  @override
+  String get freqHourly => 'Ogni ora';
+
+  @override
+  String get freq6Hours => 'Ogni 6 ore';
+
+  @override
+  String get freq12Hours => 'Ogni 12 ore';
+
+  @override
+  String get freqDaily => 'Ogni giorno (24 ore)';
+
+  @override
+  String get activateRuleImmediately => 'Attiva regola immediatamente';
+
+  @override
+  String get activateRuleImmediatelyDesc =>
+      'La sincronizzazione avverrà in background secondo l\'intervallo specificato';
+
+  @override
+  String get updateRule => 'Aggiorna';
+
+  @override
+  String get saveRule => 'Salva Regola';
+
+  @override
+  String get selectCloudProvider => 'Seleziona Provider Cloud:';
+
+  @override
+  String get cloudAccountName => 'Nome Account / Alias';
+
+  @override
+  String get cloudAccountNameHint =>
+      'Es. GoogleDrive, LavoroDropbox (senza spazi)';
+
+  @override
+  String get enterNameError => 'Inserisci un nome';
+
+  @override
+  String get noSpacesOrColons => 'Non sono ammessi spazi o \":\"';
+
+  @override
+  String get oauthMode => 'Modalità Client ID (OAuth2)';
+
+  @override
+  String get oauthOfficial => 'UnifyCloud (Ufficiale / Consigliato)';
+
+  @override
+  String get oauthRclone => 'Rclone (Sconsigliato - Quota condivisa)';
+
+  @override
+  String get oauthCustom => 'Client ID Personale (Avanzato)';
+
+  @override
+  String get officialOauthTitle => 'Credenziali Ufficiali UnifyCloud';
+
+  @override
+  String get officialOauthDesc =>
+      'Credenziali preconfigurate per collegarti immediatamente con quota dedicata e massima velocità.';
+
+  @override
+  String get rcloneOauthDesc =>
+      'Chiavi open-source condivise di Rclone. Potrebbero incorrere in limiti di quota o errori temporanei 403 Google.';
+
+  @override
+  String get customClientId => 'Client ID';
+
+  @override
+  String get customClientSecret => 'Client Secret';
+
+  @override
+  String get selectVaultDestination =>
+      'Seleziona il Cloud di destinazione per il Vault';
+
+  @override
+  String get vaultPasswordRequired => 'La password di cifratura è obbligatoria';
+
+  @override
+  String get vaultPasswordsDoNotMatch => 'Le password inserite non coincidono';
+
+  @override
+  String errorAddingRemote(String error) {
+    return 'Errore durante l\'aggiunta del remote: $error';
+  }
+
+  @override
+  String get fileNameEncryption => 'Cifratura dei Nomi di File';
+
+  @override
+  String get encryptStandard =>
+      'Standard (Nomi file completamente cifrati - Consigliato)';
+
+  @override
+  String get encryptObscure => 'Offuscamento semplice (Conserva le estensioni)';
+
+  @override
+  String get encryptOff => 'Disattivata (Nomi visibili in chiaro)';
+
+  @override
+  String get encryptFolderNames => 'Cifra anche i nomi delle cartelle';
+
+  @override
+  String get encryptFolderNamesDesc =>
+      'Nasconde completamente la struttura delle directory sul cloud';
+
+  @override
+  String get connectCloud => 'Connetti Cloud';
+
+  @override
+  String get reopenAuth => 'Riapri';
+
+  @override
+  String get linkCopiedToClipboard => 'Link copiato negli appunti!';
+
+  @override
+  String errorOpenBrowserGeneric(String error) {
+    return 'Impossibile aprire il browser: $error';
+  }
+
+  @override
+  String get shareableLinkTitle => 'Link Condivisibile';
+
+  @override
+  String shareLinkAccessDescription(String item) {
+    return 'Chiunque abbia questo link potrà accedere a $item:';
+  }
+
+  @override
+  String get open => 'Apri';
+
+  @override
+  String activeTransfersCount(int count) {
+    return '$count trasferimenti attivi';
+  }
+
+  @override
+  String transfersQueueCount(int count) {
+    return 'Coda Trasferimenti ($count)';
+  }
+
+  @override
+  String get noTransfersInProgress => 'Nessun trasferimento in corso';
+
+  @override
+  String get transfersEmptySubtitle =>
+      'Tutti i file scaricati o caricati appariranno qui';
+
+  @override
+  String get cancelled => 'Annullato';
+
+  @override
+  String get appLockedTitle => 'Applicazione bloccata';
+
+  @override
+  String get unlockWithBiometrics => 'Sblocca con Biometria';
+
+  @override
+  String get pinMustBe6Digits => 'Il PIN deve avere esattamente 6 cifre';
+
+  @override
+  String get pinIncorrect => 'Codice PIN errato. Riprova.';
+
+  @override
+  String get pinsDoNotMatch => 'I codici PIN non corrispondono. Riprova.';
+
+  @override
+  String get pinStepOld =>
+      'Inserisci il tuo codice PIN attuale per continuare.';
+
+  @override
+  String get pinStepNew => 'Inserisci il nuovo codice PIN a 6 cifre.';
+
+  @override
+  String get pinStepConfirm =>
+      'Digita nuovamente il nuovo PIN per confermarlo.';
+
+  @override
+  String get pinStepVerify =>
+      'Inserisci il tuo codice PIN per confermare l\'operazione.';
+
+  @override
+  String get pinTitleSetup => 'Imposta PIN di Sicurezza';
+
+  @override
+  String get pinTitleChange => 'Modifica PIN di Sicurezza';
+
+  @override
+  String get pinTitleVerify => 'Verifica di Sicurezza';
+
+  @override
+  String get pinContinue => 'Continua';
+
+  @override
+  String get errorDetails => 'Dettagli Errore';
+
+  @override
+  String get errorDetailsCopied => 'Dettagli errore copiati negli appunti';
+
+  @override
+  String get collapse => 'Comprimi';
+
+  @override
+  String get expand => 'Espandi';
+
+  @override
+  String get copyError => 'Copia errore';
+
+  @override
+  String get errorNetwork =>
+      'Connessione assente o instabile. Verifica la rete internet e riprova.';
+
+  @override
+  String get errorDiskSpace =>
+      'Spazio di archiviazione insufficiente o disco pieno. Libera memoria per continuare.';
+
+  @override
+  String get errorAuthExpired =>
+      'Sessione o token scaduto/revocato. Riconnetti il tuo account.';
+
+  @override
+  String get errorNotFound =>
+      'Elemento o cartella non trovata sul provider cloud.';
+
+  @override
+  String get errorPermissionDenied =>
+      'Permesso negato per eseguire questa operazione sul cloud.';
+
+  @override
+  String get errorGeneric => 'Si è verificato un errore durante l\'operazione.';
 }

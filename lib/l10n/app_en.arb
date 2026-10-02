@@ -30,7 +30,6 @@
   "loading": "Loading...",
   "success": "Operation completed",
   "error": "Error",
-
   "settingsTitle": "Settings",
   "resetDefaultsTooltip": "Restore Default Settings",
   "resetDialogTitle": "Reset Settings",
@@ -128,7 +127,6 @@
   "frameworkInfo": "Framework: Flutter (Material 3 Responsive)",
   "licenseInfo": "License: GNU General Public License v3.0 (GPL-3.0)",
   "copyrightInfo": "Copyright: © 2026 Leonardo Bani",
-
   "storageOverview": "Storage Overview",
   "connectedClouds": "Connected Clouds",
   "noCloudsConfigured": "No cloud accounts configured",
@@ -143,7 +141,6 @@
   "disconnectAccount": "Disconnect account",
   "disconnectConfirmTitle": "Disconnect account?",
   "disconnectConfirmContent": "Are you sure you want to disconnect this account? Remote files will remain intact.",
-
   "allFiles": "All Files",
   "emptyFolder": "This folder is empty",
   "emptyFolderSubtitle": "Upload files or create a subfolder to get started.",
@@ -168,7 +165,6 @@
   "queued": "Queued",
   "cancelTransfer": "Cancel transfer",
   "clearCompleted": "Clear completed",
-
   "syncRulesTitle": "Backup & Sync Rules",
   "newRule": "New Rule",
   "noSyncRules": "No synchronization rules configured",
@@ -183,7 +179,6 @@
   "syncInProgress": "Synchronization in progress...",
   "syncSuccess": "Synchronization completed",
   "syncFailed": "Synchronization failed",
-
   "addCloudDialogTitle": "Connect New Cloud",
   "selectProvider": "Select Cloud Provider",
   "accountNameLabel": "Account Name / Alias",
@@ -193,5 +188,634 @@
   "vaultConfirmPassword": "Confirm Password",
   "vaultSalt": "Salt / Secondary Password (Optional)",
   "encryptFileNames": "Encrypt file names",
-  "encryptDirNames": "Encrypt directory names"
+  "encryptDirNames": "Encrypt directory names",
+  "langSpanish": "Español",
+  "langFrench": "Français",
+  "langGerman": "Deutsch",
+  "langPortuguese": "Português",
+  "langRussian": "Русский",
+  "langChinese": "简体中文",
+  "langJapanese": "日本語",
+  "langKorean": "한국어",
+  "langArabic": "العربية",
+  "langHindi": "हिन्दी",
+  "langDutch": "Nederlands",
+  "langPolish": "Polski",
+  "langTurkish": "Türkçe",
+  "selectLanguage": "Select Language",
+  "searchLanguageHint": "Search language or country...",
+  "currentLanguage": "Current Language",
+  "systemDefaultWithLocale": "System Default ({locale})",
+  "refreshCloudsTooltip": "Refresh cloud configurations",
+  "storageOverviewAggregated": "Aggregated Storage Overview",
+  "ramEncryptionActive": "RAM Encryption Active",
+  "connectedAccountsCount": "Connected Cloud Accounts: {count}",
+  "noCloudsConfiguredHint": "No cloud accounts configured. Tap \"+ Connect New Cloud\" below.",
+  "percentUsed": "{percent}% used",
+  "availableSpace": "{space} available",
+  "calculatingQuota": "Calculating storage quotas or unlimited space...",
+  "syncAndBackup": "Sync & Backup",
+  "noRulesConfigured": "No rules configured",
+  "activeRulesCount": "{active}/{total} active rules",
+  "manage": "Manage",
+  "connectedCloudsCount": "Connected Clouds ({count})",
+  "connectNewCloud": "Connect New Cloud",
+  "noCloudProvidersConnected": "No Cloud Providers Connected",
+  "connectCloudDescription": "Connect Google Drive, Dropbox, OneDrive, SFTP or WebDAV to start syncing and exploring your files.",
+  "addFirstCloud": "Add First Cloud",
+  "vaultOnRemote": "VAULT ON {remote}",
+  "disconnectCloudTitle": "Disconnect Cloud",
+  "disconnectCloudPrompt": "Do you want to disconnect \"{name}\"? Credentials will be removed from encrypted storage.",
+  "disconnect": "Disconnect",
+  "freeSpace": "{space} free",
+  "storage": "Storage",
+  "available": "Available",
+  "exploreFiles": "Explore Files",
+  "paneLeft": "Left",
+  "paneRight": "Right",
+  "folderName": "Folder name",
+  "errorCreatingFolder": "Error creating folder: {error}",
+  "moveAction": "Move",
+  "copyAction": "Copy",
+  "transferBatchStarted": "{action} of {count} items to [{remote}] started...",
+  "errorTransferring": "Error during transfer: {error}",
+  "itemCopiedToClipboard": "\"{name}\" copied to clipboard",
+  "itemsCopiedToClipboard": "{count} items copied to clipboard",
+  "itemCutToClipboard": "\"{name}\" cut (ready to move)",
+  "itemsCutToClipboard": "{count} items cut (ready to move)",
+  "noFilesSelectedForDownload": "No files selected for download.",
+  "downloadingItems": "Downloading {count} items...",
+  "itemsDownloadedSuccess": "{count} items downloaded to \"{path}\"",
+  "errorStartingDownload": "Error starting download: {error}",
+  "deleteItemsConfirmTitle": "Delete {count} selected items?",
+  "deleteItemsConfirmPrompt": "Are you sure you want to permanently delete {count} selected items from the cloud?",
+  "itemsDeletedSuccess": "{count} items deleted",
+  "errorDeleting": "Error during deletion: {error}",
+  "uploadCompletedSuccess": "Upload completed successfully",
+  "errorUploading": "Error during upload: {error}",
+  "folderUploadCompletedSuccess": "Folder upload completed successfully",
+  "errorFolderUploading": "Error uploading folder: {error}",
+  "filesAlreadyInDirectory": "Files are already in this folder.",
+  "dragDropTransferStarted": "{action} of {count} items to [{remote}] started...",
+  "errorDragDrop": "Error during drag-and-drop transfer: {error}",
+  "closeSelection": "Close selection",
+  "itemsSelectedCount": "{count} selected",
+  "deselectAll": "Deselect all",
+  "copyToRemote": "Copy to {remote}",
+  "moveToRemote": "Move to {remote}",
+  "moreActions": "More actions",
+  "downloadSelected": "Download selected",
+  "copyToClipboard": "Copy to clipboard",
+  "cutToClipboard": "Cut to clipboard",
+  "selectCloud": "Select Cloud",
+  "closeSearch": "Close search",
+  "uploadFromDevice": "Upload from device",
+  "moreOptions": "More options",
+  "viewGrid": "Grid view",
+  "viewList": "List view",
+  "multiSelection": "Multiple selection",
+  "sortNameAsc": "Name (A-Z)",
+  "sortNameDesc": "Name (Z-A)",
+  "sortSizeDesc": "Size (Large -> Small)",
+  "sortSizeAsc": "Size (Small -> Large)",
+  "sortDateDesc": "Date (Newest first)",
+  "disableDualPane": "Disable Commander (Single Pane)",
+  "enableDualPane": "Enable Commander (Dual Pane)",
+  "itemsInClipboard": "{count} items in clipboard",
+  "pasteHere": "Paste here",
+  "noResults": "No results",
+  "noMatchingResults": "No files or folders match \"{query}\"",
+  "selectACloud": "Select a Cloud",
+  "selectCloudDescription": "Select a cloud provider from the menu above to view and explore your remote files.",
+  "optionsForItem": "Options for {name}",
+  "select": "Select",
+  "openWithSystemApp": "Open with system app",
+  "downloadToLocal": "Download to local",
+  "cut": "Cut (Move)",
+  "copyPath": "Copy path",
+  "info": "Information",
+  "generatingShareLink": "Generating share link for \"{name}\"...",
+  "errorPublicLink": "Public link error: {error}",
+  "noLinkGenerated": "No link generated by provider.",
+  "errorDownloading": "Error downloading: {error}",
+  "renameFolderTitle": "Rename folder",
+  "renameFileTitle": "Rename file",
+  "errorRenaming": "Error renaming: {error}",
+  "pathCopiedToClipboard": "Path copied to clipboard",
+  "itemDetailsPath": "Path: {path}",
+  "itemDetailsType": "Type: {type}",
+  "itemDetailsSize": "Size: {size}",
+  "itemDetailsModified": "Modified date: {date}",
+  "folder": "Folder",
+  "file": "File",
+  "selectCloudFirstLeft": "Select a cloud in the left pane first.",
+  "selectCloudFirstRight": "Select a cloud in the right pane first.",
+  "selectDestinationCloudLeft": "Select a destination cloud in the left pane first.",
+  "selectDestinationCloudRight": "Select a destination cloud in the right pane first.",
+  "noFilesToTransfer": "No files present or selected to transfer.",
+  "transferStarted": "{action} of {count} items from [{src}] to [{dst}] started...",
+  "swapPanesTooltip": "Swap panes (<->)",
+  "refreshBothPanesTooltip": "Refresh both panes",
+  "copyRight": "Copy to right ->",
+  "moveRight": "Move to right ->",
+  "copyLeft": "<- Copy to left",
+  "moveLeft": "<- Move to left",
+  "copyRightWithCount": "Copy right ({count}) ->",
+  "moveRightWithCount": "Move right ({count}) ->",
+  "copyLeftWithCount": "<- Copy left ({count})",
+  "moveLeftWithCount": "<- Move left ({count})",
+  "deleteRuleTitle": "Delete Rule",
+  "deleteRulePrompt": "Are you sure you want to delete sync rule \"{name}\"? Files on your device and in the cloud will not be deleted.",
+  "syncAll": "Sync All",
+  "newRuleTooltip": "New rule",
+  "backupBannerTitle": "Continuous Backup & Cloud Sync",
+  "backupBannerSubtitle": "Configure scheduled synchronizations between local folders and cloud remotes.",
+  "noActiveRules": "No Active Rules",
+  "noActiveRulesSubtitle": "Create your first rule to run automatic backups from your phone to Google Drive, Dropbox, SFTP or any other cloud.",
+  "createNewRule": "Create New Rule",
+  "ruleOptionsTooltip": "Rule options",
+  "syncNow": "Sync now",
+  "statusWaiting": "Pending",
+  "statusInProgress": "In progress...",
+  "statusCompleted": "Completed",
+  "statusFailed": "Failed",
+  "editRuleTitle": "Edit Backup Rule",
+  "newRuleTitle": "New Synchronization Rule",
+  "ruleDialogSubtitle": "Configure automatic backup between a local folder and the cloud.",
+  "ruleNameOptional": "Rule Name (optional)",
+  "ruleNameHint": "e.g. DCIM Photo Backup or Work Documents",
+  "sourceLocalFolder": "Local Source Folder",
+  "sourceLocalFolderHint": "/storage/emulated/0/DCIM or /home/user/Pictures",
+  "browseFolders": "Browse folders",
+  "selectLocalFolderError": "Please enter or select a local folder",
+  "noCloudsConfiguredSync": "No cloud configured. Configure a cloud account from Home before continuing.",
+  "remoteDestinationPath": "Remote Destination Path",
+  "syncMode": "Sync Mode",
+  "syncModeCopy": "Incremental Backup",
+  "syncModeCopyDesc": "Uploads new and modified files, preserving existing cloud files.",
+  "syncModeSync": "Mirror Synchronization",
+  "syncModeSyncDesc": "Makes the remote destination identical to the local folder (deletions locally are deleted on cloud).",
+  "syncFrequency": "Execution Frequency",
+  "freqManual": "Manual (on demand only)",
+  "freq15Min": "Every 15 minutes",
+  "freq30Min": "Every 30 minutes",
+  "freqHourly": "Every hour",
+  "freq6Hours": "Every 6 hours",
+  "freq12Hours": "Every 12 hours",
+  "freqDaily": "Every day (24 hours)",
+  "activateRuleImmediately": "Activate rule immediately",
+  "activateRuleImmediatelyDesc": "Sync will run in background according to the specified interval",
+  "updateRule": "Update",
+  "saveRule": "Save Rule",
+  "selectCloudProvider": "Select Cloud Provider:",
+  "cloudAccountName": "Cloud Account Name",
+  "cloudAccountNameHint": "e.g. GoogleDrive, WorkDropbox (no spaces)",
+  "enterNameError": "Please enter a name",
+  "noSpacesOrColons": "Spaces and \":\" are not allowed",
+  "oauthMode": "Client ID Mode (OAuth2)",
+  "oauthOfficial": "UnifyCloud (Official / Recommended)",
+  "oauthRclone": "Rclone (Not recommended - Shared quota)",
+  "oauthCustom": "Personal Client ID (Advanced)",
+  "officialOauthTitle": "Official UnifyCloud Credentials",
+  "officialOauthDesc": "Pre-configured credentials to connect immediately with dedicated quota and maximum speed.",
+  "rcloneOauthDesc": "Shared open-source Rclone keys. May encounter rate-limits or temporary Google 403 errors.",
+  "customClientId": "Client ID",
+  "customClientSecret": "Client Secret",
+  "selectVaultDestination": "Select destination cloud for Vault",
+  "vaultPasswordRequired": "Vault encryption password is required",
+  "vaultPasswordsDoNotMatch": "Passwords do not match",
+  "errorAddingRemote": "Error adding remote: {error}",
+  "fileNameEncryption": "File Name Encryption",
+  "encryptStandard": "Standard (Fully encrypted file names - Recommended)",
+  "encryptObscure": "Simple Obfuscation (Preserves extensions)",
+  "encryptOff": "Disabled (Visible file names)",
+  "encryptFolderNames": "Also encrypt folder names",
+  "encryptFolderNamesDesc": "Completely conceals directory structure on the cloud",
+  "connectCloud": "Connect Cloud",
+  "reopenAuth": "Reopen",
+  "linkCopiedToClipboard": "Link copied to clipboard!",
+  "errorOpenBrowserGeneric": "Unable to open browser: {error}",
+  "shareableLinkTitle": "Shareable Link",
+  "shareLinkAccessDescription": "Anyone with this link will be able to access {item}:",
+  "open": "Open",
+  "activeTransfersCount": "{count} active transfers",
+  "transfersQueueCount": "Transfer Queue ({count})",
+  "noTransfersInProgress": "No transfers in progress",
+  "transfersEmptySubtitle": "All downloaded or uploaded files will appear here",
+  "cancelled": "Cancelled",
+  "appLockedTitle": "Application Locked",
+  "unlockWithBiometrics": "Unlock with Biometrics",
+  "pinMustBe6Digits": "PIN must be exactly 6 digits",
+  "pinIncorrect": "Incorrect PIN. Try again.",
+  "pinsDoNotMatch": "PINs do not match. Try again.",
+  "pinStepOld": "Enter your current PIN to continue.",
+  "pinStepNew": "Enter your new 6-digit security PIN.",
+  "pinStepConfirm": "Re-enter the new PIN to confirm.",
+  "pinStepVerify": "Enter your PIN to confirm the operation.",
+  "pinTitleSetup": "Setup Security PIN",
+  "pinTitleChange": "Change Security PIN",
+  "pinTitleVerify": "Security Verification",
+  "pinContinue": "Continue",
+  "errorDetails": "Error Details",
+  "errorDetailsCopied": "Error details copied to clipboard",
+  "collapse": "Collapse",
+  "expand": "Expand",
+  "copyError": "Copy error",
+  "errorNetwork": "No connection or unstable network. Check your internet connection and try again.",
+  "errorDiskSpace": "Insufficient storage space or disk full. Free up memory to continue.",
+  "errorAuthExpired": "Session or token expired/revoked. Reconnect your account.",
+  "errorNotFound": "Item or folder not found on cloud provider.",
+  "errorPermissionDenied": "Permission denied for this operation on cloud.",
+  "errorGeneric": "An error occurred during the operation.",
+  "@systemDefaultWithLocale": {
+    "placeholders": {
+      "locale": {
+        "type": "String"
+      }
+    }
+  },
+  "@connectedAccountsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@percentUsed": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "@availableSpace": {
+    "placeholders": {
+      "space": {
+        "type": "String"
+      }
+    }
+  },
+  "@activeRulesCount": {
+    "placeholders": {
+      "active": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@connectedCloudsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@vaultOnRemote": {
+    "placeholders": {
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "@disconnectCloudPrompt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@freeSpace": {
+    "placeholders": {
+      "space": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorCreatingFolder": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@transferBatchStarted": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      },
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorTransferring": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@itemCopiedToClipboard": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@itemsCopiedToClipboard": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@itemCutToClipboard": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@itemsCutToClipboard": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@downloadingItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@itemsDownloadedSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorStartingDownload": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@deleteItemsConfirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@deleteItemsConfirmPrompt": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@itemsDeletedSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@errorDeleting": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorUploading": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorFolderUploading": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@dragDropTransferStarted": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      },
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorDragDrop": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@itemsSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@copyToRemote": {
+    "placeholders": {
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "@moveToRemote": {
+    "placeholders": {
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "@itemsInClipboard": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@noMatchingResults": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "@optionsForItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@generatingShareLink": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorPublicLink": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorDownloading": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorRenaming": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@itemDetailsPath": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@itemDetailsType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "@itemDetailsSize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "@itemDetailsModified": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@transferStarted": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      },
+      "src": {
+        "type": "String"
+      },
+      "dst": {
+        "type": "String"
+      }
+    }
+  },
+  "@copyRightWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@moveRightWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@copyLeftWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@moveLeftWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@deleteRulePrompt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorAddingRemote": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorOpenBrowserGeneric": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@shareLinkAccessDescription": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "@activeTransfersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@transfersQueueCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

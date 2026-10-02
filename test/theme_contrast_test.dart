@@ -90,6 +90,9 @@ void main() {
           ],
           child: MaterialApp(
             theme: AppTheme.lightTheme,
+            locale: const Locale('it'),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: const HomeScreen(),
           ),
         ),

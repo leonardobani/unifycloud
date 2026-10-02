@@ -350,14 +350,22 @@ void main() {
       expect(find.text('Appearance & Theme'), findsOneWidget);
       expect(find.text('Language'), findsOneWidget);
       expect(find.text('English'), findsOneWidget);
-      expect(find.text('Italiano'), findsOneWidget);
       expect(find.text('Files & Exploration'), findsOneWidget);
       expect(find.text('Community & Support'), findsOneWidget);
       expect(find.text('Security & Encryption'), findsOneWidget);
 
-      // Tap on Italiano segment to switch language
-      await tester.tap(find.text('Italiano'));
-      await tester.pumpAndSettle();
+      // Select Italiano to switch language (handles both SegmentedButton and Dropdown)
+      final dropdownFinder = find.byKey(const ValueKey('settings_language_dropdown'));
+      if (dropdownFinder.evaluate().isNotEmpty) {
+        await tester.tap(dropdownFinder);
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Italiano').last);
+        await tester.pumpAndSettle();
+      } else {
+        expect(find.text('Italiano'), findsOneWidget);
+        await tester.tap(find.text('Italiano'));
+        await tester.pumpAndSettle();
+      }
 
       // Verify UI immediately re-renders in Italian
       expect(find.text('Impostazioni'), findsOneWidget);
