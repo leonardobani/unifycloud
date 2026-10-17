@@ -12,10 +12,13 @@ void main() {
     test('Default values are correct', () {
       const settings = AppSettings();
       expect(settings.themeMode, equals(ThemeMode.system));
+      expect(settings.themeStyle, equals(AppThemeStyle.cosmic));
       expect(settings.showHiddenFiles, isFalse);
       expect(settings.confirmDelete, isTrue);
       expect(settings.customDownloadPath, isNull);
       expect(settings.maxConcurrentTransfers, equals(4));
+      expect(settings.autostartOnBoot, isFalse);
+      expect(settings.minimizeToTray, isTrue);
       expect(settings.language, equals('en'));
     });
 
@@ -23,36 +26,48 @@ void main() {
       const settings = AppSettings();
       final updated = settings.copyWith(
         themeMode: ThemeMode.dark,
+        themeStyle: AppThemeStyle.standard,
         showHiddenFiles: true,
         confirmDelete: false,
         customDownloadPath: () => '/home/user/Downloads',
         maxConcurrentTransfers: 8,
+        autostartOnBoot: true,
+        minimizeToTray: false,
         language: 'it',
       );
 
       expect(updated.themeMode, equals(ThemeMode.dark));
+      expect(updated.themeStyle, equals(AppThemeStyle.standard));
       expect(updated.showHiddenFiles, isTrue);
       expect(updated.confirmDelete, isFalse);
       expect(updated.customDownloadPath, equals('/home/user/Downloads'));
       expect(updated.maxConcurrentTransfers, equals(8));
+      expect(updated.autostartOnBoot, isTrue);
+      expect(updated.minimizeToTray, isFalse);
       expect(updated.language, equals('it'));
     });
 
     test('toJson and fromJson serialize and deserialize accurately', () {
       const settings = AppSettings(
         themeMode: ThemeMode.light,
+        themeStyle: AppThemeStyle.cosmic,
         showHiddenFiles: true,
         confirmDelete: false,
         customDownloadPath: '/custom/path',
         maxConcurrentTransfers: 2,
+        autostartOnBoot: true,
+        minimizeToTray: false,
       );
 
       final json = settings.toJson();
       expect(json['theme_mode'], equals('light'));
+      expect(json['theme_style'], equals('cosmic'));
       expect(json['show_hidden_files'], isTrue);
       expect(json['confirm_delete'], isFalse);
       expect(json['custom_download_path'], equals('/custom/path'));
       expect(json['max_concurrent_transfers'], equals(2));
+      expect(json['autostart_on_boot'], isTrue);
+      expect(json['minimize_to_tray'], isFalse);
 
       final restored = AppSettings.fromJson(json);
       expect(restored, equals(settings));
@@ -103,6 +118,9 @@ void main() {
       await notifier.setThemeMode(ThemeMode.light);
       expect(container.read(settingsProvider).themeMode, equals(ThemeMode.light));
 
+      await notifier.setThemeStyle(AppThemeStyle.cosmic);
+      expect(container.read(settingsProvider).themeStyle, equals(AppThemeStyle.cosmic));
+
       await notifier.setShowHiddenFiles(true);
       expect(container.read(settingsProvider).showHiddenFiles, isTrue);
 
@@ -115,10 +133,18 @@ void main() {
         equals('/storage/downloads'),
       );
 
+      await notifier.setAutostartOnBoot(true);
+      expect(container.read(settingsProvider).autostartOnBoot, isTrue);
+
+      await notifier.setMinimizeToTray(false);
+      expect(container.read(settingsProvider).minimizeToTray, isFalse);
+
       await notifier.resetToDefaults();
       expect(container.read(settingsProvider).themeMode, equals(ThemeMode.system));
       expect(container.read(settingsProvider).showHiddenFiles, isFalse);
       expect(container.read(settingsProvider).customDownloadPath, isNull);
+      expect(container.read(settingsProvider).autostartOnBoot, isFalse);
+      expect(container.read(settingsProvider).minimizeToTray, isTrue);
     });
   });
 
@@ -147,7 +173,7 @@ void main() {
     }
 
     testWidgets('Renders all standard settings sections', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(800, 1600));
+      await tester.binding.setSurfaceSize(const Size(800, 2400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(createSettingsApp());
@@ -167,6 +193,11 @@ void main() {
       expect(find.text('Mostra elementi nascosti'), findsOneWidget);
       expect(find.text('Conferma prima di eliminare'), findsOneWidget);
       expect(find.text('Cartella Download Predefinita'), findsOneWidget);
+
+      // Verify Desktop & Sistema section on Linux
+      expect(find.text('Desktop & Sistema'), findsOneWidget);
+      expect(find.text("Avvia all'avvio del sistema"), findsOneWidget);
+      expect(find.text('Riduci nel vassoio di sistema'), findsOneWidget);
 
       // Verify Section 3: Community & Sviluppo
       expect(find.text('Community & Sviluppo'), findsOneWidget);
@@ -212,7 +243,7 @@ void main() {
     testWidgets(
         'Tapping "Sostieni lo Sviluppatore" opens donation dialog with platforms',
         (tester) async {
-      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      await tester.binding.setSurfaceSize(const Size(800, 2000));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(createSettingsApp());

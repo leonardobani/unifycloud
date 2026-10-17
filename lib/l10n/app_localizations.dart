@@ -346,6 +346,48 @@ abstract class AppLocalizations {
   /// **'Dark'**
   String get themeDark;
 
+  /// No description provided for @themeStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Interface Style'**
+  String get themeStyle;
+
+  /// No description provided for @themeStyleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select desktop design style or automatic environment detection:'**
+  String get themeStyleSubtitle;
+
+  /// No description provided for @themeStyleAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto (Detect)'**
+  String get themeStyleAuto;
+
+  /// No description provided for @themeStyleStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get themeStyleStandard;
+
+  /// No description provided for @themeStyleCosmic.
+  ///
+  /// In en, this message translates to:
+  /// **'COSMIC (Default)'**
+  String get themeStyleCosmic;
+
+  /// No description provided for @themeStyleCosmicActive.
+  ///
+  /// In en, this message translates to:
+  /// **'COSMIC style is active across all devices (Teal in light mode, Pop Orange in dark mode)'**
+  String get themeStyleCosmicActive;
+
+  /// No description provided for @themeStyleCosmicDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'COSMIC desktop environment detected: COSMIC style is active (Teal in light mode, Pop Orange in dark mode)'**
+  String get themeStyleCosmicDetected;
+
   /// No description provided for @language.
   ///
   /// In en, this message translates to:
@@ -2571,6 +2613,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An error occurred during the operation.'**
   String get errorGeneric;
+
+  /// No description provided for @desktopAndSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Desktop & System'**
+  String get desktopAndSystem;
+
+  /// No description provided for @desktopAndSystemSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Startup behavior, background execution, and system tray'**
+  String get desktopAndSystemSubtitle;
+
+  /// No description provided for @autostartOnBoot.
+  ///
+  /// In en, this message translates to:
+  /// **'Start on system boot'**
+  String get autostartOnBoot;
+
+  /// No description provided for @autostartOnBootSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically launch UnifyCloud in the background on login'**
+  String get autostartOnBootSubtitle;
+
+  /// No description provided for @minimizeToTray.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimize to system tray'**
+  String get minimizeToTray;
+
+  /// No description provided for @minimizeToTraySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep UnifyCloud running in the background when the window is closed'**
+  String get minimizeToTraySubtitle;
+
+  /// No description provided for @trayStatusIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Idle (No active transfers)'**
+  String get trayStatusIdle;
+
+  /// No description provided for @trayStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} active transfers ({speed})'**
+  String trayStatusActive(int count, String speed);
+
+  /// No description provided for @trayShowWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show UnifyCloud'**
+  String get trayShowWindow;
+
+  /// No description provided for @trayHideWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide to system tray'**
+  String get trayHideWindow;
+
+  /// No description provided for @trayQuit.
+  ///
+  /// In en, this message translates to:
+  /// **'Quit UnifyCloud'**
+  String get trayQuit;
+
+  /// No description provided for @trayTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'UnifyCloud - Cloud Storage Manager'**
+  String get trayTooltip;
 }
 
 class _AppLocalizationsDelegate

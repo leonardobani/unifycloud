@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,6 +13,8 @@ import '../../providers/settings_provider.dart';
 import '../../services/app_lock_service.dart';
 import '../../services/secure_config_service.dart';
 import '../../utils/url_utils.dart';
+import '../theme/app_theme.dart';
+import '../theme/cosmic_icons.dart';
 import '../widgets/pin_setup_dialog.dart';
 
 /// Comprehensive settings, appearance, and developer support screen for UnifyCloud.
@@ -110,6 +115,7 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         children: [
+
           // Section 1: Aspetto & Tema & Lingua
           _buildThemeCard(context, settings, settingsNotifier, l10n),
           const SizedBox(height: 16),
@@ -118,7 +124,13 @@ class SettingsScreen extends ConsumerWidget {
           _buildFilesCard(context, settings, settingsNotifier, l10n),
           const SizedBox(height: 16),
 
-          // Section 3: Sviluppo & Open Source (GitLab & Donazioni)
+          // Section 3: Desktop & Sistema (Avvio automatico & System Tray)
+          if (!kIsWeb && (Platform.isLinux || Platform.isWindows || Platform.isMacOS)) ...[
+            _buildDesktopCard(context, settings, settingsNotifier, l10n),
+            const SizedBox(height: 16),
+          ],
+
+          // Section 4: Sviluppo & Open Source (GitLab & Donazioni)
           _buildCommunityAndSupportCard(context, l10n),
           const SizedBox(height: 16),
 
@@ -208,6 +220,96 @@ class SettingsScreen extends ConsumerWidget {
             Row(
               children: [
                 Icon(
+                  Icons.desktop_windows_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  l10n.themeStyle,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              l10n.themeStyleSubtitle,
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<AppThemeStyle>(
+                segments: [
+                  ButtonSegment<AppThemeStyle>(
+                    value: AppThemeStyle.cosmic,
+                    icon: const Icon(CosmicIcons.rocket),
+                    label: Text(l10n.themeStyleCosmic),
+                  ),
+                  ButtonSegment<AppThemeStyle>(
+                    value: AppThemeStyle.standard,
+                    icon: const Icon(CosmicIcons.palette),
+                    label: Text(l10n.themeStyleStandard),
+                  ),
+                  ButtonSegment<AppThemeStyle>(
+                    value: AppThemeStyle.auto,
+                    icon: const Icon(CosmicIcons.autoAwesome),
+                    label: Text(l10n.themeStyleAuto),
+                  ),
+                ],
+                selected: {settings.themeStyle},
+                onSelectionChanged: (newSelection) {
+                  if (newSelection.isNotEmpty) {
+                    notifier.setThemeStyle(newSelection.first);
+                  }
+                },
+              ),
+            ),
+            if (settings.themeStyle == AppThemeStyle.cosmic ||
+                (settings.themeStyle == AppThemeStyle.auto && AppTheme.isCosmicDesktopEnvironment())) ...[
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      CosmicIcons.autoAwesome,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        settings.themeStyle == AppThemeStyle.cosmic
+                            ? l10n.themeStyleCosmicActive
+                            : l10n.themeStyleCosmicDetected,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              child: Divider(height: 1),
+            ),
+            Row(
+              children: [
+                Icon(
                   Icons.language_outlined,
                   color: Theme.of(context).colorScheme.primary,
                 ),
@@ -280,45 +382,50 @@ class SettingsScreen extends ConsumerWidget {
                     ? settings.language
                     : 'system';
 
-                return InputDecorator(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outlineVariant,
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 4,
-                    ),
-                    prefixIcon: const Icon(Icons.language_outlined),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      key: const ValueKey('settings_language_dropdown'),
-                      value: currentSelected,
-                      isExpanded: true,
-                      items: availableOptions.map((code) {
-                        return DropdownMenuItem<String>(
-                          value: code,
-                          child: Row(
-                            children: [
-                              Icon(
-                                code == 'system'
-                                    ? Icons.auto_mode_outlined
-                                    : Icons.translate,
-                                size: 18,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(getLanguageDisplayName(code, l10n)),
-                            ],
+                  child: Row(
+                    children: [
+                      const Icon(Icons.language_outlined),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            key: const ValueKey('settings_language_dropdown'),
+                            value: currentSelected,
+                            isExpanded: true,
+                            items: availableOptions.map((code) {
+                              return DropdownMenuItem<String>(
+                                value: code,
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      code == 'system'
+                                          ? Icons.auto_mode_outlined
+                                          : Icons.translate,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(getLanguageDisplayName(code, l10n)),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (newVal) {
+                              if (newVal != null) {
+                                notifier.setLanguage(newVal);
+                              }
+                            },
                           ),
-                        );
-                      }).toList(),
-                      onChanged: (newVal) {
-                        if (newVal != null) {
-                          notifier.setLanguage(newVal);
-                        }
-                      },
-                    ),
+                        ),
+                      ),
+                    ],
                   ),
                 );
               },
@@ -1055,6 +1162,80 @@ class SettingsScreen extends ConsumerWidget {
             Text(l10n.copyrightInfo),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Desktop system integration, autostart, and system tray card.
+  Widget _buildDesktopCard(
+    BuildContext context,
+    AppSettings settings,
+    SettingsNotifier notifier,
+    AppLocalizations l10n,
+  ) {
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.desktop_windows_rounded,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  l10n.desktopAndSystem,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Text(
+              l10n.desktopAndSystemSubtitle,
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+          const Divider(height: 16),
+
+          // Autostart on Boot (Linux XDG autostart)
+          if (Platform.isLinux) ...[
+            SwitchListTile(
+              secondary: const Icon(Icons.power_settings_new_rounded),
+              title: Text(
+                l10n.autostartOnBoot,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              subtitle: Text(l10n.autostartOnBootSubtitle),
+              value: settings.autostartOnBoot,
+              onChanged: (val) {
+                notifier.setAutostartOnBoot(val);
+              },
+            ),
+            const Divider(height: 1),
+          ],
+
+          // Minimize to System Tray
+          SwitchListTile(
+            secondary: const Icon(Icons.vertical_align_bottom_rounded),
+            title: Text(
+              l10n.minimizeToTray,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitle: Text(l10n.minimizeToTraySubtitle),
+            value: settings.minimizeToTray,
+            onChanged: (val) {
+              notifier.setMinimizeToTray(val);
+            },
+          ),
+        ],
       ),
     );
   }

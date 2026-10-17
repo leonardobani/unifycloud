@@ -124,6 +124,30 @@ class AppLocalizationsHi extends AppLocalizations {
   String get themeDark => 'डार्क';
 
   @override
+  String get themeStyle => 'Interface Style';
+
+  @override
+  String get themeStyleSubtitle =>
+      'Select desktop design style or automatic environment detection:';
+
+  @override
+  String get themeStyleAuto => 'Auto (Detect)';
+
+  @override
+  String get themeStyleStandard => 'Standard';
+
+  @override
+  String get themeStyleCosmic => 'COSMIC (Default)';
+
+  @override
+  String get themeStyleCosmicActive =>
+      'COSMIC style is active across all devices (Teal in light mode, Pop Orange in dark mode)';
+
+  @override
+  String get themeStyleCosmicDetected =>
+      'COSMIC desktop environment detected: COSMIC style is active (Teal in light mode, Pop Orange in dark mode)';
+
+  @override
   String get language => 'भाषा';
 
   @override
@@ -1397,4 +1421,45 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get errorGeneric => 'ऑपरेशन के दौरान एक त्रुटि हुई।';
+
+  @override
+  String get desktopAndSystem => 'Desktop & System';
+
+  @override
+  String get desktopAndSystemSubtitle =>
+      'Startup behavior, background execution, and system tray';
+
+  @override
+  String get autostartOnBoot => 'Start on system boot';
+
+  @override
+  String get autostartOnBootSubtitle =>
+      'Automatically launch UnifyCloud in the background on login';
+
+  @override
+  String get minimizeToTray => 'Minimize to system tray';
+
+  @override
+  String get minimizeToTraySubtitle =>
+      'Keep UnifyCloud running in the background when the window is closed';
+
+  @override
+  String get trayStatusIdle => 'Idle (No active transfers)';
+
+  @override
+  String trayStatusActive(int count, String speed) {
+    return '$count active transfers ($speed)';
+  }
+
+  @override
+  String get trayShowWindow => 'Show UnifyCloud';
+
+  @override
+  String get trayHideWindow => 'Hide to system tray';
+
+  @override
+  String get trayQuit => 'Quit UnifyCloud';
+
+  @override
+  String get trayTooltip => 'UnifyCloud - Cloud Storage Manager';
 }

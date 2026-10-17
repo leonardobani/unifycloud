@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../theme/cosmic_icons.dart';
 import '../widgets/transfer_panel.dart';
 
 /// Root scaffold providing an adaptive responsive layout:
@@ -41,30 +42,30 @@ class MainScaffold extends StatelessWidget {
                   leading: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
                     child: Icon(
-                      Icons.cloud_sync,
+                      CosmicIcons.cloudSync,
                       size: 32,
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   destinations: [
                     NavigationRailDestination(
-                      icon: const Icon(Icons.home_outlined),
-                      selectedIcon: const Icon(Icons.home),
+                      icon: const Icon(CosmicIcons.home),
+                      selectedIcon: const Icon(CosmicIcons.homeFilled),
                       label: Text(l10n.home),
                     ),
                     NavigationRailDestination(
-                      icon: const Icon(Icons.folder_outlined),
-                      selectedIcon: const Icon(Icons.folder),
+                      icon: const Icon(CosmicIcons.explorer),
+                      selectedIcon: const Icon(CosmicIcons.explorerFilled),
                       label: Text(l10n.explorer),
                     ),
                     NavigationRailDestination(
-                      icon: const Icon(Icons.sync_outlined),
-                      selectedIcon: const Icon(Icons.sync),
+                      icon: const Icon(CosmicIcons.sync),
+                      selectedIcon: const Icon(CosmicIcons.syncFilled),
                       label: Text(l10n.sync),
                     ),
                     NavigationRailDestination(
-                      icon: const Icon(Icons.settings_outlined),
-                      selectedIcon: const Icon(Icons.settings),
+                      icon: const Icon(CosmicIcons.settings),
+                      selectedIcon: const Icon(CosmicIcons.settingsFilled),
                       label: Text(l10n.settings),
                     ),
                   ],
@@ -106,23 +107,23 @@ class MainScaffold extends StatelessWidget {
             onDestinationSelected: _onDestinationSelected,
             destinations: [
               NavigationDestination(
-                icon: const Icon(Icons.home_outlined),
-                selectedIcon: const Icon(Icons.home),
+                icon: const Icon(CosmicIcons.home),
+                selectedIcon: const Icon(CosmicIcons.homeFilled),
                 label: l10n.home,
               ),
               NavigationDestination(
-                icon: const Icon(Icons.folder_outlined),
-                selectedIcon: const Icon(Icons.folder),
+                icon: const Icon(CosmicIcons.explorer),
+                selectedIcon: const Icon(CosmicIcons.explorerFilled),
                 label: l10n.explorer,
               ),
               NavigationDestination(
-                icon: const Icon(Icons.sync_outlined),
-                selectedIcon: const Icon(Icons.sync),
+                icon: const Icon(CosmicIcons.sync),
+                selectedIcon: const Icon(CosmicIcons.syncFilled),
                 label: l10n.sync,
               ),
               NavigationDestination(
-                icon: const Icon(Icons.settings_outlined),
-                selectedIcon: const Icon(Icons.settings),
+                icon: const Icon(CosmicIcons.settings),
+                selectedIcon: const Icon(CosmicIcons.settingsFilled),
                 label: l10n.settings,
               ),
             ],

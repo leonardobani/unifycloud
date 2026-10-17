@@ -7,7 +7,9 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../models/transfer_models.dart';
+import '../services/background_service.dart';
 import '../services/rclone_service.dart';
+import '../services/tray_service.dart';
 import 'settings_provider.dart';
 
 class TransferState {
@@ -329,6 +331,7 @@ class TransferNotifier extends Notifier<TransferState> {
   }
 
   void _checkPollingStatus() {
+    _updateBackgroundMetrics();
     if (state.activeTransfers.isNotEmpty) {
       _startPolling();
     } else {
@@ -336,7 +339,30 @@ class TransferNotifier extends Notifier<TransferState> {
     }
   }
 
+  void _updateBackgroundMetrics() {
+    try {
+      if (state.activeTransfers.isNotEmpty) {
+        ref.read(appBackgroundServiceProvider).notifyTransferProgress(
+          activeCount: state.activeCount,
+          totalSpeed: state.totalSpeed,
+          averagePercentage: (state.averageProgress * 100).round(),
+          formattedSpeed: state.formattedTotalSpeed,
+        );
+        ref.read(trayServiceProvider).updateTransferStatus(
+          activeTransfers: state.activeCount,
+          formattedSpeed: state.formattedTotalSpeed,
+        );
+      } else {
+        ref.read(appBackgroundServiceProvider).notifyTransfersIdle();
+        ref.read(trayServiceProvider).updateTransferStatus(
+          activeTransfers: 0,
+        );
+      }
+    } catch (_) {}
+  }
+
   void _startPolling() {
+    _updateBackgroundMetrics();
     if (_pollingTimer != null && _pollingTimer!.isActive) return;
 
     state = state.copyWith(isPolling: true);
@@ -346,6 +372,7 @@ class TransferNotifier extends Notifier<TransferState> {
         try {
           final jobs = await _rclone.getAllTransfers();
           state = state.copyWith(transfers: jobs);
+          _updateBackgroundMetrics();
           if (state.activeTransfers.isEmpty) {
             _stopPolling();
           }
@@ -360,5 +387,6 @@ class TransferNotifier extends Notifier<TransferState> {
     _pollingTimer?.cancel();
     _pollingTimer = null;
     state = state.copyWith(isPolling: false);
+    _updateBackgroundMetrics();
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 
+import '../theme/cosmic_icons.dart';
+
 /// Renders a distinctive icon and color for files and directories based on type and extension.
 class FileTypeIcon extends StatelessWidget {
   final String fileName;
@@ -18,7 +20,7 @@ class FileTypeIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     if (isDir) {
       return Icon(
-        Icons.folder_rounded,
+        CosmicIcons.folder,
         size: size,
         color: Colors.amber.shade600,
       );
@@ -35,7 +37,7 @@ class FileTypeIcon extends StatelessWidget {
       case 'webp':
       case 'svg':
       case 'bmp':
-        return Icon(Icons.image_outlined, size: size, color: Colors.teal);
+        return Icon(CosmicIcons.image, size: size, color: Colors.teal);
 
       // Videos
       case 'mp4':
@@ -43,7 +45,7 @@ class FileTypeIcon extends StatelessWidget {
       case 'mov':
       case 'avi':
       case 'webm':
-        return Icon(Icons.movie_outlined, size: size, color: Colors.purple.shade300);
+        return Icon(CosmicIcons.video, size: size, color: Colors.purple.shade300);
 
       // Audio
       case 'mp3':
@@ -52,11 +54,11 @@ class FileTypeIcon extends StatelessWidget {
       case 'aac':
       case 'ogg':
       case 'm4a':
-        return Icon(Icons.audiotrack_outlined, size: size, color: Colors.pink.shade300);
+        return Icon(CosmicIcons.audio, size: size, color: Colors.pink.shade300);
 
       // PDF
       case 'pdf':
-        return Icon(Icons.picture_as_pdf_outlined, size: size, color: Colors.red.shade400);
+        return Icon(CosmicIcons.pdf, size: size, color: Colors.red.shade400);
 
       // Documents
       case 'doc':
@@ -65,20 +67,20 @@ class FileTypeIcon extends StatelessWidget {
       case 'rtf':
       case 'odt':
       case 'md':
-        return Icon(Icons.article_outlined, size: size, color: Colors.blue.shade400);
+        return Icon(CosmicIcons.document, size: size, color: Colors.blue.shade400);
 
       // Spreadsheets & Data
       case 'xls':
       case 'xlsx':
       case 'csv':
       case 'tsv':
-        return Icon(Icons.table_chart_outlined, size: size, color: Colors.green.shade500);
+        return Icon(CosmicIcons.spreadsheet, size: size, color: Colors.green.shade500);
 
       // Presentations
       case 'ppt':
       case 'pptx':
       case 'key':
-        return Icon(Icons.slideshow_outlined, size: size, color: Colors.orange.shade400);
+        return Icon(CosmicIcons.presentation, size: size, color: Colors.orange.shade400);
 
       // Archives
       case 'zip':
@@ -87,7 +89,7 @@ class FileTypeIcon extends StatelessWidget {
       case 'tar':
       case 'gz':
       case 'bz2':
-        return Icon(Icons.folder_zip_outlined, size: size, color: Colors.deepOrange.shade300);
+        return Icon(CosmicIcons.folderZip, size: size, color: Colors.deepOrange.shade300);
 
       // Code & Developer
       case 'dart':
@@ -104,11 +106,11 @@ class FileTypeIcon extends StatelessWidget {
       case 'cpp':
       case 'h':
       case 'sh':
-        return Icon(Icons.code_outlined, size: size, color: Colors.cyan.shade400);
+        return Icon(CosmicIcons.code, size: size, color: Colors.cyan.shade400);
 
       default:
         return Icon(
-          Icons.insert_drive_file_outlined,
+          CosmicIcons.file,
           size: size,
           color: Theme.of(context).colorScheme.onSurfaceVariant,
         );

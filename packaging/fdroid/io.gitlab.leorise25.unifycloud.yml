@@ -16,6 +16,7 @@ Builds:
     versionCode: 11
     commit: b4f4180223aa8315b32e1ebb2f1bda4314048fa0
     output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary: https://gitlab.com/leorise25/unifycloud/-/releases/v%v/downloads/app-armeabi-v7a-release.apk
     srclibs:
       - flutter@stable
     rm:
@@ -44,6 +45,7 @@ Builds:
     versionCode: 12
     commit: b4f4180223aa8315b32e1ebb2f1bda4314048fa0
     output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary: https://gitlab.com/leorise25/unifycloud/-/releases/v%v/downloads/app-arm64-v8a-release.apk
     srclibs:
       - flutter@stable
     rm:
@@ -72,6 +74,7 @@ Builds:
     versionCode: 13
     commit: b4f4180223aa8315b32e1ebb2f1bda4314048fa0
     output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary: https://gitlab.com/leorise25/unifycloud/-/releases/v%v/downloads/app-x86_64-release.apk
     srclibs:
       - flutter@stable
     rm:
@@ -95,6 +98,8 @@ Builds:
     build:
       - export PUB_CACHE=$(pwd)/.pub-cache
       - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-x64
+
+AllowedAPKSigningKeys: 806107340cf397e4c232e89a29538b689930f826446aa7debde8c1b9dff18aa9
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags

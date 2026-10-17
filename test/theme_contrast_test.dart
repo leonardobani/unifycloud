@@ -42,8 +42,8 @@ class SettingsMock extends SettingsNotifier {
 
 void main() {
   group('Material 3 Theme Definition Tests', () {
-    test('AppTheme.lightTheme follows M3 specifications', () {
-      final light = AppTheme.lightTheme;
+    test('AppTheme.standardLightTheme follows standard M3 specifications', () {
+      final light = AppTheme.standardLightTheme;
       expect(light.useMaterial3, isTrue);
       expect(light.brightness, equals(Brightness.light));
       expect(light.scaffoldBackgroundColor, equals(AppTheme.backgroundLight));
@@ -54,8 +54,8 @@ void main() {
       expect(light.dividerTheme.color, equals(AppTheme.borderLight));
     });
 
-    test('AppTheme.darkTheme follows M3 specifications', () {
-      final dark = AppTheme.darkTheme;
+    test('AppTheme.standardDarkTheme follows standard M3 specifications', () {
+      final dark = AppTheme.standardDarkTheme;
       expect(dark.useMaterial3, isTrue);
       expect(dark.brightness, equals(Brightness.dark));
       expect(dark.scaffoldBackgroundColor, equals(AppTheme.backgroundDark));
@@ -63,6 +63,56 @@ void main() {
       expect(dark.colorScheme.surface, equals(AppTheme.surfaceDark));
       expect(dark.appBarTheme.backgroundColor, equals(AppTheme.backgroundDark));
       expect(dark.dividerTheme.color, equals(AppTheme.borderDark));
+    });
+
+    test('AppTheme.lightTheme defaults to cosmicLightTheme with Cosmic Teal', () {
+      final light = AppTheme.lightTheme;
+      expect(light.useMaterial3, isTrue);
+      expect(light.brightness, equals(Brightness.light));
+      expect(light.scaffoldBackgroundColor, equals(AppTheme.cosmicBackgroundLight));
+      expect(light.cardTheme.color, equals(AppTheme.cosmicCardLight));
+      expect(light.colorScheme.primary, equals(AppTheme.cosmicTeal));
+      expect(light.appBarTheme.backgroundColor, equals(AppTheme.cosmicBackgroundLight));
+      expect(light.dividerTheme.color, equals(AppTheme.cosmicBorderLight));
+    });
+
+    test('AppTheme.darkTheme defaults to cosmicDarkTheme with Pop Orange', () {
+      final dark = AppTheme.darkTheme;
+      expect(dark.useMaterial3, isTrue);
+      expect(dark.brightness, equals(Brightness.dark));
+      expect(dark.scaffoldBackgroundColor, equals(AppTheme.cosmicBackgroundDark));
+      expect(dark.cardTheme.color, equals(AppTheme.cosmicCardDark));
+      expect(dark.colorScheme.primary, equals(AppTheme.popOrange));
+      expect(dark.appBarTheme.backgroundColor, equals(AppTheme.cosmicBackgroundDark));
+      expect(dark.dividerTheme.color, equals(AppTheme.cosmicBorderDark));
+    });
+
+    test('AppTheme.cosmicLightTheme follows COSMIC specifications with Cosmic Teal', () {
+      final cosmicLight = AppTheme.cosmicLightTheme;
+      expect(cosmicLight.useMaterial3, isTrue);
+      expect(cosmicLight.brightness, equals(Brightness.light));
+      expect(cosmicLight.scaffoldBackgroundColor, equals(AppTheme.cosmicBackgroundLight));
+      expect(cosmicLight.cardTheme.color, equals(AppTheme.cosmicCardLight));
+      expect(cosmicLight.colorScheme.primary, equals(AppTheme.cosmicTeal));
+      expect(cosmicLight.appBarTheme.backgroundColor, equals(AppTheme.cosmicBackgroundLight));
+      expect(cosmicLight.dividerTheme.color, equals(AppTheme.cosmicBorderLight));
+    });
+
+    test('AppTheme.cosmicDarkTheme follows COSMIC specifications with Pop Orange', () {
+      final cosmicDark = AppTheme.cosmicDarkTheme;
+      expect(cosmicDark.useMaterial3, isTrue);
+      expect(cosmicDark.brightness, equals(Brightness.dark));
+      expect(cosmicDark.scaffoldBackgroundColor, equals(AppTheme.cosmicBackgroundDark));
+      expect(cosmicDark.cardTheme.color, equals(AppTheme.cosmicCardDark));
+      expect(cosmicDark.colorScheme.primary, equals(AppTheme.popOrange));
+      expect(cosmicDark.appBarTheme.backgroundColor, equals(AppTheme.cosmicBackgroundDark));
+      expect(cosmicDark.dividerTheme.color, equals(AppTheme.cosmicBorderDark));
+    });
+
+    test('AppTheme.isCosmicActive resolves style correctly', () {
+      expect(AppTheme.isCosmicActive(AppThemeStyle.cosmic), isTrue);
+      expect(AppTheme.isCosmicActive(AppThemeStyle.standard), isFalse);
+      expect(AppTheme.isCosmicActive(AppThemeStyle.auto), equals(AppTheme.isCosmicDesktopEnvironment()));
     });
   });
 

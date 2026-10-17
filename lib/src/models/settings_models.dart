@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
 
+/// Visual theme style used across the application.
+enum AppThemeStyle {
+  /// Automatically detects desktop environment (e.g., COSMIC desktop on Linux).
+  auto,
+
+  /// Standard modern Material 3 theme.
+  standard,
+
+  /// System76 COSMIC desktop theme style.
+  cosmic,
+}
+
 /// Representation of user-configurable application preferences.
 class AppSettings {
   final ThemeMode themeMode;
+  final AppThemeStyle themeStyle;
   final bool showHiddenFiles;
   final bool confirmDelete;
   final String? customDownloadPath;
@@ -11,10 +24,13 @@ class AppSettings {
   final bool appLockEnabled;
   final bool useBiometrics;
   final int autoLockTimeoutMinutes;
+  final bool autostartOnBoot;
+  final bool minimizeToTray;
   final String language; // 'en', 'it', or 'system'
 
   const AppSettings({
     this.themeMode = ThemeMode.system,
+    this.themeStyle = AppThemeStyle.cosmic,
     this.showHiddenFiles = false,
     this.confirmDelete = true,
     this.customDownloadPath,
@@ -23,6 +39,8 @@ class AppSettings {
     this.appLockEnabled = false,
     this.useBiometrics = true,
     this.autoLockTimeoutMinutes = 0,
+    this.autostartOnBoot = false,
+    this.minimizeToTray = true,
     this.language = 'en',
   });
 
@@ -45,6 +63,7 @@ class AppSettings {
 
   AppSettings copyWith({
     ThemeMode? themeMode,
+    AppThemeStyle? themeStyle,
     bool? showHiddenFiles,
     bool? confirmDelete,
     String? Function()? customDownloadPath,
@@ -53,10 +72,13 @@ class AppSettings {
     bool? appLockEnabled,
     bool? useBiometrics,
     int? autoLockTimeoutMinutes,
+    bool? autostartOnBoot,
+    bool? minimizeToTray,
     String? language,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
+      themeStyle: themeStyle ?? this.themeStyle,
       showHiddenFiles: showHiddenFiles ?? this.showHiddenFiles,
       confirmDelete: confirmDelete ?? this.confirmDelete,
       customDownloadPath: customDownloadPath != null
@@ -69,6 +91,8 @@ class AppSettings {
       useBiometrics: useBiometrics ?? this.useBiometrics,
       autoLockTimeoutMinutes:
           autoLockTimeoutMinutes ?? this.autoLockTimeoutMinutes,
+      autostartOnBoot: autostartOnBoot ?? this.autostartOnBoot,
+      minimizeToTray: minimizeToTray ?? this.minimizeToTray,
       language: language ?? this.language,
     );
   }
@@ -76,6 +100,7 @@ class AppSettings {
   Map<String, dynamic> toJson() {
     return {
       'theme_mode': themeMode.name,
+      'theme_style': themeStyle.name,
       'show_hidden_files': showHiddenFiles,
       'confirm_delete': confirmDelete,
       'custom_download_path': customDownloadPath,
@@ -84,6 +109,8 @@ class AppSettings {
       'app_lock_enabled': appLockEnabled,
       'use_biometrics': useBiometrics,
       'auto_lock_timeout_minutes': autoLockTimeoutMinutes,
+      'autostart_on_boot': autostartOnBoot,
+      'minimize_to_tray': minimizeToTray,
       'language': language,
     };
   }
@@ -97,8 +124,19 @@ class AppSettings {
       mode = ThemeMode.light;
     }
 
+    AppThemeStyle style = AppThemeStyle.cosmic;
+    final styleStr = json['theme_style'] as String?;
+    if (styleStr == 'standard') {
+      style = AppThemeStyle.standard;
+    } else if (styleStr == 'auto') {
+      style = AppThemeStyle.auto;
+    } else if (styleStr == 'cosmic') {
+      style = AppThemeStyle.cosmic;
+    }
+
     return AppSettings(
       themeMode: mode,
+      themeStyle: style,
       showHiddenFiles: json['show_hidden_files'] as bool? ?? false,
       confirmDelete: json['confirm_delete'] as bool? ?? true,
       customDownloadPath: json['custom_download_path'] as String?,
@@ -109,6 +147,8 @@ class AppSettings {
       useBiometrics: json['use_biometrics'] as bool? ?? true,
       autoLockTimeoutMinutes:
           json['auto_lock_timeout_minutes'] as int? ?? 0,
+      autostartOnBoot: json['autostart_on_boot'] as bool? ?? false,
+      minimizeToTray: json['minimize_to_tray'] as bool? ?? true,
       language: json['language'] as String? ?? 'en',
     );
   }
@@ -118,6 +158,7 @@ class AppSettings {
     if (identical(this, other)) return true;
     return other is AppSettings &&
         other.themeMode == themeMode &&
+        other.themeStyle == themeStyle &&
         other.showHiddenFiles == showHiddenFiles &&
         other.confirmDelete == confirmDelete &&
         other.customDownloadPath == customDownloadPath &&
@@ -126,12 +167,15 @@ class AppSettings {
         other.appLockEnabled == appLockEnabled &&
         other.useBiometrics == useBiometrics &&
         other.autoLockTimeoutMinutes == autoLockTimeoutMinutes &&
+        other.autostartOnBoot == autostartOnBoot &&
+        other.minimizeToTray == minimizeToTray &&
         other.language == language;
   }
 
   @override
   int get hashCode => Object.hash(
         themeMode,
+        themeStyle,
         showHiddenFiles,
         confirmDelete,
         customDownloadPath,
@@ -140,6 +184,8 @@ class AppSettings {
         appLockEnabled,
         useBiometrics,
         autoLockTimeoutMinutes,
+        autostartOnBoot,
+        minimizeToTray,
         language,
       );
 }

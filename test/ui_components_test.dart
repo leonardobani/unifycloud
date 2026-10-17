@@ -7,6 +7,7 @@ import 'package:unifycloud/src/providers/cloud_accounts_provider.dart';
 import 'package:unifycloud/src/providers/file_explorer_provider.dart';
 import 'package:unifycloud/src/ui/screens/file_explorer_screen.dart';
 import 'package:unifycloud/src/ui/screens/home_screen.dart';
+import 'package:unifycloud/src/ui/theme/cosmic_icons.dart';
 import 'package:unifycloud/src/ui/widgets/breadcrumbs_bar.dart';
 import 'package:unifycloud/src/ui/widgets/file_type_icon.dart';
 
@@ -29,11 +30,36 @@ void main() {
         ),
       );
 
-      expect(find.byIcon(Icons.folder_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.picture_as_pdf_outlined), findsOneWidget);
-      expect(find.byIcon(Icons.image_outlined), findsOneWidget);
-      expect(find.byIcon(Icons.folder_zip_outlined), findsOneWidget);
-      expect(find.byIcon(Icons.code_outlined), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.explorerSvg,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.documentSvg,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.imageSvg,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.archiveSvg,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.codeSvg,
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('BreadcrumbsBar displays hierarchy trail', (tester) async {

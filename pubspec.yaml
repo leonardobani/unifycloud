@@ -26,6 +26,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  tray_manager: ^0.8.0
+  window_manager: ^0.5.2
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -36,3 +39,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/icons/

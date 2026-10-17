@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../models/settings_models.dart';
+import '../services/desktop_autostart_service.dart';
 
 /// Provider exposing the persistent [AppSettings] state.
 final settingsProvider =
@@ -52,6 +53,16 @@ class SettingsNotifier extends Notifier<AppSettings> {
     } catch (_) {
       // Fallback to default state on parse error
     }
+
+    try {
+      final autostartService = ref.read(desktopAutostartServiceProvider);
+      if (autostartService.isSupported) {
+        final isActuallyEnabled = await autostartService.isAutostartEnabled();
+        if (state.autostartOnBoot != isActuallyEnabled) {
+          state = state.copyWith(autostartOnBoot: isActuallyEnabled);
+        }
+      }
+    } catch (_) {}
   }
 
   /// Persists current settings to secure storage.
@@ -66,6 +77,11 @@ class SettingsNotifier extends Notifier<AppSettings> {
   /// Changes the application theme mode (system, light, dark).
   Future<void> setThemeMode(ThemeMode mode) async {
     await _persist(state.copyWith(themeMode: mode));
+  }
+
+  /// Changes the application visual theme style (auto, standard, cosmic).
+  Future<void> setThemeStyle(AppThemeStyle style) async {
+    await _persist(state.copyWith(themeStyle: style));
   }
 
   /// Toggles visibility of hidden files and directories.
@@ -112,6 +128,19 @@ class SettingsNotifier extends Notifier<AppSettings> {
   /// Updates inactivity auto-lock timeout in minutes (0 = immediately).
   Future<void> setAutoLockTimeoutMinutes(int minutes) async {
     await _persist(state.copyWith(autoLockTimeoutMinutes: minutes));
+  }
+
+  /// Enables or disables automatic startup on system boot (Linux XDG autostart).
+  Future<void> setAutostartOnBoot(bool enabled) async {
+    await _persist(state.copyWith(autostartOnBoot: enabled));
+    try {
+      await ref.read(desktopAutostartServiceProvider).setAutostartEnabled(enabled);
+    } catch (_) {}
+  }
+
+  /// Enables or disables running in the background / minimizing to tray.
+  Future<void> setMinimizeToTray(bool enabled) async {
+    await _persist(state.copyWith(minimizeToTray: enabled));
   }
 
   /// Changes the application language ('en', 'it', 'system').

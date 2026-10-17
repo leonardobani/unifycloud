@@ -554,6 +554,9 @@ void main() {
   group('SettingsScreen App Lock UI Tests', () {
     testWidgets('SettingsScreen displays App Lock toggle and controls',
         (tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 1800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
       final fakeStorage = FakeSecureStorage();
       final fakeAuth = FakeLocalAuthentication();
 

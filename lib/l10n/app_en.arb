@@ -40,6 +40,13 @@
   "themeSystem": "System",
   "themeLight": "Light",
   "themeDark": "Dark",
+  "themeStyle": "Interface Style",
+  "themeStyleSubtitle": "Select desktop design style or automatic environment detection:",
+  "themeStyleAuto": "Auto (Detect)",
+  "themeStyleStandard": "Standard",
+  "themeStyleCosmic": "COSMIC (Default)",
+  "themeStyleCosmicActive": "COSMIC style is active across all devices (Teal in light mode, Pop Orange in dark mode)",
+  "themeStyleCosmicDetected": "COSMIC desktop environment detected: COSMIC style is active (Teal in light mode, Pop Orange in dark mode)",
   "language": "Language",
   "languageSubtitle": "Select application interface language",
   "langEnglish": "English",
@@ -817,5 +824,27 @@
         "type": "int"
       }
     }
-  }
+  },
+  "desktopAndSystem": "Desktop & System",
+  "desktopAndSystemSubtitle": "Startup behavior, background execution, and system tray",
+  "autostartOnBoot": "Start on system boot",
+  "autostartOnBootSubtitle": "Automatically launch UnifyCloud in the background on login",
+  "minimizeToTray": "Minimize to system tray",
+  "minimizeToTraySubtitle": "Keep UnifyCloud running in the background when the window is closed",
+  "trayStatusIdle": "Idle (No active transfers)",
+  "trayStatusActive": "{count} active transfers ({speed})",
+  "@trayStatusActive": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "trayShowWindow": "Show UnifyCloud",
+  "trayHideWindow": "Hide to system tray",
+  "trayQuit": "Quit UnifyCloud",
+  "trayTooltip": "UnifyCloud - Cloud Storage Manager"
 }

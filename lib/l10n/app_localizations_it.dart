@@ -124,6 +124,30 @@ class AppLocalizationsIt extends AppLocalizations {
   String get themeDark => 'Scuro';
 
   @override
+  String get themeStyle => 'Stile Interfaccia';
+
+  @override
+  String get themeStyleSubtitle =>
+      'Seleziona lo stile grafico o rilevamento automatico dal sistema:';
+
+  @override
+  String get themeStyleAuto => 'Auto (Rileva)';
+
+  @override
+  String get themeStyleStandard => 'Standard';
+
+  @override
+  String get themeStyleCosmic => 'COSMIC (Predefinito)';
+
+  @override
+  String get themeStyleCosmicActive =>
+      'Stile COSMIC attivo su tutti i dispositivi (Teal in chiaro, Pop Orange in scuro)';
+
+  @override
+  String get themeStyleCosmicDetected =>
+      'Desktop COSMIC rilevato: stile COSMIC attivo (Teal in chiaro, Pop Orange in scuro)';
+
+  @override
   String get language => 'Lingua';
 
   @override
@@ -1404,4 +1428,45 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Si è verificato un errore durante l\'operazione.';
+
+  @override
+  String get desktopAndSystem => 'Desktop & Sistema';
+
+  @override
+  String get desktopAndSystemSubtitle =>
+      'Avvio automatico, esecuzione in background e vassoio di sistema';
+
+  @override
+  String get autostartOnBoot => 'Avvia all\'avvio del sistema';
+
+  @override
+  String get autostartOnBootSubtitle =>
+      'Avvia automaticamente UnifyCloud in background all\'accesso';
+
+  @override
+  String get minimizeToTray => 'Riduci nel vassoio di sistema';
+
+  @override
+  String get minimizeToTraySubtitle =>
+      'Mantieni UnifyCloud attivo in background alla chiusura della finestra';
+
+  @override
+  String get trayStatusIdle => 'Inattivo (Nessun trasferimento)';
+
+  @override
+  String trayStatusActive(int count, String speed) {
+    return '$count trasferimenti attivi ($speed)';
+  }
+
+  @override
+  String get trayShowWindow => 'Mostra UnifyCloud';
+
+  @override
+  String get trayHideWindow => 'Riduci nel vassoio';
+
+  @override
+  String get trayQuit => 'Esci da UnifyCloud';
+
+  @override
+  String get trayTooltip => 'UnifyCloud - Gestore Cloud';
 }
