@@ -1,8 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 /// Iconic symbolic icon set inspired by System76 COSMIC desktop environment (libcosmic).
 /// Provides consistent outline, rounded, and symbolic icons across all platforms.
 abstract final class CosmicIcons {
+  static const String _base = 'assets/icons/cosmic/';
+
+  // Shell & Navigation SVGs
+  static const String homeSvg = '${_base}user-home-symbolic.svg';
+  static const String explorerSvg = '${_base}folder-symbolic.svg';
+  static const String folderOpenSvg = '${_base}folder-open-symbolic.svg';
+  static const String syncSvg = '${_base}emblem-synchronizing-symbolic.svg';
+  static const String settingsSvg = '${_base}preferences-system-symbolic.svg';
+  static const String cloudSvg = '${_base}folder-remote-symbolic.svg';
+  static const String desktopSvg = '${_base}user-desktop-symbolic.svg';
+
+  // File Types & Mimetypes SVGs
+  static const String documentSvg = '${_base}x-office-document-symbolic.svg';
+  static const String imageSvg = '${_base}image-x-generic-symbolic.svg';
+  static const String videoSvg = '${_base}video-x-generic-symbolic.svg';
+  static const String audioSvg = '${_base}audio-x-generic-symbolic.svg';
+  static const String archiveSvg = '${_base}package-x-generic-symbolic.svg';
+  static const String codeSvg = '${_base}text-html-symbolic.svg';
+  static const String fileSvg = '${_base}text-x-generic-symbolic.svg';
+  static const String spreadsheetSvg = '${_base}x-office-spreadsheet-symbolic.svg';
+  static const String presentationSvg = '${_base}x-office-presentation-symbolic.svg';
+
+  // Hardware & Security SVGs
+  static const String terminalSvg = '${_base}utilities-terminal-symbolic.svg';
+  static const String lockSvg = '${_base}system-lock-screen-symbolic.svg';
+  static const String searchSvg = '${_base}system-search-symbolic.svg';
+  static const String refreshSvg = '${_base}view-refresh-symbolic.svg';
+
   // Navigation & Shell Places
   static const IconData home = Icons.home_outlined;
   static const IconData homeFilled = Icons.home_rounded;
@@ -86,4 +115,36 @@ abstract final class CosmicIcons {
   static const IconData viewGrid = Icons.grid_view_rounded;
   static const IconData viewList = Icons.view_list_rounded;
   static const IconData sort = Icons.sort_rounded;
+}
+
+/// A widget that renders a COSMIC symbolic SVG icon with theme-aware styling.
+class CosmicSvgIcon extends StatelessWidget {
+  final String asset;
+  final double? size;
+  final Color? color;
+  final String? semanticsLabel;
+
+  const CosmicSvgIcon(
+    this.asset, {
+    super.key,
+    this.size = 22,
+    this.color,
+    this.semanticsLabel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final iconTheme = IconTheme.of(context);
+    final effectiveSize = size ?? iconTheme.size ?? 22.0;
+    final effectiveColor =
+        color ?? iconTheme.color ?? Theme.of(context).colorScheme.onSurface;
+
+    return SvgPicture.asset(
+      asset,
+      width: effectiveSize,
+      height: effectiveSize,
+      colorFilter: ColorFilter.mode(effectiveColor, BlendMode.srcIn),
+      semanticsLabel: semanticsLabel,
+    );
+  }
 }
