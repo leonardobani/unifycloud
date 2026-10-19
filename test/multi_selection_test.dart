@@ -9,6 +9,7 @@ import 'package:unifycloud/src/providers/file_explorer_provider.dart';
 import 'package:unifycloud/src/providers/transfer_provider.dart';
 import 'package:unifycloud/src/services/rclone_service.dart';
 import 'package:unifycloud/src/ui/screens/file_explorer_screen.dart';
+import 'package:unifycloud/src/ui/theme/cosmic_icons.dart';
 
 class RcloneServiceMock implements RcloneService {
   final List<String> deletedPaths = [];
@@ -289,15 +290,50 @@ void main() {
 
       // Check CAB header
       expect(find.text('1 selezionati'), findsOneWidget);
-      expect(find.byIcon(Icons.close), findsOneWidget);
-      expect(find.byIcon(Icons.select_all), findsOneWidget);
-      expect(find.byIcon(Icons.download_outlined), findsOneWidget);
-      expect(find.byIcon(Icons.copy_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.cut_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.delete_outline), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.closeSvg,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.selectAllSvg,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.downloadSvg,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.copySvg,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.cutSvg,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.deleteSvg,
+        ),
+        findsOneWidget,
+      );
 
       // Normal mode action buttons should NOT be in the AppBar
-      expect(find.byIcon(Icons.upload_file_outlined), findsNothing);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.uploadSvg,
+        ),
+        findsNothing,
+      );
 
       // Check Checkbox is rendered on list items
       expect(find.byType(Checkbox), findsNWidgets(3));
@@ -334,12 +370,21 @@ void main() {
       expect(find.text('2 selezionati'), findsOneWidget);
 
       // Tap close button
-      await tester.tap(find.byIcon(Icons.close));
+      await tester.tap(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.closeSvg,
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Should return to normal AppBar
       expect(find.text('2 selezionati'), findsNothing);
-      expect(find.byIcon(Icons.upload_file_outlined), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.uploadSvg,
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Tapping Select All selects all items and updates icon to deselect', (tester) async {
@@ -373,18 +418,29 @@ void main() {
       expect(find.text('1 selezionati'), findsOneWidget);
 
       // Tap select all
-      await tester.tap(find.byIcon(Icons.select_all));
+      await tester.tap(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.selectAllSvg,
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('3 selezionati'), findsOneWidget);
-      expect(find.byIcon(Icons.deselect), findsOneWidget);
+      // When all are selected, the button has tooltip 'Deseleziona tutti' and closeSvg icon
+      final deselectBtn = find.byTooltip('Deseleziona tutti');
+      expect(deselectBtn, findsOneWidget);
 
       // Tap deselect all
-      await tester.tap(find.byIcon(Icons.deselect));
+      await tester.tap(deselectBtn);
       await tester.pumpAndSettle();
 
       expect(find.text('3 selezionati'), findsNothing);
-      expect(find.byIcon(Icons.upload_file_outlined), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.uploadSvg,
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Tapping an item in selection mode toggles selection', (tester) async {

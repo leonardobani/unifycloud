@@ -11,6 +11,7 @@ import 'package:unifycloud/src/providers/file_explorer_provider.dart';
 import 'package:unifycloud/src/providers/transfer_provider.dart';
 import 'package:unifycloud/src/services/rclone_service.dart';
 import 'package:unifycloud/src/ui/screens/file_explorer_screen.dart';
+import 'package:unifycloud/src/ui/theme/cosmic_icons.dart';
 
 class FakeRcloneServiceForUpload extends RcloneService {
   final List<Map<String, dynamic>> recordedTransfers = [];
@@ -346,9 +347,18 @@ void main() {
 
       // Verify menu items are displayed
       expect(find.text('Carica file'), findsOneWidget);
-      expect(find.text('Carica intera cartella'), findsOneWidget);
-      expect(find.byIcon(Icons.upload_file_outlined), findsNWidgets(2));
-      expect(find.byIcon(Icons.drive_folder_upload_outlined), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.uploadSvg,
+        ),
+        findsNWidgets(2),
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.folderOpenSvg,
+        ),
+        findsOneWidget,
+      );
     });
   });
 }

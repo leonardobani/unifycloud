@@ -8,6 +8,7 @@ import '../../providers/file_explorer_provider.dart';
 import '../../providers/transfer_provider.dart';
 import '../../services/file_opener_service.dart';
 import '../../services/rclone_service.dart';
+import '../theme/cosmic_icons.dart';
 import 'share_link_dialog.dart';
 
 /// Wraps a file or folder tile with context menu support (Desktop right-click & Mobile long-press).
@@ -58,7 +59,7 @@ class FileContextMenuRegion extends ConsumerWidget {
         const PopupMenuItem(
           value: 'select',
           child: ListTile(
-            leading: Icon(Icons.check_circle_outline),
+            leading: CosmicSvgIcon(CosmicIcons.checkCircleSvg, size: 20),
             title: Text('Seleziona'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -68,7 +69,7 @@ class FileContextMenuRegion extends ConsumerWidget {
           const PopupMenuItem(
             value: 'open_with',
             child: ListTile(
-              leading: Icon(Icons.open_in_new_rounded),
+              leading: CosmicSvgIcon(CosmicIcons.openWithSvg, size: 20),
               title: Text('Apri con app di sistema'),
               dense: true,
               contentPadding: EdgeInsets.zero,
@@ -77,7 +78,7 @@ class FileContextMenuRegion extends ConsumerWidget {
           const PopupMenuItem(
             value: 'download',
             child: ListTile(
-              leading: Icon(Icons.download_outlined),
+              leading: CosmicSvgIcon(CosmicIcons.downloadSvg, size: 20),
               title: Text('Scarica in locale'),
               dense: true,
               contentPadding: EdgeInsets.zero,
@@ -87,7 +88,7 @@ class FileContextMenuRegion extends ConsumerWidget {
         const PopupMenuItem(
           value: 'share_link',
           child: ListTile(
-            leading: Icon(Icons.share_outlined),
+            leading: CosmicSvgIcon(CosmicIcons.shareSvg, size: 20),
             title: Text('Crea link condivisibile'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -97,7 +98,7 @@ class FileContextMenuRegion extends ConsumerWidget {
           PopupMenuItem(
             value: 'copy_to_opposite',
             child: ListTile(
-              leading: const Icon(Icons.drive_file_move_rtl_outlined),
+              leading: const CosmicSvgIcon(CosmicIcons.chevronLeftSvg, size: 20),
               title: Text('Copia in ${oppositeState.currentRemote}'),
               dense: true,
               contentPadding: EdgeInsets.zero,
@@ -106,7 +107,7 @@ class FileContextMenuRegion extends ConsumerWidget {
           PopupMenuItem(
             value: 'move_to_opposite',
             child: ListTile(
-              leading: const Icon(Icons.drive_file_move_outlined),
+              leading: const CosmicSvgIcon(CosmicIcons.chevronRightSvg, size: 20),
               title: Text('Sposta in ${oppositeState.currentRemote}'),
               dense: true,
               contentPadding: EdgeInsets.zero,
@@ -116,7 +117,7 @@ class FileContextMenuRegion extends ConsumerWidget {
         const PopupMenuItem(
           value: 'copy',
           child: ListTile(
-            leading: Icon(Icons.copy_rounded),
+            leading: CosmicSvgIcon(CosmicIcons.copySvg, size: 20),
             title: Text('Copia'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -125,7 +126,7 @@ class FileContextMenuRegion extends ConsumerWidget {
         const PopupMenuItem(
           value: 'cut',
           child: ListTile(
-            leading: Icon(Icons.cut_rounded),
+            leading: CosmicSvgIcon(CosmicIcons.cutSvg, size: 20),
             title: Text('Taglia (Sposta)'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -134,7 +135,7 @@ class FileContextMenuRegion extends ConsumerWidget {
         const PopupMenuItem(
           value: 'rename',
           child: ListTile(
-            leading: Icon(Icons.edit_outlined),
+            leading: CosmicSvgIcon(CosmicIcons.editSvg, size: 20),
             title: Text('Rinomina'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -143,7 +144,7 @@ class FileContextMenuRegion extends ConsumerWidget {
         const PopupMenuItem(
           value: 'copy_path',
           child: ListTile(
-            leading: Icon(Icons.content_copy_outlined),
+            leading: CosmicSvgIcon(CosmicIcons.copySvg, size: 20),
             title: Text('Copia percorso'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -152,7 +153,7 @@ class FileContextMenuRegion extends ConsumerWidget {
         const PopupMenuItem(
           value: 'info',
           child: ListTile(
-            leading: Icon(Icons.info_outline),
+            leading: CosmicSvgIcon(CosmicIcons.infoSvg, size: 20),
             title: Text('Informazioni'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -162,7 +163,7 @@ class FileContextMenuRegion extends ConsumerWidget {
         const PopupMenuItem(
           value: 'delete',
           child: ListTile(
-            leading: Icon(Icons.delete_outline, color: Colors.red),
+            leading: CosmicSvgIcon(CosmicIcons.deleteSvg, color: Colors.red, size: 20),
             title: Text('Elimina', style: TextStyle(color: Colors.red)),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -446,7 +447,10 @@ class FileContextMenuRegion extends ConsumerWidget {
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            Icon(item.isDir ? Icons.folder : Icons.insert_drive_file),
+            CosmicSvgIcon(
+              item.isDir ? CosmicIcons.folderOpenSvg : CosmicIcons.fileSvg,
+              size: 20,
+            ),
             const SizedBox(width: 8),
             Expanded(child: Text(item.name, overflow: TextOverflow.ellipsis)),
           ],

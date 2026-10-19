@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/cloud_models.dart';
 import '../../providers/file_explorer_provider.dart';
+import '../theme/cosmic_icons.dart';
 
 /// Quick action toolbar at the bottom of the dual-pane Commander view,
 /// providing direct transfer (Copy, Move, Swap, Refresh) between the two panes.
@@ -161,7 +162,11 @@ class CommanderActionBar extends ConsumerWidget {
             children: [
               if (isVeryCompact)
                 IconButton.filledTonal(
-                  icon: const Icon(Icons.arrow_forward, size: 16),
+                  icon: const CosmicSvgIcon(
+                    CosmicIcons.chevronRightSvg,
+                    size: 16,
+                    fallbackMaterialIcon: Icons.arrow_forward,
+                  ),
                   tooltip: copyRightLabel,
                   onPressed: () => _handleTransfer(
                     context: context,
@@ -172,7 +177,11 @@ class CommanderActionBar extends ConsumerWidget {
                 )
               else
                 FilledButton.tonalIcon(
-                  icon: const Icon(Icons.arrow_forward, size: 16),
+                  icon: const CosmicSvgIcon(
+                    CosmicIcons.chevronRightSvg,
+                    size: 16,
+                    fallbackMaterialIcon: Icons.arrow_forward,
+                  ),
                   label: Text(
                     copyRightLabel,
                     style: const TextStyle(fontSize: 12),
@@ -186,7 +195,11 @@ class CommanderActionBar extends ConsumerWidget {
                 ),
               if (isVeryCompact)
                 IconButton.outlined(
-                  icon: const Icon(Icons.drive_file_move_outlined, size: 16),
+                  icon: const CosmicSvgIcon(
+                    CosmicIcons.chevronRightSvg,
+                    size: 16,
+                    fallbackMaterialIcon: Icons.drive_file_move_outlined,
+                  ),
                   tooltip: moveRightLabel,
                   onPressed: () => _handleTransfer(
                     context: context,
@@ -197,7 +210,11 @@ class CommanderActionBar extends ConsumerWidget {
                 )
               else
                 OutlinedButton.icon(
-                  icon: const Icon(Icons.drive_file_move_outlined, size: 16),
+                  icon: const CosmicSvgIcon(
+                    CosmicIcons.chevronRightSvg,
+                    size: 16,
+                    fallbackMaterialIcon: Icons.drive_file_move_outlined,
+                  ),
                   label: Text(
                     moveRightLabel,
                     style: const TextStyle(fontSize: 12),
@@ -216,13 +233,21 @@ class CommanderActionBar extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton.filledTonal(
-                icon: const Icon(Icons.swap_horiz_rounded, size: 20),
+                icon: const CosmicSvgIcon(
+                  CosmicIcons.splitScreenSvg,
+                  size: 20,
+                  fallbackMaterialIcon: Icons.swap_horiz_rounded,
+                ),
                 tooltip: 'Scambia pannelli (<->)',
                 onPressed: () => _handleSwapPanes(ref),
               ),
               const SizedBox(width: 8),
               IconButton.filledTonal(
-                icon: const Icon(Icons.sync_rounded, size: 20),
+                icon: const CosmicSvgIcon(
+                  CosmicIcons.syncSvg,
+                  size: 20,
+                  fallbackMaterialIcon: Icons.sync_rounded,
+                ),
                 tooltip: 'Aggiorna entrambi i pannelli',
                 onPressed: () {
                   ref.read(leftProvider.notifier).refresh();
@@ -239,7 +264,11 @@ class CommanderActionBar extends ConsumerWidget {
             children: [
               if (isVeryCompact)
                 IconButton.outlined(
-                  icon: const Icon(Icons.drive_file_move_rtl_outlined, size: 16),
+                  icon: const CosmicSvgIcon(
+                    CosmicIcons.chevronLeftSvg,
+                    size: 16,
+                    fallbackMaterialIcon: Icons.drive_file_move_rtl_outlined,
+                  ),
                   tooltip: moveLeftLabel,
                   onPressed: () => _handleTransfer(
                     context: context,
@@ -250,7 +279,11 @@ class CommanderActionBar extends ConsumerWidget {
                 )
               else
                 OutlinedButton.icon(
-                  icon: const Icon(Icons.drive_file_move_rtl_outlined, size: 16),
+                  icon: const CosmicSvgIcon(
+                    CosmicIcons.chevronLeftSvg,
+                    size: 16,
+                    fallbackMaterialIcon: Icons.drive_file_move_rtl_outlined,
+                  ),
                   label: Text(
                     moveLeftLabel,
                     style: const TextStyle(fontSize: 12),
@@ -264,7 +297,11 @@ class CommanderActionBar extends ConsumerWidget {
                 ),
               if (isVeryCompact)
                 IconButton.filledTonal(
-                  icon: const Icon(Icons.arrow_back, size: 16),
+                  icon: const CosmicSvgIcon(
+                    CosmicIcons.chevronLeftSvg,
+                    size: 16,
+                    fallbackMaterialIcon: Icons.arrow_back,
+                  ),
                   tooltip: copyLeftLabel,
                   onPressed: () => _handleTransfer(
                     context: context,
@@ -275,7 +312,11 @@ class CommanderActionBar extends ConsumerWidget {
                 )
               else
                 FilledButton.tonalIcon(
-                  icon: const Icon(Icons.arrow_back, size: 16),
+                  icon: const CosmicSvgIcon(
+                    CosmicIcons.chevronLeftSvg,
+                    size: 16,
+                    fallbackMaterialIcon: Icons.arrow_back,
+                  ),
                   label: Text(
                     copyLeftLabel,
                     style: const TextStyle(fontSize: 12),

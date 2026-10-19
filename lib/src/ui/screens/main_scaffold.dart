@@ -41,31 +41,56 @@ class MainScaffold extends StatelessWidget {
                   extended: constraints.maxWidth > 1000,
                   leading: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Icon(
-                      CosmicIcons.cloudSync,
+                    child: CosmicSvgIcon(
+                      CosmicIcons.cloudSyncSvg,
                       size: 32,
                       color: Theme.of(context).colorScheme.primary,
+                      fallbackMaterialIcon: CosmicIcons.cloudSync,
                     ),
                   ),
                   destinations: [
                     NavigationRailDestination(
-                      icon: const Icon(CosmicIcons.home),
-                      selectedIcon: const Icon(CosmicIcons.homeFilled),
+                      icon: const CosmicSvgIcon(
+                        CosmicIcons.homeSvg,
+                        fallbackMaterialIcon: CosmicIcons.home,
+                      ),
+                      selectedIcon: const CosmicSvgIcon(
+                        CosmicIcons.homeSvg,
+                        fallbackMaterialIcon: CosmicIcons.homeFilled,
+                      ),
                       label: Text(l10n.home),
                     ),
                     NavigationRailDestination(
-                      icon: const Icon(CosmicIcons.explorer),
-                      selectedIcon: const Icon(CosmicIcons.explorerFilled),
+                      icon: const CosmicSvgIcon(
+                        CosmicIcons.explorerSvg,
+                        fallbackMaterialIcon: CosmicIcons.explorer,
+                      ),
+                      selectedIcon: const CosmicSvgIcon(
+                        CosmicIcons.folderOpenSvg,
+                        fallbackMaterialIcon: CosmicIcons.explorerFilled,
+                      ),
                       label: Text(l10n.explorer),
                     ),
                     NavigationRailDestination(
-                      icon: const Icon(CosmicIcons.sync),
-                      selectedIcon: const Icon(CosmicIcons.syncFilled),
+                      icon: const CosmicSvgIcon(
+                        CosmicIcons.syncSvg,
+                        fallbackMaterialIcon: CosmicIcons.sync,
+                      ),
+                      selectedIcon: const CosmicSvgIcon(
+                        CosmicIcons.syncSvg,
+                        fallbackMaterialIcon: CosmicIcons.syncFilled,
+                      ),
                       label: Text(l10n.sync),
                     ),
                     NavigationRailDestination(
-                      icon: const Icon(CosmicIcons.settings),
-                      selectedIcon: const Icon(CosmicIcons.settingsFilled),
+                      icon: const CosmicSvgIcon(
+                        CosmicIcons.settingsSvg,
+                        fallbackMaterialIcon: CosmicIcons.settings,
+                      ),
+                      selectedIcon: const CosmicSvgIcon(
+                        CosmicIcons.settingsSvg,
+                        fallbackMaterialIcon: CosmicIcons.settingsFilled,
+                      ),
                       label: Text(l10n.settings),
                     ),
                   ],
@@ -107,23 +132,47 @@ class MainScaffold extends StatelessWidget {
             onDestinationSelected: _onDestinationSelected,
             destinations: [
               NavigationDestination(
-                icon: const Icon(CosmicIcons.home),
-                selectedIcon: const Icon(CosmicIcons.homeFilled),
+                icon: const CosmicSvgIcon(
+                  CosmicIcons.homeSvg,
+                  fallbackMaterialIcon: CosmicIcons.home,
+                ),
+                selectedIcon: const CosmicSvgIcon(
+                  CosmicIcons.homeSvg,
+                  fallbackMaterialIcon: CosmicIcons.homeFilled,
+                ),
                 label: l10n.home,
               ),
               NavigationDestination(
-                icon: const Icon(CosmicIcons.explorer),
-                selectedIcon: const Icon(CosmicIcons.explorerFilled),
+                icon: const CosmicSvgIcon(
+                  CosmicIcons.explorerSvg,
+                  fallbackMaterialIcon: CosmicIcons.explorer,
+                ),
+                selectedIcon: const CosmicSvgIcon(
+                  CosmicIcons.folderOpenSvg,
+                  fallbackMaterialIcon: CosmicIcons.explorerFilled,
+                ),
                 label: l10n.explorer,
               ),
               NavigationDestination(
-                icon: const Icon(CosmicIcons.sync),
-                selectedIcon: const Icon(CosmicIcons.syncFilled),
+                icon: const CosmicSvgIcon(
+                  CosmicIcons.syncSvg,
+                  fallbackMaterialIcon: CosmicIcons.sync,
+                ),
+                selectedIcon: const CosmicSvgIcon(
+                  CosmicIcons.syncSvg,
+                  fallbackMaterialIcon: CosmicIcons.syncFilled,
+                ),
                 label: l10n.sync,
               ),
               NavigationDestination(
-                icon: const Icon(CosmicIcons.settings),
-                selectedIcon: const Icon(CosmicIcons.settingsFilled),
+                icon: const CosmicSvgIcon(
+                  CosmicIcons.settingsSvg,
+                  fallbackMaterialIcon: CosmicIcons.settings,
+                ),
+                selectedIcon: const CosmicSvgIcon(
+                  CosmicIcons.settingsSvg,
+                  fallbackMaterialIcon: CosmicIcons.settingsFilled,
+                ),
                 label: l10n.settings,
               ),
             ],

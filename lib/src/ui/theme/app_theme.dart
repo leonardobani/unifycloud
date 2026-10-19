@@ -117,6 +117,7 @@ class AppTheme {
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
       ),
+      extensions: const [AppIconTheme(isCosmic: false)],
     );
   }
 
@@ -189,6 +190,7 @@ class AppTheme {
           borderSide: BorderSide(color: primaryColor, width: 1.5),
         ),
       ),
+      extensions: const [AppIconTheme(isCosmic: false)],
     );
   }
 
@@ -270,6 +272,7 @@ class AppTheme {
           ),
         ),
       ),
+      extensions: const [AppIconTheme(isCosmic: true)],
     );
   }
 
@@ -348,6 +351,7 @@ class AppTheme {
           ),
         ),
       ),
+      extensions: const [AppIconTheme(isCosmic: true)],
     );
   }
 
@@ -396,6 +400,30 @@ class AppTheme {
         return CosmicIcons.lock;
       default:
         return CosmicIcons.cloud;
+    }
+  }
+
+  /// COSMIC SVG icon associated with each cloud provider.
+  static String getProviderSvg(String type) {
+    switch (type.toLowerCase()) {
+      case 'drive':
+        return CosmicIcons.cloudSvg;
+      case 'dropbox':
+        return CosmicIcons.archiveSvg;
+      case 'onedrive':
+        return CosmicIcons.weatherCloudsSvg;
+      case 's3':
+        return CosmicIcons.disksSvg;
+      case 'sftp':
+        return CosmicIcons.terminalSvg;
+      case 'webdav':
+        return CosmicIcons.serverSvg;
+      case 'local':
+        return CosmicIcons.laptopSvg;
+      case 'crypt':
+        return CosmicIcons.lockSvg;
+      default:
+        return CosmicIcons.cloudSvg;
     }
   }
 }

@@ -77,7 +77,7 @@ class SettingsScreen extends ConsumerWidget {
         title: Text(l10n.settingsTitle),
         actions: [
           IconButton(
-            icon: const Icon(Icons.restore_outlined),
+            icon: const CosmicSvgIcon(CosmicIcons.refreshSvg, size: 20),
             tooltip: l10n.resetDefaultsTooltip,
             onPressed: () async {
               final confirm = await showDialog<bool>(
@@ -161,9 +161,10 @@ class SettingsScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.palette_outlined,
+                CosmicSvgIcon(
+                  CosmicIcons.paletteSvg,
                   color: Theme.of(context).colorScheme.primary,
+                  size: 20,
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -189,17 +190,17 @@ class SettingsScreen extends ConsumerWidget {
                     segments: [
                       ButtonSegment<ThemeMode>(
                         value: ThemeMode.system,
-                        icon: const Icon(Icons.brightness_auto_outlined),
+                        icon: const CosmicSvgIcon(CosmicIcons.weatherCloudsSvg, size: 18),
                         label: Text(l10n.themeSystem),
                       ),
                       ButtonSegment<ThemeMode>(
                         value: ThemeMode.light,
-                        icon: const Icon(Icons.light_mode_outlined),
+                        icon: const CosmicSvgIcon(CosmicIcons.lightModeSvg, size: 18),
                         label: Text(l10n.themeLight),
                       ),
                       ButtonSegment<ThemeMode>(
                         value: ThemeMode.dark,
-                        icon: const Icon(Icons.dark_mode_outlined),
+                        icon: const CosmicSvgIcon(CosmicIcons.darkModeSvg, size: 18),
                         label: Text(l10n.themeDark),
                       ),
                     ],
@@ -219,9 +220,10 @@ class SettingsScreen extends ConsumerWidget {
             ),
             Row(
               children: [
-                Icon(
-                  Icons.desktop_windows_outlined,
+                CosmicSvgIcon(
+                  CosmicIcons.desktopSvg,
                   color: Theme.of(context).colorScheme.primary,
+                  size: 20,
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -245,17 +247,17 @@ class SettingsScreen extends ConsumerWidget {
                 segments: [
                   ButtonSegment<AppThemeStyle>(
                     value: AppThemeStyle.cosmic,
-                    icon: const Icon(CosmicIcons.rocket),
+                    icon: const CosmicSvgIcon(CosmicIcons.rocketSvg, size: 18),
                     label: Text(l10n.themeStyleCosmic),
                   ),
                   ButtonSegment<AppThemeStyle>(
                     value: AppThemeStyle.standard,
-                    icon: const Icon(CosmicIcons.palette),
+                    icon: const CosmicSvgIcon(CosmicIcons.paletteSvg, size: 18),
                     label: Text(l10n.themeStyleStandard),
                   ),
                   ButtonSegment<AppThemeStyle>(
                     value: AppThemeStyle.auto,
-                    icon: const Icon(CosmicIcons.autoAwesome),
+                    icon: const CosmicSvgIcon(CosmicIcons.weatherCloudsSvg, size: 18),
                     label: Text(l10n.themeStyleAuto),
                   ),
                 ],
@@ -281,8 +283,8 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(
-                      CosmicIcons.autoAwesome,
+                    CosmicSvgIcon(
+                      CosmicIcons.rocketSvg,
                       size: 16,
                       color: Theme.of(context).colorScheme.primary,
                     ),
@@ -309,9 +311,10 @@ class SettingsScreen extends ConsumerWidget {
             ),
             Row(
               children: [
-                Icon(
-                  Icons.language_outlined,
+                CosmicSvgIcon(
+                  CosmicIcons.languageSvg,
                   color: Theme.of(context).colorScheme.primary,
+                  size: 20,
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -342,10 +345,9 @@ class SettingsScreen extends ConsumerWidget {
                         ...supported.map(
                           (loc) => ButtonSegment<String>(
                             value: loc.languageCode,
-                            icon: Icon(
-                              loc.languageCode == 'en'
-                                  ? Icons.language
-                                  : Icons.translate,
+                            icon: const CosmicSvgIcon(
+                              CosmicIcons.languageSvg,
+                              size: 18,
                             ),
                             label: Text(
                               getLanguageDisplayName(loc.languageCode, l10n),
@@ -354,7 +356,7 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                         ButtonSegment<String>(
                           value: 'system',
-                          icon: const Icon(Icons.auto_mode_outlined),
+                          icon: const CosmicSvgIcon(CosmicIcons.weatherCloudsSvg, size: 18),
                           label: Text(l10n.langSystem),
                         ),
                       ],
@@ -392,7 +394,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.language_outlined),
+                      const CosmicSvgIcon(CosmicIcons.languageSvg, size: 20),
                       const SizedBox(width: 12),
                       Expanded(
                         child: DropdownButtonHideUnderline(
@@ -405,10 +407,10 @@ class SettingsScreen extends ConsumerWidget {
                                 value: code,
                                 child: Row(
                                   children: [
-                                    Icon(
+                                    CosmicSvgIcon(
                                       code == 'system'
-                                          ? Icons.auto_mode_outlined
-                                          : Icons.translate,
+                                          ? CosmicIcons.weatherCloudsSvg
+                                          : CosmicIcons.languageSvg,
                                       size: 18,
                                     ),
                                     const SizedBox(width: 8),
@@ -451,9 +453,10 @@ class SettingsScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Row(
               children: [
-                Icon(
-                  Icons.folder_outlined,
+                CosmicSvgIcon(
+                  CosmicIcons.folderOpenSvg,
                   color: Theme.of(context).colorScheme.primary,
+                  size: 20,
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -466,7 +469,7 @@ class SettingsScreen extends ConsumerWidget {
           SwitchListTile(
             title: Text(l10n.showHiddenFiles),
             subtitle: Text(l10n.showHiddenFilesSubtitle),
-            secondary: const Icon(Icons.visibility_outlined),
+            secondary: const CosmicSvgIcon(CosmicIcons.visibilitySvg, size: 20),
             value: settings.showHiddenFiles,
             onChanged: (val) => notifier.setShowHiddenFiles(val),
           ),
@@ -474,7 +477,7 @@ class SettingsScreen extends ConsumerWidget {
           SwitchListTile(
             title: Text(l10n.confirmBeforeDelete),
             subtitle: Text(l10n.confirmBeforeDeleteSubtitle),
-            secondary: const Icon(Icons.delete_sweep_outlined),
+            secondary: const CosmicSvgIcon(CosmicIcons.trashSvg, size: 20),
             value: settings.confirmDelete,
             onChanged: (val) => notifier.setConfirmDelete(val),
           ),
@@ -482,13 +485,13 @@ class SettingsScreen extends ConsumerWidget {
           SwitchListTile(
             title: Text(l10n.dualPaneMode),
             subtitle: Text(l10n.dualPaneModeSubtitle),
-            secondary: const Icon(Icons.splitscreen),
+            secondary: const CosmicSvgIcon(CosmicIcons.splitScreenSvg, size: 20),
             value: settings.dualPaneEnabled,
             onChanged: (val) => notifier.setDualPaneEnabled(val),
           ),
           const Divider(height: 1),
           ListTile(
-            leading: const Icon(Icons.downloading_outlined),
+            leading: const CosmicSvgIcon(CosmicIcons.downloadSvg, size: 20),
             title: Text(l10n.defaultDownloadFolder),
             subtitle: Text(
               settings.customDownloadPath != null &&
@@ -513,12 +516,12 @@ class SettingsScreen extends ConsumerWidget {
               children: [
                 if (settings.customDownloadPath != null)
                   IconButton(
-                    icon: const Icon(Icons.restore, size: 20),
+                    icon: const CosmicSvgIcon(CosmicIcons.refreshSvg, size: 20),
                     tooltip: l10n.restoreDefaultPath,
                     onPressed: () => notifier.setCustomDownloadPath(null),
                   ),
                 FilledButton.tonalIcon(
-                  icon: const Icon(Icons.edit_outlined, size: 16),
+                  icon: const CosmicSvgIcon(CosmicIcons.editSvg, size: 16),
                   label: Text(l10n.change),
                   onPressed: () => _showCustomDownloadFolderDialog(
                     context,
@@ -549,7 +552,7 @@ class SettingsScreen extends ConsumerWidget {
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            const Icon(Icons.folder_outlined),
+            const CosmicSvgIcon(CosmicIcons.folderOpenSvg, size: 20),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -580,13 +583,16 @@ class SettingsScreen extends ConsumerWidget {
                         hintText: l10n.folderPathHint,
                         border: const OutlineInputBorder(),
                         isDense: true,
-                        prefixIcon: const Icon(Icons.folder_open, size: 20),
+                        prefixIcon: const Padding(
+                          padding: EdgeInsets.all(12),
+                          child: CosmicSvgIcon(CosmicIcons.folderOpenSvg, size: 20),
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   IconButton.filledTonal(
-                    icon: const Icon(Icons.search),
+                    icon: const CosmicSvgIcon(CosmicIcons.searchSvg, size: 20),
                     tooltip: l10n.browseWithSystemPicker,
                     onPressed: () async {
                       try {
@@ -662,8 +668,8 @@ class SettingsScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                const Icon(
-                  Icons.favorite_rounded,
+                const CosmicSvgIcon(
+                  CosmicIcons.heartSvg,
                   color: Colors.pinkAccent,
                   size: 24,
                 ),
@@ -707,7 +713,7 @@ class SettingsScreen extends ConsumerWidget {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   ),
-                  icon: const Icon(Icons.coffee_rounded, size: 20),
+                  icon: const CosmicSvgIcon(CosmicIcons.heartSvg, size: 20, color: Colors.white),
                   label: Text(l10n.supportDeveloper),
                   onPressed: () => _showSupportDialog(context, l10n),
                 ),
@@ -717,7 +723,7 @@ class SettingsScreen extends ConsumerWidget {
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   ),
-                  icon: const Icon(Icons.code_rounded, size: 20),
+                  icon: const CosmicSvgIcon(CosmicIcons.codeSvg, size: 20),
                   label: Text(l10n.viewSourceOnGitLab),
                   onPressed: () async {
                     final success = await UrlUtils.openWebUrl(
@@ -749,7 +755,7 @@ class SettingsScreen extends ConsumerWidget {
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            const Icon(Icons.favorite, color: Colors.pinkAccent),
+            const CosmicSvgIcon(CosmicIcons.heartSvg, color: Colors.pinkAccent, size: 22),
             const SizedBox(width: 10),
             Text(
               l10n.supportDialogTitle,
@@ -778,7 +784,7 @@ class SettingsScreen extends ConsumerWidget {
               const SizedBox(height: 20),
               _buildDonationTile(
                 context: ctx,
-                icon: Icons.coffee,
+                svgAsset: CosmicIcons.heartSvg,
                 color: Colors.orange,
                 title: l10n.supportKofiTitle,
                 subtitle: 'ko-fi.com/leorise',
@@ -787,7 +793,7 @@ class SettingsScreen extends ConsumerWidget {
               const SizedBox(height: 8),
               _buildDonationTile(
                 context: ctx,
-                icon: Icons.volunteer_activism_outlined,
+                svgAsset: CosmicIcons.favoriteSvg,
                 color: Colors.amber.shade800,
                 title: l10n.supportLiberapayTitle,
                 subtitle: 'liberapay.com/LeoRise25',
@@ -796,7 +802,7 @@ class SettingsScreen extends ConsumerWidget {
               const SizedBox(height: 8),
               _buildDonationTile(
                 context: ctx,
-                icon: Icons.payment,
+                svgAsset: CosmicIcons.cardSvg,
                 color: Colors.blue,
                 title: l10n.supportPaypalTitle,
                 subtitle: 'paypal.me/leorise',
@@ -817,7 +823,7 @@ class SettingsScreen extends ConsumerWidget {
 
   Widget _buildDonationTile({
     required BuildContext context,
-    required IconData icon,
+    required String svgAsset,
     required Color color,
     required String title,
     required String subtitle,
@@ -838,7 +844,7 @@ class SettingsScreen extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, color: color, size: 22),
+            CosmicSvgIcon(svgAsset, color: color, size: 22),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -858,7 +864,7 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            Icon(Icons.open_in_new, size: 16, color: color),
+            CosmicSvgIcon(CosmicIcons.openWithSvg, size: 16, color: color),
           ],
         ),
       ),
@@ -884,7 +890,7 @@ class SettingsScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Row(
               children: [
-                const Icon(Icons.security, color: Colors.green),
+                const CosmicSvgIcon(CosmicIcons.shieldSvg, color: Colors.green, size: 22),
                 const SizedBox(width: 12),
                 Text(
                   l10n.securityAndEncryption,
@@ -904,7 +910,7 @@ class SettingsScreen extends ConsumerWidget {
 
           // --- App Lock Section ---
           SwitchListTile(
-            secondary: const Icon(Icons.lock_outline_rounded),
+            secondary: const CosmicSvgIcon(CosmicIcons.lockSvg, size: 20),
             title: Text(
               l10n.appLock,
               style: const TextStyle(fontWeight: FontWeight.w600),
@@ -972,10 +978,10 @@ class SettingsScreen extends ConsumerWidget {
           if (settings.appLockEnabled) ...[
             const Divider(height: 1),
             ListTile(
-              leading: const Icon(Icons.password_rounded),
+              leading: const CosmicSvgIcon(CosmicIcons.passwordSvg, size: 20),
               title: Text(l10n.changePin),
               subtitle: Text(l10n.changePinSubtitle),
-              trailing: const Icon(Icons.chevron_right),
+              trailing: const CosmicSvgIcon(CosmicIcons.chevronRightSvg, size: 16),
               onTap: () async {
                 final success = await showDialog<bool>(
                   context: context,
@@ -1000,7 +1006,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
             const Divider(height: 1),
             SwitchListTile(
-              secondary: const Icon(Icons.fingerprint_rounded),
+              secondary: const CosmicSvgIcon(CosmicIcons.shieldSvg, size: 20),
               title: Text(l10n.biometricAuth),
               subtitle: Text(
                 lockState.canCheckBiometrics
@@ -1014,7 +1020,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
             const Divider(height: 1),
             ListTile(
-              leading: const Icon(Icons.timer_outlined),
+              leading: const CosmicSvgIcon(CosmicIcons.clockSvg, size: 20),
               title: Text(l10n.autoLock),
               subtitle: Text(
                 l10n.autoLockSubtitle,
@@ -1055,12 +1061,12 @@ class SettingsScreen extends ConsumerWidget {
 
           const Divider(height: 16),
           ListTile(
-            leading: const Icon(Icons.sync_outlined),
+            leading: const CosmicSvgIcon(CosmicIcons.syncSvg, size: 20),
             title: Text(l10n.syncCloudAccounts),
             subtitle: Text(
               l10n.syncCloudAccountsSubtitle,
             ),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: const CosmicSvgIcon(CosmicIcons.chevronRightSvg, size: 16),
             onTap: () {
               ref.read(cloudAccountsProvider.notifier).loadRemotes();
               ScaffoldMessenger.of(context).showSnackBar(
@@ -1074,7 +1080,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const Divider(height: 1),
           ListTile(
-            leading: const Icon(Icons.delete_forever_outlined, color: Colors.red),
+            leading: const CosmicSvgIcon(CosmicIcons.deleteSvg, color: Colors.red, size: 20),
             title: Text(
               l10n.clearAllCredentials,
               style: const TextStyle(color: Colors.red),
@@ -1136,7 +1142,7 @@ class SettingsScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.info_outline, color: Colors.blue),
+                const CosmicSvgIcon(CosmicIcons.infoSvg, color: Colors.blue, size: 20),
                 const SizedBox(width: 12),
                 Text(
                   l10n.aboutUnifyCloud,
@@ -1181,9 +1187,10 @@ class SettingsScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Row(
               children: [
-                Icon(
-                  Icons.desktop_windows_rounded,
+                CosmicSvgIcon(
+                  CosmicIcons.desktopSvg,
                   color: Theme.of(context).colorScheme.primary,
+                  size: 20,
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -1208,7 +1215,7 @@ class SettingsScreen extends ConsumerWidget {
           // Autostart on Boot (Linux XDG autostart)
           if (Platform.isLinux) ...[
             SwitchListTile(
-              secondary: const Icon(Icons.power_settings_new_rounded),
+              secondary: const CosmicSvgIcon(CosmicIcons.powerSvg, size: 20),
               title: Text(
                 l10n.autostartOnBoot,
                 style: const TextStyle(fontWeight: FontWeight.w600),
@@ -1224,7 +1231,7 @@ class SettingsScreen extends ConsumerWidget {
 
           // Minimize to System Tray
           SwitchListTile(
-            secondary: const Icon(Icons.vertical_align_bottom_rounded),
+            secondary: const CosmicSvgIcon(CosmicIcons.panDownSvg, size: 20),
             title: Text(
               l10n.minimizeToTray,
               style: const TextStyle(fontWeight: FontWeight.w600),

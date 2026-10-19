@@ -12,6 +12,7 @@ import 'package:unifycloud/src/providers/file_explorer_provider.dart';
 import 'package:unifycloud/src/providers/transfer_provider.dart';
 import 'package:unifycloud/src/services/rclone_service.dart';
 import 'package:unifycloud/src/ui/screens/file_explorer_screen.dart';
+import 'package:unifycloud/src/ui/theme/cosmic_icons.dart';
 import 'package:unifycloud/src/ui/widgets/commander_action_bar.dart';
 import 'package:unifycloud/src/ui/widgets/file_explorer_pane_view.dart';
 
@@ -507,7 +508,9 @@ void main() {
       expect(find.byType(FileExplorerPaneView), findsNWidgets(2));
 
       // Find the toggle icon button
-      final toggleButton = find.byIcon(Icons.splitscreen);
+      final toggleButton = find.byWidgetPredicate(
+        (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.splitScreenSvg,
+      );
       expect(toggleButton, findsAtLeastNWidgets(1));
 
       // Tap to toggle off
@@ -518,7 +521,9 @@ void main() {
       expect(find.byType(FileExplorerPaneView), findsOneWidget);
 
       // Tap to toggle back on
-      final toggleOnButton = find.byIcon(Icons.view_sidebar_outlined);
+      final toggleOnButton = find.byWidgetPredicate(
+        (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.desktopSvg,
+      );
       expect(toggleOnButton, findsOneWidget);
       await tester.tap(toggleOnButton);
       await tester.pumpAndSettle();

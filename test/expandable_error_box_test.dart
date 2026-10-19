@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:unifycloud/src/ui/theme/cosmic_icons.dart';
 import 'package:unifycloud/src/ui/widgets/expandable_error_box.dart';
 
 void main() {
@@ -32,7 +33,12 @@ void main() {
 
       expect(find.text('Dettagli Errore'), findsOneWidget);
       expect(find.text('Espandi'), findsOneWidget);
-      expect(find.byIcon(Icons.expand_more), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && (w.asset == CosmicIcons.panDownSvg || w.asset == CosmicIcons.expandMoreSvg),
+        ),
+        findsOneWidget,
+      );
       expect(find.text('Copia errore'), findsNothing);
       expect(find.byType(SelectableText), findsNothing);
     });
@@ -47,7 +53,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Comprimi'), findsOneWidget);
-      expect(find.byIcon(Icons.expand_less), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && (w.asset == CosmicIcons.panUpSvg || w.asset == CosmicIcons.expandLessSvg),
+        ),
+        findsOneWidget,
+      );
       expect(find.text('Copia errore'), findsOneWidget);
       expect(find.byType(SelectableText), findsOneWidget);
 
@@ -61,7 +72,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Espandi'), findsOneWidget);
-      expect(find.byIcon(Icons.expand_more), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && (w.asset == CosmicIcons.panDownSvg || w.asset == CosmicIcons.expandMoreSvg),
+        ),
+        findsOneWidget,
+      );
       expect(find.text('Copia errore'), findsNothing);
     });
 

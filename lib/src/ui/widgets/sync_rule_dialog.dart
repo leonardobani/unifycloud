@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/sync_rule_model.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/sync_provider.dart';
+import '../theme/app_theme.dart';
+import '../theme/cosmic_icons.dart';
 
 /// Dialog allowing users to create or edit an automated or manual sync rule.
 class SyncRuleDialog extends ConsumerStatefulWidget {
@@ -169,9 +171,12 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                   children: [
                     CircleAvatar(
                       backgroundColor: theme.colorScheme.primaryContainer,
-                      child: Icon(
-                        isEditing ? Icons.edit_calendar : Icons.sync_alt,
+                      child: CosmicSvgIcon(
+                        isEditing ? CosmicIcons.calendarSvg : CosmicIcons.syncSvg,
                         color: theme.colorScheme.primary,
+                        size: 22,
+                        fallbackMaterialIcon:
+                            isEditing ? Icons.edit_calendar : Icons.sync_alt,
                       ),
                     ),
                     const SizedBox(width: 14),
@@ -197,7 +202,10 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: const CosmicSvgIcon(
+                        CosmicIcons.closeSvg,
+                        fallbackMaterialIcon: Icons.close,
+                      ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -214,7 +222,14 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                         decoration: const InputDecoration(
                           labelText: 'Nome Regola (opzionale)',
                           hintText: 'Es. Backup Foto DCIM o Documenti Lavoro',
-                          prefixIcon: Icon(Icons.bookmark_border),
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(12),
+                            child: CosmicSvgIcon(
+                              CosmicIcons.bookmarkSvg,
+                              size: 20,
+                              fallbackMaterialIcon: Icons.bookmark_border,
+                            ),
+                          ),
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -226,9 +241,20 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                         decoration: InputDecoration(
                           labelText: 'Cartella Locale Sorgente',
                           hintText: '/home/utente/Pictures o /storage/emulated/0/DCIM',
-                          prefixIcon: const Icon(Icons.folder),
+                          prefixIcon: const Padding(
+                            padding: EdgeInsets.all(12),
+                            child: CosmicSvgIcon(
+                              CosmicIcons.folderSvg,
+                              size: 20,
+                              fallbackMaterialIcon: Icons.folder,
+                            ),
+                          ),
                           suffixIcon: IconButton(
-                            icon: const Icon(Icons.folder_open),
+                            icon: const CosmicSvgIcon(
+                              CosmicIcons.folderOpenSvg,
+                              size: 20,
+                              fallbackMaterialIcon: Icons.folder_open,
+                            ),
                             tooltip: 'Sfoglia cartelle',
                             onPressed: _pickLocalDirectory,
                           ),
@@ -248,7 +274,11 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                           runSpacing: 4,
                           children: presets.map((p) {
                             return ActionChip(
-                              avatar: const Icon(Icons.add, size: 14),
+                              avatar: const CosmicSvgIcon(
+                                CosmicIcons.addSvg,
+                                size: 14,
+                                fallbackMaterialIcon: Icons.add,
+                              ),
                               label: Text(p['label']!, style: const TextStyle(fontSize: 12)),
                               onPressed: () => _applyLocalPreset(p['path']!, p['label']!),
                             );
@@ -267,8 +297,12 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.warning_amber,
-                                  color: theme.colorScheme.error),
+                              CosmicSvgIcon(
+                                CosmicIcons.warningSvg,
+                                color: theme.colorScheme.error,
+                                size: 20,
+                                fallbackMaterialIcon: Icons.warning_amber,
+                              ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
@@ -287,7 +321,14 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                           initialValue: _selectedRemote,
                           decoration: const InputDecoration(
                             labelText: 'Cloud di Destinazione',
-                            prefixIcon: Icon(Icons.cloud_queue),
+                            prefixIcon: Padding(
+                              padding: EdgeInsets.all(12),
+                              child: CosmicSvgIcon(
+                                CosmicIcons.cloudSvg,
+                                size: 20,
+                                fallbackMaterialIcon: Icons.cloud_queue,
+                              ),
+                            ),
                             border: OutlineInputBorder(),
                           ),
                           items: cloudState.remotes.map((remote) {
@@ -295,7 +336,13 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                               value: remote.name,
                               child: Row(
                                 children: [
-                                  Icon(_getProviderIcon(remote.type), size: 20),
+                                  CosmicSvgIcon(
+                                    AppTheme.getProviderSvg(remote.type),
+                                    size: 20,
+                                    color: AppTheme.getProviderColor(remote.type),
+                                    fallbackMaterialIcon:
+                                        _getProviderIcon(remote.type),
+                                  ),
                                   const SizedBox(width: 8),
                                   Text(
                                     remote.name,
@@ -331,7 +378,14 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                         decoration: const InputDecoration(
                           labelText: 'Cartella di Destinazione sul Cloud',
                           hintText: 'Backup/Foto o /',
-                          prefixIcon: Icon(Icons.cloud_upload_outlined),
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(12),
+                            child: CosmicSvgIcon(
+                              CosmicIcons.uploadSvg,
+                              size: 20,
+                              fallbackMaterialIcon: Icons.cloud_upload_outlined,
+                            ),
+                          ),
                           border: OutlineInputBorder(),
                         ),
                         validator: (v) {
@@ -356,12 +410,20 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                           ButtonSegment<SyncMode>(
                             value: SyncMode.copy,
                             label: Text('Backup Incrementale'),
-                            icon: Icon(Icons.backup_outlined),
+                            icon: CosmicSvgIcon(
+                              CosmicIcons.uploadSvg,
+                              size: 18,
+                              fallbackMaterialIcon: Icons.backup_outlined,
+                            ),
                           ),
                           ButtonSegment<SyncMode>(
                             value: SyncMode.sync,
                             label: Text('Sincronizzazione Mirror'),
-                            icon: Icon(Icons.sync),
+                            icon: CosmicSvgIcon(
+                              CosmicIcons.syncSvg,
+                              size: 18,
+                              fallbackMaterialIcon: Icons.sync,
+                            ),
                           ),
                         ],
                         selected: {_selectedMode},
@@ -384,7 +446,14 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                         initialValue: _selectedFrequency,
                         decoration: const InputDecoration(
                           labelText: 'Frequenza Pianificata',
-                          prefixIcon: Icon(Icons.schedule),
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(12),
+                            child: CosmicSvgIcon(
+                              CosmicIcons.clockSvg,
+                              size: 20,
+                              fallbackMaterialIcon: Icons.schedule,
+                            ),
+                          ),
                           border: OutlineInputBorder(),
                         ),
                         items: SyncFrequency.values.map((freq) {
@@ -427,7 +496,11 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                     ),
                     const SizedBox(width: 8),
                     FilledButton.icon(
-                      icon: const Icon(Icons.check),
+                      icon: const CosmicSvgIcon(
+                        CosmicIcons.checkSvg,
+                        size: 18,
+                        fallbackMaterialIcon: Icons.check,
+                      ),
                       label: Text(isEditing ? 'Aggiorna' : 'Salva Regola'),
                       onPressed: cloudState.remotes.isEmpty ? null : _save,
                     ),

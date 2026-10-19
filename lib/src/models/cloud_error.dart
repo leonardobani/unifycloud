@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../ui/theme/cosmic_icons.dart';
+
 /// Categories of errors that can occur during cloud operations and transfers.
 enum CloudErrorType {
   network,
@@ -111,6 +113,24 @@ enum CloudErrorType {
         return Icons.block_rounded;
       case CloudErrorType.generic:
         return Icons.error_outline_rounded;
+    }
+  }
+
+  /// Recommended COSMIC SVG icon asset.
+  String get svgAsset {
+    switch (this) {
+      case CloudErrorType.network:
+        return CosmicIcons.warningSvg;
+      case CloudErrorType.diskSpace:
+        return CosmicIcons.diskUsageSvg;
+      case CloudErrorType.authExpired:
+        return CosmicIcons.lockSvg;
+      case CloudErrorType.notFound:
+        return CosmicIcons.searchSvg;
+      case CloudErrorType.permissionDenied:
+        return CosmicIcons.lockSvg;
+      case CloudErrorType.generic:
+        return CosmicIcons.errorSvg;
     }
   }
 

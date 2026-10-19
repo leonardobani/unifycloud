@@ -85,8 +85,12 @@ void main() {
       expect(find.text('GoogleDrive'), findsOneWidget);
       expect(find.text('Projects'), findsOneWidget);
       expect(find.text('2026'), findsOneWidget);
-      expect(find.text('Design'), findsOneWidget);
-      expect(find.byIcon(Icons.chevron_right), findsNWidgets(4));
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.chevronRightSvg,
+        ),
+        findsNWidgets(4),
+      );
     });
 
     testWidgets('HomeScreen renders storage overview and add cloud button', (tester) async {
@@ -155,12 +159,29 @@ void main() {
 
       expect(find.text('Subfolder'), findsOneWidget);
       expect(find.text('report.pdf'), findsOneWidget);
-      expect(find.byIcon(Icons.search), findsOneWidget);
-      expect(find.byIcon(Icons.sort), findsOneWidget);
-      expect(find.byIcon(Icons.grid_view_outlined), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.searchSvg,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.sortSvg,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.viewGridSvg,
+        ),
+        findsOneWidget,
+      );
 
       // Verify 3-dots PopupMenuButton is rendered for items
-      final moreButtons = find.byIcon(Icons.more_vert);
+      final moreButtons = find.byWidgetPredicate(
+        (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.moreVertSvg,
+      );
       expect(moreButtons, findsNWidgets(2));
 
       // Tap 3-dots on file item (second one)

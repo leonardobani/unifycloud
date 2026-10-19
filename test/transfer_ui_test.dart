@@ -8,6 +8,7 @@ import 'package:unifycloud/src/providers/cloud_accounts_provider.dart';
 import 'package:unifycloud/src/providers/file_explorer_provider.dart';
 import 'package:unifycloud/src/providers/transfer_provider.dart';
 import 'package:unifycloud/src/ui/screens/file_explorer_screen.dart';
+import 'package:unifycloud/src/ui/theme/cosmic_icons.dart';
 import 'package:unifycloud/src/ui/widgets/transfer_panel.dart';
 
 class TransferNotifierMock extends Notifier<TransferState>
@@ -230,7 +231,12 @@ void main() {
       );
 
       // Verify Upload action in AppBar
-      expect(find.byIcon(Icons.upload_file_outlined), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.uploadSvg,
+        ),
+        findsOneWidget,
+      );
 
       // Verify Cloud-to-Cloud Clipboard Banner
       expect(find.text('Incolla qui'), findsOneWidget);

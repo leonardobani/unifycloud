@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:unifycloud/l10n/app_localizations.dart';
 import 'package:unifycloud/src/models/cloud_models.dart';
@@ -11,6 +12,7 @@ import 'package:unifycloud/src/ui/screens/file_explorer_screen.dart';
 import 'package:unifycloud/src/ui/screens/home_screen.dart';
 import 'package:unifycloud/src/ui/screens/settings_screen.dart';
 import 'package:unifycloud/src/ui/theme/app_theme.dart';
+import 'package:unifycloud/src/ui/theme/cosmic_icons.dart';
 import 'package:unifycloud/src/ui/widgets/breadcrumbs_bar.dart';
 import 'package:unifycloud/src/ui/widgets/expandable_error_box.dart';
 import 'package:unifycloud/src/ui/widgets/file_type_icon.dart';
@@ -253,7 +255,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final icon = tester.widget<Icon>(find.byIcon(Icons.insert_drive_file_outlined));
+      final icon = tester.widget<CosmicSvgIcon>(
+        find.byWidgetPredicate((w) => w is CosmicSvgIcon && w.asset == CosmicIcons.fileSvg),
+      );
       expect(icon.color, equals(AppTheme.lightTheme.colorScheme.onSurfaceVariant));
     });
 
@@ -279,7 +283,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final homeIcon = tester.widget<Icon>(find.byIcon(Icons.home_outlined));
+      final homeIcon = tester.widget<CosmicSvgIcon>(
+        find.byWidgetPredicate((w) => w is CosmicSvgIcon && w.asset == CosmicIcons.homeSvg),
+      );
       expect(homeIcon.color, equals(AppTheme.lightTheme.colorScheme.onSurfaceVariant));
     });
 
@@ -299,6 +305,38 @@ void main() {
       expect(find.text('Nessun trasferimento recente'), findsOneWidget);
       final subtitle = tester.widget<Text>(find.text('I download, gli upload e le copie cloud appariranno qui.'));
       expect(subtitle.style?.color, equals(AppTheme.lightTheme.colorScheme.onSurfaceVariant));
+    });
+
+    testWidgets('CosmicSvgIcon renders SVG in COSMIC theme and Icon in Standard Material theme', (tester) async {
+      // 1. In COSMIC theme
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.cosmicLightTheme,
+          home: const Scaffold(
+            body: CosmicSvgIcon(CosmicIcons.searchSvg),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Should render SvgPicture
+      expect(find.byType(SvgPicture), findsOneWidget);
+      expect(find.byIcon(Icons.search_rounded), findsNothing);
+
+      // 2. In Standard Material theme
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.standardLightTheme,
+          home: const Scaffold(
+            body: CosmicSvgIcon(CosmicIcons.searchSvg),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Should render standard Material Icon
+      expect(find.byType(SvgPicture), findsNothing);
+      expect(find.byIcon(Icons.search_rounded), findsOneWidget);
     });
   });
 }

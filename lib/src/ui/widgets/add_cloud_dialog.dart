@@ -8,6 +8,7 @@ import '../../providers/cloud_accounts_provider.dart';
 import '../../services/oauth_service.dart';
 import '../../utils/token_utils.dart';
 import '../theme/app_theme.dart';
+import '../theme/cosmic_icons.dart';
 
 /// Modal dialog allowing users to configure and connect a new cloud storage provider.
 class AddCloudDialog extends ConsumerStatefulWidget {
@@ -401,10 +402,12 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
               children: [
                 Row(
                   children: [
-                    Icon(
-                      AppTheme.getProviderIcon(_selectedProvider),
+                    CosmicSvgIcon(
+                      AppTheme.getProviderSvg(_selectedProvider),
                       color: AppTheme.getProviderColor(_selectedProvider),
                       size: 28,
+                      fallbackMaterialIcon:
+                          AppTheme.getProviderIcon(_selectedProvider),
                     ),
                     const SizedBox(width: 12),
                     const Text(
@@ -413,7 +416,10 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                     ),
                     const Spacer(),
                     IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: const CosmicSvgIcon(
+                        CosmicIcons.closeSvg,
+                        fallbackMaterialIcon: Icons.close,
+                      ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -438,10 +444,12 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               label: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(
-                                    AppTheme.getProviderIcon(p['type']!),
+                                  CosmicSvgIcon(
+                                    AppTheme.getProviderSvg(p['type']!),
                                     size: 16,
                                     color: AppTheme.getProviderColor(p['type']!),
+                                    fallbackMaterialIcon:
+                                        AppTheme.getProviderIcon(p['type']!),
                                   ),
                                   const SizedBox(width: 6),
                                   Flexible(
@@ -464,7 +472,14 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             labelText: 'Nome identificativo del Cloud',
                             helperText: 'Es. GoogleDrive, LavoroDropbox (senza spazi)',
                             border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.label_outline),
+                            prefixIcon: Padding(
+                              padding: EdgeInsets.all(12),
+                              child: CosmicSvgIcon(
+                                CosmicIcons.editSvg,
+                                size: 20,
+                                fallbackMaterialIcon: Icons.label_outline,
+                              ),
+                            ),
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
@@ -484,7 +499,14 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             decoration: const InputDecoration(
                               labelText: 'Modalità Client ID (OAuth2)',
                               border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.vpn_key_outlined),
+                              prefixIcon: Padding(
+                                padding: EdgeInsets.all(12),
+                                child: CosmicSvgIcon(
+                                  CosmicIcons.passwordSvg,
+                                  size: 20,
+                                  fallbackMaterialIcon: Icons.vpn_key_outlined,
+                                ),
+                              ),
                             ),
                             items: const [
                               DropdownMenuItem(
@@ -522,10 +544,11 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(
-                                    Icons.verified_rounded,
+                                  const CosmicSvgIcon(
+                                    CosmicIcons.checkCircleSvg,
                                     size: 20,
                                     color: Colors.blue,
+                                    fallbackMaterialIcon: Icons.verified_rounded,
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
@@ -567,10 +590,11 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(
-                                    Icons.warning_amber_rounded,
+                                  const CosmicSvgIcon(
+                                    CosmicIcons.warningSvg,
                                     size: 20,
                                     color: Colors.amber,
+                                    fallbackMaterialIcon: Icons.warning_amber_rounded,
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
@@ -612,7 +636,12 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.info_outline, size: 18, color: Colors.teal),
+                                  const CosmicSvgIcon(
+                                    CosmicIcons.infoSvg,
+                                    size: 18,
+                                    color: Colors.teal,
+                                    fallbackMaterialIcon: Icons.info_outline,
+                                  ),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
@@ -636,7 +665,14 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                     ? 'Es. xxxxx.apps.googleusercontent.com'
                                     : null,
                                 border: const OutlineInputBorder(),
-                                prefixIcon: const Icon(Icons.key_outlined),
+                                prefixIcon: const Padding(
+                                  padding: EdgeInsets.all(12),
+                                  child: CosmicSvgIcon(
+                                    CosmicIcons.passwordSvg,
+                                    size: 20,
+                                    fallbackMaterialIcon: Icons.key_outlined,
+                                  ),
+                                ),
                               ),
                               validator: (v) {
                                 if (_authMethod == 'custom' &&
@@ -652,7 +688,14 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               decoration: const InputDecoration(
                                 labelText: 'Client Secret (Opzionale)',
                                 border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.lock_outline),
+                                prefixIcon: Padding(
+                                  padding: EdgeInsets.all(12),
+                                  child: CosmicSvgIcon(
+                                    CosmicIcons.lockSvg,
+                                    size: 20,
+                                    fallbackMaterialIcon: Icons.lock_outline,
+                                  ),
+                                ),
                               ),
                               obscureText: true,
                             ),
@@ -666,7 +709,11 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                     height: 18,
                                     child: CircularProgressIndicator(strokeWidth: 2),
                                   )
-                                : const Icon(Icons.open_in_browser),
+                                : const CosmicSvgIcon(
+                                    CosmicIcons.openWithSvg,
+                                    size: 18,
+                                    fallbackMaterialIcon: Icons.open_in_browser,
+                                  ),
                             label: Text(
                               _isAuthenticating
                                   ? 'Autenticazione in corso...'
@@ -707,14 +754,17 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                 children: [
                                   Row(
                                     children: [
-                                      Icon(
+                                      CosmicSvgIcon(
                                         _browserOpened
-                                            ? Icons.check_circle_outline
-                                            : Icons.link_rounded,
+                                            ? CosmicIcons.checkCircleSvg
+                                            : CosmicIcons.linkSvg,
                                         size: 18,
                                         color: _browserOpened
                                             ? Colors.green
                                             : Colors.orange,
+                                        fallbackMaterialIcon: _browserOpened
+                                            ? Icons.check_circle_outline
+                                            : Icons.link_rounded,
                                       ),
                                       const SizedBox(width: 8),
                                       Expanded(
@@ -760,8 +810,11 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                               ),
                                             );
                                           },
-                                          icon:
-                                              const Icon(Icons.copy, size: 16),
+                                          icon: const CosmicSvgIcon(
+                                            CosmicIcons.copySvg,
+                                            size: 16,
+                                            fallbackMaterialIcon: Icons.copy,
+                                          ),
                                           label: const Text('Copia Link',
                                               style: TextStyle(fontSize: 12)),
                                           style: FilledButton.styleFrom(
@@ -780,8 +833,11 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                               .openBrowser(
                                                   Uri.parse(_authUrl!));
                                         },
-                                        icon: const Icon(Icons.open_in_browser,
-                                            size: 16),
+                                        icon: const CosmicSvgIcon(
+                                          CosmicIcons.openWithSvg,
+                                          size: 16,
+                                          fallbackMaterialIcon: Icons.open_in_browser,
+                                        ),
                                         label: const Text('Riapri',
                                             style: TextStyle(fontSize: 12)),
                                         style: OutlinedButton.styleFrom(
@@ -814,7 +870,14 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                   ? 'URL WebDAV / Nextcloud'
                                   : (_selectedProvider == 's3' ? 'Endpoint S3' : 'Host / Server SFTP'),
                               border: const OutlineInputBorder(),
-                              prefixIcon: const Icon(Icons.dns_outlined),
+                              prefixIcon: const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: CosmicSvgIcon(
+                                  CosmicIcons.serverSvg,
+                                  size: 20,
+                                  fallbackMaterialIcon: Icons.dns_outlined,
+                                ),
+                              ),
                             ),
                             validator: (v) =>
                                 (v == null || v.trim().isEmpty) ? 'Campo obbligatorio' : null,
@@ -825,7 +888,14 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             decoration: InputDecoration(
                               labelText: _selectedProvider == 's3' ? 'Access Key ID' : 'Username',
                               border: const OutlineInputBorder(),
-                              prefixIcon: const Icon(Icons.person_outline),
+                              prefixIcon: const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: CosmicSvgIcon(
+                                  CosmicIcons.userSvg,
+                                  size: 20,
+                                  fallbackMaterialIcon: Icons.person_outline,
+                                ),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -834,7 +904,14 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             decoration: InputDecoration(
                               labelText: _selectedProvider == 's3' ? 'Secret Access Key' : 'Password',
                               border: const OutlineInputBorder(),
-                              prefixIcon: const Icon(Icons.lock_outline),
+                              prefixIcon: const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: CosmicSvgIcon(
+                                  CosmicIcons.lockSvg,
+                                  size: 20,
+                                  fallbackMaterialIcon: Icons.lock_outline,
+                                ),
+                              ),
                             ),
                             obscureText: true,
                           ),
@@ -844,7 +921,11 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               padding: EdgeInsets.all(12.0),
                               child: Row(
                                 children: [
-                                  Icon(Icons.info_outline, color: Colors.blue),
+                                  CosmicSvgIcon(
+                                    CosmicIcons.infoSvg,
+                                    color: Colors.blue,
+                                    fallbackMaterialIcon: Icons.info_outline,
+                                  ),
                                   SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
@@ -869,7 +950,12 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             child: const Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.shield_outlined, color: Color(0xFF00BFA5), size: 22),
+                                CosmicSvgIcon(
+                                  CosmicIcons.shieldSvg,
+                                  color: Color(0xFF00BFA5),
+                                  size: 22,
+                                  fallbackMaterialIcon: Icons.shield_outlined,
+                                ),
                                 SizedBox(width: 10),
                                 Expanded(
                                   child: Column(
@@ -906,7 +992,11 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                   ),
                                   child: const Row(
                                     children: [
-                                      Icon(Icons.warning_amber_rounded, color: Colors.amber),
+                                      CosmicSvgIcon(
+                                        CosmicIcons.warningSvg,
+                                        color: Colors.amber,
+                                        fallbackMaterialIcon: Icons.warning_amber_rounded,
+                                      ),
                                       SizedBox(width: 10),
                                       Expanded(
                                         child: Text(
@@ -931,17 +1021,26 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                   labelText: 'Cloud di destinazione *',
                                   helperText: 'Il cloud dove verranno archiviati i file cifrati',
                                   border: OutlineInputBorder(),
-                                  prefixIcon: Icon(Icons.cloud_outlined),
+                                  prefixIcon: Padding(
+                                    padding: EdgeInsets.all(12),
+                                    child: CosmicSvgIcon(
+                                      CosmicIcons.cloudSvg,
+                                      size: 20,
+                                      fallbackMaterialIcon: Icons.cloud_outlined,
+                                    ),
+                                  ),
                                 ),
                                 items: availableRemotes.map((r) {
                                   return DropdownMenuItem<String>(
                                     value: r.name,
                                     child: Row(
                                       children: [
-                                        Icon(
-                                          AppTheme.getProviderIcon(r.type),
+                                        CosmicSvgIcon(
+                                          AppTheme.getProviderSvg(r.type),
                                           size: 18,
                                           color: AppTheme.getProviderColor(r.type),
+                                          fallbackMaterialIcon:
+                                              AppTheme.getProviderIcon(r.type),
                                         ),
                                         const SizedBox(width: 8),
                                         Text('${r.name} (${r.type})'),
@@ -965,7 +1064,14 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               hintText: 'es. vault o secret_data',
                               helperText: 'Cartella sul cloud remoto in cui salvare i file cifrati (opzionale)',
                               border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.folder_outlined),
+                              prefixIcon: Padding(
+                                padding: EdgeInsets.all(12),
+                                child: CosmicSvgIcon(
+                                  CosmicIcons.folderSvg,
+                                  size: 20,
+                                  fallbackMaterialIcon: Icons.folder_outlined,
+                                ),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -976,10 +1082,23 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               labelText: 'Password di Cifratura (Password Principale) *',
                               helperText: 'Conservala con cura: senza password non sarà possibile recuperare i file',
                               border: const OutlineInputBorder(),
-                              prefixIcon: const Icon(Icons.lock_rounded),
+                              prefixIcon: const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: CosmicSvgIcon(
+                                  CosmicIcons.lockSvg,
+                                  size: 20,
+                                  fallbackMaterialIcon: Icons.lock_rounded,
+                                ),
+                              ),
                               suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscureCryptPassword ? Icons.visibility_off : Icons.visibility,
+                                icon: CosmicSvgIcon(
+                                  _obscureCryptPassword
+                                      ? CosmicIcons.visibilityOffSvg
+                                      : CosmicIcons.visibilitySvg,
+                                  size: 20,
+                                  fallbackMaterialIcon: _obscureCryptPassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -1002,10 +1121,23 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             decoration: InputDecoration(
                               labelText: 'Conferma Password *',
                               border: const OutlineInputBorder(),
-                              prefixIcon: const Icon(Icons.lock_outline_rounded),
+                              prefixIcon: const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: CosmicSvgIcon(
+                                  CosmicIcons.lockSvg,
+                                  size: 20,
+                                  fallbackMaterialIcon: Icons.lock_outline_rounded,
+                                ),
+                              ),
                               suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscureCryptConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                                icon: CosmicSvgIcon(
+                                  _obscureCryptConfirmPassword
+                                      ? CosmicIcons.visibilityOffSvg
+                                      : CosmicIcons.visibilitySvg,
+                                  size: 20,
+                                  fallbackMaterialIcon: _obscureCryptConfirmPassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -1034,10 +1166,23 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               labelText: 'Salt / Password Secondaria (Opzionale)',
                               helperText: 'Aggiunge ulteriore sicurezza contro attacchi brute-force',
                               border: const OutlineInputBorder(),
-                              prefixIcon: const Icon(Icons.key_outlined),
+                              prefixIcon: const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: CosmicSvgIcon(
+                                  CosmicIcons.passwordSvg,
+                                  size: 20,
+                                  fallbackMaterialIcon: Icons.key_outlined,
+                                ),
+                              ),
                               suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscureCryptSalt ? Icons.visibility_off : Icons.visibility,
+                                icon: CosmicSvgIcon(
+                                  _obscureCryptSalt
+                                      ? CosmicIcons.visibilityOffSvg
+                                      : CosmicIcons.visibilitySvg,
+                                  size: 20,
+                                  fallbackMaterialIcon: _obscureCryptSalt
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -1054,7 +1199,14 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             decoration: const InputDecoration(
                               labelText: 'Cifratura dei Nomi File',
                               border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.drive_file_rename_outline),
+                              prefixIcon: Padding(
+                                padding: EdgeInsets.all(12),
+                                child: CosmicSvgIcon(
+                                  CosmicIcons.editSvg,
+                                  size: 20,
+                                  fallbackMaterialIcon: Icons.drive_file_rename_outline,
+                                ),
+                              ),
                             ),
                             items: const [
                               DropdownMenuItem(

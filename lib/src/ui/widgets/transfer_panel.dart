@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/transfer_models.dart';
 import '../../providers/transfer_provider.dart';
 import '../theme/app_theme.dart';
+import '../theme/cosmic_icons.dart';
 import 'file_type_icon.dart';
 
 /// Floating banner shown when transfers are active.
@@ -98,10 +99,11 @@ class TransferFloatingBar extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Icon(
-                  Icons.expand_less,
+                CosmicSvgIcon(
+                  CosmicIcons.expandLessSvg,
                   size: 22,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fallbackMaterialIcon: Icons.expand_less,
                 ),
               ],
             ),
@@ -148,8 +150,12 @@ class TransferSheet extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Row(
               children: [
-                const Icon(Icons.swap_vert_rounded,
-                    color: AppTheme.primaryColor, size: 24),
+                const CosmicSvgIcon(
+                  CosmicIcons.networkTransferSvg,
+                  color: AppTheme.primaryColor,
+                  size: 24,
+                  fallbackMaterialIcon: Icons.swap_vert_rounded,
+                ),
                 const SizedBox(width: 10),
                 Text(
                   'Coda Trasferimenti (${transfers.length})',
@@ -164,14 +170,21 @@ class TransferSheet extends ConsumerWidget {
                     onPressed: () {
                       ref.read(transferProvider.notifier).clearCompleted();
                     },
-                    icon: const Icon(Icons.clear_all, size: 18),
+                    icon: const CosmicSvgIcon(
+                      CosmicIcons.clearSvg,
+                      size: 18,
+                      fallbackMaterialIcon: Icons.clear_all,
+                    ),
                     label: const Text('Pulisci'),
                     style: TextButton.styleFrom(
                       visualDensity: VisualDensity.compact,
                     ),
                   ),
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: const CosmicSvgIcon(
+                    CosmicIcons.closeSvg,
+                    fallbackMaterialIcon: Icons.close,
+                  ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -186,10 +199,11 @@ class TransferSheet extends ConsumerWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.cloud_done_outlined,
+                        CosmicSvgIcon(
+                          CosmicIcons.cloudSvg,
                           size: 64,
                           color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                          fallbackMaterialIcon: Icons.cloud_done_outlined,
                         ),
                         const SizedBox(height: 16),
                         const Text(
@@ -380,7 +394,12 @@ class _TransferCard extends ConsumerWidget {
   Widget _buildStatusWidget(BuildContext context, WidgetRef ref) {
     if (job.isActive) {
       return IconButton(
-        icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 22),
+        icon: const CosmicSvgIcon(
+          CosmicIcons.closeSvg,
+          color: Colors.red,
+          size: 22,
+          fallbackMaterialIcon: Icons.cancel_outlined,
+        ),
         tooltip: 'Annulla trasferimento',
         onPressed: () {
           ref.read(transferProvider.notifier).cancelTransfer(job.id);
@@ -390,13 +409,26 @@ class _TransferCard extends ConsumerWidget {
 
     switch (job.status) {
       case TransferStatus.completed:
-        return const Icon(Icons.check_circle_rounded,
-            color: Colors.green, size: 22);
+        return const CosmicSvgIcon(
+          CosmicIcons.checkCircleSvg,
+          color: Colors.green,
+          size: 22,
+          fallbackMaterialIcon: Icons.check_circle_rounded,
+        );
       case TransferStatus.failed:
-        return const Icon(Icons.error_outline_rounded,
-            color: Colors.red, size: 22);
+        return const CosmicSvgIcon(
+          CosmicIcons.errorSvg,
+          color: Colors.red,
+          size: 22,
+          fallbackMaterialIcon: Icons.error_outline_rounded,
+        );
       case TransferStatus.cancelled:
-        return const Icon(Icons.cancel_rounded, color: Colors.orange, size: 22);
+        return const CosmicSvgIcon(
+          CosmicIcons.closeSvg,
+          color: Colors.orange,
+          size: 22,
+          fallbackMaterialIcon: Icons.cancel_rounded,
+        );
       default:
         return const SizedBox.shrink();
     }

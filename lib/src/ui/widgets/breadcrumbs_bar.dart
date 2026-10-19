@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../providers/file_explorer_provider.dart';
+import '../theme/cosmic_icons.dart';
 
 /// An interactive horizontal breadcrumb bar allowing one-tap navigation to any parent directory.
 class BreadcrumbsBar extends ConsumerWidget {
@@ -53,8 +54,8 @@ class BreadcrumbsBar extends ConsumerWidget {
         controller: scrollController,
         scrollDirection: Axis.horizontal,
         itemCount: breadcrumbs.length,
-        separatorBuilder: (context, index) => Icon(
-          Icons.chevron_right,
+        separatorBuilder: (context, index) => CosmicSvgIcon(
+          CosmicIcons.chevronRightSvg,
           size: 18,
           color: Theme.of(context).colorScheme.outlineVariant,
         ),
@@ -78,8 +79,8 @@ class BreadcrumbsBar extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (item.isRoot) ...[
-                      Icon(
-                        Icons.home_outlined,
+                      CosmicSvgIcon(
+                        CosmicIcons.homeSvg,
                         size: 18,
                         color: isLast
                             ? Theme.of(context).colorScheme.primary
