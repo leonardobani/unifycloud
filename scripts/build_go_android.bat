@@ -44,8 +44,9 @@ set "GOOS=android"
 set "GOARCH=arm64"
 set "CC=%LLVM_BIN%\aarch64-linux-android%MIN_API%-clang.cmd"
 if not exist "!CC!" set "CC=%LLVM_BIN%\aarch64-linux-android%MIN_API%-clang"
-go build -buildmode=c-shared -o "%OUTPUT_BASE_DIR%\arm64-v8a\librclone_wrapper.so" main.go
+go build -ldflags="-s -w" -buildmode=c-shared -o "%OUTPUT_BASE_DIR%\arm64-v8a\librclone_wrapper.so" main.go
 popd
+if exist "%LLVM_BIN%\llvm-strip.exe" "%LLVM_BIN%\llvm-strip.exe" --strip-unneeded "%OUTPUT_BASE_DIR%\arm64-v8a\librclone_wrapper.so"
 
 rem armeabi-v7a
 if not exist "%OUTPUT_BASE_DIR%\armeabi-v7a" mkdir "%OUTPUT_BASE_DIR%\armeabi-v7a"
@@ -56,8 +57,9 @@ set "GOARCH=arm"
 set "GOARM=7"
 set "CC=%LLVM_BIN%\armv7a-linux-androideabi%MIN_API%-clang.cmd"
 if not exist "!CC!" set "CC=%LLVM_BIN%\armv7a-linux-androideabi%MIN_API%-clang"
-go build -buildmode=c-shared -o "%OUTPUT_BASE_DIR%\armeabi-v7a\librclone_wrapper.so" main.go
+go build -ldflags="-s -w" -buildmode=c-shared -o "%OUTPUT_BASE_DIR%\armeabi-v7a\librclone_wrapper.so" main.go
 popd
+if exist "%LLVM_BIN%\llvm-strip.exe" "%LLVM_BIN%\llvm-strip.exe" --strip-unneeded "%OUTPUT_BASE_DIR%\armeabi-v7a\librclone_wrapper.so"
 
 rem x86_64
 if not exist "%OUTPUT_BASE_DIR%\x86_64" mkdir "%OUTPUT_BASE_DIR%\x86_64"
@@ -67,8 +69,9 @@ set "GOOS=android"
 set "GOARCH=amd64"
 set "CC=%LLVM_BIN%\x86_64-linux-android%MIN_API%-clang.cmd"
 if not exist "!CC!" set "CC=%LLVM_BIN%\x86_64-linux-android%MIN_API%-clang"
-go build -buildmode=c-shared -o "%OUTPUT_BASE_DIR%\x86_64\librclone_wrapper.so" main.go
+go build -ldflags="-s -w" -buildmode=c-shared -o "%OUTPUT_BASE_DIR%\x86_64\librclone_wrapper.so" main.go
 popd
+if exist "%LLVM_BIN%\llvm-strip.exe" "%LLVM_BIN%\llvm-strip.exe" --strip-unneeded "%OUTPUT_BASE_DIR%\x86_64\librclone_wrapper.so"
 
 echo === Android Go compilation finished ===
 exit /b 0

@@ -195,7 +195,7 @@ The embedded Go backend must be compiled into native dynamic libraries (`.so`, `
 #### A. For Linux Desktop:
 ```bash
 cd go_backend
-go build -buildmode=c-shared -o librclone_wrapper.so main.go
+go build -ldflags="-s -w" -buildmode=c-shared -o librclone_wrapper.so main.go
 cd ..
 ```
 
@@ -214,14 +214,14 @@ This automatically compiles `librclone_wrapper.so` for each ABI and outputs them
 Using MinGW-w64 GCC or MSVC:
 ```cmd
 cd go_backend
-go build -buildmode=c-shared -o librclone_wrapper.dll main.go
+go build -ldflags="-s -w" -buildmode=c-shared -o librclone_wrapper.dll main.go
 cd ..
 ```
 
 #### D. For macOS Desktop:
 ```bash
 cd go_backend
-go build -buildmode=c-shared -o librclone_wrapper.dylib main.go
+go build -ldflags="-s -w" -buildmode=c-shared -o librclone_wrapper.dylib main.go
 cd ..
 ```
 

@@ -10,7 +10,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 echo "==> [1/4] Building Go CGO shared library (librclone_wrapper.so)..."
 cd "$PROJECT_ROOT/go_backend"
-go build -buildmode=c-shared -o librclone_wrapper.so main.go
+go build -ldflags="-s -w" -buildmode=c-shared -o librclone_wrapper.so main.go
 
 echo "==> [2/4] Building Flutter Linux Release bundle..."
 cd "$PROJECT_ROOT"

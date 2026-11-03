@@ -69,7 +69,7 @@ set(GO_LIB_OUTPUT "${GO_BACKEND_DIR}/${GO_LIB_NAME}")
 if(GO_EXECUTABLE)
   add_custom_command(
     OUTPUT "${GO_LIB_OUTPUT}"
-    COMMAND ${GO_EXECUTABLE} build -buildmode=c-shared -o "${GO_LIB_OUTPUT}" main.go
+    COMMAND ${GO_EXECUTABLE} build -ldflags="-s -w" -buildmode=c-shared -o "${GO_LIB_OUTPUT}" main.go
     WORKING_DIRECTORY "${GO_BACKEND_DIR}"
     DEPENDS "${GO_BACKEND_DIR}/main.go"
     COMMENT "Building Go Rclone shared library for Linux (${GO_LIB_OUTPUT})"

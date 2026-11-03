@@ -100,7 +100,7 @@ Before building or running UnifyCloud, ensure your development machine has:
 #### Step 1: Compile the Go Shared Library
 ```bash
 cd go_backend
-go build -buildmode=c-shared -o librclone_wrapper.so main.go
+go build -ldflags="-s -w" -buildmode=c-shared -o librclone_wrapper.so main.go
 cd ..
 ```
 
@@ -174,7 +174,7 @@ adb install -r build/app/outputs/flutter-apk/app-release.apk
 #### Step 1: Compile the Go DLL
 ```cmd
 cd go_backend
-go build -buildmode=c-shared -o librclone_wrapper.dll main.go
+go build -ldflags="-s -w" -buildmode=c-shared -o librclone_wrapper.dll main.go
 cd ..
 ```
 
@@ -196,7 +196,7 @@ The output bundle will be generated under `build\windows\x64\runner\Release\`.
 #### macOS:
 ```bash
 cd go_backend
-go build -buildmode=c-shared -o librclone_wrapper.dylib main.go
+go build -ldflags="-s -w" -buildmode=c-shared -o librclone_wrapper.dylib main.go
 cd ..
 flutter run -d macos
 ```

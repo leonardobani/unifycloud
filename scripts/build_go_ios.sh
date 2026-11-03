@@ -72,7 +72,7 @@ build_ios_target() {
         export CGO_CFLAGS="$target_flag"
         export CGO_LDFLAGS="$target_flag"
 
-        go build -buildmode=c-archive -o "$output_file" main.go
+        go build -ldflags="-s -w" -buildmode=c-archive -o "$output_file" main.go
     )
 }
 

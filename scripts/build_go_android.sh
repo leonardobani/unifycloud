@@ -172,8 +172,12 @@ build_abi() {
         [ -n "$goarm" ] && export GOARM="$goarm"
         export CC="$cc_compiler"
 
-        go build -buildmode=c-shared -o "$output_file" main.go
+        go build -ldflags="-s -w" -buildmode=c-shared -o "$output_file" main.go
     )
+
+    if [ -x "$llvm_bin/llvm-strip" ]; then
+        "$llvm_bin/llvm-strip" --strip-unneeded "$output_file"
+    fi
 
     echo "✓ Built $output_file ($(du -h "$output_file" | cut -f1))"
 }
