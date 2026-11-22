@@ -35,7 +35,7 @@ class DesktopAutostartService {
 
   /// Path to the .desktop entry file in autostart directory.
   File get desktopEntryFile {
-    return File('$autostartDirectoryPath/io.gitlab.leorise25.unifycloud.desktop');
+    return File('$autostartDirectoryPath/dev.leonardobani.unifycloud.desktop');
   }
 
   String get executablePath {
@@ -74,7 +74,7 @@ Name=UnifyCloud
 GenericName=Cloud Storage Client
 Comment=Unified multi-cloud storage and synchronization client
 Exec="$executablePath" --background
-Icon=io.gitlab.leorise25.unifycloud
+Icon=dev.leonardobani.unifycloud
 Terminal=false
 Categories=Utility;Network;FileManager;
 StartupNotify=false

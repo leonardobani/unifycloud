@@ -1,4 +1,4 @@
-app-id: com.example.unifycloud
+app-id: dev.leonardobani.unifycloud
 runtime: org.freedesktop.Platform
 runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
@@ -35,16 +35,16 @@ modules:
       - mkdir -p /app/data
       - cp -r data/* /app/data/
       # Desktop environment integration
-      - install -D -m 0644 com.example.unifycloud.desktop /app/share/applications/com.example.unifycloud.desktop
-      - install -D -m 0644 com.example.unifycloud.metainfo.xml /app/share/metainfo/com.example.unifycloud.metainfo.xml
-      - install -D -m 0644 com.example.unifycloud.png /app/share/icons/hicolor/256x256/apps/com.example.unifycloud.png
+      - install -D -m 0644 dev.leonardobani.unifycloud.desktop /app/share/applications/dev.leonardobani.unifycloud.desktop
+      - install -D -m 0644 dev.leonardobani.unifycloud.metainfo.xml /app/share/metainfo/dev.leonardobani.unifycloud.metainfo.xml
+      - install -D -m 0644 dev.leonardobani.unifycloud.png /app/share/icons/hicolor/256x256/apps/dev.leonardobani.unifycloud.png
     sources:
       - type: dir
         path: ../../build/linux/x64/release/bundle
       - type: file
-        path: com.example.unifycloud.desktop
+        path: dev.leonardobani.unifycloud.desktop
       - type: file
-        path: com.example.unifycloud.metainfo.xml
+        path: dev.leonardobani.unifycloud.metainfo.xml
       - type: file
-        path: com.example.unifycloud.png
+        path: dev.leonardobani.unifycloud.png
 

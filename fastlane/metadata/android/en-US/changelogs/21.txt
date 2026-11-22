@@ -1,0 +1,4 @@
+- New official UnifyCloud application logo and updated branding.
+- Enhanced COSMIC theme and UI styling.
+- Improved multi-cloud synchronization and background transfers.
+- Performance optimizations and bug fixes.

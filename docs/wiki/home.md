@@ -142,6 +142,6 @@ Solutions for common scenarios:
 
 ## 🤝 Project Links & Community
 
-- **GitLab Repository**: [https://gitlab.com/leorise25/unifycloud](https://gitlab.com/leorise25/unifycloud)
-- **Issue Tracker & Feature Requests**: [https://gitlab.com/leorise25/unifycloud/-/issues](https://gitlab.com/leorise25/unifycloud/-/issues)
-- **License**: [GNU General Public License v3.0 (GPL-3.0)](https://gitlab.com/leorise25/unifycloud/-/blob/master/LICENSE)
+- **GitLab Repository**: [https://gitlab.com/leonardobani/unifycloud](https://gitlab.com/leonardobani/unifycloud)
+- **Issue Tracker & Feature Requests**: [https://gitlab.com/leonardobani/unifycloud/-/issues](https://gitlab.com/leonardobani/unifycloud/-/issues)
+- **License**: [GNU General Public License v3.0 (GPL-3.0)](https://gitlab.com/leonardobani/unifycloud/-/blob/master/LICENSE)

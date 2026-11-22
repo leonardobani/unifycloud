@@ -31,23 +31,23 @@ if ! command -v flatpak-builder &> /dev/null; then
     echo "  Ubuntu/Debian: sudo apt install flatpak-builder"
     echo ""
     echo "Poi esegui direttamente da terminale (nella cartella packaging/flatpak):"
-    echo "  flatpak-builder --user --install --force-clean build-dir com.example.unifycloud.yml"
+    echo "  flatpak-builder --user --install --force-clean build-dir dev.leonardobani.unifycloud.yml"
     echo ""
     echo "Oppure per generare un pacchetto singolo .flatpak standalone:"
-    echo "  flatpak-builder --force-clean build-dir com.example.unifycloud.yml --repo=repo"
-    echo "  flatpak build-bundle repo unifycloud.flatpak com.example.unifycloud"
+    echo "  flatpak-builder --force-clean build-dir dev.leonardobani.unifycloud.yml --repo=repo"
+    echo "  flatpak build-bundle repo unifycloud.flatpak dev.leonardobani.unifycloud"
     echo "----------------------------------------------------------------------"
     exit 0
 fi
 
 echo "==> Compilazione pacchetto Flatpak con flatpak-builder..."
-flatpak-builder --user --install --force-clean build-dir com.example.unifycloud.yml
+flatpak-builder --user --install --force-clean build-dir dev.leonardobani.unifycloud.yml
 
 echo "==> Creazione bundle esportabile standalone (unifycloud.flatpak)..."
-flatpak-builder --force-clean build-dir com.example.unifycloud.yml --repo=repo
-flatpak build-bundle repo unifycloud.flatpak com.example.unifycloud
+flatpak-builder --force-clean build-dir dev.leonardobani.unifycloud.yml --repo=repo
+flatpak build-bundle repo unifycloud.flatpak dev.leonardobani.unifycloud
 
 echo "==> Successo! Pacchetto Flatpak pronto:"
-echo "    - Installato localmente nell'ambiente Flatpak utente: flatpak run com.example.unifycloud"
+echo "    - Installato localmente nell'ambiente Flatpak utente: flatpak run dev.leonardobani.unifycloud"
 echo "    - File bundle autonomo generato: $SCRIPT_DIR/unifycloud.flatpak"
 

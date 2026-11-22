@@ -21,7 +21,7 @@ import '../widgets/pin_setup_dialog.dart';
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
-  static const String gitlabRepoUrl = 'https://gitlab.com/leorise25/unifycloud';
+  static const String gitlabRepoUrl = 'https://gitlab.com/leonardobani/unifycloud';
   static const String kofiUrl = 'https://ko-fi.com/leorise';
   static const String liberapayUrl = 'https://liberapay.com/LeoRise25/';
   static const String paypalUrl = 'https://paypal.me/leorise';

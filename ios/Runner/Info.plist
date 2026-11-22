@@ -74,7 +74,7 @@
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>dev.flutter.background.refresh</string>
-		<string>com.example.unifycloud.transfer</string>
+		<string>dev.leonardobani.unifycloud.transfer</string>
 	</array>
 </dict>
 </plist>

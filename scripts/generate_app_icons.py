@@ -127,7 +127,7 @@ for filename, size in macos_sizes.items():
     print(f"Generated macOS {filename} -> {size}")
 
 # Linux / Flatpak icon (256x256 squircle)
-flatpak_dest = os.path.join(PROJECT_ROOT, 'packaging/flatpak/com.example.unifycloud.png')
+flatpak_dest = os.path.join(PROJECT_ROOT, 'packaging/flatpak/dev.leonardobani.unifycloud.png')
 flatpak_img = final_mac.resize((256, 256), Image.Resampling.LANCZOS)
 flatpak_img.save(flatpak_dest, 'PNG', optimize=True)
 print(f"Generated Flatpak icon {flatpak_dest} -> (256, 256)")

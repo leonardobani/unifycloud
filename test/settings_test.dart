@@ -437,7 +437,7 @@ void main() {
   group('UrlUtils Tests', () {
     test('openWebUrl executes safely and returns boolean', () async {
       final res = await UrlUtils.openWebUrl(
-        Uri.parse('https://gitlab.com/leorise25/unifycloud'),
+        Uri.parse('https://gitlab.com/leonardobani/unifycloud'),
       );
       expect(res, isA<bool>());
     });
