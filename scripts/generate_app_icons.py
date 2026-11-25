@@ -126,11 +126,11 @@ for filename, size in macos_sizes.items():
     img.save(dest, 'PNG', optimize=True)
     print(f"Generated macOS {filename} -> {size}")
 
-# Linux / Flatpak icon (256x256 squircle)
+# Linux / Flatpak icon (512x512 squircle)
 flatpak_dest = os.path.join(PROJECT_ROOT, 'packaging/flatpak/dev.leonardobani.unifycloud.png')
-flatpak_img = final_mac.resize((256, 256), Image.Resampling.LANCZOS)
+flatpak_img = final_mac.resize((512, 512), Image.Resampling.LANCZOS)
 flatpak_img.save(flatpak_dest, 'PNG', optimize=True)
-print(f"Generated Flatpak icon {flatpak_dest} -> (256, 256)")
+print(f"Generated Flatpak icon {flatpak_dest} -> (512, 512)")
 
 # 6. Windows app_icon.ico
 windows_ico_dest = os.path.join(PROJECT_ROOT, 'windows/runner/resources/app_icon.ico')

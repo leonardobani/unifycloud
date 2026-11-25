@@ -11,5 +11,4 @@ Categories=Utility;FileTools;FileManager;Archiving;
 Keywords=cloud;storage;rclone;backup;sync;drive;dropbox;onedrive;sftp;
 StartupNotify=true
 StartupWMClass=unifycloud
-MimeType=application/pdf;
 

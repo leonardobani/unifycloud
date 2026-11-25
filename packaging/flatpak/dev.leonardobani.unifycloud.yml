@@ -1,6 +1,6 @@
-app-id: dev.leonardobani.unifycloud
+id: dev.leonardobani.unifycloud
 runtime: org.freedesktop.Platform
-runtime-version: '24.08'
+runtime-version: '26.08'
 sdk: org.freedesktop.Sdk
 command: unifycloud
 
@@ -14,30 +14,26 @@ finish-args:
   # Hardware GPU rendering acceleration
   - --device=dri
   # Filesystem access for folder backup and local file management
-  - --filesystem=host
-  # Portals for file picker, default app opener, notifications and secure storage
-  - --talk-name=org.freedesktop.portal.FileChooser
-  - --talk-name=org.freedesktop.portal.OpenURI
-  - --talk-name=org.freedesktop.portal.Notification
+  - --filesystem=home
+  - --filesystem=/run/media
+  # Notifications, system tray, and secure storage (portals are allowed automatically)
   - --talk-name=org.freedesktop.Notifications
   - --talk-name=org.freedesktop.secrets
+  - --talk-name=org.kde.StatusNotifierWatcher
 
 modules:
   - name: unifycloud
     buildsystem: simple
     build-commands:
-      # Install main executable binary
-      - install -D -m 0755 unifycloud /app/bin/unifycloud
-      # Install bundled native libraries (libflutter_linux_gtk, librclone_wrapper, plugins)
-      - mkdir -p /app/lib
-      - cp -r lib/* /app/lib/
-      # Install Flutter asset bundles and data files
-      - mkdir -p /app/data
-      - cp -r data/* /app/data/
+      # Install full Flutter Linux bundle so lib/ and data/ sit beside the executable
+      - mkdir -p /app/dev.leonardobani.unifycloud /app/bin
+      - cp -r unifycloud lib data /app/dev.leonardobani.unifycloud/
+      - chmod 0755 /app/dev.leonardobani.unifycloud/unifycloud
+      - ln -s /app/dev.leonardobani.unifycloud/unifycloud /app/bin/unifycloud
       # Desktop environment integration
-      - install -D -m 0644 dev.leonardobani.unifycloud.desktop /app/share/applications/dev.leonardobani.unifycloud.desktop
-      - install -D -m 0644 dev.leonardobani.unifycloud.metainfo.xml /app/share/metainfo/dev.leonardobani.unifycloud.metainfo.xml
-      - install -D -m 0644 dev.leonardobani.unifycloud.png /app/share/icons/hicolor/256x256/apps/dev.leonardobani.unifycloud.png
+      - install -Dm644 dev.leonardobani.unifycloud.desktop -t /app/share/applications
+      - install -Dm644 dev.leonardobani.unifycloud.metainfo.xml -t /app/share/metainfo
+      - install -Dm644 dev.leonardobani.unifycloud.png /app/share/icons/hicolor/512x512/apps/dev.leonardobani.unifycloud.png
     sources:
       - type: dir
         path: ../../build/linux/x64/release/bundle
@@ -47,4 +43,3 @@ modules:
         path: dev.leonardobani.unifycloud.metainfo.xml
       - type: file
         path: dev.leonardobani.unifycloud.png
-

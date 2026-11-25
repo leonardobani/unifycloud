@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>dev.leonardobani.unifycloud</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>UnifyCloud</name>
+  <summary>Multi-cloud storage manager with E2EE and auto-sync</summary>
+  <developer id="dev.leonardobani">
+    <name>Leonardo Bani</name>
+  </developer>
+  <url type="homepage">https://gitlab.com/leonardobani/unifycloud</url>
+  <url type="vcs-browser">https://gitlab.com/leonardobani/unifycloud</url>
+  <url type="help">https://gitlab.com/leonardobani/unifycloud/-/wikis/home</url>
+  <description>
+    <p>
+      UnifyCloud is a fast, secure, and privacy-respecting multi-cloud storage manager and synchronization tool built with Flutter and an embedded Rclone engine.
+    </p>
+    <p>Key Features:</p>
+    <ul>
+      <li>Connect and browse multiple cloud storage providers simultaneously (Google Drive, OneDrive, Dropbox, SFTP, S3, Nextcloud/WebDAV, and Local Storage).</li>
+      <li>Wrap any cloud remote with client-side zero-knowledge AES-256 encryption (Rclone Crypt).</li>
+      <li>Dual-pane Commander view with direct cross-cloud drag-and-drop and background transfers.</li>
+      <li>Automated scheduled backups and mirror synchronization between local folders and cloud storage.</li>
+      <li>Zero-plaintext in-memory configuration storage backed by the OS Secret Service keyring.</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">dev.leonardobani.unifycloud.desktop</launchable>
+  <provides>
+    <binary>unifycloud</binary>
+  </provides>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Unified multi-cloud dashboard on Linux</caption>
+      <image type="source">https://gitlab.com/leonardobani/unifycloud/-/raw/master/packaging/flatpak/screenshots/home.png</image>
+    </screenshot>
+  </screenshots>
+  <branding>
+    <color type="primary" scheme_preference="light">#d8bbff</color>
+    <color type="primary" scheme_preference="dark">#4f378b</color>
+  </branding>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="1.0.1" date="2026-11-25">
+      <description>
+        <p>Security audit fixes, classic Material 3 theme restoration, and updated packaging.</p>
+      </description>
+    </release>
+    <release version="1.0.0" date="2026-09-21">
+      <description>
+        <p>Official UnifyCloud logo, updated Material 3 theme, improved multi-cloud synchronization, and security hardening.</p>
+      </description>
+    </release>
+    <release version="0.1.0" date="2026-09-19">
+      <description>
+        <p>Initial release featuring multi-cloud support, dual-pane explorer, and periodic folder backups.</p>
+      </description>
+    </release>
+  </releases>
+</component>
