@@ -6,10 +6,10 @@ Questa cartella contiene tutti i file necessari per pacchettizzare, distribuire 
 
 ## 1. File Inclusi
 
-- [`com.example.unifycloud.yml`](./com.example.unifycloud.yml): Manifest per `flatpak-builder` con configurazione runtime `org.freedesktop.Platform 24.08`.
-- [`com.example.unifycloud.desktop`](./com.example.unifycloud.desktop): File desktop entry conforme agli standard freedesktop (con categorie, mime types e scorciatoia nel launcher di sistema).
-- [`com.example.unifycloud.metainfo.xml`](./com.example.unifycloud.metainfo.xml): Metadati AppStream per la visualizzazione su GNOME Software, KDE Discover e Flathub.
-- [`com.example.unifycloud.png`](./com.example.unifycloud.png): Icona dell'applicazione a 256x256 px.
+- [`dev.leonardobani.unifycloud.yml`](./dev.leonardobani.unifycloud.yml): Manifest per `flatpak-builder` con configurazione runtime `org.freedesktop.Platform 24.08`.
+- [`dev.leonardobani.unifycloud.desktop`](./dev.leonardobani.unifycloud.desktop): File desktop entry conforme agli standard freedesktop (con categorie, mime types e scorciatoia nel launcher di sistema).
+- [`dev.leonardobani.unifycloud.metainfo.xml`](./dev.leonardobani.unifycloud.metainfo.xml): Metadati AppStream per la visualizzazione su GNOME Software, KDE Discover e Flathub.
+- [`dev.leonardobani.unifycloud.png`](./dev.leonardobani.unifycloud.png): Icona dell'applicazione a 256x256 px.
 - [`build_flatpak.sh`](./build_flatpak.sh): Script di automazione per compilare il core Go, compilare la release Flutter Linux ed eseguire il packaging.
 
 ---
@@ -61,7 +61,7 @@ flutter build linux --release
 
 # 2. Compila e installa l'app come Flatpak per il tuo utente locale:
 cd packaging/flatpak
-flatpak-builder --user --install --force-clean build-dir com.example.unifycloud.yml
+flatpak-builder --user --install --force-clean build-dir dev.leonardobani.unifycloud.yml
 ```
 
 ---
@@ -70,7 +70,7 @@ flatpak-builder --user --install --force-clean build-dir com.example.unifycloud.
 
 Una volta installata, UnifyCloud compare automaticamente nel menu delle applicazioni del desktop (GNOME, KDE, Cinnamon, ecc.), oppure può essere avviata da terminale:
 ```bash
-flatpak run com.example.unifycloud
+flatpak run dev.leonardobani.unifycloud
 ```
 
 ---
@@ -82,10 +82,10 @@ Per distribuire un singolo file `.flatpak` installabile su qualsiasi PC senza ri
 cd packaging/flatpak
 
 # Costruisci il repository locale
-flatpak-builder --force-clean build-dir com.example.unifycloud.yml --repo=repo
+flatpak-builder --force-clean build-dir dev.leonardobani.unifycloud.yml --repo=repo
 
 # Esporta il bundle .flatpak
-flatpak build-bundle repo unifycloud.flatpak com.example.unifycloud
+flatpak build-bundle repo unifycloud.flatpak dev.leonardobani.unifycloud
 ```
 
 Il file risultante `unifycloud.flatpak` può essere installato su qualsiasi sistema con un semplice doppio clic o da terminale:

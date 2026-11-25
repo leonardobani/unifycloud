@@ -23,11 +23,11 @@ UnifyCloud runs natively across desktop and mobile platforms:
 ### Option A: Install from F-Droid (Recommended for FOSS Users)
 UnifyCloud is packaged for F-Droid with 100% reproducible builds and zero proprietary tracking libraries.
 1. Install the [F-Droid Client](https://f-droid.org/) if not already installed.
-2. Search for **UnifyCloud** (Package ID: `io.gitlab.leorise25.unifycloud`).
+2. Search for **UnifyCloud** (Package ID: `dev.leonardobani.unifycloud`).
 3. Tap **Install** and accept updates automatically through F-Droid.
 
 ### Option B: Download Direct APK Releases
-If you do not use F-Droid, download pre-compiled APKs directly from the [GitLab Releases](https://gitlab.com/leorise25/unifycloud/-/releases) page.
+If you do not use F-Droid, download pre-compiled APKs directly from the [GitLab Releases](https://gitlab.com/leonardobani/unifycloud/-/releases) page.
 
 We provide both architecture-specific APKs (~45 MB) and a universal APK (~95 MB):
 
@@ -79,11 +79,11 @@ flatpak install unifycloud.flatpak
 #### Running the Flatpak Application:
 UnifyCloud will appear in your desktop application launcher (GNOME Dash, KDE Kickoff, etc.). You can also run it via terminal:
 ```bash
-flatpak run com.example.unifycloud
+flatpak run dev.leonardobani.unifycloud
 ```
 
 #### Flatpak Security & Portal Permissions:
-The Flatpak manifest (`packaging/flatpak/com.example.unifycloud.yml`) includes configured sandbox permissions:
+The Flatpak manifest (`packaging/flatpak/dev.leonardobani.unifycloud.yml`) includes configured sandbox permissions:
 - `--share=network`: Connects to cloud provider APIs.
 - `--filesystem=host`: Grants access to your local filesystem for browsing and folder sync.
 - `--talk-name=org.freedesktop.secrets`: Connects to your system Keyring (GNOME Keyring / KWallet) to store OAuth tokens encrypted in RAM.
@@ -95,7 +95,7 @@ The Flatpak manifest (`packaging/flatpak/com.example.unifycloud.yml`) includes c
 
 If you prefer running UnifyCloud natively without Flatpak:
 
-1. Download the `unifycloud-linux-x64.tar.gz` archive from [GitLab Releases](https://gitlab.com/leorise25/unifycloud/-/releases).
+1. Download the `unifycloud-linux-x64.tar.gz` archive from [GitLab Releases](https://gitlab.com/leonardobani/unifycloud/-/releases).
 2. Extract the archive:
    ```bash
    tar -xzf unifycloud-linux-x64.tar.gz
@@ -124,7 +124,7 @@ If you prefer running UnifyCloud natively without Flatpak:
 ## 3. 🪟 Windows Desktop
 
 ### Installation Steps:
-1. Download `unifycloud-windows-x64.zip` from [GitLab Releases](https://gitlab.com/leorise25/unifycloud/-/releases).
+1. Download `unifycloud-windows-x64.zip` from [GitLab Releases](https://gitlab.com/leonardobani/unifycloud/-/releases).
 2. Right-click the `.zip` file and select **Extract All...** to a permanent location (e.g., `C:\Program Files\UnifyCloud` or `C:\Users\<YourUser>\AppData\Local\Programs\UnifyCloud`).
 3. Double-click `unifycloud.exe` to launch the application.
 4. *(Optional)* Right-click `unifycloud.exe` ➔ **Pin to Start** or **Pin to taskbar**.
@@ -142,7 +142,7 @@ If Windows SmartScreen displays *"Windows protected your PC"* on the first run (
 ## 4. 🍎 macOS & iOS
 
 ### macOS Desktop:
-1. Download `UnifyCloud-macOS.dmg` from [GitLab Releases](https://gitlab.com/leorise25/unifycloud/-/releases).
+1. Download `UnifyCloud-macOS.dmg` from [GitLab Releases](https://gitlab.com/leonardobani/unifycloud/-/releases).
 2. Open the `.dmg` file and drag **UnifyCloud.app** into your **Applications** folder.
 3. Launch UnifyCloud from Launchpad or Spotlight.
 
@@ -182,7 +182,7 @@ If you want to contribute, modify code, or compile UnifyCloud from scratch, foll
 
 ### Step 1: Clone the Repository
 ```bash
-git clone https://gitlab.com/leorise25/unifycloud.git
+git clone https://gitlab.com/leonardobani/unifycloud.git
 cd unifycloud
 ```
 

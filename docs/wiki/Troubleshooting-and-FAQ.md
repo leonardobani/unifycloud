@@ -103,8 +103,8 @@ This document covers solutions to common questions, platform-specific edge cases
 - **Solution**:
   - Grant filesystem access to external mount points via terminal:
     ```bash
-    flatpak override --user --filesystem=/run/media com.example.unifycloud
-    flatpak override --user --filesystem=/media com.example.unifycloud
+    flatpak override --user --filesystem=/run/media dev.leonardobani.unifycloud
+    flatpak override --user --filesystem=/media dev.leonardobani.unifycloud
     ```
   - Or use the graphical [Flatseal](https://flathub.org/apps/com.github.tchx84.Flatseal) utility to toggle filesystem permissions.
 
@@ -137,4 +137,4 @@ This document covers solutions to common questions, platform-specific edge cases
 **Yes.** UnifyCloud's Crypt implementation is 100% compliant with standard Rclone Crypt. You can open, mount, or decrypt your files on any machine using the official Rclone command-line tool with your password and salt.
 
 ### How do I report a bug or request a new feature?
-Please open an issue on our [GitLab Issue Tracker](https://gitlab.com/leorise25/unifycloud/-/issues). Include your operating system, UnifyCloud version, and any relevant log details.
+Please open an issue on our [GitLab Issue Tracker](https://gitlab.com/leonardobani/unifycloud/-/issues). Include your operating system, UnifyCloud version, and any relevant log details.

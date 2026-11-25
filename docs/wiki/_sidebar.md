@@ -56,5 +56,5 @@
 
 ### ❓ Help & Resources
 - **[Troubleshooting & FAQ](Troubleshooting-and-FAQ)**
-- **[GitLab Repository](https://gitlab.com/leorise25/unifycloud)**
-- **[Issue Tracker](https://gitlab.com/leorise25/unifycloud/-/issues)**
+- **[GitLab Repository](https://gitlab.com/leonardobani/unifycloud)**
+- **[Issue Tracker](https://gitlab.com/leonardobani/unifycloud/-/issues)**

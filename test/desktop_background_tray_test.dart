@@ -86,7 +86,7 @@ void main() {
       expect(content, contains('[Desktop Entry]'));
       expect(content, contains('Name=UnifyCloud'));
       expect(content, contains('Exec="/usr/bin/unifycloud" --background'));
-      expect(content, contains('Icon=io.gitlab.leorise25.unifycloud'));
+      expect(content, contains('Icon=dev.leonardobani.unifycloud'));
       expect(content, contains('X-GNOME-Autostart-enabled=true'));
 
       final isEnabled = await autostartService.isAutostartEnabled();

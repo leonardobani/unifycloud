@@ -12,8 +12,8 @@ PROJECT_ROOT="$(cd "$WIKI_DIR/../.." && pwd)"
 TEMP_DIR="/tmp/unifycloud_wiki_sync_$$"
 
 # Git repository for GitLab Wiki:
-WIKI_REPO_HTTPS="https://gitlab.com/leorise25/unifycloud.wiki.git"
-WIKI_REPO_SSH="git@gitlab.com:leorise25/unifycloud.wiki.git"
+WIKI_REPO_HTTPS="https://gitlab.com/leonardobani/unifycloud.wiki.git"
+WIKI_REPO_SSH="git@gitlab.com:leonardobani/unifycloud.wiki.git"
 
 echo "========================================================"
 echo "  UnifyCloud - GitLab Wiki Publisher"
@@ -38,7 +38,7 @@ rm -rf "$TEMP_DIR"
 git clone "$WIKI_REPO" "$TEMP_DIR" || {
     echo ""
     echo "⚠️  Note: If this is the first time you are creating the Wiki, make sure"
-    echo "    you have initialized the Wiki by opening: https://gitlab.com/leorise25/unifycloud/-/wikis"
+    echo "    you have initialized the Wiki by opening: https://gitlab.com/leonardobani/unifycloud/-/wikis"
     echo "    and creating an initial page if needed."
     exit 1
 }
@@ -76,7 +76,7 @@ else
     git push origin "$CURRENT_BRANCH"
     echo ""
     echo "🎉 SUCCESS: Wiki documentation published successfully!"
-    echo "👉 View your wiki online at: https://gitlab.com/leorise25/unifycloud/-/wikis/home"
+    echo "👉 View your wiki online at: https://gitlab.com/leonardobani/unifycloud/-/wikis/home"
 fi
 
 # Clean up

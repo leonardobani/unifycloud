@@ -211,7 +211,7 @@ flutter run -d ios
 
 ## 📚 Official Documentation & GitLab Wiki
 
-Comprehensive documentation is available in the repository at [`docs/wiki/`](docs/wiki/) and published on our **[GitLab Wiki](https://gitlab.com/leorise25/unifycloud/-/wikis/home)**:
+Comprehensive documentation is available in the repository at [`docs/wiki/`](docs/wiki/) and published on our **[GitLab Wiki](https://gitlab.com/leonardobani/unifycloud/-/wikis/home)**:
 
 - 📦 **[Installation Guide](docs/wiki/Installation-Guide.md)**: Setup instructions for Android (F-Droid & APK), Linux (Flatpak & bundle), Windows, macOS, and iOS.
 - ☁️ **[Configuring Drives](docs/wiki/Configuring-Drives.md)**: Connecting Google Drive, OneDrive, Dropbox, Nextcloud/WebDAV, SFTP, S3, Local Drive, and Crypt E2EE vaults.
