@@ -12,7 +12,6 @@ abstract final class CosmicIcons {
   static const String folderSvg = '${_base}folder-symbolic.svg';
   static const String folderOpenSvg = '${_base}folder-open-symbolic.svg';
   static const String folderNewSvg = '${_base}folder-new-symbolic.svg';
-  static const String folderZipSvg = '${_base}package-x-generic-symbolic.svg';
   static const String syncSvg = '${_base}emblem-synchronizing-symbolic.svg';
   static const String settingsSvg = '${_base}preferences-system-symbolic.svg';
   static const String cloudSvg = '${_base}folder-remote-symbolic.svg';
@@ -34,10 +33,8 @@ abstract final class CosmicIcons {
   static const String searchSvg = '${_base}system-search-symbolic.svg';
   static const String refreshSvg = '${_base}view-refresh-symbolic.svg';
   static const String addSvg = '${_base}list-add-symbolic.svg';
-  static const String removeSvg = '${_base}list-remove-symbolic.svg';
   static const String closeSvg = '${_base}window-close-symbolic.svg';
   static const String checkSvg = '${_base}object-select-symbolic.svg';
-  static const String checkboxCheckedSvg = '${_base}checkbox-checked-symbolic.svg';
   static const String editSvg = '${_base}accessories-text-editor-symbolic.svg';
   static const String deleteSvg = '${_base}edit-delete-symbolic.svg';
   static const String trashSvg = '${_base}user-trash-symbolic.svg';
@@ -46,12 +43,10 @@ abstract final class CosmicIcons {
   static const String downloadSvg = '${_base}folder-download-symbolic.svg';
   static const String uploadSvg = '${_base}go-up-symbolic.svg';
   static const String moreVertSvg = '${_base}view-more-symbolic.svg';
-  static const String moreHorizSvg = '${_base}view-more-horizontal-symbolic.svg';
   static const String chevronRightSvg = '${_base}go-next-symbolic.svg';
   static const String chevronLeftSvg = '${_base}go-previous-symbolic.svg';
   static const String openWithSvg = '${_base}window-pop-out-symbolic.svg';
   static const String sortSvg = '${_base}view-sort-ascending-symbolic.svg';
-  static const String sortDescSvg = '${_base}view-sort-descending-symbolic.svg';
   static const String viewListSvg = '${_base}playlist-symbolic.svg';
   static const String viewGridSvg = '${_base}window-stack-symbolic.svg';
   static const String splitScreenSvg = '${_base}window-swap-symbolic.svg';
@@ -79,9 +74,7 @@ abstract final class CosmicIcons {
   static const String favoriteSvg = '${_base}emblem-favorite-symbolic.svg';
   static const String playSvg = '${_base}media-playback-start-symbolic.svg';
   static const String pauseSvg = '${_base}media-playback-pause-symbolic.svg';
-  static const String stopSvg = '${_base}process-stop-symbolic.svg';
   static const String clockSvg = '${_base}accessories-clock-symbolic.svg';
-  static const String timeSvg = '${_base}accessories-clock-symbolic.svg';
   static const String lightModeSvg = '${_base}weather-clear-symbolic.svg';
   static const String darkModeSvg = '${_base}weather-clear-night-symbolic.svg';
   static const String powerSvg = '${_base}preferences-power-and-battery-symbolic.svg';
@@ -97,9 +90,6 @@ abstract final class CosmicIcons {
   static const String expandLessSvg = '${_base}pan-up-symbolic.svg';
   static const String visibilityOffSvg = '${_base}image-red-eye-symbolic.svg';
   static const String visibilitySvg = '${_base}weather-clear-symbolic.svg';
-  static const String bugReportSvg = '${_base}dialog-warning-symbolic.svg';
-  static const String openMenuSvg = '${_base}open-menu-symbolic.svg';
-  static const String unlockSvg = '${_base}changes-allow-symbolic.svg';
   static const String calendarSvg = '${_base}office-calendar-symbolic.svg';
   static const String bookmarkSvg = '${_base}user-bookmarks-symbolic.svg';
   static const String userSvg = '${_base}user-info-symbolic.svg';
@@ -121,12 +111,10 @@ abstract final class CosmicIcons {
   // File Types & Mimetypes (Freedesktop & COSMIC files specs)
   static const IconData folder = Icons.folder_rounded;
   static const IconData folderOpen = Icons.folder_open_rounded;
-  static const IconData folderZip = Icons.folder_zip_outlined;
   static const IconData file = Icons.insert_drive_file_outlined;
   static const IconData image = Icons.image_outlined;
   static const IconData video = Icons.movie_outlined;
   static const IconData audio = Icons.audiotrack_outlined;
-  static const IconData pdf = Icons.picture_as_pdf_outlined;
   static const IconData document = Icons.article_outlined;
   static const IconData spreadsheet = Icons.table_chart_outlined;
   static const IconData presentation = Icons.slideshow_outlined;
@@ -136,24 +124,16 @@ abstract final class CosmicIcons {
   static const IconData select = Icons.check_circle_outline;
   static const IconData openWith = Icons.open_in_new_rounded;
   static const IconData download = Icons.download_outlined;
-  static const IconData downloadFilled = Icons.download_rounded;
   static const IconData upload = Icons.upload_outlined;
-  static const IconData uploadFilled = Icons.upload_rounded;
   static const IconData share = Icons.share_outlined;
   static const IconData copy = Icons.copy_rounded;
-  static const IconData contentCopy = Icons.content_copy_outlined;
   static const IconData cut = Icons.cut_rounded;
-  static const IconData move = Icons.drive_file_move_outlined;
-  static const IconData moveToOpposite = Icons.drive_file_move_rtl_outlined;
-  static const IconData rename = Icons.edit_outlined;
   static const IconData edit = Icons.edit_outlined;
   static const IconData info = Icons.info_outline;
   static const IconData delete = Icons.delete_outline_rounded;
-  static const IconData deleteForever = Icons.delete_forever_rounded;
   static const IconData search = Icons.search_rounded;
   static const IconData refresh = Icons.refresh_rounded;
   static const IconData add = Icons.add_rounded;
-  static const IconData addCircle = Icons.add_circle_outline_rounded;
   static const IconData close = Icons.close_rounded;
   static const IconData check = Icons.check_rounded;
   static const IconData checkCircle = Icons.check_circle_outline;
@@ -163,12 +143,9 @@ abstract final class CosmicIcons {
 
   // Security & Hardware
   static const IconData lock = Icons.lock_outline_rounded;
-  static const IconData lockOpen = Icons.lock_open_rounded;
   static const IconData shield = Icons.shield_outlined;
-  static const IconData fingerprint = Icons.fingerprint_rounded;
   static const IconData terminal = Icons.terminal_outlined;
   static const IconData storage = Icons.storage_outlined;
-  static const IconData pieChart = Icons.pie_chart_outline;
   static const IconData networkServer = Icons.dns_outlined;
   static const IconData deviceLaptop = Icons.laptop_outlined;
 
@@ -180,11 +157,9 @@ abstract final class CosmicIcons {
   // Appearance & Themes
   static const IconData palette = Icons.palette_outlined;
   static const IconData language = Icons.language_outlined;
-  static const IconData brightnessAuto = Icons.brightness_auto_outlined;
   static const IconData lightMode = Icons.light_mode_outlined;
   static const IconData darkMode = Icons.dark_mode_outlined;
   static const IconData rocket = Icons.rocket_launch_outlined;
-  static const IconData autoAwesome = Icons.auto_awesome;
   static const IconData viewGrid = Icons.grid_view_rounded;
   static const IconData viewList = Icons.view_list_rounded;
   static const IconData sort = Icons.sort_rounded;
@@ -199,7 +174,6 @@ abstract final class CosmicIcons {
     explorerSvg: Icons.folder_outlined,
     folderOpenSvg: Icons.folder_open_rounded,
     folderNewSvg: Icons.create_new_folder_outlined,
-    folderZipSvg: Icons.folder_zip_outlined,
     syncSvg: Icons.sync_rounded,
     settingsSvg: Icons.tune_rounded,
     cloudSvg: Icons.cloud_outlined,
@@ -215,10 +189,8 @@ abstract final class CosmicIcons {
     searchSvg: Icons.search_rounded,
     refreshSvg: Icons.refresh_rounded,
     addSvg: Icons.add_rounded,
-    removeSvg: Icons.remove_rounded,
     closeSvg: Icons.close_rounded,
     checkSvg: Icons.check_rounded,
-    checkboxCheckedSvg: Icons.check_box_rounded,
     editSvg: Icons.edit_outlined,
     deleteSvg: Icons.delete_outline_rounded,
     trashSvg: Icons.delete_outline_rounded,
@@ -227,12 +199,10 @@ abstract final class CosmicIcons {
     downloadSvg: Icons.download_outlined,
     uploadSvg: Icons.upload_file_outlined,
     moreVertSvg: Icons.more_vert_rounded,
-    moreHorizSvg: Icons.more_horiz_rounded,
     chevronRightSvg: Icons.chevron_right_rounded,
     chevronLeftSvg: Icons.chevron_left_rounded,
     openWithSvg: Icons.open_in_new_rounded,
     sortSvg: Icons.sort_rounded,
-    sortDescSvg: Icons.sort_rounded,
     viewListSvg: Icons.view_list_rounded,
     viewGridSvg: Icons.grid_view_rounded,
     splitScreenSvg: Icons.splitscreen_rounded,
@@ -242,7 +212,6 @@ abstract final class CosmicIcons {
     errorSvg: Icons.error_outline_rounded,
     terminalSvg: Icons.terminal_outlined,
     lockSvg: Icons.lock_outline_rounded,
-    unlockSvg: Icons.lock_open_rounded,
     passwordSvg: Icons.vpn_key_outlined,
     shieldSvg: Icons.shield_outlined,
     diskUsageSvg: Icons.pie_chart_outline_rounded,
@@ -257,7 +226,6 @@ abstract final class CosmicIcons {
     heartSvg: Icons.favorite_rounded,
     playSvg: Icons.play_arrow_rounded,
     pauseSvg: Icons.pause_rounded,
-    stopSvg: Icons.stop_rounded,
     clockSvg: Icons.schedule_rounded,
     lightModeSvg: Icons.light_mode_outlined,
     darkModeSvg: Icons.dark_mode_outlined,
@@ -271,7 +239,6 @@ abstract final class CosmicIcons {
     panDownSvg: Icons.keyboard_arrow_down_rounded,
     panUpSvg: Icons.keyboard_arrow_up_rounded,
     visibilityOffSvg: Icons.visibility_off_rounded,
-    openMenuSvg: Icons.menu_rounded,
     calendarSvg: Icons.calendar_today_rounded,
     bookmarkSvg: Icons.bookmark_border_rounded,
     userSvg: Icons.person_outline_rounded,

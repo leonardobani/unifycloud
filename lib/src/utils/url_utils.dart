@@ -4,11 +4,22 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// Utility methods for safely launching web URLs across desktop and mobile platforms.
 class UrlUtils {
+  /// Returns true only for safe HTTP/HTTPS web URLs with a valid host/authority.
+  static bool isValidWebUrl(Uri url) {
+    final scheme = url.scheme.toLowerCase();
+    return (scheme == 'http' || scheme == 'https') &&
+        url.hasAuthority &&
+        url.host.isNotEmpty;
+  }
+
   /// Safely attempts to open a URL in the default system browser.
   /// On Linux, prioritizes Freedesktop D-Bus portal calls (`gdbus` / `busctl`) to bypass
   /// `gtk_show_uri_on_window`, preventing "Gdk-WARNING: Server is missing xdg_foreign support"
   /// and ensuring URLs open seamlessly on Wayland, Flatpak, Distrobox, and COSMIC desktop environments.
   static Future<bool> openWebUrl(Uri url) async {
+    if (!isValidWebUrl(url)) {
+      return false;
+    }
     final urlStr = url.toString();
 
     // 1. On Linux, prioritize native D-Bus Portal and command-line launchers

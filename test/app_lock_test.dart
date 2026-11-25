@@ -186,6 +186,21 @@ void main() {
       expect(() => service.savePin('12'), throwsArgumentError);
       expect(() => service.savePin('1234'), throwsArgumentError);
       expect(() => service.savePin('1234567'), throwsArgumentError);
+      expect(() => service.savePin('abcdef'), throwsArgumentError);
+    });
+
+    test('savePin stores salted PBKDF2 hash instead of plaintext and migrates legacy PINs', () async {
+      await service.savePin('123456');
+      final stored = await fakeStorage.read(key: AppLockService.pinStorageKey);
+      expect(stored, isNotNull);
+      expect(stored, startsWith('pbkdf2_sha256\$'));
+      expect(stored, isNot(contains('123456')));
+
+      // Legacy plaintext PIN still verifies and auto-migrates to hash
+      await fakeStorage.write(key: AppLockService.pinStorageKey, value: '654321');
+      expect(await service.verifyPin('654321'), isTrue);
+      final migrated = await fakeStorage.read(key: AppLockService.pinStorageKey);
+      expect(migrated, startsWith('pbkdf2_sha256\$'));
     });
 
     test('clearPin deletes the saved PIN', () async {
@@ -300,6 +315,32 @@ void main() {
       expect(rightResult, isTrue);
       expect(container.read(appLockProvider).isLocked, isFalse);
       expect(container.read(appLockProvider).errorMessage, isNull);
+    });
+
+    test('verifyPin enforces rate-limiting lockout after 5 consecutive failures', () async {
+      final fakeStorage = FakeSecureStorage();
+      final fakeAuth = FakeLocalAuthentication();
+      final service = AppLockService(storage: fakeStorage, localAuth: fakeAuth);
+      await service.savePin('654321');
+
+      final container = ProviderContainer(
+        overrides: [
+          settingsProvider.overrideWith(
+            () => SettingsNotifier(const AppSettings(appLockEnabled: true)),
+          ),
+          appLockServiceProvider.overrideWithValue(service),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final notifier = container.read(appLockProvider.notifier);
+      for (var i = 0; i < 5; i++) {
+        expect(await notifier.verifyPin('000000'), isFalse);
+      }
+      expect(container.read(appLockProvider).isLockedOut, isTrue);
+      expect(container.read(appLockProvider).errorMessage, contains('Troppi tentativi'));
+      // Even correct PIN is rejected while locked out
+      expect(await notifier.verifyPin('654321'), isFalse);
     });
 
     test('auto-lock triggers on resume when elapsed time exceeds timeout', () async {

@@ -10,7 +10,6 @@ class AppTheme {
   static const primaryColor = Color(0xFF1E88E5); // Modern Cloud Blue
   static const secondaryColor = Color(0xFF26A69A); // Teal accent
   static const surfaceDark = Color(0xFF121820);
-  static const surfaceColor = surfaceDark;
   static const backgroundDark = Color(0xFF0D1117);
   static const cardDark = Color(0xFF1A222D);
 

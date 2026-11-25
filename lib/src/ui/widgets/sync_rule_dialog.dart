@@ -341,7 +341,7 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                                     size: 20,
                                     color: AppTheme.getProviderColor(remote.type),
                                     fallbackMaterialIcon:
-                                        _getProviderIcon(remote.type),
+                                        AppTheme.getProviderIcon(remote.type),
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
@@ -512,24 +512,5 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
         ),
       ),
     );
-  }
-
-  IconData _getProviderIcon(String type) {
-    switch (type.toLowerCase()) {
-      case 'drive':
-        return Icons.add_to_drive;
-      case 'onedrive':
-        return Icons.cloud;
-      case 'dropbox':
-        return Icons.inventory_2;
-      case 's3':
-        return Icons.storage;
-      case 'sftp':
-        return Icons.terminal;
-      case 'webdav':
-        return Icons.dns;
-      default:
-        return Icons.cloud_queue;
-    }
   }
 }

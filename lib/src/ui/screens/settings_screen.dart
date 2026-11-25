@@ -11,6 +11,7 @@ import '../../providers/app_lock_provider.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/app_lock_service.dart';
+import '../../services/rclone_service.dart';
 import '../../services/secure_config_service.dart';
 import '../../utils/url_utils.dart';
 import '../theme/app_theme.dart';
@@ -1114,6 +1115,7 @@ class SettingsScreen extends ConsumerWidget {
 
               if (confirm == true) {
                 await ref.read(secureConfigServiceProvider).clearConfig();
+                await ref.read(rcloneServiceProvider).loadConfigInMemory('');
                 await ref.read(cloudAccountsProvider.notifier).loadRemotes();
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(

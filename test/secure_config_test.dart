@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:unifycloud/src/services/oauth_service.dart';
 import 'package:unifycloud/src/services/rclone_service.dart';
 import 'package:unifycloud/src/services/secure_config_service.dart';
+import 'package:unifycloud/src/utils/url_utils.dart';
 
 void main() {
   group('Fase 4: In-Memory Rclone Configuration & Security Tests', () {
@@ -100,6 +101,27 @@ user = testuser
       expect(url.host, equals('login.microsoftonline.com'));
       expect(url.queryParameters['client_id'], equals('onedrive-client-id'));
       expect(url.queryParameters['scope'], contains('Files.ReadWrite.All'));
+    });
+
+    test('buildAuthUrl includes PKCE S256 challenge when provided', () {
+      final config = OAuthService.supportedProviders['drive']!;
+      final url = oauthService.buildAuthUrl(
+        config: config,
+        clientId: 'client-id',
+        redirectUri: 'http://127.0.0.1:53682/',
+        state: 'rand_state',
+        codeChallenge: 'pkce_challenge_abc',
+      );
+      expect(url.queryParameters['code_challenge'], equals('pkce_challenge_abc'));
+      expect(url.queryParameters['code_challenge_method'], equals('S256'));
+    });
+
+    test('UrlUtils.isValidWebUrl accepts only http/https with host', () {
+      expect(UrlUtils.isValidWebUrl(Uri.parse('https://example.com/a')), isTrue);
+      expect(UrlUtils.isValidWebUrl(Uri.parse('http://localhost:53682/')), isTrue);
+      expect(UrlUtils.isValidWebUrl(Uri.parse('file:///etc/passwd')), isFalse);
+      expect(UrlUtils.isValidWebUrl(Uri.parse('javascript:alert(1)')), isFalse);
+      expect(UrlUtils.isValidWebUrl(Uri.parse('https://')), isFalse);
     });
   });
 

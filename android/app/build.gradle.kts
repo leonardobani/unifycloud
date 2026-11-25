@@ -56,10 +56,8 @@ android {
     buildTypes {
         release {
             val releaseSigning = signingConfigs.findByName("release")
-            signingConfig = if (releaseSigning?.storeFile?.exists() == true) {
-                releaseSigning
-            } else {
-                signingConfigs.getByName("debug")
+            if (releaseSigning?.storeFile?.exists() == true) {
+                signingConfig = releaseSigning
             }
         }
     }
