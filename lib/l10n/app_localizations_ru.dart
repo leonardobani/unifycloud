@@ -345,7 +345,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get appVersion => 'Версия приложения: 1.0.0';
 
   @override
-  String get developerInfo => 'Разработчик: LeoRise (@leorise25)';
+  String get developerInfo => 'Разработчик: Leonardo Bani (@leonardobani)';
 
   @override
   String get engineInfo => 'Движок: Rclone Core CGO (Go v1.22+ / C FFI)';

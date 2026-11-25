@@ -339,7 +339,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appVersion => 'إصدار التطبيق: 1.0.0';
 
   @override
-  String get developerInfo => 'المطور: LeoRise (@leorise25)';
+  String get developerInfo => 'المطور: Leonardo Bani (@leonardobani)';
 
   @override
   String get engineInfo => 'المحرك: Rclone Core CGO (Go v1.22+ / C FFI)';

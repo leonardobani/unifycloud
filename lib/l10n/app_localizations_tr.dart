@@ -343,7 +343,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get appVersion => 'Uygulama Sürümü: 1.0.0';
 
   @override
-  String get developerInfo => 'Geliştirici: LeoRise (@leorise25)';
+  String get developerInfo => 'Geliştirici: Leonardo Bani (@leonardobani)';
 
   @override
   String get engineInfo => 'Motor: Rclone Core CGO (Go v1.22+ / C FFI)';

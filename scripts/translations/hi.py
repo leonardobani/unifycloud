@@ -130,7 +130,7 @@ translations = {
     "clearCredentialsSuccess": "क्रेडेंशियल्स सफलतापूर्वक हटा दिए गए",
     "aboutUnifyCloud": "UnifyCloud के बारे में",
     "appVersion": "ऐप संस्करण: 1.0.0",
-    "developerInfo": "डेवलपर: LeoRise (@leorise25)",
+    "developerInfo": "डेवलपर: Leonardo Bani (@leonardobani)",
     "engineInfo": "इंजन: Rclone Core CGO (Go v1.22+ / C FFI)",
     "frameworkInfo": "फ़्रेमवर्क: Flutter (Material 3 Responsive)",
     "licenseInfo": "लाइसेंस: GNU General Public License v3.0 (GPL-3.0)",

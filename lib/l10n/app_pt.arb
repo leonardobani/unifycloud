@@ -103,7 +103,7 @@
   "clearCredentialsSuccess": "Credenciais eliminadas com sucesso",
   "aboutUnifyCloud": "Sobre o UnifyCloud",
   "appVersion": "Versão da aplicação: 1.0.0",
-  "developerInfo": "Programador: LeoRise (@leorise25)",
+  "developerInfo": "Programador: Leonardo Bani (@leonardobani)",
   "engineInfo": "Motor: Rclone Core CGO (Go v1.22+ / C FFI)",
   "frameworkInfo": "Framework: Flutter (Material 3 Responsive)",
   "licenseInfo": "Licença: GNU General Public License v3.0 (GPL-3.0)",

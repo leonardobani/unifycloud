@@ -130,7 +130,7 @@ translations = {
     "clearCredentialsSuccess": "자격 증명이 삭제되었습니다",
     "aboutUnifyCloud": "UnifyCloud 정보",
     "appVersion": "앱 버전: 1.0.0",
-    "developerInfo": "개발자: LeoRise (@leorise25)",
+    "developerInfo": "개발자: Leonardo Bani (@leonardobani)",
     "engineInfo": "엔진: Rclone Core CGO (Go v1.22+ / C FFI)",
     "frameworkInfo": "프레임워크: Flutter (Material 3 반응형)",
     "licenseInfo": "라이선스: GNU General Public License v3.0 (GPL-3.0)",

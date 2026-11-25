@@ -130,7 +130,7 @@ translations = {
     "clearCredentialsSuccess": "Zugangsdaten erfolgreich gelöscht",
     "aboutUnifyCloud": "Über UnifyCloud",
     "appVersion": "App-Version: 1.0.0",
-    "developerInfo": "Entwickler: LeoRise (@leorise25)",
+    "developerInfo": "Entwickler: Leonardo Bani (@leonardobani)",
     "engineInfo": "Engine: Rclone Core CGO (Go v1.22+ / C FFI)",
     "frameworkInfo": "Framework: Flutter (Material 3 Responsive)",
     "licenseInfo": "Lizenz: GNU General Public License v3.0 (GPL-3.0)",

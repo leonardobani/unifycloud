@@ -125,7 +125,7 @@ translations = {
     "clearCredentialsSuccess": "Kimlik bilgileri başarıyla temizlendi",
     "aboutUnifyCloud": "UnifyCloud Hakkında",
     "appVersion": "Uygulama Sürümü: 1.0.0",
-    "developerInfo": "Geliştirici: LeoRise (@leorise25)",
+    "developerInfo": "Geliştirici: Leonardo Bani (@leonardobani)",
     "engineInfo": "Motor: Rclone Core CGO (Go v1.22+ / C FFI)",
     "frameworkInfo": "Çerçeve: Flutter (Material 3 Responsive)",
     "licenseInfo": "Lisans: GNU General Public License v3.0 (GPL-3.0)",

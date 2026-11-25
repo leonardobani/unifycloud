@@ -326,7 +326,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appVersion => '应用版本：1.0.0';
 
   @override
-  String get developerInfo => '开发者：LeoRise (@leorise25)';
+  String get developerInfo => '开发者：Leonardo Bani (@leonardobani)';
 
   @override
   String get engineInfo => '引擎：Rclone Core CGO (Go v1.22+ / C FFI)';

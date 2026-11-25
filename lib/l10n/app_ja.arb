@@ -103,7 +103,7 @@
   "clearCredentialsSuccess": "認証情報を削除しました",
   "aboutUnifyCloud": "UnifyCloudについて",
   "appVersion": "アプリバージョン: 1.0.0",
-  "developerInfo": "開発者: LeoRise (@leorise25)",
+  "developerInfo": "開発者: Leonardo Bani (@leonardobani)",
   "engineInfo": "エンジン: Rclone Core CGO (Go v1.22+ / C FFI)",
   "frameworkInfo": "フレームワーク: Flutter (Material 3 Responsive)",
   "licenseInfo": "ライセンス: GNU General Public License v3.0 (GPL-3.0)",

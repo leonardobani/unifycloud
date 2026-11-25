@@ -345,7 +345,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get appVersion => 'Versione App: 1.0.0';
 
   @override
-  String get developerInfo => 'Sviluppatore: LeoRise (@leorise25)';
+  String get developerInfo => 'Sviluppatore: Leonardo Bani (@leonardobani)';
 
   @override
   String get engineInfo => 'Motore: Rclone Core CGO (Go v1.22+ / C FFI)';

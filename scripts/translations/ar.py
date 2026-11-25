@@ -130,7 +130,7 @@ translations = {
     "clearCredentialsSuccess": "تم حذف بيانات الاعتماد بنجاح",
     "aboutUnifyCloud": "حول UnifyCloud",
     "appVersion": "إصدار التطبيق: 1.0.0",
-    "developerInfo": "المطور: LeoRise (@leorise25)",
+    "developerInfo": "المطور: Leonardo Bani (@leonardobani)",
     "engineInfo": "المحرك: Rclone Core CGO (Go v1.22+ / C FFI)",
     "frameworkInfo": "إطار العمل: Flutter (Material 3 متجاوب)",
     "licenseInfo": "الترخيص: رخصة جنو العمومية الإصدار 3.0 (GPL-3.0)",

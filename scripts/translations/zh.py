@@ -130,7 +130,7 @@ translations = {
     "clearCredentialsSuccess": "凭据已成功清除",
     "aboutUnifyCloud": "关于 UnifyCloud",
     "appVersion": "应用版本：1.0.0",
-    "developerInfo": "开发者：LeoRise (@leorise25)",
+    "developerInfo": "开发者：Leonardo Bani (@leonardobani)",
     "engineInfo": "引擎：Rclone Core CGO (Go v1.22+ / C FFI)",
     "frameworkInfo": "框架：Flutter (Material 3 响应式)",
     "licenseInfo": "许可证：GNU 通用公共许可证 v3.0 (GPL-3.0)",

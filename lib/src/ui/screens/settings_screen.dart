@@ -21,9 +21,9 @@ class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   static const String gitlabRepoUrl = 'https://gitlab.com/leonardobani/unifycloud';
-  static const String kofiUrl = 'https://ko-fi.com/leorise';
-  static const String liberapayUrl = 'https://liberapay.com/LeoRise25/';
-  static const String paypalUrl = 'https://paypal.me/leorise';
+  static const String kofiUrl = 'https://ko-fi.com/leonardobani';
+  static const String liberapayUrl = 'https://liberapay.com/leonardobani/';
+  static const String paypalUrl = 'https://paypal.me/leonardobani';
 
   /// Returns a human-friendly display label for any language code or 'system'.
   static String getLanguageDisplayName(String code, AppLocalizations l10n) {
@@ -689,7 +689,7 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Icons.coffee,
                 color: Colors.orange,
                 title: l10n.supportKofiTitle,
-                subtitle: 'ko-fi.com/leorise',
+                subtitle: 'ko-fi.com/leonardobani',
                 url: kofiUrl,
               ),
               const SizedBox(height: 8),
@@ -698,7 +698,7 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Icons.volunteer_activism_outlined,
                 color: Colors.amber.shade800,
                 title: l10n.supportLiberapayTitle,
-                subtitle: 'liberapay.com/LeoRise25',
+                subtitle: 'liberapay.com/leonardobani',
                 url: liberapayUrl,
               ),
               const SizedBox(height: 8),
@@ -707,7 +707,7 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Icons.payment,
                 color: Colors.blue,
                 title: l10n.supportPaypalTitle,
-                subtitle: 'paypal.me/leorise',
+                subtitle: 'paypal.me/leonardobani',
                 url: paypalUrl,
               ),
             ],

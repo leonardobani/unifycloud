@@ -745,7 +745,7 @@ abstract class AppLocalizations {
   /// No description provided for @developerInfo.
   ///
   /// In en, this message translates to:
-  /// **'Developer: LeoRise (@leorise25)'**
+  /// **'Developer: Leonardo Bani (@leonardobani)'**
   String get developerInfo;
 
   /// No description provided for @engineInfo.

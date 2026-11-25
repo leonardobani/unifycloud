@@ -328,7 +328,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appVersion => '앱 버전: 1.0.0';
 
   @override
-  String get developerInfo => '개발자: LeoRise (@leorise25)';
+  String get developerInfo => '개발자: Leonardo Bani (@leonardobani)';
 
   @override
   String get engineInfo => '엔진: Rclone Core CGO (Go v1.22+ / C FFI)';

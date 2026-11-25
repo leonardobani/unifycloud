@@ -199,7 +199,7 @@ void main() {
       // Verify Section 4 & 5: Sicurezza e Info
       expect(find.text('Sicurezza & Cifratura'), findsOneWidget);
       expect(find.text('Informazioni su UnifyCloud'), findsOneWidget);
-      expect(find.text('Sviluppatore: LeoRise (@leorise25)'), findsOneWidget);
+      expect(find.text('Sviluppatore: Leonardo Bani (@leonardobani)'), findsOneWidget);
       expect(
         find.text('Licenza: GNU General Public License v3.0 (GPL-3.0)'),
         findsOneWidget,
