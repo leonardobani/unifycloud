@@ -1,4 +1,4 @@
 - Nuovo logo ufficiale di UnifyCloud e grafica rinnovata.
-- Miglioramenti al tema COSMIC e all'interfaccia utente.
-- Ottimizzazione della sincronizzazione multi-cloud e dei trasferimenti in background.
+- Aggiornamenti al tema Material 3 e all'interfaccia utente.
+- Miglioramenti alla sicurezza, sincronizzazione multi-cloud e trasferimenti in background.
 - Correzioni di bug e miglioramenti prestazionali.
