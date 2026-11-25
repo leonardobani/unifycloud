@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/cloud_models.dart';
-import '../theme/cosmic_icons.dart';
 
 /// A Material 3 dialog displaying a generated public shareable link for a file or folder.
 class ShareLinkDialog extends StatelessWidget {
@@ -68,7 +67,7 @@ class ShareLinkDialog extends StatelessWidget {
               color: colorScheme.primaryContainer,
               shape: BoxShape.circle,
             ),
-            child: CosmicSvgIcon(CosmicIcons.linkSvg, color: colorScheme.primary, size: 24),
+            child: Icon(Icons.link_rounded, color: colorScheme.primary, size: 24),
           ),
           const SizedBox(width: 12),
           const Expanded(
@@ -84,10 +83,8 @@ class ShareLinkDialog extends StatelessWidget {
           children: [
             Row(
               children: [
-                CosmicSvgIcon(
-                  item.isDir ? CosmicIcons.folderSvg : CosmicIcons.fileSvg,
-                  fallbackMaterialIcon:
-                      item.isDir ? Icons.folder_rounded : Icons.insert_drive_file_rounded,
+                Icon(
+                  item.isDir ? Icons.folder_rounded : Icons.insert_drive_file_rounded,
                   size: 20,
                   color: colorScheme.primary,
                 ),
@@ -121,13 +118,10 @@ class ShareLinkDialog extends StatelessWidget {
                 fontSize: 13,
               ),
               decoration: InputDecoration(
-                prefixIcon: const Padding(
-                  padding: EdgeInsets.all(12),
-                  child: CosmicSvgIcon(CosmicIcons.browserSvg, size: 20),
-                ),
+                prefixIcon: const Icon(Icons.public, size: 20),
                 suffixIcon: IconButton(
                   tooltip: 'Copia link',
-                  icon: const CosmicSvgIcon(CosmicIcons.copySvg, size: 20),
+                  icon: const Icon(Icons.copy_rounded, size: 20),
                   onPressed: () => _copyToClipboard(context),
                 ),
                 filled: true,
@@ -148,7 +142,7 @@ class ShareLinkDialog extends StatelessWidget {
         ),
         OutlinedButton.icon(
           onPressed: () => _openInBrowser(context),
-          icon: const CosmicSvgIcon(CosmicIcons.openWithSvg, size: 18),
+          icon: const Icon(Icons.open_in_browser_rounded, size: 18),
           label: const Text('Apri'),
         ),
         FilledButton.icon(
@@ -156,7 +150,7 @@ class ShareLinkDialog extends StatelessWidget {
             _copyToClipboard(context);
             Navigator.of(context).pop();
           },
-          icon: const CosmicSvgIcon(CosmicIcons.copySvg, size: 18),
+          icon: const Icon(Icons.copy_rounded, size: 18),
           label: const Text('Copia Link'),
         ),
       ],

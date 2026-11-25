@@ -14,7 +14,6 @@ import '../../providers/transfer_provider.dart';
 import '../../services/file_opener_service.dart';
 import '../../services/rclone_service.dart';
 import '../theme/app_theme.dart';
-import '../theme/cosmic_icons.dart';
 import 'adaptive_draggable.dart';
 import 'breadcrumbs_bar.dart';
 import 'expandable_error_box.dart';
@@ -557,7 +556,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         ? AppBar(
             titleSpacing: widget.isDualPane ? 8.0 : null,
             leading: IconButton(
-              icon: const CosmicSvgIcon(CosmicIcons.closeSvg),
+              icon: const Icon(Icons.close),
               tooltip: 'Chiudi selezione',
               visualDensity: widget.isDualPane ? VisualDensity.compact : null,
               onPressed: () {
@@ -571,7 +570,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             ),
             actions: [
               IconButton(
-                icon: CosmicSvgIcon(allSelected ? CosmicIcons.closeSvg : CosmicIcons.selectAllSvg, size: 20),
+                icon: Icon(allSelected ? Icons.deselect : Icons.select_all, size: 20),
                 tooltip: allSelected ? 'Deseleziona tutti' : 'Seleziona tutti',
                 visualDensity: widget.isDualPane ? VisualDensity.compact : null,
                 onPressed: () {
@@ -584,13 +583,13 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
               ),
               if (hasOppositeRemote) ...[
                 IconButton(
-                  icon: const CosmicSvgIcon(CosmicIcons.chevronLeftSvg, size: 20),
+                  icon: const Icon(Icons.drive_file_move_rtl_outlined, size: 20),
                   tooltip: 'Copia in ${oppositeState.currentRemote}',
                   visualDensity: widget.isDualPane ? VisualDensity.compact : null,
                   onPressed: () => _handleBatchTransferToOpposite(isMove: false),
                 ),
                 IconButton(
-                  icon: const CosmicSvgIcon(CosmicIcons.chevronRightSvg, size: 20),
+                  icon: const Icon(Icons.drive_file_move_outlined, size: 20),
                   tooltip: 'Sposta in ${oppositeState.currentRemote}',
                   visualDensity: widget.isDualPane ? VisualDensity.compact : null,
                   onPressed: () => _handleBatchTransferToOpposite(isMove: true),
@@ -598,7 +597,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
               ],
               if (widget.isDualPane) ...[
                 PopupMenuButton<String>(
-                  icon: const CosmicSvgIcon(CosmicIcons.moreVertSvg, size: 20),
+                  icon: const Icon(Icons.more_vert, size: 20),
                   tooltip: 'Altre azioni',
                   padding: EdgeInsets.zero,
                   onSelected: (action) {
@@ -622,7 +621,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                       value: 'download',
                       child: Row(
                         children: [
-                          CosmicSvgIcon(CosmicIcons.downloadSvg, size: 20),
+                          Icon(Icons.download_outlined, size: 20),
                           SizedBox(width: 8),
                           Text('Scarica selezionati'),
                         ],
@@ -632,7 +631,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                       value: 'copy',
                       child: Row(
                         children: [
-                          CosmicSvgIcon(CosmicIcons.copySvg, size: 20),
+                          Icon(Icons.copy_rounded, size: 20),
                           SizedBox(width: 8),
                           Text('Copia negli appunti'),
                         ],
@@ -642,7 +641,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                       value: 'cut',
                       child: Row(
                         children: [
-                          CosmicSvgIcon(CosmicIcons.cutSvg, size: 20),
+                          Icon(Icons.cut_rounded, size: 20),
                           SizedBox(width: 8),
                           Text('Taglia negli appunti'),
                         ],
@@ -653,7 +652,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                       value: 'delete',
                       child: Row(
                         children: [
-                          CosmicSvgIcon(CosmicIcons.deleteSvg, size: 20, color: Colors.red),
+                          Icon(Icons.delete_outline, size: 20, color: Colors.red),
                           SizedBox(width: 8),
                           Text('Elimina selezionati', style: TextStyle(color: Colors.red)),
                         ],
@@ -663,22 +662,22 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                 ),
               ] else ...[
                 IconButton(
-                  icon: const CosmicSvgIcon(CosmicIcons.downloadSvg, size: 20),
+                  icon: const Icon(Icons.download_outlined, size: 20),
                   tooltip: 'Scarica selezionati',
                   onPressed: () => _handleBatchDownload(state),
                 ),
                 IconButton(
-                  icon: const CosmicSvgIcon(CosmicIcons.copySvg, size: 20),
+                  icon: const Icon(Icons.copy_rounded, size: 20),
                   tooltip: 'Copia selezionati',
                   onPressed: () => _handleBatchCopy(state),
                 ),
                 IconButton(
-                  icon: const CosmicSvgIcon(CosmicIcons.cutSvg, size: 20),
+                  icon: const Icon(Icons.cut_rounded, size: 20),
                   tooltip: 'Taglia selezionati',
                   onPressed: () => _handleBatchCut(state),
                 ),
                 IconButton(
-                  icon: const CosmicSvgIcon(CosmicIcons.deleteSvg, size: 20, color: Colors.red),
+                  icon: const Icon(Icons.delete_outline, size: 20, color: Colors.red),
                   tooltip: 'Elimina selezionati',
                   onPressed: () => _handleBatchDelete(state),
                 ),
@@ -720,7 +719,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                           child: DropdownButton<String>(
                             value: state.currentRemote,
                             hint: const Text('Seleziona Cloud'),
-                            icon: const CosmicSvgIcon(CosmicIcons.panDownSvg, size: 20),
+                            icon: const Icon(Icons.keyboard_arrow_down, size: 20),
                             isDense: true,
                             isExpanded: true,
                             items: remotesState.remotes.map((r) {
@@ -730,8 +729,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     if (r.isCrypt) ...[
-                                      const CosmicSvgIcon(
-                                        CosmicIcons.lockSvg,
+                                      const Icon(
+                                        Icons.lock_rounded,
                                         size: 14,
                                         color: Color(0xFF00BFA5),
                                       ),
@@ -783,8 +782,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                             child: const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                CosmicSvgIcon(
-                                  CosmicIcons.lockSvg,
+                                Icon(
+                                  Icons.lock,
                                   size: 12,
                                   color: Color(0xFF00BFA5),
                                 ),
@@ -806,7 +805,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                   ),
             actions: [
               IconButton(
-                icon: CosmicSvgIcon(_isSearching ? CosmicIcons.closeSvg : CosmicIcons.searchSvg, size: 20),
+                icon: Icon(_isSearching ? Icons.close : Icons.search, size: 20),
                 tooltip: _isSearching ? 'Chiudi ricerca' : 'Cerca',
                 visualDensity: widget.isDualPane ? VisualDensity.compact : null,
                 onPressed: () {
@@ -826,7 +825,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
               if (!_isSearching) ...[
                 if (widget.isDualPane) ...[
                   PopupMenuButton<String>(
-                    icon: const CosmicSvgIcon(CosmicIcons.uploadSvg, size: 20),
+                    icon: const Icon(Icons.upload_file_outlined, size: 20),
                     tooltip: 'Carica dal dispositivo',
                     padding: EdgeInsets.zero,
                     enabled: state.currentRemote != null,
@@ -836,7 +835,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                         value: 'files',
                         child: Row(
                           children: [
-                            CosmicSvgIcon(CosmicIcons.uploadSvg, size: 20),
+                            Icon(Icons.upload_file_outlined),
                             SizedBox(width: 12),
                             Expanded(child: Text('Carica file')),
                           ],
@@ -846,7 +845,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                         value: 'folder',
                         child: Row(
                           children: [
-                            CosmicSvgIcon(CosmicIcons.folderOpenSvg, size: 20),
+                            Icon(Icons.drive_folder_upload_outlined),
                             SizedBox(width: 12),
                             Expanded(child: Text('Carica intera cartella')),
                           ],
@@ -855,13 +854,13 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                     ],
                   ),
                   IconButton(
-                    icon: const CosmicSvgIcon(CosmicIcons.folderNewSvg, size: 20),
+                    icon: const Icon(Icons.create_new_folder_outlined, size: 20),
                     tooltip: 'Nuova Cartella',
                     visualDensity: VisualDensity.compact,
                     onPressed: state.currentRemote == null ? null : _showNewFolderDialog,
                   ),
                   PopupMenuButton<String>(
-                    icon: const CosmicSvgIcon(CosmicIcons.moreVertSvg, size: 20),
+                    icon: const Icon(Icons.more_vert, size: 20),
                     tooltip: 'Altre opzioni',
                     padding: EdgeInsets.zero,
                     onSelected: (value) {
@@ -885,10 +884,10 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                         value: 'toggle_view',
                         child: Row(
                           children: [
-                            CosmicSvgIcon(
+                            Icon(
                               state.viewMode == FileViewMode.list
-                                  ? CosmicIcons.viewGridSvg
-                                  : CosmicIcons.viewListSvg,
+                                  ? Icons.grid_view_outlined
+                                  : Icons.view_list_outlined,
                               size: 20,
                             ),
                             const SizedBox(width: 8),
@@ -904,7 +903,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                         value: 'select_all',
                         child: Row(
                           children: [
-                            CosmicSvgIcon(CosmicIcons.selectAllSvg, size: 20),
+                            Icon(Icons.checklist_rounded, size: 20),
                             SizedBox(width: 8),
                             Text('Selezione multipla'),
                           ],
@@ -916,10 +915,10 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                           value: 'sort_${mode.name}',
                           child: Row(
                             children: [
-                              CosmicSvgIcon(
+                              Icon(
                                 state.sortMode == mode
-                                    ? CosmicIcons.checkCircleSvg
-                                    : CosmicIcons.sortSvg,
+                                    ? Icons.check
+                                    : Icons.sort,
                                 size: 18,
                               ),
                               const SizedBox(width: 8),
@@ -932,7 +931,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                   ),
                 ] else ...[
                   IconButton(
-                    icon: const CosmicSvgIcon(CosmicIcons.selectAllSvg, size: 20),
+                    icon: const Icon(Icons.checklist_rounded, size: 20),
                     tooltip: 'Selezione multipla',
                     onPressed: state.displayItems.isEmpty
                         ? null
@@ -941,7 +940,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                           },
                   ),
                   PopupMenuButton<FileSortMode>(
-                    icon: const CosmicSvgIcon(CosmicIcons.sortSvg, size: 20),
+                    icon: const Icon(Icons.sort, size: 20),
                     tooltip: 'Ordina per',
                     initialValue: state.sortMode,
                     onSelected: (mode) {
@@ -971,10 +970,10 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                     ],
                   ),
                   IconButton(
-                    icon: CosmicSvgIcon(
+                    icon: Icon(
                       state.viewMode == FileViewMode.list
-                          ? CosmicIcons.viewGridSvg
-                          : CosmicIcons.viewListSvg,
+                          ? Icons.grid_view_outlined
+                          : Icons.view_list_outlined,
                       size: 20,
                     ),
                     tooltip: state.viewMode == FileViewMode.list
@@ -988,7 +987,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                     },
                   ),
                   PopupMenuButton<String>(
-                    icon: const CosmicSvgIcon(CosmicIcons.uploadSvg, size: 20),
+                    icon: const Icon(Icons.upload_file_outlined, size: 20),
                     tooltip: 'Carica dal dispositivo',
                     enabled: state.currentRemote != null,
                     onSelected: (choice) => _handleUploadChoice(choice, state),
@@ -997,7 +996,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                         value: 'files',
                         child: Row(
                           children: [
-                            CosmicSvgIcon(CosmicIcons.uploadSvg, size: 20),
+                            Icon(Icons.upload_file_outlined),
                             SizedBox(width: 12),
                             Expanded(child: Text('Carica file')),
                           ],
@@ -1007,7 +1006,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                         value: 'folder',
                         child: Row(
                           children: [
-                            CosmicSvgIcon(CosmicIcons.folderOpenSvg, size: 20),
+                            Icon(Icons.drive_folder_upload_outlined),
                             SizedBox(width: 12),
                             Expanded(child: Text('Carica intera cartella')),
                           ],
@@ -1016,17 +1015,17 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                     ],
                   ),
                   IconButton(
-                    icon: const CosmicSvgIcon(CosmicIcons.folderNewSvg, size: 20),
+                    icon: const Icon(Icons.create_new_folder_outlined, size: 20),
                     tooltip: 'Nuova Cartella',
                     onPressed: state.currentRemote == null ? null : _showNewFolderDialog,
                   ),
                 ],
                 if (widget.showDualPaneToggle)
                   IconButton(
-                    icon: CosmicSvgIcon(
+                    icon: Icon(
                       ref.watch(dualPaneActiveProvider)
-                          ? CosmicIcons.splitScreenSvg
-                          : CosmicIcons.desktopSvg,
+                          ? Icons.splitscreen
+                          : Icons.view_sidebar_outlined,
                       size: 20,
                     ),
                     tooltip: ref.watch(dualPaneActiveProvider)
@@ -1093,8 +1092,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const CosmicSvgIcon(
-                                CosmicIcons.downloadSvg,
+                              const Icon(
+                                Icons.file_download_outlined,
                                 color: AppTheme.primaryColor,
                                 size: 28,
                               ),
@@ -1138,10 +1137,9 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     return MaterialBanner(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.12),
-      leading: CosmicSvgIcon(
-        clipboard.isCut ? CosmicIcons.cutSvg : CosmicIcons.copySvg,
+      leading: Icon(
+        clipboard.isCut ? Icons.cut_rounded : Icons.copy_rounded,
         color: AppTheme.primaryColor,
-        size: 22,
       ),
       content: Text(
         label,
@@ -1153,7 +1151,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
           child: const Text('Annulla'),
         ),
         FilledButton.icon(
-          icon: const CosmicSvgIcon(CosmicIcons.pasteSvg, size: 16),
+          icon: const Icon(Icons.paste_rounded, size: 16),
           label: const Text('Incolla qui'),
           onPressed: state.currentRemote == null
               ? null
@@ -1186,8 +1184,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CosmicSvgIcon(
-              CosmicIcons.cloudSvg,
+            Icon(
+              Icons.cloud_off,
               size: 56,
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
             ),
@@ -1254,11 +1252,10 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                   color: accentColor.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
-                child: CosmicSvgIcon(
-                  errorType.svgAsset,
+                child: Icon(
+                  errorType.icon,
                   size: 32,
                   color: accentColor,
-                  fallbackMaterialIcon: errorType.icon,
                 ),
               ),
               const SizedBox(height: 16),
@@ -1276,7 +1273,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
               FilledButton.icon(
                 onPressed: () =>
                     ref.read(widget.provider.notifier).refresh(),
-                icon: const CosmicSvgIcon(CosmicIcons.refreshSvg, size: 18),
+                icon: const Icon(Icons.refresh, size: 18),
                 label: const Text('Riprova'),
               ),
             ],
@@ -1292,8 +1289,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CosmicSvgIcon(
-              CosmicIcons.folderOpenSvg,
+            Icon(
+              Icons.folder_open_outlined,
               size: 56,
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
             ),
@@ -1608,7 +1605,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         oppositeState!.currentRemote!.trim().isNotEmpty;
 
     return PopupMenuButton<String>(
-      icon: const CosmicSvgIcon(CosmicIcons.moreVertSvg, size: 18),
+      icon: const Icon(Icons.more_vert, size: 18),
       tooltip: 'Opzioni per ${item.name}',
       onSelected: (action) =>
           _handleItemAction(context, ref, item, state, action),
@@ -1616,7 +1613,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         const PopupMenuItem(
           value: 'select',
           child: ListTile(
-            leading: CosmicSvgIcon(CosmicIcons.checkCircleSvg, size: 20),
+            leading: Icon(Icons.check_circle_outline),
             title: Text('Seleziona'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -1626,7 +1623,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
           const PopupMenuItem(
             value: 'open_with',
             child: ListTile(
-              leading: CosmicSvgIcon(CosmicIcons.openWithSvg, size: 20),
+              leading: Icon(Icons.open_in_new_rounded),
               title: Text('Apri con app di sistema'),
               dense: true,
               contentPadding: EdgeInsets.zero,
@@ -1635,7 +1632,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
           const PopupMenuItem(
             value: 'download',
             child: ListTile(
-              leading: CosmicSvgIcon(CosmicIcons.downloadSvg, size: 20),
+              leading: Icon(Icons.download_outlined),
               title: Text('Scarica in locale'),
               dense: true,
               contentPadding: EdgeInsets.zero,
@@ -1645,7 +1642,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         const PopupMenuItem(
           value: 'share_link',
           child: ListTile(
-            leading: CosmicSvgIcon(CosmicIcons.shareSvg, size: 20),
+            leading: Icon(Icons.share_outlined),
             title: Text('Crea link condivisibile'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -1655,7 +1652,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
           PopupMenuItem(
             value: 'copy_to_opposite',
             child: ListTile(
-              leading: const CosmicSvgIcon(CosmicIcons.splitScreenSvg, size: 20),
+              leading: const Icon(Icons.drive_file_move_rtl_outlined),
               title: Text('Copia in ${oppositeState.currentRemote}'),
               dense: true,
               contentPadding: EdgeInsets.zero,
@@ -1664,7 +1661,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
           PopupMenuItem(
             value: 'move_to_opposite',
             child: ListTile(
-              leading: const CosmicSvgIcon(CosmicIcons.splitScreenSvg, size: 20),
+              leading: const Icon(Icons.drive_file_move_outlined),
               title: Text('Sposta in ${oppositeState.currentRemote}'),
               dense: true,
               contentPadding: EdgeInsets.zero,
@@ -1674,7 +1671,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         const PopupMenuItem(
           value: 'copy',
           child: ListTile(
-            leading: CosmicSvgIcon(CosmicIcons.copySvg, size: 20),
+            leading: Icon(Icons.copy_rounded),
             title: Text('Copia'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -1683,7 +1680,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         const PopupMenuItem(
           value: 'cut',
           child: ListTile(
-            leading: CosmicSvgIcon(CosmicIcons.cutSvg, size: 20),
+            leading: Icon(Icons.cut_rounded),
             title: Text('Taglia (Sposta)'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -1692,7 +1689,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         const PopupMenuItem(
           value: 'rename',
           child: ListTile(
-            leading: CosmicSvgIcon(CosmicIcons.editSvg, size: 20),
+            leading: Icon(Icons.edit_outlined),
             title: Text('Rinomina'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -1701,7 +1698,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         const PopupMenuItem(
           value: 'copy_path',
           child: ListTile(
-            leading: CosmicSvgIcon(CosmicIcons.copySvg, size: 20),
+            leading: Icon(Icons.content_copy_outlined),
             title: Text('Copia percorso'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -1710,7 +1707,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         const PopupMenuItem(
           value: 'info',
           child: ListTile(
-            leading: CosmicSvgIcon(CosmicIcons.infoSvg, size: 20),
+            leading: Icon(Icons.info_outline),
             title: Text('Informazioni'),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -1719,7 +1716,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         const PopupMenuItem(
           value: 'delete',
           child: ListTile(
-            leading: CosmicSvgIcon(CosmicIcons.deleteSvg, size: 20, color: Colors.red),
+            leading: Icon(Icons.delete_outline, color: Colors.red),
             title: Text('Elimina', style: TextStyle(color: Colors.red)),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -1897,10 +1894,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            CosmicSvgIcon(
-              item.isDir ? CosmicIcons.folderOpenSvg : CosmicIcons.fileSvg,
-              size: 20,
-            ),
+            Icon(item.isDir ? Icons.folder : Icons.insert_drive_file),
             const SizedBox(width: 8),
             Expanded(child: Text(item.name, overflow: TextOverflow.ellipsis)),
           ],

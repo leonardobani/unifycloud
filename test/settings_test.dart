@@ -12,7 +12,6 @@ void main() {
     test('Default values are correct', () {
       const settings = AppSettings();
       expect(settings.themeMode, equals(ThemeMode.system));
-      expect(settings.themeStyle, equals(AppThemeStyle.cosmic));
       expect(settings.showHiddenFiles, isFalse);
       expect(settings.confirmDelete, isTrue);
       expect(settings.customDownloadPath, isNull);
@@ -26,7 +25,6 @@ void main() {
       const settings = AppSettings();
       final updated = settings.copyWith(
         themeMode: ThemeMode.dark,
-        themeStyle: AppThemeStyle.standard,
         showHiddenFiles: true,
         confirmDelete: false,
         customDownloadPath: () => '/home/user/Downloads',
@@ -37,7 +35,6 @@ void main() {
       );
 
       expect(updated.themeMode, equals(ThemeMode.dark));
-      expect(updated.themeStyle, equals(AppThemeStyle.standard));
       expect(updated.showHiddenFiles, isTrue);
       expect(updated.confirmDelete, isFalse);
       expect(updated.customDownloadPath, equals('/home/user/Downloads'));
@@ -50,7 +47,6 @@ void main() {
     test('toJson and fromJson serialize and deserialize accurately', () {
       const settings = AppSettings(
         themeMode: ThemeMode.light,
-        themeStyle: AppThemeStyle.cosmic,
         showHiddenFiles: true,
         confirmDelete: false,
         customDownloadPath: '/custom/path',
@@ -61,7 +57,6 @@ void main() {
 
       final json = settings.toJson();
       expect(json['theme_mode'], equals('light'));
-      expect(json['theme_style'], equals('cosmic'));
       expect(json['show_hidden_files'], isTrue);
       expect(json['confirm_delete'], isFalse);
       expect(json['custom_download_path'], equals('/custom/path'));
@@ -117,9 +112,6 @@ void main() {
 
       await notifier.setThemeMode(ThemeMode.light);
       expect(container.read(settingsProvider).themeMode, equals(ThemeMode.light));
-
-      await notifier.setThemeStyle(AppThemeStyle.cosmic);
-      expect(container.read(settingsProvider).themeStyle, equals(AppThemeStyle.cosmic));
 
       await notifier.setShowHiddenFiles(true);
       expect(container.read(settingsProvider).showHiddenFiles, isTrue);

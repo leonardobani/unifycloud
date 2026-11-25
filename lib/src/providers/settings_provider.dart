@@ -79,11 +79,6 @@ class SettingsNotifier extends Notifier<AppSettings> {
     await _persist(state.copyWith(themeMode: mode));
   }
 
-  /// Changes the application visual theme style (auto, standard, cosmic).
-  Future<void> setThemeStyle(AppThemeStyle style) async {
-    await _persist(state.copyWith(themeStyle: style));
-  }
-
   /// Toggles visibility of hidden files and directories.
   Future<void> setShowHiddenFiles(bool show) async {
     await _persist(state.copyWith(showHiddenFiles: show));

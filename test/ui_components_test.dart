@@ -7,7 +7,6 @@ import 'package:unifycloud/src/providers/cloud_accounts_provider.dart';
 import 'package:unifycloud/src/providers/file_explorer_provider.dart';
 import 'package:unifycloud/src/ui/screens/file_explorer_screen.dart';
 import 'package:unifycloud/src/ui/screens/home_screen.dart';
-import 'package:unifycloud/src/ui/theme/cosmic_icons.dart';
 import 'package:unifycloud/src/ui/widgets/breadcrumbs_bar.dart';
 import 'package:unifycloud/src/ui/widgets/file_type_icon.dart';
 
@@ -30,36 +29,11 @@ void main() {
         ),
       );
 
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.explorerSvg,
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.documentSvg,
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.imageSvg,
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.archiveSvg,
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.codeSvg,
-        ),
-        findsOneWidget,
-      );
+      expect(find.byIcon(Icons.folder_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.picture_as_pdf_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.image_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.folder_zip_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.code_outlined), findsOneWidget);
     });
 
     testWidgets('BreadcrumbsBar displays hierarchy trail', (tester) async {
@@ -85,12 +59,8 @@ void main() {
       expect(find.text('GoogleDrive'), findsOneWidget);
       expect(find.text('Projects'), findsOneWidget);
       expect(find.text('2026'), findsOneWidget);
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.chevronRightSvg,
-        ),
-        findsNWidgets(4),
-      );
+      expect(find.text('Design'), findsOneWidget);
+      expect(find.byIcon(Icons.chevron_right), findsNWidgets(4));
     });
 
     testWidgets('HomeScreen renders storage overview and add cloud button', (tester) async {
@@ -159,29 +129,12 @@ void main() {
 
       expect(find.text('Subfolder'), findsOneWidget);
       expect(find.text('report.pdf'), findsOneWidget);
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.searchSvg,
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.sortSvg,
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.viewGridSvg,
-        ),
-        findsOneWidget,
-      );
+      expect(find.byIcon(Icons.search), findsOneWidget);
+      expect(find.byIcon(Icons.sort), findsOneWidget);
+      expect(find.byIcon(Icons.grid_view_outlined), findsOneWidget);
 
       // Verify 3-dots PopupMenuButton is rendered for items
-      final moreButtons = find.byWidgetPredicate(
-        (w) => w is CosmicSvgIcon && w.asset == CosmicIcons.moreVertSvg,
-      );
+      final moreButtons = find.byIcon(Icons.more_vert);
       expect(moreButtons, findsNWidgets(2));
 
       // Tap 3-dots on file item (second one)
