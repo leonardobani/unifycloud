@@ -306,11 +306,30 @@ class _TransferCard extends ConsumerWidget {
               ),
             ] else if (job.status == TransferStatus.failed) ...[
               const SizedBox(height: 6),
-              Text(
-                'Errore: ${job.error ?? "Trasferimento fallito"}',
-                style: const TextStyle(fontSize: 11, color: Colors.red),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      job.friendlyErrorMessage ??
+                          'Errore: ${job.error ?? "Trasferimento fallito"}',
+                      style: const TextStyle(fontSize: 11, color: Colors.red),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (job.canRetry)
+                    TextButton.icon(
+                      onPressed: () {
+                        ref.read(transferProvider.notifier).retryTransfer(job.id);
+                      },
+                      icon: const Icon(Icons.refresh_rounded, size: 14),
+                      label: const Text('Riprova', style: TextStyle(fontSize: 11)),
+                      style: TextButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                      ),
+                    ),
+                ],
               ),
             ] else if (job.status == TransferStatus.cancelled) ...[
               const SizedBox(height: 6),

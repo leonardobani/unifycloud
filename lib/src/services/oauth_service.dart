@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -171,12 +173,24 @@ class OAuthService {
     }
   }
 
+  static String _generateRandomToken([int byteLength = 32]) {
+    final rng = Random.secure();
+    final bytes = List<int>.generate(byteLength, (_) => rng.nextInt(256));
+    return base64UrlEncode(bytes).replaceAll('=', '');
+  }
+
+  static String _computeCodeChallenge(String verifier) {
+    final digest = sha256.convert(ascii.encode(verifier));
+    return base64UrlEncode(digest.bytes).replaceAll('=', '');
+  }
+
   /// Constructs the authorization URL for the chosen cloud provider.
   Uri buildAuthUrl({
     required OAuthProviderConfig config,
     required String clientId,
     required String redirectUri,
     String state = '',
+    String? codeChallenge,
   }) {
     final queryParams = {
       'client_id': clientId,
@@ -184,6 +198,10 @@ class OAuthService {
       'response_type': 'code',
       if (config.scopes.isNotEmpty) 'scope': config.scopes.join(' '),
       if (state.isNotEmpty) 'state': state,
+      if (codeChallenge != null && codeChallenge.isNotEmpty) ...{
+        'code_challenge': codeChallenge,
+        'code_challenge_method': 'S256',
+      },
       if (config.providerType == 'drive') 'access_type': 'offline',
       'prompt': 'consent',
     };
@@ -235,13 +253,16 @@ class OAuthService {
     final redirectUri = server.port == rcloneOAuthPort
         ? config.defaultRedirectUri
         : 'http://localhost:${server.port}/';
-    final state = DateTime.now().millisecondsSinceEpoch.toString();
+    final state = _generateRandomToken(32);
+    final codeVerifier = _generateRandomToken(32);
+    final codeChallenge = _computeCodeChallenge(codeVerifier);
 
     final authUrl = buildAuthUrl(
       config: config,
       clientId: clientId,
       redirectUri: redirectUri,
       state: state,
+      codeChallenge: codeChallenge,
     );
 
     // 2. Attempt to launch authorization page in browser using resilient fallback chain
@@ -277,7 +298,7 @@ class OAuthService {
       }
 
       request.response.headers.contentType = ContentType.html;
-      if (code != null && (state.isEmpty || returnedState == state)) {
+      if (code != null && state.isNotEmpty && returnedState == state) {
         request.response.write('''
 <!DOCTYPE html>
 <html>
@@ -293,7 +314,12 @@ class OAuthService {
           completer.complete(code);
         }
       } else {
-        final errMsg = errorDesc ?? error ?? 'Codice di autorizzazione non valido.';
+        final rawErrMsg = errorDesc ??
+            error ??
+            (returnedState != state
+                ? 'Parametro state OAuth non valido.'
+                : 'Codice di autorizzazione non valido.');
+        final safeErrMsg = const HtmlEscape().convert(rawErrMsg);
         request.response.statusCode = HttpStatus.badRequest;
         request.response.write('''
 <!DOCTYPE html>
@@ -301,14 +327,14 @@ class OAuthService {
 <head><title>UnifyCloud - Errore</title></head>
 <body style="font-family: sans-serif; text-align: center; padding: 50px;">
   <h2>Errore di autenticazione &#x274C;</h2>
-  <p>$errMsg</p>
+  <p>$safeErrMsg</p>
 </body>
 </html>
 ''');
         await request.response.close();
         if (!completer.isCompleted) {
           completer.completeError(
-            Exception('OAuth authorization failed: $errMsg'),
+            Exception('OAuth authorization failed: $rawErrMsg'),
           );
         }
       }
@@ -330,6 +356,7 @@ class OAuthService {
         clientSecret: effectiveSecret,
         code: code,
         redirectUri: redirectUri,
+        codeVerifier: codeVerifier,
       );
 
       // 5. Automatic discovery of drive_id and drive_type for OneDrive
@@ -405,6 +432,7 @@ class OAuthService {
     String? clientSecret,
     required String code,
     required String redirectUri,
+    String? codeVerifier,
   }) async {
     final response = await _httpClient.post(
       Uri.parse(config.tokenEndpoint),
@@ -416,13 +444,24 @@ class OAuthService {
         'code': code,
         'grant_type': 'authorization_code',
         'redirect_uri': redirectUri,
+        if (codeVerifier != null && codeVerifier.isNotEmpty)
+          'code_verifier': codeVerifier,
       },
     );
 
     if (response.statusCode != 200) {
-      throw Exception(
-        'Token exchange failed (${response.statusCode}): ${response.body}',
-      );
+      String summary = 'HTTP ${response.statusCode}';
+      try {
+        final decoded = jsonDecode(response.body);
+        if (decoded is Map) {
+          final err = decoded['error']?.toString();
+          final desc = decoded['error_description']?.toString();
+          if (err != null && err.isNotEmpty) {
+            summary = desc != null && desc.isNotEmpty ? '$err: $desc' : err;
+          }
+        }
+      } catch (_) {}
+      throw Exception('Token exchange failed ($summary)');
     }
 
     final data = jsonDecode(response.body) as Map<String, dynamic>;

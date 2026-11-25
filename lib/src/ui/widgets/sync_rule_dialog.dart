@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/sync_rule_model.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/sync_provider.dart';
+import '../theme/app_theme.dart';
 
 /// Dialog allowing users to create or edit an automated or manual sync rule.
 class SyncRuleDialog extends ConsumerStatefulWidget {
@@ -295,7 +296,11 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                               value: remote.name,
                               child: Row(
                                 children: [
-                                  Icon(_getProviderIcon(remote.type), size: 20),
+                                  Icon(
+                                    AppTheme.getProviderIcon(remote.type),
+                                    size: 20,
+                                    color: AppTheme.getProviderColor(remote.type),
+                                  ),
                                   const SizedBox(width: 8),
                                   Text(
                                     remote.name,
@@ -439,24 +444,5 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
         ),
       ),
     );
-  }
-
-  IconData _getProviderIcon(String type) {
-    switch (type.toLowerCase()) {
-      case 'drive':
-        return Icons.add_to_drive;
-      case 'onedrive':
-        return Icons.cloud;
-      case 'dropbox':
-        return Icons.inventory_2;
-      case 's3':
-        return Icons.storage;
-      case 'sftp':
-        return Icons.terminal;
-      case 'webdav':
-        return Icons.dns;
-      default:
-        return Icons.cloud_queue;
-    }
   }
 }

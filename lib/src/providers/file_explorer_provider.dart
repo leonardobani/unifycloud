@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
 import '../models/cloud_models.dart';
 import '../models/transfer_models.dart';
@@ -353,35 +350,6 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }
-  }
-
-  /// Downloads an item to the local downloads directory (or user-defined custom directory).
-  Future<File> downloadItem(CloudItem item) async {
-    final remote = state.currentRemote;
-    if (remote == null) {
-      throw StateError('No remote selected');
-    }
-
-    final customPath = ref.read(settingsProvider).customDownloadPath;
-    final Directory downloadsDir;
-    if (customPath != null && customPath.trim().isNotEmpty) {
-      downloadsDir = Directory(customPath.trim());
-    } else {
-      downloadsDir = await getDownloadsDirectory() ??
-          await getApplicationDocumentsDirectory();
-    }
-    await downloadsDir.create(recursive: true);
-
-    final localDestination = p.join(downloadsDir.path, item.name);
-
-    await _rcloneService.copyFile(
-      srcRemote: remote,
-      srcPath: item.path,
-      dstRemote: '',
-      dstPath: localDestination,
-    );
-
-    return File(localDestination);
   }
 
   /// Direct transfer (copy or move) of items from this pane to a target remote and path,

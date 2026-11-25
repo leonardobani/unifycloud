@@ -5,6 +5,7 @@ import 'l10n/app_localizations.dart';
 import 'src/providers/settings_provider.dart';
 import 'src/router/app_router.dart';
 import 'src/services/background_service.dart';
+import 'src/services/desktop_autostart_service.dart';
 import 'src/services/rclone_service.dart';
 import 'src/services/secure_config_service.dart';
 import 'src/services/tray_service.dart';
@@ -22,14 +23,24 @@ void main([List<String> args = const []]) async {
   final backgroundService = AppBackgroundService();
   await backgroundService.initialize();
 
+  // Load persisted settings synchronously before building UI so App Lock engages immediately
+  const storage = SecureConfigService.defaultStorage;
+  final autostartService = DesktopAutostartService();
+  final initialSettings = await SettingsNotifier.loadPersistedSettings(
+    storage,
+    autostartService: autostartService,
+  );
+
   // Initialize native Rclone engine and secure configuration bootstrapping
   final rclone = RcloneService();
-  final secureConfig = SecureConfigService();
+  final secureConfig = SecureConfigService(storage);
 
   // Always initialize native Rclone engine first (enables copy_links and memory mode)
   try {
     await rclone.init();
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('[Main] Rclone initialization failed: $e');
+  }
 
   try {
     final savedConfig = await secureConfig.loadEncryptedConfig();
@@ -42,10 +53,15 @@ void main([List<String> args = const []]) async {
       // Decrypted configuration injected exclusively into RAM memory
       await rclone.loadConfigInMemory(sanitized);
     }
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('[Main] Failed to load secure config: $e');
+  }
 
   final container = ProviderContainer(
     overrides: [
+      settingsStorageProvider.overrideWithValue(storage),
+      settingsProvider.overrideWith(() => SettingsNotifier(initialSettings)),
+      desktopAutostartServiceProvider.overrideWithValue(autostartService),
       rcloneServiceProvider.overrideWithValue(rclone),
       secureConfigServiceProvider.overrideWithValue(secureConfig),
       appBackgroundServiceProvider.overrideWithValue(backgroundService),

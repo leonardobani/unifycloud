@@ -23,7 +23,14 @@ class AppLockGate extends ConsumerWidget {
       return const AppLockScreen();
     }
 
-    return child;
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) =>
+          ref.read(appLockProvider.notifier).recordActivity(),
+      onPointerSignal: (_) =>
+          ref.read(appLockProvider.notifier).recordActivity(),
+      child: child,
+    );
   }
 }
 

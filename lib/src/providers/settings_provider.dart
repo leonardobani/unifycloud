@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../models/settings_models.dart';
 import '../services/desktop_autostart_service.dart';
+import '../services/secure_config_service.dart';
 
 /// Provider exposing the persistent [AppSettings] state.
 final settingsProvider =
@@ -14,49 +15,72 @@ final settingsProvider =
 
 /// Provider exposing [FlutterSecureStorage] for settings persistence.
 final settingsStorageProvider = Provider<FlutterSecureStorage>((ref) {
-  return const FlutterSecureStorage(
-    aOptions: AndroidOptions(),
-    iOptions: IOSOptions(
-      accessibility: KeychainAccessibility.first_unlock,
-    ),
-    mOptions: MacOsOptions(
-      accessibility: KeychainAccessibility.first_unlock,
-    ),
-    lOptions: LinuxOptions(),
-  );
+  return SecureConfigService.defaultStorage;
 });
 
 /// Riverpod 3 Notifier managing application settings and persistence.
 class SettingsNotifier extends Notifier<AppSettings> {
   static const String settingsStorageKey = 'unifycloud_settings_v1';
   final AppSettings? _initialSettings;
+  bool _hasLocalChanges = false;
 
   SettingsNotifier([this._initialSettings]);
 
   FlutterSecureStorage get _storage => ref.read(settingsStorageProvider);
 
-  @override
-  AppSettings build() {
-    final initial = _initialSettings ?? const AppSettings();
-    scheduleMicrotask(() => _loadFromStorage());
-    return initial;
-  }
-
-  /// Loads saved settings from persistent storage.
-  Future<void> _loadFromStorage() async {
+  /// Loads persisted [AppSettings] from [storage] prior to app startup.
+  static Future<AppSettings> loadPersistedSettings(
+    FlutterSecureStorage storage, {
+    DesktopAutostartService? autostartService,
+  }) async {
+    var loaded = const AppSettings();
     try {
-      final rawJson = await _storage.read(key: settingsStorageKey);
+      final rawJson = await storage.read(key: settingsStorageKey);
       if (rawJson != null && rawJson.trim().isNotEmpty) {
         final decoded = jsonDecode(rawJson) as Map<String, dynamic>;
-        state = AppSettings.fromJson(decoded);
+        loaded = AppSettings.fromJson(decoded);
       }
     } catch (_) {
       // Fallback to default state on parse error
     }
 
+    if (autostartService != null && autostartService.isSupported) {
+      try {
+        final isActuallyEnabled = await autostartService.isAutostartEnabled();
+        if (loaded.autostartOnBoot != isActuallyEnabled) {
+          loaded = loaded.copyWith(autostartOnBoot: isActuallyEnabled);
+        }
+      } catch (_) {}
+    }
+
+    return loaded;
+  }
+
+  @override
+  AppSettings build() {
+    _hasLocalChanges = false;
+    if (_initialSettings != null) {
+      return _initialSettings;
+    }
+    scheduleMicrotask(() => _loadFromStorage());
+    return const AppSettings();
+  }
+
+  /// Loads saved settings from persistent storage without clobbering newer updates.
+  Future<void> _loadFromStorage() async {
+    try {
+      final rawJson = await _storage.read(key: settingsStorageKey);
+      if (!_hasLocalChanges && rawJson != null && rawJson.trim().isNotEmpty) {
+        final decoded = jsonDecode(rawJson) as Map<String, dynamic>;
+        state = AppSettings.fromJson(decoded);
+      }
+    } catch (_) {
+      // Fallback to current state on parse error
+    }
+
     try {
       final autostartService = ref.read(desktopAutostartServiceProvider);
-      if (autostartService.isSupported) {
+      if (!_hasLocalChanges && autostartService.isSupported) {
         final isActuallyEnabled = await autostartService.isAutostartEnabled();
         if (state.autostartOnBoot != isActuallyEnabled) {
           state = state.copyWith(autostartOnBoot: isActuallyEnabled);
@@ -67,6 +91,7 @@ class SettingsNotifier extends Notifier<AppSettings> {
 
   /// Persists current settings to secure storage.
   Future<void> _persist(AppSettings newSettings) async {
+    _hasLocalChanges = true;
     state = newSettings;
     try {
       final jsonString = jsonEncode(newSettings.toJson());

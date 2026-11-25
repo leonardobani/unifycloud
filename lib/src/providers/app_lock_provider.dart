@@ -16,6 +16,8 @@ class AppLockState {
   final bool isAuthenticating;
   final String? errorMessage;
   final DateTime? lastPausedAt;
+  final int failedAttempts;
+  final DateTime? lockoutUntil;
 
   const AppLockState({
     this.isLocked = false,
@@ -25,7 +27,12 @@ class AppLockState {
     this.isAuthenticating = false,
     this.errorMessage,
     this.lastPausedAt,
+    this.failedAttempts = 0,
+    this.lockoutUntil,
   });
+
+  bool get isLockedOut =>
+      lockoutUntil != null && DateTime.now().isBefore(lockoutUntil!);
 
   AppLockState copyWith({
     bool? isLocked,
@@ -35,6 +42,8 @@ class AppLockState {
     bool? isAuthenticating,
     String? Function()? errorMessage,
     DateTime? Function()? lastPausedAt,
+    int? failedAttempts,
+    DateTime? Function()? lockoutUntil,
   }) {
     return AppLockState(
       isLocked: isLocked ?? this.isLocked,
@@ -44,6 +53,8 @@ class AppLockState {
       isAuthenticating: isAuthenticating ?? this.isAuthenticating,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       lastPausedAt: lastPausedAt != null ? lastPausedAt() : this.lastPausedAt,
+      failedAttempts: failedAttempts ?? this.failedAttempts,
+      lockoutUntil: lockoutUntil != null ? lockoutUntil() : this.lockoutUntil,
     );
   }
 }
@@ -52,10 +63,12 @@ class AppLockState {
 final appLockProvider =
     NotifierProvider<AppLockNotifier, AppLockState>(AppLockNotifier.new);
 
-/// Riverpod 3 Notifier managing App Lock state, biometrics, and lifecycle-based auto-lock.
+/// Riverpod 3 Notifier managing App Lock state, biometrics, rate-limiting, and auto-lock.
 class AppLockNotifier extends Notifier<AppLockState>
     with WidgetsBindingObserver {
+  static const int _maxFreeAttempts = 5;
   bool _disposed = false;
+  Timer? _inactivityTimer;
 
   @override
   AppLockState build() {
@@ -72,6 +85,7 @@ class AppLockNotifier extends Notifier<AppLockState>
     binding.addObserver(this);
     ref.onDispose(() {
       _disposed = true;
+      _inactivityTimer?.cancel();
       binding.removeObserver(this);
     });
 
@@ -83,6 +97,28 @@ class AppLockNotifier extends Notifier<AppLockState>
     });
 
     return initialState;
+  }
+
+  void _resetInactivityTimer() {
+    _inactivityTimer?.cancel();
+    _inactivityTimer = null;
+    if (_disposed || state.isLocked) return;
+
+    final settings = ref.read(settingsProvider);
+    if (!settings.appLockEnabled || settings.autoLockTimeoutMinutes <= 0) {
+      return;
+    }
+
+    _inactivityTimer = Timer(
+      Duration(minutes: settings.autoLockTimeoutMinutes),
+      lock,
+    );
+  }
+
+  /// Records user interaction to postpone foreground inactivity auto-lock.
+  void recordActivity() {
+    if (_disposed || state.isLocked) return;
+    _resetInactivityTimer();
   }
 
   /// Refreshes biometric capabilities and PIN presence from secure storage.
@@ -133,22 +169,38 @@ class AppLockNotifier extends Notifier<AppLockState>
   /// Manually locks the app immediately.
   void lock() {
     if (_disposed) return;
+    _inactivityTimer?.cancel();
     state = state.copyWith(isLocked: true, errorMessage: () => null);
   }
 
-  /// Unlocks the app and clears any error message.
+  /// Unlocks the app and clears any error message and failed attempt counters.
   void unlock() {
     if (_disposed) return;
     state = state.copyWith(
       isLocked: false,
       isAuthenticating: false,
       errorMessage: () => null,
+      failedAttempts: 0,
+      lockoutUntil: () => null,
     );
+    _resetInactivityTimer();
   }
 
-  /// Verifies the entered PIN. Unlocks if correct, otherwise sets an error message.
+  /// Verifies the entered PIN. Unlocks if correct, otherwise sets an error message
+  /// and enforces exponential backoff after [_maxFreeAttempts] failures.
   Future<bool> verifyPin(String pin) async {
     if (_disposed) return false;
+
+    final now = DateTime.now();
+    if (state.lockoutUntil != null && now.isBefore(state.lockoutUntil!)) {
+      final remaining = state.lockoutUntil!.difference(now).inSeconds + 1;
+      state = state.copyWith(
+        errorMessage: () =>
+            'Troppi tentativi falliti. Riprova tra ${remaining}s.',
+      );
+      return false;
+    }
+
     final service = ref.read(appLockServiceProvider);
     state = state.copyWith(isAuthenticating: true, errorMessage: () => null);
     try {
@@ -158,9 +210,20 @@ class AppLockNotifier extends Notifier<AppLockState>
         unlock();
         return true;
       } else {
+        final nextAttempts = state.failedAttempts + 1;
+        DateTime? nextLockout;
+        var msg = 'Codice PIN errato. Riprova.';
+        if (nextAttempts >= _maxFreeAttempts) {
+          final exponent = (nextAttempts - _maxFreeAttempts).clamp(0, 5);
+          final cooldownSec = (30 * (1 << exponent)).clamp(30, 900);
+          nextLockout = DateTime.now().add(Duration(seconds: cooldownSec));
+          msg = 'Troppi tentativi falliti. Riprova tra ${cooldownSec}s.';
+        }
         state = state.copyWith(
           isAuthenticating: false,
-          errorMessage: () => 'Codice PIN errato. Riprova.',
+          failedAttempts: nextAttempts,
+          lockoutUntil: () => nextLockout,
+          errorMessage: () => msg,
         );
         return false;
       }

@@ -325,6 +325,29 @@ void main() {
       // Crucial: srcPath must NOT be /Work/Work/presentation.pdf
       expect(mockRclone.copyCalls.first['srcPath'], equals('Work/presentation.pdf'));
     });
+
+    test('getCachedFile sanitizes path traversal filenames within preview dir', () async {
+      final service = FileOpenerService(
+        rcloneService: mockRclone,
+        getTempDir: () async => tempDir,
+        openFile: (path) async => mockResult,
+      );
+
+      final traversalItem = CloudItem(
+        name: '../../evil.txt',
+        path: '../../evil.txt',
+        size: 10,
+        isDir: false,
+      );
+
+      final cached = await service.getCachedFile(
+        remote: 'MyDrive',
+        item: traversalItem,
+      );
+      final previewRoot = p.join(tempDir.path, 'unifycloud_previews', 'MyDrive');
+      expect(p.isWithin(previewRoot, cached.path), isTrue);
+      expect(p.basename(cached.path), equals('evil.txt'));
+    });
   });
 
   group('FileExplorerScreen Integration Tests', () {

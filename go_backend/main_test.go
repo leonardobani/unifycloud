@@ -613,5 +613,44 @@ func TestCryptBackend(t *testing.T) {
 	}
 }
 
+func TestSecurity_IniInjectionAndPasswordObscure(t *testing.T) {
+	InitRcloneInternal("")
+
+	// 1. Reject invalid remote names (INI section injection)
+	badNames := []string{
+		"bad]name",
+		"bad[name",
+		"bad\n[evil]\ntype=local",
+		"bad:name",
+		"bad name",
+	}
+	for _, name := range badNames {
+		resp := SetRemoteConfigInternal(name, "s3", `{}`)
+		if resp.Success {
+			t.Errorf("Expected SetRemoteConfigInternal to reject remote name %q", name)
+		}
+	}
+
+	// 2. Reject newline injection in option values
+	resp := SetRemoteConfigInternal("valid_s3", "s3", `{"endpoint":"https://example.com\n[injected]\ntype = local"}`)
+	if resp.Success {
+		t.Error("Expected SetRemoteConfigInternal to reject newline in option value")
+	}
+
+	// 3. Obscure password for webdav and sftp
+	respWebdav := SetRemoteConfigInternal("my_webdav", "webdav", `{"url":"https://cloud.example.com","user":"alice","pass":"SuperPlainPass"}`)
+	if !respWebdav.Success {
+		t.Fatalf("SetRemoteConfigInternal webdav failed: %s", respWebdav.Error)
+	}
+	exported := ExportConfigInMemoryInternal()
+	if !exported.Success {
+		t.Fatalf("ExportConfigInMemoryInternal failed: %s", exported.Error)
+	}
+	if strings.Contains(exported.Data.(string), "SuperPlainPass") {
+		t.Error("Expected webdav pass to be obscured in exported INI, found plaintext")
+	}
+}
+
+
 
 

@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/transfer_models.dart';
 import '../services/background_service.dart';
+import '../services/file_opener_service.dart';
 import '../services/rclone_service.dart';
 import '../services/tray_service.dart';
 import 'settings_provider.dart';
@@ -33,9 +34,6 @@ class TransferState {
 
   List<TransferJob> get activeTransfers =>
       transfers.where((t) => t.isActive).toList();
-
-  List<TransferJob> get completedTransfers =>
-      transfers.where((t) => t.status == TransferStatus.completed).toList();
 
   int get activeCount => activeTransfers.length;
 
@@ -299,9 +297,11 @@ class TransferNotifier extends Notifier<TransferState> {
 
     await targetDir.create(recursive: true);
 
-    final rawName = p.basename(srcPath.replaceAll(RegExp(r'/+$'), ''));
-    final fileName = rawName.isNotEmpty ? rawName : 'downloaded_file';
-    final localDestination = p.join(targetDir.path, fileName);
+    final fileName = sanitizeLocalFileName(srcPath, fallback: 'downloaded_file');
+    final localDestination = p.normalize(p.join(targetDir.path, fileName));
+    if (!p.isWithin(targetDir.path, localDestination)) {
+      throw ArgumentError('Invalid destination filename derived from: $srcPath');
+    }
 
     return startTransfer(
       srcRemote: srcRemote,

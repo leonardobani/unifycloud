@@ -40,6 +40,18 @@ String resolveRemoteItemPath(String itemPath, [String? currentPath]) {
   return '$cleanCurrent/$cleanItem';
 }
 
+/// Extracts a safe single filename from a remote path or item name, preventing
+/// path traversal (`../`), null bytes, or directory escape.
+String sanitizeLocalFileName(String rawName, {String fallback = 'file'}) {
+  final normalized = rawName.replaceAll('\x00', '').replaceAll('\\', '/');
+  final stripped = normalized.replaceAll(RegExp(r'/+$'), '');
+  final base = p.posix.basename(stripped).trim();
+  if (base.isEmpty || base == '.' || base == '..') {
+    return fallback;
+  }
+  return base;
+}
+
 /// Service responsible for downloading files to a local preview cache and opening them
 /// using the host platform's default application.
 class FileOpenerService {
@@ -106,16 +118,17 @@ class FileOpenerService {
   /// Uses [OpenFilex.open] to trigger the platform's native intent / controller / handler.
   static Future<OpenResult> openSystemFile(String filePath) async {
     if (Platform.isLinux) {
-      final isPdfFile = filePath.toLowerCase().endsWith('.pdf');
+      final safePath = p.canonicalize(filePath);
+      final isPdfFile = safePath.toLowerCase().endsWith('.pdf');
 
       // 1. Desktop launchers
       final desktopLaunchers = [
-        ('/usr/local/bin/xdg-open', [filePath]),
-        ('/usr/bin/distrobox-host-exec', ['xdg-open', filePath]),
-        ('/usr/bin/gio', ['open', filePath]),
-        ('gio', ['open', filePath]),
-        ('/usr/bin/xdg-open', [filePath]),
-        ('xdg-open', [filePath]),
+        ('/usr/local/bin/xdg-open', [safePath]),
+        ('/usr/bin/distrobox-host-exec', ['xdg-open', safePath]),
+        ('/usr/bin/gio', ['open', safePath]),
+        ('gio', ['open', safePath]),
+        ('/usr/bin/xdg-open', [safePath]),
+        ('xdg-open', [safePath]),
       ];
 
       for (final launcher in desktopLaunchers) {
@@ -126,7 +139,7 @@ class FileOpenerService {
 
       // 2. Try url_launcher (Portal / GTK)
       try {
-        final fileUri = Uri.file(filePath);
+        final fileUri = Uri.file(safePath);
         final launched = await launchUrl(
           fileUri,
           mode: LaunchMode.externalApplication,
@@ -158,20 +171,20 @@ class FileOpenerService {
         ];
 
         for (final viewer in pdfViewers) {
-          if (await _tryLaunchProcess(viewer, [filePath])) {
+          if (await _tryLaunchProcess(viewer, [safePath])) {
             return OpenResult(type: ResultType.done, message: 'done');
           }
-          if (await _tryLaunchProcess('/usr/bin/distrobox-host-exec', [viewer, filePath])) {
+          if (await _tryLaunchProcess('/usr/bin/distrobox-host-exec', [viewer, safePath])) {
             return OpenResult(type: ResultType.done, message: 'done');
           }
         }
 
         // Also try flatpak browsers/viewers on host
         final flatpaks = [
-          ['flatpak', 'run', 'org.mozilla.firefox', filePath],
-          ['flatpak', 'run', 'org.gnome.Evince', filePath],
-          ['flatpak', 'run', 'com.google.Chrome', filePath],
-          ['flatpak', 'run', 'org.kde.okular', filePath],
+          ['flatpak', 'run', 'org.mozilla.firefox', safePath],
+          ['flatpak', 'run', 'org.gnome.Evince', safePath],
+          ['flatpak', 'run', 'com.google.Chrome', safePath],
+          ['flatpak', 'run', 'org.kde.okular', safePath],
         ];
         for (final fp in flatpaks) {
           if (await _tryLaunchProcess('/usr/bin/distrobox-host-exec', fp)) {
@@ -199,7 +212,12 @@ class FileOpenerService {
     if (!previewDir.existsSync()) {
       previewDir.createSync(recursive: true);
     }
-    return File(p.join(previewDir.path, item.name));
+    final safeName = sanitizeLocalFileName(item.name, fallback: 'preview_file');
+    final candidatePath = p.normalize(p.join(previewDir.path, safeName));
+    if (!p.isWithin(previewDir.path, candidatePath)) {
+      throw ArgumentError('Invalid file name for preview cache: ${item.name}');
+    }
+    return File(candidatePath);
   }
 
   bool _isLocalRemote(String remote) {

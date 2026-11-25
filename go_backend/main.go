@@ -170,13 +170,30 @@ func (s *MemoryStorage) Save() error {
 	return nil
 }
 
+func hasControlNewline(s string) bool {
+	return strings.ContainsAny(s, "\r\n")
+}
+
+func isValidRemoteName(name string) bool {
+	if name == "" {
+		return false
+	}
+	return !strings.ContainsAny(name, "[]:\r\n\t ")
+}
+
 func (s *MemoryStorage) Serialize() (string, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	var sb strings.Builder
 	for secName, secKeys := range s.sections {
+		if hasControlNewline(secName) || strings.ContainsAny(secName, "[]") {
+			return "", fmt.Errorf("invalid remote section name")
+		}
 		sb.WriteString(fmt.Sprintf("[%s]\n", secName))
 		for k, v := range secKeys {
+			if hasControlNewline(k) || hasControlNewline(v) || strings.Contains(k, "=") {
+				return "", fmt.Errorf("invalid INI key or value in section %q", secName)
+			}
 			sb.WriteString(fmt.Sprintf("%s = %s\n", k, v))
 		}
 		sb.WriteString("\n")
@@ -187,8 +204,6 @@ func (s *MemoryStorage) Serialize() (string, error) {
 func init() {
 	_ = os.Setenv("RCLONE_LOCAL_COPY_LINKS", "true")
 	_ = os.Setenv("RCLONE_COPY_LINKS", "true")
-	_ = os.Setenv("RCLONE_LOCAL_SKIP_LINKS", "true")
-	_ = os.Setenv("RCLONE_SKIP_LINKS", "true")
 }
 
 func (s *MemoryStorage) LoadFromIni(content string) error {
@@ -204,9 +219,14 @@ func (s *MemoryStorage) LoadFromIni(content string) error {
 			continue
 		}
 		if strings.HasPrefix(line, "[") && strings.HasSuffix(line, "]") {
-			currentSection = strings.TrimSpace(line[1 : len(line)-1])
-			if currentSection != "" && s.sections[currentSection] == nil {
-				s.sections[currentSection] = make(map[string]string)
+			candidate := strings.TrimSpace(line[1 : len(line)-1])
+			if isValidRemoteName(candidate) {
+				currentSection = candidate
+				if s.sections[currentSection] == nil {
+					s.sections[currentSection] = make(map[string]string)
+				}
+			} else {
+				currentSection = ""
 			}
 			continue
 		}
@@ -215,19 +235,18 @@ func (s *MemoryStorage) LoadFromIni(content string) error {
 			if len(parts) == 2 {
 				k := strings.TrimSpace(parts[0])
 				v := strings.TrimSpace(parts[1])
-				s.sections[currentSection][k] = v
+				if k != "" && !hasControlNewline(k) && !hasControlNewline(v) && !strings.Contains(k, "=") {
+					s.sections[currentSection][k] = v
+				}
 			}
 		}
 	}
 
-	// Ensure any local remote in loaded config has copy_links and skip_links
+	// Ensure any local remote in loaded config has copy_links
 	for _, sec := range s.sections {
 		if strings.EqualFold(sec["type"], "local") {
 			if _, ok := sec["copy_links"]; !ok {
 				sec["copy_links"] = "true"
-			}
-			if _, ok := sec["skip_links"]; !ok {
-				sec["skip_links"] = "true"
 			}
 		}
 	}
@@ -339,8 +358,6 @@ func InitRcloneInternal(configPath string) Response {
 	// and allows proper browsing/copying of symlinked directories (e.g. /bin -> /usr/bin, /lib -> /usr/lib on Linux).
 	_ = os.Setenv("RCLONE_LOCAL_COPY_LINKS", "true")
 	_ = os.Setenv("RCLONE_COPY_LINKS", "true")
-	_ = os.Setenv("RCLONE_LOCAL_SKIP_LINKS", "true")
-	_ = os.Setenv("RCLONE_SKIP_LINKS", "true")
 
 	cfg := strings.TrimSpace(configPath)
 	if cfg != "" {
@@ -393,8 +410,8 @@ func ExportConfigInMemoryInternal() Response {
 func SetRemoteConfigInternal(remoteName, remoteType, optionsJson string) Response {
 	rName := strings.TrimSpace(remoteName)
 	rType := strings.TrimSpace(remoteType)
-	if rName == "" || rType == "" {
-		return ResponseError(fmt.Errorf("remoteName and remoteType cannot be empty"))
+	if !isValidRemoteName(rName) || rType == "" || hasControlNewline(rType) {
+		return ResponseError(fmt.Errorf("invalid remoteName or remoteType"))
 	}
 
 	opts := make(map[string]string)
@@ -405,16 +422,20 @@ func SetRemoteConfigInternal(remoteName, remoteType, optionsJson string) Respons
 			return ResponseError(fmt.Errorf("invalid options JSON: %w", err))
 		}
 		for k, v := range rawMap {
-			opts[k] = fmt.Sprintf("%v", v)
+			if k == "" || hasControlNewline(k) || strings.Contains(k, "=") {
+				return ResponseError(fmt.Errorf("invalid option key %q", k))
+			}
+			valStr := fmt.Sprintf("%v", v)
+			if hasControlNewline(valStr) {
+				return ResponseError(fmt.Errorf("option value for %q cannot contain newlines", k))
+			}
+			opts[k] = valStr
 		}
 	}
 
 	if strings.EqualFold(rType, "local") {
 		if _, ok := opts["copy_links"]; !ok {
 			opts["copy_links"] = "true"
-		}
-		if _, ok := opts["skip_links"]; !ok {
-			opts["skip_links"] = "true"
 		}
 	} else if strings.EqualFold(rType, "crypt") {
 		if pass, ok := opts["password"]; ok && pass != "" {
@@ -425,6 +446,12 @@ func SetRemoteConfigInternal(remoteName, remoteType, optionsJson string) Respons
 		if pass2, ok := opts["password2"]; ok && pass2 != "" {
 			if _, err := obscure.Reveal(pass2); err != nil {
 				opts["password2"] = obscure.MustObscure(pass2)
+			}
+		}
+	} else if strings.EqualFold(rType, "webdav") || strings.EqualFold(rType, "sftp") {
+		if pass, ok := opts["pass"]; ok && pass != "" {
+			if _, err := obscure.Reveal(pass); err != nil {
+				opts["pass"] = obscure.MustObscure(pass)
 			}
 		}
 	}
@@ -761,6 +788,15 @@ var globalTransferManager = &TransferManager{
 	jobs: make(map[string]*TransferJob),
 }
 
+func cloneTransferJob(j *TransferJob) *TransferJob {
+	if j == nil {
+		return nil
+	}
+	copyJob := *j
+	copyJob.cancel = nil
+	return &copyJob
+}
+
 func StartTransferInternal(srcRemote, srcPath, dstRemote, dstPath string, isMove bool) Response {
 	trimmedSrc := strings.Trim(srcPath, "/")
 	if trimmedSrc == "" {
@@ -789,6 +825,7 @@ func StartTransferInternal(srcRemote, srcPath, dstRemote, dstPath string, isMove
 	globalTransferManager.mu.Lock()
 	globalTransferManager.jobs[jobID] = job
 	globalTransferManager.jobList = append(globalTransferManager.jobList, jobID)
+	snapshot := cloneTransferJob(job)
 	globalTransferManager.mu.Unlock()
 
 	go func() {
@@ -803,6 +840,15 @@ func StartTransferInternal(srcRemote, srcPath, dstRemote, dstPath string, isMove
 		}()
 
 		globalTransferManager.mu.Lock()
+		if ctx.Err() != nil || job.Status == "cancelled" {
+			if job.Status != "cancelled" {
+				job.Status = "cancelled"
+				job.Error = "Transfer cancelled by user"
+				job.EndTime = time.Now().Format(time.RFC3339)
+			}
+			globalTransferManager.mu.Unlock()
+			return
+		}
 		job.Status = "running"
 		globalTransferManager.mu.Unlock()
 
@@ -891,14 +937,14 @@ func StartTransferInternal(srcRemote, srcPath, dstRemote, dstPath string, isMove
 		job.EndTime = time.Now().Format(time.RFC3339)
 
 		if opErr != nil {
-			if jobCtx.Err() == context.Canceled {
+			if jobCtx.Err() == context.Canceled || job.Status == "cancelled" {
 				job.Status = "cancelled"
 				job.Error = "Transfer cancelled by user"
 			} else {
 				job.Status = "failed"
 				job.Error = opErr.Error()
 			}
-		} else {
+		} else if job.Status != "cancelled" {
 			job.Status = "completed"
 			if job.TotalBytes > 0 {
 				job.Bytes = job.TotalBytes
@@ -907,7 +953,7 @@ func StartTransferInternal(srcRemote, srcPath, dstRemote, dstPath string, isMove
 		}
 	}()
 
-	return ResponseSuccess(job)
+	return ResponseSuccess(snapshot)
 }
 
 func StartSyncInternal(srcRemote, srcPath, dstRemote, dstPath, syncMode string) Response {
@@ -934,6 +980,7 @@ func StartSyncInternal(srcRemote, srcPath, dstRemote, dstPath, syncMode string) 
 	globalTransferManager.mu.Lock()
 	globalTransferManager.jobs[jobID] = job
 	globalTransferManager.jobList = append(globalTransferManager.jobList, jobID)
+	snapshot := cloneTransferJob(job)
 	globalTransferManager.mu.Unlock()
 
 	go func() {
@@ -948,6 +995,15 @@ func StartSyncInternal(srcRemote, srcPath, dstRemote, dstPath, syncMode string) 
 		}()
 
 		globalTransferManager.mu.Lock()
+		if ctx.Err() != nil || job.Status == "cancelled" {
+			if job.Status != "cancelled" {
+				job.Status = "cancelled"
+				job.Error = "Transfer cancelled by user"
+				job.EndTime = time.Now().Format(time.RFC3339)
+			}
+			globalTransferManager.mu.Unlock()
+			return
+		}
 		job.Status = "running"
 		globalTransferManager.mu.Unlock()
 
@@ -988,14 +1044,14 @@ func StartSyncInternal(srcRemote, srcPath, dstRemote, dstPath, syncMode string) 
 		job.EndTime = time.Now().Format(time.RFC3339)
 
 		if opErr != nil {
-			if jobCtx.Err() == context.Canceled {
+			if jobCtx.Err() == context.Canceled || job.Status == "cancelled" {
 				job.Status = "cancelled"
 				job.Error = "Sync cancelled by user"
 			} else {
 				job.Status = "failed"
 				job.Error = opErr.Error()
 			}
-		} else {
+		} else if job.Status != "cancelled" {
 			job.Status = "completed"
 			if job.TotalBytes > 0 {
 				job.Bytes = job.TotalBytes
@@ -1004,14 +1060,14 @@ func StartSyncInternal(srcRemote, srcPath, dstRemote, dstPath, syncMode string) 
 		}
 	}()
 
-	return ResponseSuccess(job)
+	return ResponseSuccess(snapshot)
 }
 
 func GetTransferProgressInternal(jobId string) Response {
 	targetID := strings.TrimSpace(jobId)
 
-	globalTransferManager.mu.RLock()
-	defer globalTransferManager.mu.RUnlock()
+	globalTransferManager.mu.Lock()
+	defer globalTransferManager.mu.Unlock()
 
 	refreshJobStats := func(j *TransferJob) {
 		if j.Status == "running" {
@@ -1048,14 +1104,14 @@ func GetTransferProgressInternal(jobId string) Response {
 			return ResponseError(fmt.Errorf("job %q not found", targetID))
 		}
 		refreshJobStats(job)
-		return ResponseSuccess(job)
+		return ResponseSuccess(cloneTransferJob(job))
 	}
 
 	list := make([]*TransferJob, 0, len(globalTransferManager.jobList))
 	for _, id := range globalTransferManager.jobList {
 		if j, ok := globalTransferManager.jobs[id]; ok {
 			refreshJobStats(j)
-			list = append(list, j)
+			list = append(list, cloneTransferJob(j))
 		}
 	}
 	return ResponseSuccess(list)

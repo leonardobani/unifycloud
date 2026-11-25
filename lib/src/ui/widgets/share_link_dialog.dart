@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/cloud_models.dart';
+import '../../utils/url_utils.dart';
 
 /// A Material 3 dialog displaying a generated public shareable link for a file or folder.
 class ShareLinkDialog extends StatelessWidget {
@@ -42,7 +42,14 @@ class ShareLinkDialog extends StatelessWidget {
   void _openInBrowser(BuildContext context) async {
     try {
       final uri = Uri.parse(link);
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      final opened = await UrlUtils.openWebUrl(uri);
+      if (!opened && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('URL non valido o impossibile aprire il browser.'),
+          ),
+        );
+      }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

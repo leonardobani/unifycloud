@@ -24,6 +24,7 @@ functions:
     - 'CancelTransfer'
     - 'ClearCompletedTransfers'
     - 'CreatePublicLink'
+    - 'StartSync'
     - 'FreeString'
 preamble: |
   // AUTO GENERATED FILE, DO NOT EDIT.
