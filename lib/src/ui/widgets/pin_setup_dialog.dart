@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../theme/cosmic_icons.dart';
-
 /// Mode for [PinSetupDialog].
 enum PinDialogMode {
   /// Setting up a PIN for the first time.
@@ -200,11 +198,10 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
                   color: colorScheme.primaryContainer,
                   shape: BoxShape.circle,
                 ),
-                child: CosmicSvgIcon(
-                  CosmicIcons.lockSvg,
+                child: Icon(
+                  Icons.lock_rounded,
                   size: 30,
                   color: colorScheme.onPrimaryContainer,
-                  fallbackMaterialIcon: Icons.lock_rounded,
                 ),
               ),
               const SizedBox(height: 16),
@@ -362,11 +359,10 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
                   width: 60,
                   height: 48,
                   alignment: Alignment.center,
-                  child: CosmicSvgIcon(
-                    CosmicIcons.undoSvg,
+                  child: Icon(
+                    Icons.backspace_outlined,
                     size: 22,
                     color: colorScheme.onSurfaceVariant,
-                    fallbackMaterialIcon: Icons.backspace_outlined,
                   ),
                 ),
               ),

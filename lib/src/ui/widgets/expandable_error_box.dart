@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../theme/cosmic_icons.dart';
-
 /// An interactive, expandable error box that displays an error snippet when collapsed
 /// and expands on click to show the full, selectable, and scrollable error message
 /// with a quick copy-to-clipboard action.
@@ -100,8 +98,8 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
                   // Header bar
                   Row(
                     children: [
-                      CosmicSvgIcon(
-                        CosmicIcons.warningSvg,
+                      Icon(
+                        Icons.bug_report_outlined,
                         size: 16,
                         color: accent.withValues(alpha: 0.9),
                       ),
@@ -126,8 +124,8 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
                         ),
                       ),
                       const SizedBox(width: 4),
-                      CosmicSvgIcon(
-                        _isExpanded ? CosmicIcons.panUpSvg : CosmicIcons.panDownSvg,
+                      Icon(
+                        _isExpanded ? Icons.expand_less : Icons.expand_more,
                         size: 18,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
@@ -183,8 +181,8 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
                       children: [
                         TextButton.icon(
                           onPressed: _copyToClipboard,
-                          icon: CosmicSvgIcon(
-                            _copied ? CosmicIcons.checkSvg : CosmicIcons.copySvg,
+                          icon: Icon(
+                            _copied ? Icons.check : Icons.copy_rounded,
                             size: 14,
                             color: _copied ? Colors.green : accent,
                           ),

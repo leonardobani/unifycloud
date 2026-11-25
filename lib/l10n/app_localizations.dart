@@ -346,48 +346,6 @@ abstract class AppLocalizations {
   /// **'Dark'**
   String get themeDark;
 
-  /// No description provided for @themeStyle.
-  ///
-  /// In en, this message translates to:
-  /// **'Interface Style'**
-  String get themeStyle;
-
-  /// No description provided for @themeStyleSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Select desktop design style or automatic environment detection:'**
-  String get themeStyleSubtitle;
-
-  /// No description provided for @themeStyleAuto.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto (Detect)'**
-  String get themeStyleAuto;
-
-  /// No description provided for @themeStyleStandard.
-  ///
-  /// In en, this message translates to:
-  /// **'Standard'**
-  String get themeStyleStandard;
-
-  /// No description provided for @themeStyleCosmic.
-  ///
-  /// In en, this message translates to:
-  /// **'COSMIC (Default)'**
-  String get themeStyleCosmic;
-
-  /// No description provided for @themeStyleCosmicActive.
-  ///
-  /// In en, this message translates to:
-  /// **'COSMIC style is active across all devices (Teal in light mode, Pop Orange in dark mode)'**
-  String get themeStyleCosmicActive;
-
-  /// No description provided for @themeStyleCosmicDetected.
-  ///
-  /// In en, this message translates to:
-  /// **'COSMIC desktop environment detected: COSMIC style is active (Teal in light mode, Pop Orange in dark mode)'**
-  String get themeStyleCosmicDetected;
-
   /// No description provided for @language.
   ///
   /// In en, this message translates to:

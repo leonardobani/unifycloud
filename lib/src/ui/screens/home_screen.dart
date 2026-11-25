@@ -9,7 +9,6 @@ import '../../providers/file_explorer_provider.dart';
 import '../../providers/sync_provider.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../theme/app_theme.dart';
-import '../theme/cosmic_icons.dart';
 import '../widgets/add_cloud_dialog.dart';
 import '../widgets/expandable_error_box.dart';
 
@@ -29,7 +28,7 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            const CosmicSvgIcon(CosmicIcons.cloudSyncSvg, color: AppTheme.primaryColor, size: 28),
+            const Icon(Icons.cloud_sync, color: AppTheme.primaryColor),
             const SizedBox(width: 8),
             Text(
               l10n.appTitle,
@@ -41,7 +40,7 @@ class HomeScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
-            icon: const CosmicSvgIcon(CosmicIcons.refreshSvg, size: 20),
+            icon: const Icon(Icons.refresh),
             tooltip: l10n.refreshCloudsTooltip,
             onPressed: () {
               ref.read(cloudAccountsProvider.notifier).loadRemotes();
@@ -71,7 +70,7 @@ class HomeScreen extends ConsumerWidget {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const CosmicSvgIcon(CosmicIcons.diskUsageSvg, color: AppTheme.primaryColor, size: 20),
+                            const Icon(Icons.pie_chart_outline, color: AppTheme.primaryColor),
                             const SizedBox(width: 8),
                             Text(
                               l10n.storageOverviewAggregated,
@@ -82,7 +81,7 @@ class HomeScreen extends ConsumerWidget {
                           ],
                         ),
                         Chip(
-                          avatar: const CosmicSvgIcon(CosmicIcons.shieldSvg, size: 16, color: Colors.green),
+                          avatar: const Icon(Icons.shield_outlined, size: 16, color: Colors.green),
                           label: Text(l10n.ramEncryptionActive, style: const TextStyle(fontSize: 12)),
                           backgroundColor: Colors.green.withValues(alpha: 0.1),
                           side: BorderSide.none,
@@ -207,10 +206,9 @@ class HomeScreen extends ConsumerWidget {
                       children: [
                         CircleAvatar(
                           backgroundColor: colorScheme.primaryContainer,
-                          child: CosmicSvgIcon(
-                            CosmicIcons.syncSvg,
+                          child: Icon(
+                            Icons.sync,
                             color: colorScheme.primary,
-                            size: 22,
                           ),
                         ),
                         const SizedBox(width: 14),
@@ -238,7 +236,7 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ),
                         TextButton.icon(
-                          icon: const CosmicSvgIcon(CosmicIcons.chevronRightSvg, size: 16),
+                          icon: const Icon(Icons.arrow_forward, size: 16),
                           label: Text(l10n.manage),
                           onPressed: () => context.go('/sync'),
                         ),
@@ -270,7 +268,7 @@ class HomeScreen extends ConsumerWidget {
                       builder: (ctx) => const AddCloudDialog(),
                     );
                   },
-                  icon: const CosmicSvgIcon(CosmicIcons.addSvg, size: 18),
+                  icon: const Icon(Icons.add),
                   label: Text(l10n.connectNewCloud),
                 ),
               ],
@@ -299,8 +297,8 @@ class HomeScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(40.0),
                   child: Column(
                     children: [
-                      CosmicSvgIcon(
-                        CosmicIcons.cloudSvg,
+                      Icon(
+                        Icons.cloud_off_outlined,
                         size: 64,
                         color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                       ),
@@ -323,7 +321,7 @@ class HomeScreen extends ConsumerWidget {
                             builder: (ctx) => const AddCloudDialog(),
                           );
                         },
-                        icon: const CosmicSvgIcon(CosmicIcons.addSvg, size: 18),
+                        icon: const Icon(Icons.add),
                         label: Text(l10n.addFirstCloud),
                       ),
                     ],
@@ -347,6 +345,7 @@ class HomeScreen extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       final remote = state.remotes[index];
                       final color = AppTheme.getProviderColor(remote.type);
+                      final icon = AppTheme.getProviderIcon(remote.type);
                       final quota = remote.quota;
 
                       return Card(
@@ -360,11 +359,7 @@ class HomeScreen extends ConsumerWidget {
                                 children: [
                                   CircleAvatar(
                                     backgroundColor: color.withValues(alpha: 0.15),
-                                    child: CosmicSvgIcon(
-                                      AppTheme.getProviderSvg(remote.type),
-                                      color: color,
-                                      size: 22,
-                                    ),
+                                    child: Icon(icon, color: color),
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
@@ -405,8 +400,8 @@ class HomeScreen extends ConsumerWidget {
                                                 child: const Row(
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
-                                                    CosmicSvgIcon(
-                                                      CosmicIcons.lockSvg,
+                                                    Icon(
+                                                      Icons.lock,
                                                       size: 10,
                                                       color: Color(0xFF00BFA5),
                                                     ),
@@ -443,7 +438,7 @@ class HomeScreen extends ConsumerWidget {
                                     ),
                                   ),
                                   PopupMenuButton<String>(
-                                    icon: const CosmicSvgIcon(CosmicIcons.moreVertSvg, size: 20),
+                                    icon: const Icon(Icons.more_vert, size: 20),
                                     onSelected: (action) async {
                                       if (action == 'create_vault') {
                                         showDialog(
@@ -488,7 +483,7 @@ class HomeScreen extends ConsumerWidget {
                                         PopupMenuItem(
                                           value: 'create_vault',
                                           child: ListTile(
-                                            leading: const CosmicSvgIcon(CosmicIcons.lockSvg, color: Color(0xFF00BFA5), size: 18),
+                                            leading: const Icon(Icons.lock_outline, color: Color(0xFF00BFA5)),
                                             title: Text(l10n.createVaultHere),
                                             dense: true,
                                             contentPadding: EdgeInsets.zero,
@@ -497,7 +492,7 @@ class HomeScreen extends ConsumerWidget {
                                       PopupMenuItem(
                                         value: 'delete',
                                         child: ListTile(
-                                          leading: const CosmicSvgIcon(CosmicIcons.deleteSvg, color: Colors.red, size: 18),
+                                          leading: const Icon(Icons.delete_outline, color: Colors.red),
                                           title: Text(l10n.disconnect, style: const TextStyle(color: Colors.red)),
                                           dense: true,
                                           contentPadding: EdgeInsets.zero,
@@ -592,7 +587,7 @@ class HomeScreen extends ConsumerWidget {
                                         .openRemote(remote.name);
                                     context.go('/explorer');
                                   },
-                                  icon: const CosmicSvgIcon(CosmicIcons.folderOpenSvg, size: 18),
+                                  icon: const Icon(Icons.folder_open, size: 18),
                                   label: Text(l10n.exploreFiles),
                                 ),
                               ),

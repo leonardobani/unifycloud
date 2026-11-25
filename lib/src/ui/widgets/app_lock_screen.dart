@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/app_lock_provider.dart';
 import '../../providers/settings_provider.dart';
-import '../theme/cosmic_icons.dart';
 
 /// Full-screen lock widget displayed when UnifyCloud is locked.
 class AppLockScreen extends ConsumerStatefulWidget {
@@ -122,11 +121,10 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
                           color: colorScheme.primaryContainer,
                           shape: BoxShape.circle,
                         ),
-                        child: CosmicSvgIcon(
-                          CosmicIcons.lockSvg,
+                        child: Icon(
+                          Icons.lock_rounded,
                           size: 38,
                           color: colorScheme.onPrimaryContainer,
-                          fallbackMaterialIcon: Icons.lock_rounded,
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -206,11 +204,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
                                 .read(appLockProvider.notifier)
                                 .authenticateWithBiometrics();
                           },
-                          icon: const CosmicSvgIcon(
-                            CosmicIcons.shieldSvg,
-                            size: 24,
-                            fallbackMaterialIcon: Icons.fingerprint_rounded,
-                          ),
+                          icon: const Icon(Icons.fingerprint_rounded, size: 24),
                           label: const Text(
                             'Sblocca con Biometria',
                             style: TextStyle(fontSize: 14),
@@ -263,11 +257,10 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
                     width: 70,
                     height: 70,
                     alignment: Alignment.center,
-                    child: CosmicSvgIcon(
-                      CosmicIcons.shieldSvg,
+                    child: Icon(
+                      Icons.fingerprint_rounded,
                       size: 28,
                       color: colorScheme.primary,
-                      fallbackMaterialIcon: Icons.fingerprint_rounded,
                     ),
                   ),
                 )
@@ -285,11 +278,10 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
                   width: 70,
                   height: 70,
                   alignment: Alignment.center,
-                  child: CosmicSvgIcon(
-                    CosmicIcons.undoSvg,
+                  child: Icon(
+                    Icons.backspace_outlined,
                     size: 24,
                     color: colorScheme.onSurfaceVariant,
-                    fallbackMaterialIcon: Icons.backspace_outlined,
                   ),
                 ),
               ),

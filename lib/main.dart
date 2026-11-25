@@ -73,13 +73,12 @@ class UnifyCloudApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
-    final isCosmic = AppTheme.isCosmicActive(settings.themeStyle);
 
     return MaterialApp.router(
       title: 'UnifyCloud',
       debugShowCheckedModeBanner: false,
-      theme: isCosmic ? AppTheme.cosmicLightTheme : AppTheme.standardLightTheme,
-      darkTheme: isCosmic ? AppTheme.cosmicDarkTheme : AppTheme.standardDarkTheme,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       themeMode: settings.themeMode,
       locale: settings.locale,
       supportedLocales: AppLocalizations.supportedLocales,

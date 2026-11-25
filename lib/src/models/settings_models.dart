@@ -1,21 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Visual theme style used across the application.
-enum AppThemeStyle {
-  /// Automatically detects desktop environment (e.g., COSMIC desktop on Linux).
-  auto,
-
-  /// Standard modern Material 3 theme.
-  standard,
-
-  /// System76 COSMIC desktop theme style.
-  cosmic,
-}
-
 /// Representation of user-configurable application preferences.
 class AppSettings {
   final ThemeMode themeMode;
-  final AppThemeStyle themeStyle;
   final bool showHiddenFiles;
   final bool confirmDelete;
   final String? customDownloadPath;
@@ -30,7 +17,6 @@ class AppSettings {
 
   const AppSettings({
     this.themeMode = ThemeMode.system,
-    this.themeStyle = AppThemeStyle.cosmic,
     this.showHiddenFiles = false,
     this.confirmDelete = true,
     this.customDownloadPath,
@@ -63,7 +49,6 @@ class AppSettings {
 
   AppSettings copyWith({
     ThemeMode? themeMode,
-    AppThemeStyle? themeStyle,
     bool? showHiddenFiles,
     bool? confirmDelete,
     String? Function()? customDownloadPath,
@@ -78,7 +63,6 @@ class AppSettings {
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
-      themeStyle: themeStyle ?? this.themeStyle,
       showHiddenFiles: showHiddenFiles ?? this.showHiddenFiles,
       confirmDelete: confirmDelete ?? this.confirmDelete,
       customDownloadPath: customDownloadPath != null
@@ -100,7 +84,6 @@ class AppSettings {
   Map<String, dynamic> toJson() {
     return {
       'theme_mode': themeMode.name,
-      'theme_style': themeStyle.name,
       'show_hidden_files': showHiddenFiles,
       'confirm_delete': confirmDelete,
       'custom_download_path': customDownloadPath,
@@ -124,19 +107,8 @@ class AppSettings {
       mode = ThemeMode.light;
     }
 
-    AppThemeStyle style = AppThemeStyle.cosmic;
-    final styleStr = json['theme_style'] as String?;
-    if (styleStr == 'standard') {
-      style = AppThemeStyle.standard;
-    } else if (styleStr == 'auto') {
-      style = AppThemeStyle.auto;
-    } else if (styleStr == 'cosmic') {
-      style = AppThemeStyle.cosmic;
-    }
-
     return AppSettings(
       themeMode: mode,
-      themeStyle: style,
       showHiddenFiles: json['show_hidden_files'] as bool? ?? false,
       confirmDelete: json['confirm_delete'] as bool? ?? true,
       customDownloadPath: json['custom_download_path'] as String?,
@@ -158,7 +130,6 @@ class AppSettings {
     if (identical(this, other)) return true;
     return other is AppSettings &&
         other.themeMode == themeMode &&
-        other.themeStyle == themeStyle &&
         other.showHiddenFiles == showHiddenFiles &&
         other.confirmDelete == confirmDelete &&
         other.customDownloadPath == customDownloadPath &&
@@ -175,7 +146,6 @@ class AppSettings {
   @override
   int get hashCode => Object.hash(
         themeMode,
-        themeStyle,
         showHiddenFiles,
         confirmDelete,
         customDownloadPath,

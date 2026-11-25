@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:unifycloud/l10n/app_localizations.dart';
 import 'package:unifycloud/src/models/cloud_models.dart';
@@ -12,7 +11,6 @@ import 'package:unifycloud/src/ui/screens/file_explorer_screen.dart';
 import 'package:unifycloud/src/ui/screens/home_screen.dart';
 import 'package:unifycloud/src/ui/screens/settings_screen.dart';
 import 'package:unifycloud/src/ui/theme/app_theme.dart';
-import 'package:unifycloud/src/ui/theme/cosmic_icons.dart';
 import 'package:unifycloud/src/ui/widgets/breadcrumbs_bar.dart';
 import 'package:unifycloud/src/ui/widgets/expandable_error_box.dart';
 import 'package:unifycloud/src/ui/widgets/file_type_icon.dart';
@@ -44,8 +42,8 @@ class SettingsMock extends SettingsNotifier {
 
 void main() {
   group('Material 3 Theme Definition Tests', () {
-    test('AppTheme.standardLightTheme follows standard M3 specifications', () {
-      final light = AppTheme.standardLightTheme;
+    test('AppTheme.lightTheme follows M3 specifications', () {
+      final light = AppTheme.lightTheme;
       expect(light.useMaterial3, isTrue);
       expect(light.brightness, equals(Brightness.light));
       expect(light.scaffoldBackgroundColor, equals(AppTheme.backgroundLight));
@@ -56,8 +54,8 @@ void main() {
       expect(light.dividerTheme.color, equals(AppTheme.borderLight));
     });
 
-    test('AppTheme.standardDarkTheme follows standard M3 specifications', () {
-      final dark = AppTheme.standardDarkTheme;
+    test('AppTheme.darkTheme follows M3 specifications', () {
+      final dark = AppTheme.darkTheme;
       expect(dark.useMaterial3, isTrue);
       expect(dark.brightness, equals(Brightness.dark));
       expect(dark.scaffoldBackgroundColor, equals(AppTheme.backgroundDark));
@@ -65,56 +63,6 @@ void main() {
       expect(dark.colorScheme.surface, equals(AppTheme.surfaceDark));
       expect(dark.appBarTheme.backgroundColor, equals(AppTheme.backgroundDark));
       expect(dark.dividerTheme.color, equals(AppTheme.borderDark));
-    });
-
-    test('AppTheme.lightTheme defaults to cosmicLightTheme with Cosmic Teal', () {
-      final light = AppTheme.lightTheme;
-      expect(light.useMaterial3, isTrue);
-      expect(light.brightness, equals(Brightness.light));
-      expect(light.scaffoldBackgroundColor, equals(AppTheme.cosmicBackgroundLight));
-      expect(light.cardTheme.color, equals(AppTheme.cosmicCardLight));
-      expect(light.colorScheme.primary, equals(AppTheme.cosmicTeal));
-      expect(light.appBarTheme.backgroundColor, equals(AppTheme.cosmicBackgroundLight));
-      expect(light.dividerTheme.color, equals(AppTheme.cosmicBorderLight));
-    });
-
-    test('AppTheme.darkTheme defaults to cosmicDarkTheme with Pop Orange', () {
-      final dark = AppTheme.darkTheme;
-      expect(dark.useMaterial3, isTrue);
-      expect(dark.brightness, equals(Brightness.dark));
-      expect(dark.scaffoldBackgroundColor, equals(AppTheme.cosmicBackgroundDark));
-      expect(dark.cardTheme.color, equals(AppTheme.cosmicCardDark));
-      expect(dark.colorScheme.primary, equals(AppTheme.popOrange));
-      expect(dark.appBarTheme.backgroundColor, equals(AppTheme.cosmicBackgroundDark));
-      expect(dark.dividerTheme.color, equals(AppTheme.cosmicBorderDark));
-    });
-
-    test('AppTheme.cosmicLightTheme follows COSMIC specifications with Cosmic Teal', () {
-      final cosmicLight = AppTheme.cosmicLightTheme;
-      expect(cosmicLight.useMaterial3, isTrue);
-      expect(cosmicLight.brightness, equals(Brightness.light));
-      expect(cosmicLight.scaffoldBackgroundColor, equals(AppTheme.cosmicBackgroundLight));
-      expect(cosmicLight.cardTheme.color, equals(AppTheme.cosmicCardLight));
-      expect(cosmicLight.colorScheme.primary, equals(AppTheme.cosmicTeal));
-      expect(cosmicLight.appBarTheme.backgroundColor, equals(AppTheme.cosmicBackgroundLight));
-      expect(cosmicLight.dividerTheme.color, equals(AppTheme.cosmicBorderLight));
-    });
-
-    test('AppTheme.cosmicDarkTheme follows COSMIC specifications with Pop Orange', () {
-      final cosmicDark = AppTheme.cosmicDarkTheme;
-      expect(cosmicDark.useMaterial3, isTrue);
-      expect(cosmicDark.brightness, equals(Brightness.dark));
-      expect(cosmicDark.scaffoldBackgroundColor, equals(AppTheme.cosmicBackgroundDark));
-      expect(cosmicDark.cardTheme.color, equals(AppTheme.cosmicCardDark));
-      expect(cosmicDark.colorScheme.primary, equals(AppTheme.popOrange));
-      expect(cosmicDark.appBarTheme.backgroundColor, equals(AppTheme.cosmicBackgroundDark));
-      expect(cosmicDark.dividerTheme.color, equals(AppTheme.cosmicBorderDark));
-    });
-
-    test('AppTheme.isCosmicActive resolves style correctly', () {
-      expect(AppTheme.isCosmicActive(AppThemeStyle.cosmic), isTrue);
-      expect(AppTheme.isCosmicActive(AppThemeStyle.standard), isFalse);
-      expect(AppTheme.isCosmicActive(AppThemeStyle.auto), equals(AppTheme.isCosmicDesktopEnvironment()));
     });
   });
 
@@ -255,9 +203,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final icon = tester.widget<CosmicSvgIcon>(
-        find.byWidgetPredicate((w) => w is CosmicSvgIcon && w.asset == CosmicIcons.fileSvg),
-      );
+      final icon = tester.widget<Icon>(find.byIcon(Icons.insert_drive_file_outlined));
       expect(icon.color, equals(AppTheme.lightTheme.colorScheme.onSurfaceVariant));
     });
 
@@ -283,9 +229,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final homeIcon = tester.widget<CosmicSvgIcon>(
-        find.byWidgetPredicate((w) => w is CosmicSvgIcon && w.asset == CosmicIcons.homeSvg),
-      );
+      final homeIcon = tester.widget<Icon>(find.byIcon(Icons.home_outlined));
       expect(homeIcon.color, equals(AppTheme.lightTheme.colorScheme.onSurfaceVariant));
     });
 
@@ -305,38 +249,6 @@ void main() {
       expect(find.text('Nessun trasferimento recente'), findsOneWidget);
       final subtitle = tester.widget<Text>(find.text('I download, gli upload e le copie cloud appariranno qui.'));
       expect(subtitle.style?.color, equals(AppTheme.lightTheme.colorScheme.onSurfaceVariant));
-    });
-
-    testWidgets('CosmicSvgIcon renders SVG in COSMIC theme and Icon in Standard Material theme', (tester) async {
-      // 1. In COSMIC theme
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.cosmicLightTheme,
-          home: const Scaffold(
-            body: CosmicSvgIcon(CosmicIcons.searchSvg),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // Should render SvgPicture
-      expect(find.byType(SvgPicture), findsOneWidget);
-      expect(find.byIcon(Icons.search_rounded), findsNothing);
-
-      // 2. In Standard Material theme
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.standardLightTheme,
-          home: const Scaffold(
-            body: CosmicSvgIcon(CosmicIcons.searchSvg),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // Should render standard Material Icon
-      expect(find.byType(SvgPicture), findsNothing);
-      expect(find.byIcon(Icons.search_rounded), findsOneWidget);
     });
   });
 }

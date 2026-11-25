@@ -122,30 +122,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get themeDark => 'داكن';
 
   @override
-  String get themeStyle => 'Interface Style';
-
-  @override
-  String get themeStyleSubtitle =>
-      'Select desktop design style or automatic environment detection:';
-
-  @override
-  String get themeStyleAuto => 'Auto (Detect)';
-
-  @override
-  String get themeStyleStandard => 'Standard';
-
-  @override
-  String get themeStyleCosmic => 'COSMIC (Default)';
-
-  @override
-  String get themeStyleCosmicActive =>
-      'COSMIC style is active across all devices (Teal in light mode, Pop Orange in dark mode)';
-
-  @override
-  String get themeStyleCosmicDetected =>
-      'COSMIC desktop environment detected: COSMIC style is active (Teal in light mode, Pop Orange in dark mode)';
-
-  @override
   String get language => 'اللغة';
 
   @override

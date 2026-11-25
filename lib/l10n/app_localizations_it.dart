@@ -124,30 +124,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get themeDark => 'Scuro';
 
   @override
-  String get themeStyle => 'Stile Interfaccia';
-
-  @override
-  String get themeStyleSubtitle =>
-      'Seleziona lo stile grafico o rilevamento automatico dal sistema:';
-
-  @override
-  String get themeStyleAuto => 'Auto (Rileva)';
-
-  @override
-  String get themeStyleStandard => 'Standard';
-
-  @override
-  String get themeStyleCosmic => 'COSMIC (Predefinito)';
-
-  @override
-  String get themeStyleCosmicActive =>
-      'Stile COSMIC attivo su tutti i dispositivi (Teal in chiaro, Pop Orange in scuro)';
-
-  @override
-  String get themeStyleCosmicDetected =>
-      'Desktop COSMIC rilevato: stile COSMIC attivo (Teal in chiaro, Pop Orange in scuro)';
-
-  @override
   String get language => 'Lingua';
 
   @override

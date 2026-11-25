@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/sync_rule_model.dart';
 import '../../providers/sync_provider.dart';
 import '../theme/app_theme.dart';
-import '../theme/cosmic_icons.dart';
 import '../widgets/sync_rule_dialog.dart';
 
 /// Screen allowing users to configure and manage automated and on-demand folder sync rules.
@@ -67,7 +66,7 @@ class SyncRulesScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            const CosmicSvgIcon(CosmicIcons.syncSvg, color: AppTheme.primaryColor, size: 24),
+            const Icon(Icons.sync, color: AppTheme.primaryColor),
             const SizedBox(width: 8),
             Flexible(
               child: Text(
@@ -89,7 +88,7 @@ class SyncRulesScreen extends ConsumerWidget {
                       height: 16,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const CosmicSvgIcon(CosmicIcons.syncSvg, size: 18),
+                  : const Icon(Icons.sync),
               label: const Text('Sincronizza Tutte'),
               onPressed: anyInProgress
                   ? null
@@ -98,7 +97,7 @@ class SyncRulesScreen extends ConsumerWidget {
                     },
             ),
           IconButton(
-            icon: const CosmicSvgIcon(CosmicIcons.addSvg, size: 20),
+            icon: const Icon(Icons.add),
             tooltip: 'Nuova regola',
             onPressed: () => _openAddRuleDialog(context),
           ),
@@ -106,7 +105,7 @@ class SyncRulesScreen extends ConsumerWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        icon: const CosmicSvgIcon(CosmicIcons.addSvg, size: 20),
+        icon: const Icon(Icons.add),
         label: const Text('Nuova Regola'),
         onPressed: () => _openAddRuleDialog(context),
       ),
@@ -131,8 +130,8 @@ class SyncRulesScreen extends ConsumerWidget {
                       color: colorScheme.primaryContainer,
                       shape: BoxShape.circle,
                     ),
-                    child: CosmicSvgIcon(
-                      CosmicIcons.syncSvg,
+                    child: Icon(
+                      Icons.backup,
                       color: colorScheme.primary,
                       size: 28,
                     ),
@@ -171,8 +170,8 @@ class SyncRulesScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CosmicSvgIcon(
-                    CosmicIcons.syncSvg,
+                  Icon(
+                    Icons.cloud_sync_outlined,
                     size: 80,
                     color: colorScheme.primary.withValues(alpha: 0.5),
                   ),
@@ -196,7 +195,7 @@ class SyncRulesScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 24),
                   FilledButton.icon(
-                    icon: const CosmicSvgIcon(CosmicIcons.addSvg, size: 18),
+                    icon: const Icon(Icons.add),
                     label: const Text('Crea Nuova Regola'),
                     onPressed: () => _openAddRuleDialog(context),
                   ),
@@ -245,10 +244,10 @@ class SyncRulesScreen extends ConsumerWidget {
             // Top Row: Title + Status Switch + Popup Menu
             Row(
               children: [
-                CosmicSvgIcon(
+                Icon(
                   rule.mode == SyncMode.sync
-                      ? CosmicIcons.syncSvg
-                      : CosmicIcons.uploadSvg,
+                      ? Icons.sync
+                      : Icons.backup_outlined,
                   color: rule.isEnabled
                       ? colorScheme.primary
                       : Colors.grey,
@@ -278,14 +277,14 @@ class SyncRulesScreen extends ConsumerWidget {
                         },
                 ),
                 PopupMenuButton<String>(
-                  icon: const CosmicSvgIcon(CosmicIcons.moreVertSvg, size: 20),
+                  icon: const Icon(Icons.more_vert),
                   tooltip: 'Opzioni regola',
                   itemBuilder: (context) => [
                     const PopupMenuItem(
                       value: 'edit',
                       child: Row(
                         children: [
-                          CosmicSvgIcon(CosmicIcons.editSvg, size: 18),
+                          Icon(Icons.edit, size: 18),
                           SizedBox(width: 8),
                           Text('Modifica'),
                         ],
@@ -295,7 +294,7 @@ class SyncRulesScreen extends ConsumerWidget {
                       value: 'delete',
                       child: Row(
                         children: [
-                          CosmicSvgIcon(CosmicIcons.deleteSvg, color: Colors.red, size: 18),
+                          Icon(Icons.delete, color: Colors.red, size: 18),
                           SizedBox(width: 8),
                           Text('Elimina', style: TextStyle(color: Colors.red)),
                         ],
@@ -323,7 +322,7 @@ class SyncRulesScreen extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  const CosmicSvgIcon(CosmicIcons.folderOpenSvg, size: 18),
+                  const Icon(Icons.folder_outlined, size: 18),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -339,9 +338,9 @@ class SyncRulesScreen extends ConsumerWidget {
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: CosmicSvgIcon(CosmicIcons.chevronRightSvg, size: 16, color: Colors.grey),
+                    child: Icon(Icons.arrow_forward, size: 16, color: Colors.grey),
                   ),
-                  const CosmicSvgIcon(CosmicIcons.cloudSvg, size: 18),
+                  const Icon(Icons.cloud_outlined, size: 18),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -367,7 +366,7 @@ class SyncRulesScreen extends ConsumerWidget {
               children: [
                 // Frequency Badge
                 Chip(
-                  avatar: const CosmicSvgIcon(CosmicIcons.clockSvg, size: 14),
+                  avatar: const Icon(Icons.schedule, size: 14),
                   label: Text(rule.frequency.label, style: const TextStyle(fontSize: 11)),
                   backgroundColor: colorScheme.surfaceContainerHighest,
                   visualDensity: VisualDensity.compact,
@@ -375,8 +374,8 @@ class SyncRulesScreen extends ConsumerWidget {
                 ),
                 // Mode Badge
                 Chip(
-                  avatar: CosmicSvgIcon(
-                    rule.mode == SyncMode.sync ? CosmicIcons.syncSvg : CosmicIcons.uploadSvg,
+                  avatar: Icon(
+                    rule.mode == SyncMode.sync ? Icons.sync : Icons.backup,
                     size: 14,
                   ),
                   label: Text(rule.mode.label, style: const TextStyle(fontSize: 11)),
@@ -400,7 +399,7 @@ class SyncRulesScreen extends ConsumerWidget {
                 ),
                 child: Row(
                   children: [
-                    CosmicSvgIcon(CosmicIcons.errorSvg,
+                    Icon(Icons.error_outline,
                         size: 16, color: colorScheme.error),
                     const SizedBox(width: 8),
                     Expanded(
@@ -431,7 +430,7 @@ class SyncRulesScreen extends ConsumerWidget {
                 ),
                 if (isInProgress)
                   OutlinedButton.icon(
-                    icon: const CosmicSvgIcon(CosmicIcons.closeSvg, size: 16, color: Colors.red),
+                    icon: const Icon(Icons.cancel, size: 16, color: Colors.red),
                     label: const Text('Annulla', style: TextStyle(color: Colors.red)),
                     onPressed: () {
                       ref.read(syncProvider.notifier).cancelSync(rule.id);
@@ -439,7 +438,7 @@ class SyncRulesScreen extends ConsumerWidget {
                   )
                 else
                   FilledButton.icon(
-                    icon: const CosmicSvgIcon(CosmicIcons.playSvg, size: 18),
+                    icon: const Icon(Icons.play_arrow, size: 18),
                     label: const Text('Sincronizza ora'),
                     onPressed: () {
                       ref.read(syncProvider.notifier).executeSync(rule.id);
@@ -469,7 +468,7 @@ class SyncRulesScreen extends ConsumerWidget {
         );
       case SyncStatus.completed:
         return const Chip(
-          avatar: CosmicSvgIcon(CosmicIcons.checkCircleSvg, size: 14, color: Colors.green),
+          avatar: Icon(Icons.check_circle, size: 14, color: Colors.green),
           label: Text('Completato', style: TextStyle(fontSize: 11, color: Colors.green)),
           backgroundColor: Color(0x1A4CAF50),
           visualDensity: VisualDensity.compact,
@@ -477,7 +476,7 @@ class SyncRulesScreen extends ConsumerWidget {
         );
       case SyncStatus.failed:
         return Chip(
-          avatar: CosmicSvgIcon(CosmicIcons.errorSvg, size: 14, color: colorScheme.error),
+          avatar: Icon(Icons.error, size: 14, color: colorScheme.error),
           label: Text('Errore', style: TextStyle(fontSize: 11, color: colorScheme.error)),
           backgroundColor: colorScheme.errorContainer,
           visualDensity: VisualDensity.compact,
@@ -485,7 +484,7 @@ class SyncRulesScreen extends ConsumerWidget {
         );
       case SyncStatus.idle:
         return const Chip(
-          avatar: CosmicSvgIcon(CosmicIcons.pauseSvg, size: 14, color: Colors.grey),
+          avatar: Icon(Icons.pause, size: 14, color: Colors.grey),
           label: Text('In attesa', style: TextStyle(fontSize: 11, color: Colors.grey)),
           backgroundColor: Color(0x1A9E9E9E),
           visualDensity: VisualDensity.compact,
