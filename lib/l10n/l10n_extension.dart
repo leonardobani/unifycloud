@@ -1,10 +1,17 @@
 import 'dart:ui' show PlatformDispatcher;
 
-import 'package:flutter/widgets.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'app_localizations.dart';
 
 export 'app_localizations.dart';
+
+/// Localization delegates compatible with `package:material_ui` and [AppLocalizations].
+const List<LocalizationsDelegate<dynamic>> appLocalizationsDelegates =
+    <LocalizationsDelegate<dynamic>>[
+  AppLocalizations.delegate,
+  ...GlobalMaterialLocalizations.delegates,
+];
 
 /// Resolves [AppLocalizations] without requiring a [BuildContext] with delegates.
 /// Falls back to English if [locale] is null or unsupported.

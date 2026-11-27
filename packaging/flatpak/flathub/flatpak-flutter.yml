@@ -74,5 +74,5 @@ modules:
       - go.mod.yml
       - type: git
         url: https://github.com/flutter/flutter.git
-        tag: 3.47.9
+        tag: 3.50.1
         dest: flutter

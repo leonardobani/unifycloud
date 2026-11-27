@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:unifycloud/l10n/app_localizations.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:unifycloud/l10n/l10n_extension.dart';
 import 'package:unifycloud/src/models/cloud_models.dart';
 import 'package:unifycloud/src/models/settings_models.dart';
 import 'package:unifycloud/src/providers/cloud_accounts_provider.dart';
@@ -91,7 +91,7 @@ void main() {
             theme: AppTheme.lightTheme,
             locale: const Locale('it'),
             supportedLocales: AppLocalizations.supportedLocales,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             home: const HomeScreen(),
           ),
         ),
@@ -148,7 +148,7 @@ void main() {
             theme: AppTheme.lightTheme,
             locale: const Locale('it'),
             supportedLocales: AppLocalizations.supportedLocales,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             home: const SettingsScreen(),
           ),
         ),

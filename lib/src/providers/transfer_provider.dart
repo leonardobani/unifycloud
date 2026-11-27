@@ -255,6 +255,8 @@ class TransferNotifier extends Notifier<TransferState> {
     required String dstPath,
     String dialogTitle = 'Select folder to upload to Cloud',
   }) async {
+    // Directory() and rclone require a filesystem path rather than an Android SAF content:// URI.
+    // ignore: deprecated_member_use
     final selectedDir = await FilePicker.getDirectoryPath(
       dialogTitle: dialogTitle,
     );

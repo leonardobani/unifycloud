@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../l10n/l10n_extension.dart';
 import '../../models/sync_rule_model.dart';
@@ -60,6 +60,8 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
   }
 
   Future<void> _pickLocalDirectory(AppLocalizations l10n) async {
+    // Directory() and rclone require a filesystem path rather than an Android SAF content:// URI.
+    // ignore: deprecated_member_use
     final selected = await FilePicker.getDirectoryPath();
     if (selected != null && selected.isNotEmpty) {
       setState(() {

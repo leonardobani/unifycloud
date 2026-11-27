@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
-import 'l10n/app_localizations.dart';
+import 'l10n/l10n_extension.dart';
 import 'src/providers/settings_provider.dart';
 import 'src/router/app_router.dart';
 import 'src/services/background_service.dart';
@@ -98,7 +98,7 @@ class UnifyCloudApp extends ConsumerWidget {
       themeMode: settings.themeMode,
       locale: settings.locale,
       supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       localeResolutionCallback: (locale, supportedLocales) {
         if (locale != null) {
           for (final supported in supportedLocales) {

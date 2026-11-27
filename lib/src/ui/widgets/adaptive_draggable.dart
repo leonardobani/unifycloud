@@ -1,7 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A draggable widget that adapts its gesture recognition based on the pointer device kind:
 /// - Mouse pointers: immediate drag on click-and-drag.

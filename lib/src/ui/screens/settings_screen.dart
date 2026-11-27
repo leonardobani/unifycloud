@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../models/settings_models.dart';
@@ -478,8 +478,9 @@ class SettingsScreen extends ConsumerWidget {
                     tooltip: l10n.browseWithSystemPicker,
                     onPressed: () async {
                       try {
-                        final selectedPath =
-                            await FilePicker.getDirectoryPath();
+                        // Directory() and rclone require a filesystem path rather than an Android SAF content:// URI.
+                        // ignore: deprecated_member_use
+                        final selectedPath = await FilePicker.getDirectoryPath();
                         if (selectedPath != null && selectedPath.isNotEmpty) {
                           controller.text = selectedPath;
                         }

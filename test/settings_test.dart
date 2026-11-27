@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:unifycloud/l10n/l10n_extension.dart';
 import 'package:unifycloud/src/models/settings_models.dart';
 import 'package:unifycloud/src/providers/settings_provider.dart';
@@ -185,7 +185,7 @@ void main() {
             return MaterialApp(
               locale: currentSettings.locale,
               supportedLocales: AppLocalizations.supportedLocales,
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              localizationsDelegates: appLocalizationsDelegates,
               home: const SettingsScreen(),
             );
           },
@@ -305,7 +305,7 @@ void main() {
           child: const MaterialApp(
             locale: Locale('it'),
             supportedLocales: AppLocalizations.supportedLocales,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             home: SettingsScreen(),
           ),
         ),
@@ -362,7 +362,7 @@ void main() {
           child: const MaterialApp(
             locale: Locale('it'),
             supportedLocales: AppLocalizations.supportedLocales,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             home: SettingsScreen(),
           ),
         ),
@@ -431,7 +431,7 @@ void main() {
         MaterialApp(
           locale: const Locale('en'),
           supportedLocales: AppLocalizations.supportedLocales,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           home: Builder(
             builder: (context) {
               final l10n = AppLocalizations.of(context)!;
