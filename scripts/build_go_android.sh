@@ -55,7 +55,7 @@ find_ndk() {
             return 0
         fi
     fi
-    for standard_path in "$HOME/Android/Sdk/ndk/"* "/var/home/yoga/FlutterDev/android-sdk/ndk/"* "/usr/local/share/android-sdk/ndk/"* "/opt/android-sdk/ndk/"*; do
+    for standard_path in "$HOME/Projects/Android/Sdk/ndk/"* "$HOME/Android/Sdk/ndk/"* "/var/home/yoga/FlutterDev/android-sdk/ndk/"* "/usr/local/share/android-sdk/ndk/"* "/opt/android-sdk/ndk/"*; do
         if [ -d "$standard_path" ]; then
             echo "$standard_path"
             return 0

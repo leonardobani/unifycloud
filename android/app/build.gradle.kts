@@ -58,6 +58,9 @@ android {
             val releaseSigning = signingConfigs.findByName("release")
             if (releaseSigning?.storeFile?.exists() == true) {
                 signingConfig = releaseSigning
+            } else {
+                // Fallback to debug signing when key.properties is absent so `flutter run --release` can install.
+                signingConfig = signingConfigs.getByName("debug")
             }
         }
     }
