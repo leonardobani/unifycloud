@@ -3,9 +3,6 @@ import 'package:path/path.dart' as p;
 
 /// Renders a distinctive icon and color for files and directories based on type and extension.
 class FileTypeIcon extends StatelessWidget {
-  final String fileName;
-  final bool isDir;
-  final double size;
 
   const FileTypeIcon({
     super.key,
@@ -13,6 +10,9 @@ class FileTypeIcon extends StatelessWidget {
     required this.isDir,
     this.size = 24,
   });
+  final String fileName;
+  final bool isDir;
+  final double size;
 
   @override
   Widget build(BuildContext context) {

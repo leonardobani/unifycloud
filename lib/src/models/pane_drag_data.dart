@@ -5,6 +5,14 @@ import 'cloud_models.dart';
 
 /// Data payload transferred during drag-and-drop operations between explorer panes.
 class PaneDragData {
+
+  const PaneDragData({
+    required this.sourceRemote,
+    required this.sourcePath,
+    required this.items,
+    required this.sourceProvider,
+    this.isMove = false,
+  });
   /// The cloud remote where the dragged items originate.
   final String sourceRemote;
 
@@ -20,18 +28,9 @@ class PaneDragData {
   /// The provider instance of the source pane.
   final NotifierProvider<FileExplorerNotifier, FileExplorerState> sourceProvider;
 
-  const PaneDragData({
-    required this.sourceRemote,
-    required this.sourcePath,
-    required this.items,
-    required this.sourceProvider,
-    this.isMove = false,
-  });
-
   /// Total count of items in this drag payload.
   int get count => items.length;
 
   /// Primary item name for tooltip / drag feedback.
   String get primaryName => items.isNotEmpty ? items.first.name : '';
 }
-

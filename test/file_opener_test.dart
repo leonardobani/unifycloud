@@ -38,9 +38,9 @@ class MockRcloneService extends RcloneService {
 }
 
 class FakeFileOpenerService extends FileOpenerService {
-  final List<CloudItem> recordedOpens = [];
 
   FakeFileOpenerService({required super.rcloneService});
+  final List<CloudItem> recordedOpens = [];
 
   @override
   Future<void> openCloudItem({
@@ -56,8 +56,8 @@ class FakeFileOpenerService extends FileOpenerService {
 
 class FakeFileExplorerNotifier extends Notifier<FileExplorerState>
     implements FileExplorerNotifier {
-  final FileExplorerState _initial;
   FakeFileExplorerNotifier(this._initial);
+  final FileExplorerState _initial;
 
   @override
   FileExplorerState build() => _initial;
@@ -68,8 +68,8 @@ class FakeFileExplorerNotifier extends Notifier<FileExplorerState>
 
 class FakeCloudAccountsNotifier extends Notifier<CloudAccountsState>
     implements CloudAccountsNotifier {
-  final CloudAccountsState _initial;
   FakeCloudAccountsNotifier(this._initial);
+  final CloudAccountsState _initial;
 
   @override
   CloudAccountsState build() => _initial;
@@ -89,7 +89,7 @@ void main() {
       tempDir = Directory.systemTemp.createTempSync('unify_file_opener_unit_');
       mockRclone = MockRcloneService();
       openedFiles = [];
-      mockResult = OpenResult(type: ResultType.done, message: 'done');
+      mockResult = OpenResult();
     });
 
     tearDown(() {
@@ -115,7 +115,7 @@ void main() {
         },
       );
 
-      final testItem = CloudItem(
+      const testItem = CloudItem(
         name: 'document.pdf',
         path: 'document.pdf',
         size: 256,
@@ -143,7 +143,7 @@ void main() {
         },
       );
 
-      final testItem = CloudItem(
+      const testItem = CloudItem(
         name: 'photo.jpg',
         path: 'vacation/photo.jpg',
         size: 100,
@@ -181,7 +181,7 @@ void main() {
         },
       );
 
-      final dirItem = CloudItem(
+      const dirItem = CloudItem(
         name: 'MyFolder',
         path: 'MyFolder',
         size: 0,
@@ -212,7 +212,7 @@ void main() {
         },
       );
 
-      final testItem = CloudItem(
+      const testItem = CloudItem(
         name: 'document.pdf',
         path: 'document.pdf',
         size: 256, // New size 256
@@ -239,7 +239,7 @@ void main() {
         },
       );
 
-      final testItem = CloudItem(
+      const testItem = CloudItem(
         name: 'notes.txt',
         path: 'notes.txt',
         size: 100,
@@ -308,7 +308,7 @@ void main() {
         },
       );
 
-      final testItem = CloudItem(
+      const testItem = CloudItem(
         name: 'presentation.pdf',
         path: 'Work/presentation.pdf',
         size: 500,
@@ -333,7 +333,7 @@ void main() {
         openFile: (path) async => mockResult,
       );
 
-      final traversalItem = CloudItem(
+      const traversalItem = CloudItem(
         name: '../../evil.txt',
         path: '../../evil.txt',
         size: 10,
@@ -355,18 +355,16 @@ void main() {
       final mockRclone = MockRcloneService();
       final fakeFileOpener = FakeFileOpenerService(rcloneService: mockRclone);
 
-      final testItem = CloudItem(
+      const testItem = CloudItem(
         name: 'presentation.key',
         path: 'presentation.key',
         size: 100,
         isDir: false,
       );
 
-      final initialState = FileExplorerState(
+      const initialState = FileExplorerState(
         currentRemote: 'MyDrive',
-        currentPath: '',
         items: [testItem],
-        isLoading: false,
       );
 
       await tester.pumpWidget(
@@ -411,18 +409,16 @@ void main() {
       final mockRclone = MockRcloneService();
       final fakeFileOpener = FakeFileOpenerService(rcloneService: mockRclone);
 
-      final testItem = CloudItem(
+      const testItem = CloudItem(
         name: 'report.pdf',
         path: 'report.pdf',
         size: 100,
         isDir: false,
       );
 
-      final initialState = FileExplorerState(
+      const initialState = FileExplorerState(
         currentRemote: 'MyDrive',
-        currentPath: '',
         items: [testItem],
-        isLoading: false,
       );
 
       await tester.pumpWidget(
@@ -452,16 +448,16 @@ void main() {
       await tester.pumpAndSettle();
 
       // Open 3-dots menu
-      final moreButton = find.byTooltip('Opzioni per report.pdf');
+      final moreButton = find.byTooltip('Options for report.pdf');
       expect(moreButton, findsOneWidget);
       await tester.tap(moreButton);
       await tester.pumpAndSettle();
 
-      // Verify "Apri con app di sistema" is present
-      expect(find.text('Apri con app di sistema'), findsOneWidget);
+      // Verify "Open with system app" is present
+      expect(find.text('Open with system app'), findsOneWidget);
 
-      // Tap "Apri con app di sistema"
-      await tester.tap(find.text('Apri con app di sistema'));
+      // Tap "Open with system app"
+      await tester.tap(find.text('Open with system app'));
       await tester.pumpAndSettle();
 
       // Verify opened
@@ -474,18 +470,16 @@ void main() {
       final mockRclone = MockRcloneService();
       final fakeFileOpener = FakeFileOpenerService(rcloneService: mockRclone);
 
-      final testItem = CloudItem(
+      const testItem = CloudItem(
         name: 'document.docx',
         path: 'document.docx',
         size: 200,
         isDir: false,
       );
 
-      final initialState = FileExplorerState(
+      const initialState = FileExplorerState(
         currentRemote: 'MyDrive',
-        currentPath: '',
         items: [testItem],
-        isLoading: false,
       );
 
       await tester.pumpWidget(
@@ -518,9 +512,9 @@ void main() {
       await tester.tap(find.text('document.docx'), buttons: kSecondaryButton);
       await tester.pumpAndSettle();
 
-      expect(find.text('Apri con app di sistema'), findsOneWidget);
+      expect(find.text('Open with system app'), findsOneWidget);
 
-      await tester.tap(find.text('Apri con app di sistema'));
+      await tester.tap(find.text('Open with system app'));
       await tester.pumpAndSettle();
 
       expect(fakeFileOpener.recordedOpens.length, equals(1));
@@ -532,24 +526,22 @@ void main() {
       final mockRclone = MockRcloneService();
       final fakeFileOpener = FakeFileOpenerService(rcloneService: mockRclone);
 
-      final pdfItem = CloudItem(
+      const pdfItem = CloudItem(
         name: 'manual.pdf',
         path: 'manual.pdf',
         size: 5000,
         isDir: false,
       );
-      final txtItem = CloudItem(
+      const txtItem = CloudItem(
         name: 'notes.txt',
         path: 'notes.txt',
         size: 200,
         isDir: false,
       );
 
-      final initialState = FileExplorerState(
+      const initialState = FileExplorerState(
         currentRemote: 'MyDrive',
-        currentPath: '',
         items: [pdfItem, txtItem],
-        isLoading: false,
       );
 
       await tester.pumpWidget(
@@ -598,19 +590,19 @@ void main() {
     test('isPdf accurately detects PDF files by extension or mimeType', () {
       expect(
         FileOpenerService.isPdf(
-          CloudItem(name: 'doc.pdf', path: 'doc.pdf', size: 10, isDir: false),
+          const CloudItem(name: 'doc.pdf', path: 'doc.pdf', size: 10, isDir: false),
         ),
         isTrue,
       );
       expect(
         FileOpenerService.isPdf(
-          CloudItem(name: 'REPORT.PDF', path: 'REPORT.PDF', size: 10, isDir: false),
+          const CloudItem(name: 'REPORT.PDF', path: 'REPORT.PDF', size: 10, isDir: false),
         ),
         isTrue,
       );
       expect(
         FileOpenerService.isPdf(
-          CloudItem(
+          const CloudItem(
             name: 'unknown_ext',
             path: 'unknown_ext',
             size: 10,
@@ -622,13 +614,13 @@ void main() {
       );
       expect(
         FileOpenerService.isPdf(
-          CloudItem(name: 'photo.jpg', path: 'photo.jpg', size: 10, isDir: false),
+          const CloudItem(name: 'photo.jpg', path: 'photo.jpg', size: 10, isDir: false),
         ),
         isFalse,
       );
       expect(
         FileOpenerService.isPdf(
-          CloudItem(name: 'code.dart', path: 'code.dart', size: 10, isDir: false),
+          const CloudItem(name: 'code.dart', path: 'code.dart', size: 10, isDir: false),
         ),
         isFalse,
       );

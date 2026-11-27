@@ -9,15 +9,15 @@ import '../utils/token_utils.dart';
 
 /// State for configured cloud accounts.
 class CloudAccountsState {
-  final bool isLoading;
-  final String? error;
-  final List<CloudRemote> remotes;
 
   const CloudAccountsState({
     this.isLoading = false,
     this.error,
     this.remotes = const [],
   });
+  final bool isLoading;
+  final String? error;
+  final List<CloudRemote> remotes;
 
   bool get hasStorageData =>
       remotes.any((r) => r.quota != null && r.quota!.hasData);
@@ -79,13 +79,13 @@ class CloudAccountsNotifier extends Notifier<CloudAccountsState> {
 
   @override
   CloudAccountsState build() {
-    scheduleMicrotask(() => loadRemotes());
+    scheduleMicrotask(loadRemotes);
     return const CloudAccountsState(isLoading: true);
   }
 
   /// Refreshes the list of remotes from the Go core.
   Future<void> loadRemotes() async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
     try {
       // Auto-heal any malformed token lines in memory and persistent storage
       try {
@@ -120,7 +120,7 @@ class CloudAccountsNotifier extends Notifier<CloudAccountsState> {
     required String type,
     Map<String, String> options = const {},
   }) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
     try {
       final sanitizedOptions = Map<String, String>.from(options);
       if (sanitizedOptions.containsKey('token')) {
@@ -147,7 +147,7 @@ class CloudAccountsNotifier extends Notifier<CloudAccountsState> {
 
   /// Removes a remote from RAM and updates encrypted secure storage.
   Future<void> deleteRemote(String name) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
     try {
       await _rcloneService.deleteRemote(name);
       final exportedIni = await _rcloneService.exportConfigInMemory();

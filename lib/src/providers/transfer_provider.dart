@@ -14,13 +14,13 @@ import '../services/tray_service.dart';
 import 'settings_provider.dart';
 
 class TransferState {
-  final List<TransferJob> transfers;
-  final bool isPolling;
 
   const TransferState({
     this.transfers = const [],
     this.isPolling = false,
   });
+  final List<TransferJob> transfers;
+  final bool isPolling;
 
   TransferState copyWith({
     List<TransferJob>? transfers,
@@ -73,7 +73,7 @@ class TransferNotifier extends Notifier<TransferState> {
       _pollingTimer?.cancel();
     });
     // Initial fetch of existing transfers
-    Future.microtask(() => loadTransfers());
+    Future.microtask(loadTransfers);
     return const TransferState();
   }
 
@@ -149,7 +149,6 @@ class TransferNotifier extends Notifier<TransferState> {
       srcPath: file.path,
       dstRemote: dstRemote,
       dstPath: targetDstPath,
-      isMove: false,
     );
   }
 
@@ -175,9 +174,10 @@ class TransferNotifier extends Notifier<TransferState> {
   Future<List<TransferJob>> pickAndUploadFiles({
     required String dstRemote,
     required String dstPath,
+    String dialogTitle = 'Select files to upload to Cloud',
   }) async {
     final result = await FilePicker.pickFiles(
-      dialogTitle: 'Seleziona i file da caricare nel Cloud',
+      dialogTitle: dialogTitle,
     );
 
     if (result.isEmpty) {
@@ -207,7 +207,7 @@ class TransferNotifier extends Notifier<TransferState> {
     required String dstPath,
   }) async {
     if (!directory.existsSync()) {
-      throw FileSystemException('Directory non esistente', directory.path);
+      throw FileSystemException('Directory does not exist', directory.path);
     }
 
     final rootDirName = p.basename(directory.path);
@@ -234,7 +234,6 @@ class TransferNotifier extends Notifier<TransferState> {
           srcPath: entity.path,
           dstRemote: dstRemote,
           dstPath: targetDstPath,
-          isMove: false,
         );
         launchedJobs.add(job);
       } else if (entity is Directory) {
@@ -254,9 +253,10 @@ class TransferNotifier extends Notifier<TransferState> {
   Future<List<TransferJob>> pickAndUploadFolder({
     required String dstRemote,
     required String dstPath,
+    String dialogTitle = 'Select folder to upload to Cloud',
   }) async {
     final selectedDir = await FilePicker.getDirectoryPath(
-      dialogTitle: 'Seleziona la cartella da caricare nel Cloud',
+      dialogTitle: dialogTitle,
     );
 
     if (selectedDir == null || selectedDir.trim().isEmpty) {
@@ -308,7 +308,6 @@ class TransferNotifier extends Notifier<TransferState> {
       srcPath: srcPath,
       dstRemote: '',
       dstPath: localDestination,
-      isMove: false,
     );
   }
 
@@ -341,19 +340,21 @@ class TransferNotifier extends Notifier<TransferState> {
 
   void _updateBackgroundMetrics() {
     try {
+      final locale = ref.read(settingsProvider).locale;
       if (state.activeTransfers.isNotEmpty) {
         ref.read(appBackgroundServiceProvider).notifyTransferProgress(
           activeCount: state.activeCount,
           totalSpeed: state.totalSpeed,
           averagePercentage: (state.averageProgress * 100).round(),
           formattedSpeed: state.formattedTotalSpeed,
+          locale: locale,
         );
         ref.read(trayServiceProvider).updateTransferStatus(
           activeTransfers: state.activeCount,
           formattedSpeed: state.formattedTotalSpeed,
         );
       } else {
-        ref.read(appBackgroundServiceProvider).notifyTransfersIdle();
+        ref.read(appBackgroundServiceProvider).notifyTransfersIdle(locale: locale);
         ref.read(trayServiceProvider).updateTransferStatus(
           activeTransfers: 0,
         );

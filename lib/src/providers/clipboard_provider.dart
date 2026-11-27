@@ -1,14 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../models/cloud_models.dart';
 import '../models/transfer_models.dart';
 import 'transfer_provider.dart';
 
 class ClipboardState {
-  final CloudItem? _singleItem;
-  final List<CloudItem> _multipleItems;
-  final String? sourceRemote;
-  final bool isCut;
 
   const ClipboardState({
     CloudItem? item,
@@ -17,6 +14,10 @@ class ClipboardState {
     this.isCut = false,
   })  : _singleItem = item,
         _multipleItems = items;
+  final CloudItem? _singleItem;
+  final List<CloudItem> _multipleItems;
+  final String? sourceRemote;
+  final bool isCut;
 
   /// Returns all items in clipboard (supporting both single and multi-item modes).
   List<CloudItem> get items {
@@ -35,7 +36,10 @@ class ClipboardState {
   /// Total number of items stored in clipboard.
   int get count => items.length;
 
-  String get actionLabel => isCut ? 'Sposta' : 'Copia';
+  String localizedActionLabel(AppLocalizations l10n) =>
+      isCut ? l10n.move : l10n.copy;
+
+  String get actionLabel => isCut ? 'Move' : 'Copy';
 }
 
 final clipboardProvider =
@@ -50,7 +54,6 @@ class ClipboardNotifier extends Notifier<ClipboardState> {
     state = ClipboardState(
       items: [item],
       sourceRemote: sourceRemote,
-      isCut: false,
     );
   }
 
@@ -68,7 +71,6 @@ class ClipboardNotifier extends Notifier<ClipboardState> {
     state = ClipboardState(
       items: items,
       sourceRemote: sourceRemote,
-      isCut: false,
     );
   }
 
@@ -120,4 +122,3 @@ class ClipboardNotifier extends Notifier<ClipboardState> {
     return jobs;
   }
 }
-

@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/l10n_extension.dart';
 import '../../models/cloud_models.dart';
 import '../../providers/file_explorer_provider.dart';
 
 /// Quick action toolbar at the bottom of the dual-pane Commander view,
 /// providing direct transfer (Copy, Move, Swap, Refresh) between the two panes.
 class CommanderActionBar extends ConsumerWidget {
-  final NotifierProvider<FileExplorerNotifier, FileExplorerState> leftProvider;
-  final NotifierProvider<FileExplorerNotifier, FileExplorerState> rightProvider;
 
   const CommanderActionBar({
     super.key,
     required this.leftProvider,
     required this.rightProvider,
   });
+  final NotifierProvider<FileExplorerNotifier, FileExplorerState> leftProvider;
+  final NotifierProvider<FileExplorerNotifier, FileExplorerState> rightProvider;
 
   void _handleTransfer({
     required BuildContext context,
@@ -22,6 +23,7 @@ class CommanderActionBar extends ConsumerWidget {
     required bool isMove,
     required bool leftToRight,
   }) async {
+    final l10n = context.l10n;
     final srcProvider = leftToRight ? leftProvider : rightProvider;
     final dstProvider = leftToRight ? rightProvider : leftProvider;
 
@@ -35,7 +37,7 @@ class CommanderActionBar extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Seleziona prima un cloud nel pannello ${leftToRight ? "sinistro" : "destro"}.',
+            leftToRight ? l10n.selectCloudFirstLeft : l10n.selectCloudFirstRight,
           ),
         ),
       );
@@ -46,7 +48,9 @@ class CommanderActionBar extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Seleziona prima un cloud di destinazione nel pannello ${leftToRight ? "destro" : "sinistro"}.',
+            leftToRight
+                ? l10n.selectDestinationCloudRight
+                : l10n.selectDestinationCloudLeft,
           ),
         ),
       );
@@ -61,8 +65,8 @@ class CommanderActionBar extends ConsumerWidget {
 
     if (itemsToTransfer.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Nessun file presente o selezionato da trasferire.'),
+        SnackBar(
+          content: Text(l10n.noFilesToTransfer),
         ),
       );
       return;
@@ -70,12 +74,12 @@ class CommanderActionBar extends ConsumerWidget {
 
     final messenger = ScaffoldMessenger.of(context);
     final count = itemsToTransfer.length;
-    final actionLabel = isMove ? 'Spostamento' : 'Copia';
+    final actionLabel = isMove ? l10n.moveAction : l10n.copyAction;
 
     messenger.showSnackBar(
       SnackBar(
         content: Text(
-          '$actionLabel di $count ${count == 1 ? "elemento" : "elementi"} da [$srcRemote] a [$dstRemote] avviato...',
+          l10n.transferStarted(actionLabel, count, srcRemote, dstRemote),
         ),
         duration: const Duration(seconds: 2),
       ),
@@ -89,10 +93,10 @@ class CommanderActionBar extends ConsumerWidget {
             isMove: isMove,
           );
       ref.read(srcProvider.notifier).clearSelection();
-      ref.read(dstProvider.notifier).refresh();
+      await ref.read(dstProvider.notifier).refresh();
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Errore durante il trasferimento: $e')),
+        SnackBar(content: Text(l10n.errorTransferring(e.toString()))),
       );
     }
   }
@@ -117,6 +121,7 @@ class CommanderActionBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final leftState = ref.watch(leftProvider);
     final rightState = ref.watch(rightProvider);
 
@@ -139,22 +144,30 @@ class CommanderActionBar extends ConsumerWidget {
           final isVeryCompact = constraints.maxWidth < 680;
 
           final copyRightLabel = hasLeftSelection
-              ? (isCompact ? 'Copia (${leftState.selectedCount}) ->' : 'Copia a destra (${leftState.selectedCount})')
-              : (isCompact ? 'Copia ->' : 'Copia a destra ->');
+              ? (isCompact
+                  ? l10n.copyRightCountCompact(leftState.selectedCount)
+                  : l10n.copyRightWithCount(leftState.selectedCount))
+              : (isCompact ? l10n.copyRightCompact : l10n.copyRight);
 
           final moveRightLabel = hasLeftSelection
-              ? (isCompact ? 'Sposta (${leftState.selectedCount}) ->' : 'Sposta a destra (${leftState.selectedCount})')
-              : (isCompact ? 'Sposta ->' : 'Sposta a destra ->');
+              ? (isCompact
+                  ? l10n.moveRightCountCompact(leftState.selectedCount)
+                  : l10n.moveRightWithCount(leftState.selectedCount))
+              : (isCompact ? l10n.moveRightCompact : l10n.moveRight);
 
           final moveLeftLabel = hasRightSelection
-              ? (isCompact ? '<- Sposta (${rightState.selectedCount})' : '<- Sposta a sinistra (${rightState.selectedCount})')
-              : (isCompact ? '<- Sposta' : '<- Sposta a sinistra');
+              ? (isCompact
+                  ? l10n.moveLeftCountCompact(rightState.selectedCount)
+                  : l10n.moveLeftWithCount(rightState.selectedCount))
+              : (isCompact ? l10n.moveLeftCompact : l10n.moveLeft);
 
           final copyLeftLabel = hasRightSelection
-              ? (isCompact ? '<- Copia (${rightState.selectedCount})' : '<- Copia a sinistra (${rightState.selectedCount})')
-              : (isCompact ? '<- Copia' : '<- Copia a sinistra');
+              ? (isCompact
+                  ? l10n.copyLeftCountCompact(rightState.selectedCount)
+                  : l10n.copyLeftWithCount(rightState.selectedCount))
+              : (isCompact ? l10n.copyLeftCompact : l10n.copyLeft);
 
-          Widget leftActions = Wrap(
+          final Widget leftActions = Wrap(
             spacing: 6,
             runSpacing: 4,
             crossAxisAlignment: WrapCrossAlignment.center,
@@ -212,18 +225,18 @@ class CommanderActionBar extends ConsumerWidget {
             ],
           );
 
-          Widget centerActions = Row(
+          final Widget centerActions = Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton.filledTonal(
                 icon: const Icon(Icons.swap_horiz_rounded, size: 20),
-                tooltip: 'Scambia pannelli (<->)',
+                tooltip: l10n.swapPanesTooltip,
                 onPressed: () => _handleSwapPanes(ref),
               ),
               const SizedBox(width: 8),
               IconButton.filledTonal(
                 icon: const Icon(Icons.sync_rounded, size: 20),
-                tooltip: 'Aggiorna entrambi i pannelli',
+                tooltip: l10n.refreshBothPanesTooltip,
                 onPressed: () {
                   ref.read(leftProvider.notifier).refresh();
                   ref.read(rightProvider.notifier).refresh();
@@ -232,7 +245,7 @@ class CommanderActionBar extends ConsumerWidget {
             ],
           );
 
-          Widget rightActions = Wrap(
+          final Widget rightActions = Wrap(
             spacing: 6,
             runSpacing: 4,
             crossAxisAlignment: WrapCrossAlignment.center,
@@ -311,4 +324,3 @@ class CommanderActionBar extends ConsumerWidget {
     );
   }
 }
-

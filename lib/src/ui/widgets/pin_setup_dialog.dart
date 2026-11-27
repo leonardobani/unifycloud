@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../l10n/l10n_extension.dart';
+
 /// Mode for [PinSetupDialog].
 enum PinDialogMode {
   /// Setting up a PIN for the first time.
@@ -15,9 +17,6 @@ enum PinDialogMode {
 
 /// Dialog for setting up, changing, or verifying the App Lock PIN.
 class PinSetupDialog extends StatefulWidget {
-  final PinDialogMode mode;
-  final Future<bool> Function(String pin)? onVerifyOldPin;
-  final Future<void> Function(String newPin)? onSaveNewPin;
 
   const PinSetupDialog({
     super.key,
@@ -25,6 +24,9 @@ class PinSetupDialog extends StatefulWidget {
     this.onVerifyOldPin,
     this.onSaveNewPin,
   });
+  final PinDialogMode mode;
+  final Future<bool> Function(String pin)? onVerifyOldPin;
+  final Future<void> Function(String newPin)? onSaveNewPin;
 
   @override
   State<PinSetupDialog> createState() => _PinSetupDialogState();
@@ -58,33 +60,31 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
     super.dispose();
   }
 
-  String get _title {
+  String _title(AppLocalizations l10n) {
     switch (widget.mode) {
       case PinDialogMode.setup:
-        return _currentStep == 1 ? 'Imposta Codice PIN' : 'Conferma Codice PIN';
+        return _currentStep == 1 ? l10n.pinTitleSetup : l10n.pinTitleConfirm;
       case PinDialogMode.change:
-        if (_currentStep == 0) return 'Inserisci PIN Attuale';
-        return _currentStep == 1 ? 'Nuovo Codice PIN' : 'Conferma Nuovo PIN';
+        if (_currentStep == 0) return l10n.pinTitleEnterCurrent;
+        return _currentStep == 1 ? l10n.pinTitleNew : l10n.pinTitleConfirmNew;
       case PinDialogMode.verify:
-        return 'Verifica Codice PIN';
+        return l10n.pinTitleVerify;
     }
   }
 
-  String get _subtitle {
+  String _subtitle(AppLocalizations l10n) {
     switch (widget.mode) {
       case PinDialogMode.setup:
         return _currentStep == 1
-            ? 'Crea un codice numerico a 6 cifre per proteggere l\'app.'
-            : 'Digita nuovamente il codice PIN per confermarlo.';
+            ? l10n.pinStepSetupNew
+            : l10n.pinStepSetupConfirm;
       case PinDialogMode.change:
         if (_currentStep == 0) {
-          return 'Inserisci il tuo codice PIN attuale per continuare.';
+          return l10n.pinStepOld;
         }
-        return _currentStep == 1
-            ? 'Inserisci il nuovo codice PIN a 6 cifre.'
-            : 'Digita nuovamente il nuovo PIN per confermarlo.';
+        return _currentStep == 1 ? l10n.pinStepNew : l10n.pinStepConfirm;
       case PinDialogMode.verify:
-        return 'Inserisci il tuo codice PIN per confermare l\'operazione.';
+        return l10n.pinStepVerify;
     }
   }
 
@@ -108,10 +108,11 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
   }
 
   Future<void> _submitCurrentStep() async {
+    final l10n = context.l10n;
     final pin = _pinController.text.trim();
     if (pin.length != 6) {
       setState(() {
-        _errorMessage = 'Il PIN deve avere esattamente 6 cifre';
+        _errorMessage = l10n.pinMustBe6Digits;
       });
       return;
     }
@@ -126,7 +127,7 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
 
       if (!isValid) {
         setState(() {
-          _errorMessage = 'Codice PIN errato. Riprova.';
+          _errorMessage = l10n.pinIncorrect;
           _pinController.clear();
         });
         return;
@@ -156,7 +157,7 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
       _enteredConfirmPin = pin;
       if (_enteredConfirmPin != _enteredNewPin) {
         setState(() {
-          _errorMessage = 'I codici PIN non corrispondono. Riprova.';
+          _errorMessage = l10n.pinsDoNotMatch;
           _pinController.clear();
         });
         return;
@@ -176,6 +177,7 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final pinLength = _pinController.text.length;
@@ -206,7 +208,7 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
               ),
               const SizedBox(height: 16),
               Text(
-                _title,
+                _title(l10n),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 18,
@@ -215,7 +217,7 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
               ),
               const SizedBox(height: 8),
               Text(
-                _subtitle,
+                _subtitle(l10n),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13,
@@ -299,7 +301,7 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
                     onPressed: _isLoading
                         ? null
                         : () => Navigator.of(context).pop(false),
-                    child: const Text('Annulla'),
+                    child: Text(l10n.cancel),
                   ),
                   const SizedBox(width: 8),
                   FilledButton(
@@ -317,8 +319,8 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
                           )
                         : Text(_currentStep == 2 ||
                                 widget.mode == PinDialogMode.verify
-                            ? 'Conferma'
-                            : 'Continua'),
+                            ? l10n.confirm
+                            : l10n.pinContinue),
                   ),
                 ],
               ),
@@ -333,7 +335,7 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
   Widget _buildKeypad(ColorScheme colorScheme) {
     return Column(
       children: [
-        for (var row in [
+        for (final row in [
           ['1', '2', '3'],
           ['4', '5', '6'],
           ['7', '8', '9'],

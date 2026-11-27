@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/l10n_extension.dart';
 import '../../models/sync_rule_model.dart';
 import '../../providers/sync_provider.dart';
 import '../theme/app_theme.dart';
@@ -24,19 +25,21 @@ class SyncRulesScreen extends ConsumerWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, WidgetRef ref, SyncRule rule) {
+  void _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    SyncRule rule,
+    AppLocalizations l10n,
+  ) {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Elimina Regola'),
-        content: Text(
-          'Vuoi davvero eliminare la regola di sincronizzazione "${rule.name}"? '
-          'I file presenti sia sul dispositivo che sul cloud non verranno cancellati.',
-        ),
+        title: Text(l10n.deleteRuleTitle),
+        content: Text(l10n.deleteRulePrompt(rule.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Annulla'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
@@ -46,7 +49,7 @@ class SyncRulesScreen extends ConsumerWidget {
               ref.read(syncProvider.notifier).deleteRule(rule.id);
               Navigator.of(context).pop();
             },
-            child: const Text('Elimina'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -55,6 +58,7 @@ class SyncRulesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final rules = ref.watch(syncProvider);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -70,7 +74,7 @@ class SyncRulesScreen extends ConsumerWidget {
             const SizedBox(width: 8),
             Flexible(
               child: Text(
-                'Sincronizzazione & Backup',
+                l10n.syncAndBackup,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -89,7 +93,7 @@ class SyncRulesScreen extends ConsumerWidget {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.sync),
-              label: const Text('Sincronizza Tutte'),
+              label: Text(l10n.syncAll),
               onPressed: anyInProgress
                   ? null
                   : () {
@@ -98,7 +102,7 @@ class SyncRulesScreen extends ConsumerWidget {
             ),
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'Nuova regola',
+            tooltip: l10n.newRuleTooltip,
             onPressed: () => _openAddRuleDialog(context),
           ),
           const SizedBox(width: 8),
@@ -106,7 +110,7 @@ class SyncRulesScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add),
-        label: const Text('Nuova Regola'),
+        label: Text(l10n.newRule),
         onPressed: () => _openAddRuleDialog(context),
       ),
       body: ListView(
@@ -142,14 +146,14 @@ class SyncRulesScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Backup Continuo & Sincronizzazione Cloud',
+                          l10n.backupBannerTitle,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Crea regole per sincronizzare automaticamente le tue cartelle (es. Foto/DCIM, Documenti) con Google Drive, OneDrive o altri provider supportati.',
+                          l10n.backupBannerSubtitle,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: isDark ? Colors.grey[400] : Colors.grey[600],
                           ),
@@ -177,7 +181,7 @@ class SyncRulesScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Nessuna Regola Configurata',
+                    l10n.noRulesConfigured,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -186,7 +190,7 @@ class SyncRulesScreen extends ConsumerWidget {
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 420),
                     child: Text(
-                      'Configura una regola per eseguire il backup automatico a intervalli regolari o su richiesta con il pulsante "Sincronizza ora".',
+                      l10n.noSyncRulesEmptyDesc,
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -196,7 +200,7 @@ class SyncRulesScreen extends ConsumerWidget {
                   const SizedBox(height: 24),
                   FilledButton.icon(
                     icon: const Icon(Icons.add),
-                    label: const Text('Crea Nuova Regola'),
+                    label: Text(l10n.createNewRule),
                     onPressed: () => _openAddRuleDialog(context),
                   ),
                 ],
@@ -204,21 +208,26 @@ class SyncRulesScreen extends ConsumerWidget {
             ),
           ] else ...[
             Text(
-              'Regole di Sincronizzazione (${rules.length})',
+              l10n.syncRulesCount(rules.length),
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.primary,
               ),
             ),
             const SizedBox(height: 8),
-            ...rules.map((rule) => _buildRuleCard(context, ref, rule)),
+            ...rules.map((rule) => _buildRuleCard(context, ref, rule, l10n)),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildRuleCard(BuildContext context, WidgetRef ref, SyncRule rule) {
+  Widget _buildRuleCard(
+    BuildContext context,
+    WidgetRef ref,
+    SyncRule rule,
+    AppLocalizations l10n,
+  ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
@@ -278,25 +287,25 @@ class SyncRulesScreen extends ConsumerWidget {
                 ),
                 PopupMenuButton<String>(
                   icon: const Icon(Icons.more_vert),
-                  tooltip: 'Opzioni regola',
+                  tooltip: l10n.ruleOptionsTooltip,
                   itemBuilder: (context) => [
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'edit',
                       child: Row(
                         children: [
-                          Icon(Icons.edit, size: 18),
-                          SizedBox(width: 8),
-                          Text('Modifica'),
+                          const Icon(Icons.edit, size: 18),
+                          const SizedBox(width: 8),
+                          Text(l10n.edit),
                         ],
                       ),
                     ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'delete',
                       child: Row(
                         children: [
-                          Icon(Icons.delete, color: Colors.red, size: 18),
-                          SizedBox(width: 8),
-                          Text('Elimina', style: TextStyle(color: Colors.red)),
+                          const Icon(Icons.delete, color: Colors.red, size: 18),
+                          const SizedBox(width: 8),
+                          Text(l10n.delete, style: const TextStyle(color: Colors.red)),
                         ],
                       ),
                     ),
@@ -305,7 +314,7 @@ class SyncRulesScreen extends ConsumerWidget {
                     if (action == 'edit') {
                       _openEditRuleDialog(context, rule);
                     } else if (action == 'delete') {
-                      _confirmDelete(context, ref, rule);
+                      _confirmDelete(context, ref, rule, l10n);
                     }
                   },
                 ),
@@ -367,7 +376,10 @@ class SyncRulesScreen extends ConsumerWidget {
                 // Frequency Badge
                 Chip(
                   avatar: const Icon(Icons.schedule, size: 14),
-                  label: Text(rule.frequency.label, style: const TextStyle(fontSize: 11)),
+                  label: Text(
+                    rule.frequency.localizedLabel(l10n),
+                    style: const TextStyle(fontSize: 11),
+                  ),
                   backgroundColor: colorScheme.surfaceContainerHighest,
                   visualDensity: VisualDensity.compact,
                   side: BorderSide.none,
@@ -378,13 +390,16 @@ class SyncRulesScreen extends ConsumerWidget {
                     rule.mode == SyncMode.sync ? Icons.sync : Icons.backup,
                     size: 14,
                   ),
-                  label: Text(rule.mode.label, style: const TextStyle(fontSize: 11)),
+                  label: Text(
+                    rule.mode.localizedLabel(l10n),
+                    style: const TextStyle(fontSize: 11),
+                  ),
                   backgroundColor: colorScheme.surfaceContainerHighest,
                   visualDensity: VisualDensity.compact,
                   side: BorderSide.none,
                 ),
                 // Status Badge
-                _buildStatusChip(rule, colorScheme),
+                _buildStatusChip(rule, colorScheme, l10n),
               ],
             ),
             const SizedBox(height: 12),
@@ -417,12 +432,12 @@ class SyncRulesScreen extends ConsumerWidget {
               const SizedBox(height: 10),
             ],
 
-            // Action row: Last execution timestamp + "Sincronizza ora" button
+            // Action row: Last execution timestamp + "Sync now" button
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  _formatLastSyncTime(rule.lastSyncTime),
+                  _formatLastSyncTime(rule.lastSyncTime, l10n),
                   style: TextStyle(
                     fontSize: 12,
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -431,7 +446,7 @@ class SyncRulesScreen extends ConsumerWidget {
                 if (isInProgress)
                   OutlinedButton.icon(
                     icon: const Icon(Icons.cancel, size: 16, color: Colors.red),
-                    label: const Text('Annulla', style: TextStyle(color: Colors.red)),
+                    label: Text(l10n.cancel, style: const TextStyle(color: Colors.red)),
                     onPressed: () {
                       ref.read(syncProvider.notifier).cancelSync(rule.id);
                     },
@@ -439,7 +454,7 @@ class SyncRulesScreen extends ConsumerWidget {
                 else
                   FilledButton.icon(
                     icon: const Icon(Icons.play_arrow, size: 18),
-                    label: const Text('Sincronizza ora'),
+                    label: Text(l10n.syncNow),
                     onPressed: () {
                       ref.read(syncProvider.notifier).executeSync(rule.id);
                     },
@@ -452,7 +467,11 @@ class SyncRulesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusChip(SyncRule rule, ColorScheme colorScheme) {
+  Widget _buildStatusChip(
+    SyncRule rule,
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
     switch (rule.lastStatus) {
       case SyncStatus.inProgress:
         return Chip(
@@ -461,53 +480,64 @@ class SyncRulesScreen extends ConsumerWidget {
             height: 12,
             child: CircularProgressIndicator(strokeWidth: 2),
           ),
-          label: const Text('In corso...', style: TextStyle(fontSize: 11)),
+          label: Text(l10n.statusInProgress, style: const TextStyle(fontSize: 11)),
           backgroundColor: colorScheme.primaryContainer,
           visualDensity: VisualDensity.compact,
           side: BorderSide.none,
         );
       case SyncStatus.completed:
-        return const Chip(
-          avatar: Icon(Icons.check_circle, size: 14, color: Colors.green),
-          label: Text('Completato', style: TextStyle(fontSize: 11, color: Colors.green)),
-          backgroundColor: Color(0x1A4CAF50),
+        return Chip(
+          avatar: const Icon(Icons.check_circle, size: 14, color: Colors.green),
+          label: Text(
+            l10n.statusCompleted,
+            style: const TextStyle(fontSize: 11, color: Colors.green),
+          ),
+          backgroundColor: const Color(0x1A4CAF50),
           visualDensity: VisualDensity.compact,
           side: BorderSide.none,
         );
       case SyncStatus.failed:
         return Chip(
           avatar: Icon(Icons.error, size: 14, color: colorScheme.error),
-          label: Text('Errore', style: TextStyle(fontSize: 11, color: colorScheme.error)),
+          label: Text(
+            l10n.statusFailed,
+            style: TextStyle(fontSize: 11, color: colorScheme.error),
+          ),
           backgroundColor: colorScheme.errorContainer,
           visualDensity: VisualDensity.compact,
           side: BorderSide.none,
         );
       case SyncStatus.idle:
-        return const Chip(
-          avatar: Icon(Icons.pause, size: 14, color: Colors.grey),
-          label: Text('In attesa', style: TextStyle(fontSize: 11, color: Colors.grey)),
-          backgroundColor: Color(0x1A9E9E9E),
+        return Chip(
+          avatar: const Icon(Icons.pause, size: 14, color: Colors.grey),
+          label: Text(
+            l10n.statusWaiting,
+            style: const TextStyle(fontSize: 11, color: Colors.grey),
+          ),
+          backgroundColor: const Color(0x1A9E9E9E),
           visualDensity: VisualDensity.compact,
           side: BorderSide.none,
         );
     }
   }
 
-  String _formatLastSyncTime(DateTime? time) {
+  String _formatLastSyncTime(DateTime? time, AppLocalizations l10n) {
     if (time == null) {
-      return 'Mai sincronizzato';
+      return l10n.neverSynced;
     }
     final now = DateTime.now();
     final diff = now.difference(time);
 
     if (diff.inMinutes < 1) {
-      return 'Ultima sinc: adesso';
+      return l10n.lastSyncNow;
     } else if (diff.inMinutes < 60) {
-      return 'Ultima sinc: ${diff.inMinutes} minuti fa';
+      return l10n.lastSyncMinutesAgo(diff.inMinutes);
     } else if (diff.inHours < 24) {
-      return 'Ultima sinc: ${diff.inHours} ore fa';
+      return l10n.lastSyncHoursAgo(diff.inHours);
     } else {
-      return 'Ultima sinc: ${time.day.toString().padLeft(2, '0')}/${time.month.toString().padLeft(2, '0')} ${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+      final formatted =
+          '${time.day.toString().padLeft(2, '0')}/${time.month.toString().padLeft(2, '0')} ${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+      return l10n.lastSyncDate(formatted);
     }
   }
 }

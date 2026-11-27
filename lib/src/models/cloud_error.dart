@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
+
 /// Categories of errors that can occur during cloud operations and transfers.
 enum CloudErrorType {
   network,
@@ -14,7 +16,7 @@ enum CloudErrorType {
     if (error == null) return CloudErrorType.generic;
     final str = error.toString().toLowerCase();
 
-    // 1. Spazio in esaurimento / disco pieno
+    // 1. Out of disk space / quota exceeded
     if (str.contains('no space left') ||
         str.contains('disk full') ||
         str.contains('enospc') ||
@@ -25,7 +27,7 @@ enum CloudErrorType {
       return CloudErrorType.diskSpace;
     }
 
-    // 2. Token revocati o scaduti / autenticazione
+    // 2. Revoked or expired auth tokens
     if (str.contains('invalid_grant') ||
         str.contains('token expired') ||
         str.contains('token has been revoked') ||
@@ -42,7 +44,7 @@ enum CloudErrorType {
       return CloudErrorType.authExpired;
     }
 
-    // 3. Perdita di connessione / rete
+    // 3. Network disconnection / timeout
     if (str.contains('no such host') ||
         str.contains('connection refused') ||
         str.contains('network is unreachable') ||
@@ -58,7 +60,7 @@ enum CloudErrorType {
       return CloudErrorType.network;
     }
 
-    // 4. File o cartella non trovata
+    // 4. File or folder not found
     if (str.contains('file not found') ||
         str.contains('object not found') ||
         str.contains('not found') ||
@@ -66,7 +68,7 @@ enum CloudErrorType {
       return CloudErrorType.notFound;
     }
 
-    // 5. Permessi negati
+    // 5. Permission denied
     if (str.contains('permission denied') ||
         str.contains('access denied') ||
         str.contains('access forbidden') ||
@@ -78,21 +80,39 @@ enum CloudErrorType {
     return CloudErrorType.generic;
   }
 
-  /// User-friendly localized message in Italian explaining the error cause.
+  /// Localized user-friendly message explaining the error cause.
+  String localizedMessage(AppLocalizations l10n) {
+    switch (this) {
+      case CloudErrorType.network:
+        return l10n.errorNetwork;
+      case CloudErrorType.diskSpace:
+        return l10n.errorDiskSpace;
+      case CloudErrorType.authExpired:
+        return l10n.errorAuthExpired;
+      case CloudErrorType.notFound:
+        return l10n.errorNotFound;
+      case CloudErrorType.permissionDenied:
+        return l10n.errorPermissionDenied;
+      case CloudErrorType.generic:
+        return l10n.errorGeneric;
+    }
+  }
+
+  /// User-friendly message in English when no [AppLocalizations] context is available.
   String get userFriendlyMessage {
     switch (this) {
       case CloudErrorType.network:
-        return 'Connessione assente o instabile. Verifica la rete internet e riprova.';
+        return 'No connection or unstable network. Check your internet connection and try again.';
       case CloudErrorType.diskSpace:
-        return 'Spazio di archiviazione insufficiente o disco pieno. Libera memoria per continuare.';
+        return 'Insufficient storage space or disk full. Free up memory to continue.';
       case CloudErrorType.authExpired:
-        return 'Sessione o token scaduto/revocato. Riconnetti il tuo account.';
+        return 'Session or token expired/revoked. Reconnect your account.';
       case CloudErrorType.notFound:
-        return 'Elemento o cartella non trovata sul provider cloud.';
+        return 'Item or folder not found on cloud provider.';
       case CloudErrorType.permissionDenied:
-        return 'Permesso negato per eseguire questa operazione sul cloud.';
+        return 'Permission denied for this operation on cloud.';
       case CloudErrorType.generic:
-        return 'Si è verificato un errore durante l\'operazione.';
+        return 'An error occurred during the operation.';
     }
   }
 

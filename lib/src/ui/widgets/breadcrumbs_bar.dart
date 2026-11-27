@@ -6,12 +6,12 @@ import '../../providers/file_explorer_provider.dart';
 
 /// An interactive horizontal breadcrumb bar allowing one-tap navigation to any parent directory.
 class BreadcrumbsBar extends ConsumerWidget {
-  final NotifierProvider<FileExplorerNotifier, FileExplorerState>? provider;
 
   const BreadcrumbsBar({
     super.key,
     this.provider,
   });
+  final NotifierProvider<FileExplorerNotifier, FileExplorerState>? provider;
 
   NotifierProvider<FileExplorerNotifier, FileExplorerState> get _provider =>
       provider ?? fileExplorerProvider;

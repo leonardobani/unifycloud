@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../l10n/l10n_extension.dart';
 import '../../models/cloud_models.dart';
 import '../../utils/url_utils.dart';
 
 /// A Material 3 dialog displaying a generated public shareable link for a file or folder.
 class ShareLinkDialog extends StatelessWidget {
-  final CloudItem item;
-  final String link;
 
   const ShareLinkDialog({
     super.key,
     required this.item,
     required this.link,
   });
+  final CloudItem item;
+  final String link;
 
   /// Displays the [ShareLinkDialog].
   static Future<void> show(
@@ -31,29 +32,30 @@ class ShareLinkDialog extends StatelessWidget {
     await Clipboard.setData(ClipboardData(text: link));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Link copiato negli appunti!'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(context.l10n.linkCopiedToClipboard),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
   }
 
   void _openInBrowser(BuildContext context) async {
+    final l10n = context.l10n;
     try {
       final uri = Uri.parse(link);
       final opened = await UrlUtils.openWebUrl(uri);
       if (!opened && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('URL non valido o impossibile aprire il browser.'),
+          SnackBar(
+            content: Text(l10n.invalidUrlOrBrowser),
           ),
         );
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Impossibile aprire il browser: $e')),
+          SnackBar(content: Text(l10n.errorOpenBrowserGeneric(e.toString()))),
         );
       }
     }
@@ -61,6 +63,7 @@ class ShareLinkDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -77,8 +80,8 @@ class ShareLinkDialog extends StatelessWidget {
             child: Icon(Icons.link_rounded, color: colorScheme.primary, size: 24),
           ),
           const SizedBox(width: 12),
-          const Expanded(
-            child: Text('Link Condivisibile'),
+          Expanded(
+            child: Text(l10n.shareableLinkTitle),
           ),
         ],
       ),
@@ -109,7 +112,7 @@ class ShareLinkDialog extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Chiunque abbia questo link potrà accedere a ${item.isDir ? "questa cartella" : "questo file"}:',
+              item.isDir ? l10n.shareLinkAccessFolder : l10n.shareLinkAccessFile,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.textTheme.bodySmall?.color,
               ),
@@ -127,7 +130,7 @@ class ShareLinkDialog extends StatelessWidget {
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.public, size: 20),
                 suffixIcon: IconButton(
-                  tooltip: 'Copia link',
+                  tooltip: l10n.copyShareLink,
                   icon: const Icon(Icons.copy_rounded, size: 20),
                   onPressed: () => _copyToClipboard(context),
                 ),
@@ -145,12 +148,12 @@ class ShareLinkDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Chiudi'),
+          child: Text(l10n.close),
         ),
         OutlinedButton.icon(
           onPressed: () => _openInBrowser(context),
           icon: const Icon(Icons.open_in_browser_rounded, size: 18),
-          label: const Text('Apri'),
+          label: Text(l10n.open),
         ),
         FilledButton.icon(
           onPressed: () {
@@ -158,7 +161,7 @@ class ShareLinkDialog extends StatelessWidget {
             Navigator.of(context).pop();
           },
           icon: const Icon(Icons.copy_rounded, size: 18),
-          label: const Text('Copia Link'),
+          label: Text(l10n.copyShareLink),
         ),
       ],
     );

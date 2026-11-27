@@ -47,20 +47,15 @@ class FakeRcloneServiceForUpload extends RcloneService {
       dstRemote: dstRemote,
       dstPath: dstPath,
       isMove: isMove,
-      status: TransferStatus.queued,
-      bytes: 0,
       totalBytes: 2048,
-      percentage: 0,
-      speed: 0,
-      eta: 0,
     );
   }
 }
 
 class FakeFileExplorerNotifier extends Notifier<FileExplorerState>
     implements FileExplorerNotifier {
-  final FileExplorerState _initial;
   FakeFileExplorerNotifier(this._initial);
+  final FileExplorerState _initial;
 
   @override
   FileExplorerState build() => _initial;
@@ -71,8 +66,8 @@ class FakeFileExplorerNotifier extends Notifier<FileExplorerState>
 
 class FakeCloudAccountsNotifier extends Notifier<CloudAccountsState>
     implements CloudAccountsNotifier {
-  final CloudAccountsState _initial;
   FakeCloudAccountsNotifier(this._initial);
+  final CloudAccountsState _initial;
 
   @override
   CloudAccountsState build() => _initial;
@@ -307,9 +302,8 @@ void main() {
       await tester.binding.setSurfaceSize(const Size(800, 1200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      final testState = FileExplorerState(
+      const testState = FileExplorerState(
         currentRemote: 'GoogleDrive',
-        currentPath: '',
         items: [
           CloudItem(name: 'File1.txt', path: 'File1.txt', isDir: false, size: 100),
         ],
@@ -337,7 +331,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Find the upload PopupMenuButton
-      final uploadButton = find.byTooltip('Carica dal dispositivo');
+      final uploadButton = find.byTooltip('Upload from device');
       expect(uploadButton, findsOneWidget);
 
       // Tap on the upload button to open menu
@@ -345,8 +339,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify menu items are displayed
-      expect(find.text('Carica file'), findsOneWidget);
-      expect(find.text('Carica intera cartella'), findsOneWidget);
+      expect(find.text('Upload file'), findsOneWidget);
+      expect(find.text('Upload entire folder'), findsOneWidget);
       expect(find.byIcon(Icons.upload_file_outlined), findsNWidgets(2));
       expect(find.byIcon(Icons.drive_folder_upload_outlined), findsOneWidget);
     });

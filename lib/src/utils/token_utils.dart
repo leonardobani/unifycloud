@@ -106,4 +106,3 @@ class TokenUtils {
     return modified ? sanitizedLines.join('\n') : iniContent;
   }
 }
-

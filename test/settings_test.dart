@@ -1,11 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:unifycloud/l10n/app_localizations.dart';
+import 'package:unifycloud/l10n/l10n_extension.dart';
 import 'package:unifycloud/src/models/settings_models.dart';
 import 'package:unifycloud/src/providers/settings_provider.dart';
 import 'package:unifycloud/src/ui/screens/settings_screen.dart';
 import 'package:unifycloud/src/utils/url_utils.dart';
+
+class _InMemorySecureStorage extends FlutterSecureStorage {
+  _InMemorySecureStorage(this.data);
+  final Map<String, String> data;
+
+  @override
+  Future<String?> read({
+    required String key,
+    AppleOptions? iOptions,
+    AndroidOptions? aOptions,
+    LinuxOptions? lOptions,
+    WebOptions? webOptions,
+    AppleOptions? mOptions,
+    WindowsOptions? wOptions,
+  }) async =>
+      data[key];
+}
 
 void main() {
   group('AppSettings Model Tests', () {
@@ -69,7 +87,7 @@ void main() {
     });
 
     test('locale getter dynamically resolves arbitrary language tags (scalable to 10-20 languages)', () {
-      expect(const AppSettings(language: 'en').locale, equals(const Locale('en')));
+      expect(const AppSettings().locale, equals(const Locale('en')));
       expect(const AppSettings(language: 'it').locale, equals(const Locale('it')));
       expect(const AppSettings(language: 'es').locale, equals(const Locale('es')));
       expect(const AppSettings(language: 'de').locale, equals(const Locale('de')));
@@ -137,6 +155,17 @@ void main() {
       expect(container.read(settingsProvider).customDownloadPath, isNull);
       expect(container.read(settingsProvider).autostartOnBoot, isFalse);
       expect(container.read(settingsProvider).minimizeToTray, isTrue);
+    });
+
+    test('loadPersistedSettings normalizes removed minor language codes to system',
+        () async {
+      final storage = _InMemorySecureStorage({
+        SettingsNotifier.settingsStorageKey: '{"language":"de"}',
+      });
+      final loaded = await SettingsNotifier.loadPersistedSettings(storage);
+      expect(loaded.language, equals('system'));
+      expect(AppSettings.supportedLanguageCodes,
+          equals({'en', 'it', 'fr', 'pl', 'es', 'ar'}));
     });
   });
 
@@ -214,10 +243,7 @@ void main() {
 
       await tester.pumpWidget(
         createSettingsApp(
-          initialSettings: const AppSettings(
-            themeMode: ThemeMode.system,
-            language: 'it',
-          ),
+          
         ),
       );
       await tester.pumpAndSettle();
@@ -276,11 +302,11 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp(
-            locale: const Locale('it'),
+          child: const MaterialApp(
+            locale: Locale('it'),
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
-            home: const SettingsScreen(),
+            home: SettingsScreen(),
           ),
         ),
       );
@@ -333,11 +359,11 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp(
-            locale: const Locale('it'),
+          child: const MaterialApp(
+            locale: Locale('it'),
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
-            home: const SettingsScreen(),
+            home: SettingsScreen(),
           ),
         ),
       );
@@ -409,20 +435,36 @@ void main() {
           home: Builder(
             builder: (context) {
               final l10n = AppLocalizations.of(context)!;
+              expect(AppLocalizations.supportedLocales.map((l) => l.languageCode),
+                  containsAll(['en', 'it', 'fr', 'pl', 'es', 'ar']));
+              expect(AppLocalizations.supportedLocales.length, equals(6));
               expect(SettingsScreen.getLanguageDisplayName('en', l10n), equals('English'));
               expect(SettingsScreen.getLanguageDisplayName('it', l10n), equals('Italiano'));
-              expect(SettingsScreen.getLanguageDisplayName('system', l10n), equals('System Default'));
-              expect(SettingsScreen.getLanguageDisplayName('de', l10n), equals('Deutsch'));
-              expect(SettingsScreen.getLanguageDisplayName('es', l10n), equals('Español'));
               expect(SettingsScreen.getLanguageDisplayName('fr', l10n), equals('Français'));
-              expect(SettingsScreen.getLanguageDisplayName('ja', l10n), equals('日本語'));
-              expect(SettingsScreen.getLanguageDisplayName('zh', l10n), equals('中文'));
+              expect(SettingsScreen.getLanguageDisplayName('pl', l10n), equals('Polski'));
+              expect(SettingsScreen.getLanguageDisplayName('es', l10n), equals('Español'));
+              expect(SettingsScreen.getLanguageDisplayName('ar', l10n), equals('العربية'));
+              expect(SettingsScreen.getLanguageDisplayName('system', l10n), equals('System Default'));
+              expect(SettingsScreen.getLanguageDisplayName('de', l10n), equals('DE'));
               expect(SettingsScreen.getLanguageDisplayName('xyz', l10n), equals('XYZ'));
               return const SizedBox.shrink();
             },
           ),
         ),
       );
+    });
+
+    test('All 6 kept locales resolve cleanly and unsupported locales fall back to English', () {
+      for (final code in ['en', 'it', 'fr', 'pl', 'es', 'ar']) {
+        final l10n = resolveAppLocalizations(Locale(code));
+        expect(l10n.localeName, equals(code));
+        expect(l10n.itemsSelectedCount(3), isNotEmpty);
+        expect(l10n.activeTransfersCount(1), isNotEmpty);
+        expect(l10n.trayStatusActive(2, '1.5 MB/s'), isNotEmpty);
+      }
+      final fallback = resolveAppLocalizations(const Locale('de'));
+      expect(fallback.localeName, equals('en'));
+      expect(fallback.appLockedTitle, equals('Application Locked'));
     });
   });
 
@@ -435,4 +477,3 @@ void main() {
     });
   });
 }
-

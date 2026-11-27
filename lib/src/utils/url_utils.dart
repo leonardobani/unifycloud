@@ -112,7 +112,7 @@ class UrlUtils {
     } catch (_) {}
 
     try {
-      if (await launchUrl(url, mode: LaunchMode.platformDefault)) {
+      if (await launchUrl(url)) {
         return true;
       }
     } catch (_) {}

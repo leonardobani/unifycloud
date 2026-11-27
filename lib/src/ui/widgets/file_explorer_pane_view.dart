@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 
+import '../../../l10n/l10n_extension.dart';
 import '../../models/cloud_error.dart';
 import '../../models/cloud_models.dart';
 import '../../models/pane_drag_data.dart';
@@ -24,11 +25,6 @@ import 'share_link_dialog.dart';
 /// Reusable explorer pane view supporting independent navigation, selection,
 /// drag-and-drop file transfer, and direct cross-pane actions.
 class FileExplorerPaneView extends ConsumerStatefulWidget {
-  final NotifierProvider<FileExplorerNotifier, FileExplorerState> provider;
-  final NotifierProvider<FileExplorerNotifier, FileExplorerState>? oppositeProvider;
-  final String? paneTitle;
-  final bool isDualPane;
-  final bool showDualPaneToggle;
 
   const FileExplorerPaneView({
     super.key,
@@ -38,6 +34,11 @@ class FileExplorerPaneView extends ConsumerStatefulWidget {
     this.isDualPane = false,
     this.showDualPaneToggle = false,
   });
+  final NotifierProvider<FileExplorerNotifier, FileExplorerState> provider;
+  final NotifierProvider<FileExplorerNotifier, FileExplorerState>? oppositeProvider;
+  final String? paneTitle;
+  final bool isDualPane;
+  final bool showDualPaneToggle;
 
   @override
   ConsumerState<FileExplorerPaneView> createState() =>
@@ -78,27 +79,28 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
   }
 
   void _showNewFolderDialog() async {
+    final l10n = context.l10n;
     final controller = TextEditingController();
     final created = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Nuova Cartella'),
+        title: Text(l10n.newFolder),
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(
-            labelText: 'Nome cartella',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: l10n.folderName,
+            border: const OutlineInputBorder(),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Annulla'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Crea'),
+            child: Text(l10n.create),
           ),
         ],
       ),
@@ -112,7 +114,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Errore creazione cartella: $e')),
+            SnackBar(content: Text(l10n.errorCreatingFolder(e.toString()))),
           );
         }
       }
@@ -121,6 +123,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
 
   void _handleBatchTransferToOpposite({required bool isMove}) async {
     if (widget.oppositeProvider == null) return;
+    final l10n = context.l10n;
     final srcState = ref.read(widget.provider);
     final dstState = ref.read(widget.oppositeProvider!);
 
@@ -131,13 +134,13 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     if (srcRemote.isEmpty || dstRemote.isEmpty || items.isEmpty) return;
 
     final messenger = ScaffoldMessenger.of(context);
-    final actionLabel = isMove ? 'Spostamento' : 'Copia';
+    final actionLabel = isMove ? l10n.moveAction : l10n.copyAction;
     final count = items.length;
 
     messenger.showSnackBar(
       SnackBar(
         content: Text(
-          '$actionLabel di $count ${count == 1 ? "elemento" : "elementi"} verso [$dstRemote] avviato...',
+          l10n.transferBatchStarted(actionLabel, count, dstRemote),
         ),
         duration: const Duration(seconds: 2),
       ),
@@ -151,15 +154,16 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             isMove: isMove,
           );
       ref.read(widget.provider.notifier).clearSelection();
-      ref.read(widget.oppositeProvider!.notifier).refresh();
+      await ref.read(widget.oppositeProvider!.notifier).refresh();
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Errore durante il trasferimento: $e')),
+        SnackBar(content: Text(l10n.errorTransferring(e.toString()))),
       );
     }
   }
 
   void _handleBatchCopy(FileExplorerState state) {
+    final l10n = context.l10n;
     final items = state.selectedItems;
     final currentRemote = state.currentRemote ?? '';
     if (items.isEmpty || currentRemote.isEmpty) return;
@@ -171,14 +175,15 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
       SnackBar(
         content: Text(
           items.length == 1
-              ? '"${items.first.name}" copiato negli appunti'
-              : '${items.length} elementi copiati negli appunti',
+              ? l10n.itemCopiedToClipboard(items.first.name)
+              : l10n.itemsCopiedToClipboard(items.length),
         ),
       ),
     );
   }
 
   void _handleBatchCut(FileExplorerState state) {
+    final l10n = context.l10n;
     final items = state.selectedItems;
     final currentRemote = state.currentRemote ?? '';
     if (items.isEmpty || currentRemote.isEmpty) return;
@@ -190,14 +195,15 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
       SnackBar(
         content: Text(
           items.length == 1
-              ? '"${items.first.name}" tagliato (pronto per lo spostamento)'
-              : '${items.length} elementi tagliati (pronti per lo spostamento)',
+              ? l10n.itemCutToClipboard(items.first.name)
+              : l10n.itemsCutToClipboard(items.length),
         ),
       ),
     );
   }
 
   void _handleBatchDownload(FileExplorerState state) async {
+    final l10n = context.l10n;
     final items = state.selectedItems;
     final currentRemote = state.currentRemote ?? '';
     if (items.isEmpty || currentRemote.isEmpty) return;
@@ -207,9 +213,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
 
     if (filesToDownload.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'Il download diretto delle cartelle non è supportato. Seleziona singoli file.'),
+        SnackBar(
+          content: Text(l10n.folderDownloadUnsupported),
         ),
       );
       return;
@@ -230,8 +235,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             Expanded(
               child: Text(
                 filesToDownload.length == 1
-                    ? 'Download avviato per "${filesToDownload.first.name}"...'
-                    : 'Avvio download per ${filesToDownload.length} file...',
+                    ? l10n.downloadingSingleItem(filesToDownload.first.name)
+                    : l10n.downloadingMultipleItems(filesToDownload.length),
               ),
             ),
           ],
@@ -254,23 +259,24 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
           );
       ref.read(widget.provider.notifier).clearSelection();
 
-      final dirNote = dirCount > 0 ? ' ($dirCount cartelle escluse)' : '';
       messenger.showSnackBar(
         SnackBar(
           content: Text(
-            '${jobs.length} file aggiunti alla coda di download$dirNote.',
+            dirCount > 0
+                ? l10n.filesAddedToDownloadQueueWithSkipped(jobs.length, dirCount)
+                : l10n.filesAddedToDownloadQueue(jobs.length),
           ),
-          duration: const Duration(seconds: 4),
         ),
       );
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Errore durante l\'avvio del download: $e')),
+        SnackBar(content: Text(l10n.errorStartingDownload(e.toString()))),
       );
     }
   }
 
   void _handleBatchDelete(FileExplorerState state) async {
+    final l10n = context.l10n;
     final items = state.selectedItems;
     if (items.isEmpty) return;
 
@@ -282,22 +288,26 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         context: context,
         builder: (ctx) => AlertDialog(
           title: Text(
-            'Elimina ${items.length == 1 ? (items.first.isDir ? "cartella" : "file") : "${items.length} elementi"}?',
+            items.length == 1
+                ? (items.first.isDir
+                    ? l10n.deleteSingleFolderTitle
+                    : l10n.deleteSingleFileTitle)
+                : l10n.deleteItemsConfirmTitle(items.length),
           ),
           content: Text(
             items.length == 1
-                ? 'Sei sicuro di voler eliminare definitivamente "${items.first.name}"?'
-                : 'Sei sicuro di voler eliminare definitivamente i ${items.length} elementi selezionati?',
+                ? l10n.deleteSingleItemPrompt(items.first.name)
+                : l10n.deleteItemsConfirmPrompt(items.length),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Annulla'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               style: FilledButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () => Navigator.of(ctx).pop(true),
-              child: const Text('Elimina'),
+              child: Text(l10n.delete),
             ),
           ],
         ),
@@ -313,8 +323,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             SnackBar(
               content: Text(
                 items.length == 1
-                    ? 'Elemento eliminato'
-                    : '${items.length} elementi eliminati',
+                    ? l10n.itemDeletedSuccess
+                    : l10n.itemsDeletedSuccess(items.length),
               ),
             ),
           );
@@ -322,31 +332,32 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Errore durante l\'eliminazione: $e')),
+            SnackBar(content: Text(l10n.errorDeleting(e.toString()))),
           );
         }
       }
     }
   }
 
-  String _sortModeLabel(FileSortMode mode) {
+  String _sortModeLabel(FileSortMode mode, AppLocalizations l10n) {
     switch (mode) {
       case FileSortMode.nameAsc:
-        return 'Nome (A-Z)';
+        return l10n.sortNameAsc;
       case FileSortMode.nameDesc:
-        return 'Nome (Z-A)';
+        return l10n.sortNameDesc;
       case FileSortMode.sizeDesc:
-        return 'Dimensione (Grande -> Piccolo)';
+        return l10n.sortSizeDesc;
       case FileSortMode.sizeAsc:
-        return 'Dimensione (Piccolo -> Grande)';
+        return l10n.sortSizeAsc;
       case FileSortMode.dateDesc:
-        return 'Data (Recente prima)';
+        return l10n.sortDateDesc;
       case FileSortMode.dateAsc:
-        return 'Data (Meno recente prima)';
+        return l10n.sortDateAsc;
     }
   }
 
   Future<void> _handleUploadChoice(String choice, FileExplorerState state) async {
+    final l10n = context.l10n;
     if (choice == 'files') {
       try {
         final jobs = await ref
@@ -354,21 +365,20 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             .pickAndUploadFiles(
               dstRemote: state.currentRemote!,
               dstPath: state.currentPath,
+              dialogTitle: l10n.selectFilesToUpload,
             );
         if (mounted && jobs.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                '${jobs.length} ${jobs.length == 1 ? "file aggiunto" : "file aggiunti"} alla coda di caricamento',
-              ),
+              content: Text(l10n.filesAddedToUploadQueue(jobs.length)),
             ),
           );
-          ref.read(widget.provider.notifier).refresh();
+          await ref.read(widget.provider.notifier).refresh();
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Errore durante il caricamento: $e')),
+            SnackBar(content: Text(l10n.errorUploading(e.toString()))),
           );
         }
       }
@@ -379,26 +389,23 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             .pickAndUploadFolder(
               dstRemote: state.currentRemote!,
               dstPath: state.currentPath,
+              dialogTitle: l10n.selectFolderToUpload,
             );
         if (mounted) {
           if (jobs.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(
-                  'Cartella aggiunta al caricamento (${jobs.length} ${jobs.length == 1 ? "file" : "file"} in coda)',
-                ),
+                content: Text(l10n.folderAddedToUploadQueue(jobs.length)),
               ),
             );
           }
-          ref.read(widget.provider.notifier).refresh();
+          await ref.read(widget.provider.notifier).refresh();
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                'Errore durante il caricamento della cartella: $e',
-              ),
+              content: Text(l10n.errorFolderUploading(e.toString())),
             ),
           );
         }
@@ -407,6 +414,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
   }
 
   void _handleDroppedData(PaneDragData data, {String? targetFolderPath}) async {
+    final l10n = context.l10n;
     final targetState = ref.read(widget.provider);
     final targetRemote = targetState.currentRemote;
     if (targetRemote == null || targetRemote.isEmpty) return;
@@ -416,9 +424,9 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     // Check if dropping onto the exact same folder
     if (data.sourceRemote == targetRemote && data.sourcePath == targetPath) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('I file si trovano già in questa cartella.'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(l10n.filesAlreadyInDirectory),
+          duration: const Duration(seconds: 2),
         ),
       );
       return;
@@ -426,12 +434,12 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
 
     final messenger = ScaffoldMessenger.of(context);
     final count = data.items.length;
-    final actionLabel = data.isMove ? 'Spostamento' : 'Copia';
+    final actionLabel = data.isMove ? l10n.moveAction : l10n.copyAction;
 
     messenger.showSnackBar(
       SnackBar(
         content: Text(
-          '$actionLabel di $count ${count == 1 ? "elemento" : "elementi"} da [${data.sourceRemote}] a [$targetRemote] in corso...',
+          l10n.dragDropInProgress(actionLabel, count, data.sourceRemote, targetRemote),
         ),
         duration: const Duration(seconds: 2),
       ),
@@ -444,10 +452,10 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             dstPath: targetPath,
             isMove: data.isMove,
           );
-      ref.read(widget.provider.notifier).refresh();
+      await ref.read(widget.provider.notifier).refresh();
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Errore durante il trasferimento drag-and-drop: $e')),
+        SnackBar(content: Text(l10n.errorDragDrop(e.toString()))),
       );
     }
   }
@@ -474,7 +482,6 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             FileTypeIcon(
               fileName: data.primaryName,
               isDir: data.items.isNotEmpty && data.items.first.isDir,
-              size: 24,
             ),
             const SizedBox(width: 8),
             ConstrainedBox(
@@ -516,6 +523,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final state = ref.watch(widget.provider);
     final remotesState = ref.watch(cloudAccountsProvider);
     final oppositeState = widget.oppositeProvider != null
@@ -557,21 +565,21 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             titleSpacing: widget.isDualPane ? 8.0 : null,
             leading: IconButton(
               icon: const Icon(Icons.close),
-              tooltip: 'Chiudi selezione',
+              tooltip: l10n.closeSelection,
               visualDensity: widget.isDualPane ? VisualDensity.compact : null,
               onPressed: () {
                 ref.read(widget.provider.notifier).clearSelection();
               },
             ),
             title: Text(
-              '${state.selectedCount} selezionati',
+              l10n.itemsSelectedCount(state.selectedCount),
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               overflow: TextOverflow.ellipsis,
             ),
             actions: [
               IconButton(
                 icon: Icon(allSelected ? Icons.deselect : Icons.select_all, size: 20),
-                tooltip: allSelected ? 'Deseleziona tutti' : 'Seleziona tutti',
+                tooltip: allSelected ? l10n.deselectAll : l10n.selectAll,
                 visualDensity: widget.isDualPane ? VisualDensity.compact : null,
                 onPressed: () {
                   if (allSelected) {
@@ -584,13 +592,13 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
               if (hasOppositeRemote) ...[
                 IconButton(
                   icon: const Icon(Icons.drive_file_move_rtl_outlined, size: 20),
-                  tooltip: 'Copia in ${oppositeState.currentRemote}',
+                  tooltip: l10n.copyToRemote(oppositeState.currentRemote ?? ''),
                   visualDensity: widget.isDualPane ? VisualDensity.compact : null,
                   onPressed: () => _handleBatchTransferToOpposite(isMove: false),
                 ),
                 IconButton(
                   icon: const Icon(Icons.drive_file_move_outlined, size: 20),
-                  tooltip: 'Sposta in ${oppositeState.currentRemote}',
+                  tooltip: l10n.moveToRemote(oppositeState.currentRemote ?? ''),
                   visualDensity: widget.isDualPane ? VisualDensity.compact : null,
                   onPressed: () => _handleBatchTransferToOpposite(isMove: true),
                 ),
@@ -598,63 +606,62 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
               if (widget.isDualPane) ...[
                 PopupMenuButton<String>(
                   icon: const Icon(Icons.more_vert, size: 20),
-                  tooltip: 'Altre azioni',
+                  tooltip: l10n.moreActions,
                   padding: EdgeInsets.zero,
                   onSelected: (action) {
                     switch (action) {
                       case 'download':
                         _handleBatchDownload(state);
-                        break;
                       case 'copy':
                         _handleBatchCopy(state);
-                        break;
                       case 'cut':
                         _handleBatchCut(state);
-                        break;
                       case 'delete':
                         _handleBatchDelete(state);
-                        break;
                     }
                   },
                   itemBuilder: (ctx) => [
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'download',
                       child: Row(
                         children: [
-                          Icon(Icons.download_outlined, size: 20),
-                          SizedBox(width: 8),
-                          Text('Scarica selezionati'),
+                          const Icon(Icons.download_outlined, size: 20),
+                          const SizedBox(width: 8),
+                          Text(l10n.downloadSelected),
                         ],
                       ),
                     ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'copy',
                       child: Row(
                         children: [
-                          Icon(Icons.copy_rounded, size: 20),
-                          SizedBox(width: 8),
-                          Text('Copia negli appunti'),
+                          const Icon(Icons.copy_rounded, size: 20),
+                          const SizedBox(width: 8),
+                          Text(l10n.copyToClipboard),
                         ],
                       ),
                     ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'cut',
                       child: Row(
                         children: [
-                          Icon(Icons.cut_rounded, size: 20),
-                          SizedBox(width: 8),
-                          Text('Taglia negli appunti'),
+                          const Icon(Icons.cut_rounded, size: 20),
+                          const SizedBox(width: 8),
+                          Text(l10n.cutToClipboard),
                         ],
                       ),
                     ),
                     const PopupMenuDivider(),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'delete',
                       child: Row(
                         children: [
-                          Icon(Icons.delete_outline, size: 20, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text('Elimina selezionati', style: TextStyle(color: Colors.red)),
+                          const Icon(Icons.delete_outline, size: 20, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Text(
+                            l10n.deleteSelected,
+                            style: const TextStyle(color: Colors.red),
+                          ),
                         ],
                       ),
                     ),
@@ -663,22 +670,22 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
               ] else ...[
                 IconButton(
                   icon: const Icon(Icons.download_outlined, size: 20),
-                  tooltip: 'Scarica selezionati',
+                  tooltip: l10n.downloadSelected,
                   onPressed: () => _handleBatchDownload(state),
                 ),
                 IconButton(
                   icon: const Icon(Icons.copy_rounded, size: 20),
-                  tooltip: 'Copia selezionati',
+                  tooltip: l10n.copySelected,
                   onPressed: () => _handleBatchCopy(state),
                 ),
                 IconButton(
                   icon: const Icon(Icons.cut_rounded, size: 20),
-                  tooltip: 'Taglia selezionati',
+                  tooltip: l10n.cutSelected,
                   onPressed: () => _handleBatchCut(state),
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete_outline, size: 20, color: Colors.red),
-                  tooltip: 'Elimina selezionati',
+                  tooltip: l10n.deleteSelected,
                   onPressed: () => _handleBatchDelete(state),
                 ),
               ],
@@ -691,8 +698,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                 ? TextField(
                     controller: _searchController,
                     autofocus: true,
-                    decoration: const InputDecoration(
-                      hintText: 'Cerca file o cartelle...',
+                    decoration: InputDecoration(
+                      hintText: l10n.searchFilesHint,
                       border: InputBorder.none,
                     ),
                     onChanged: (val) {
@@ -718,7 +725,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             value: state.currentRemote,
-                            hint: const Text('Seleziona Cloud'),
+                            hint: Text(l10n.selectCloud),
                             icon: const Icon(Icons.keyboard_arrow_down, size: 20),
                             isDense: true,
                             isExpanded: true,
@@ -763,8 +770,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                       if (isCurrentCrypt) ...[
                         const SizedBox(width: 6),
                         Tooltip(
-                          message:
-                              'Crittografia End-to-End attiva (AES-256)\nFile e cartelle cifrati client-side',
+                          message: l10n.e2eActiveTooltip,
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,
@@ -806,7 +812,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             actions: [
               IconButton(
                 icon: Icon(_isSearching ? Icons.close : Icons.search, size: 20),
-                tooltip: _isSearching ? 'Chiudi ricerca' : 'Cerca',
+                tooltip: _isSearching ? l10n.closeSearch : l10n.search,
                 visualDensity: widget.isDualPane ? VisualDensity.compact : null,
                 onPressed: () {
                   setState(() {
@@ -826,28 +832,28 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                 if (widget.isDualPane) ...[
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.upload_file_outlined, size: 20),
-                    tooltip: 'Carica dal dispositivo',
+                    tooltip: l10n.uploadFromDevice,
                     padding: EdgeInsets.zero,
                     enabled: state.currentRemote != null,
                     onSelected: (choice) => _handleUploadChoice(choice, state),
                     itemBuilder: (ctx) => [
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'files',
                         child: Row(
                           children: [
-                            Icon(Icons.upload_file_outlined),
-                            SizedBox(width: 12),
-                            Expanded(child: Text('Carica file')),
+                            const Icon(Icons.upload_file_outlined),
+                            const SizedBox(width: 12),
+                            Expanded(child: Text(l10n.uploadFile)),
                           ],
                         ),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'folder',
                         child: Row(
                           children: [
-                            Icon(Icons.drive_folder_upload_outlined),
-                            SizedBox(width: 12),
-                            Expanded(child: Text('Carica intera cartella')),
+                            const Icon(Icons.drive_folder_upload_outlined),
+                            const SizedBox(width: 12),
+                            Expanded(child: Text(l10n.uploadFolder)),
                           ],
                         ),
                       ),
@@ -855,13 +861,13 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.create_new_folder_outlined, size: 20),
-                    tooltip: 'Nuova Cartella',
+                    tooltip: l10n.newFolder,
                     visualDensity: VisualDensity.compact,
                     onPressed: state.currentRemote == null ? null : _showNewFolderDialog,
                   ),
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.more_vert, size: 20),
-                    tooltip: 'Altre opzioni',
+                    tooltip: l10n.moreOptions,
                     padding: EdgeInsets.zero,
                     onSelected: (value) {
                       if (value == 'toggle_view') {
@@ -893,19 +899,19 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                             const SizedBox(width: 8),
                             Text(
                               state.viewMode == FileViewMode.list
-                                  ? 'Vista Griglia'
-                                  : 'Vista Lista',
+                                  ? l10n.viewGrid
+                                  : l10n.viewList,
                             ),
                           ],
                         ),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'select_all',
                         child: Row(
                           children: [
-                            Icon(Icons.checklist_rounded, size: 20),
-                            SizedBox(width: 8),
-                            Text('Selezione multipla'),
+                            const Icon(Icons.checklist_rounded, size: 20),
+                            const SizedBox(width: 8),
+                            Text(l10n.multiSelection),
                           ],
                         ),
                       ),
@@ -922,7 +928,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                                 size: 18,
                               ),
                               const SizedBox(width: 8),
-                              Text(_sortModeLabel(mode)),
+                              Text(_sortModeLabel(mode, l10n)),
                             ],
                           ),
                         );
@@ -932,7 +938,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                 ] else ...[
                   IconButton(
                     icon: const Icon(Icons.checklist_rounded, size: 20),
-                    tooltip: 'Selezione multipla',
+                    tooltip: l10n.multiSelection,
                     onPressed: state.displayItems.isEmpty
                         ? null
                         : () {
@@ -941,31 +947,31 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                   ),
                   PopupMenuButton<FileSortMode>(
                     icon: const Icon(Icons.sort, size: 20),
-                    tooltip: 'Ordina per',
+                    tooltip: l10n.sortByTooltip,
                     initialValue: state.sortMode,
                     onSelected: (mode) {
                       ref.read(widget.provider.notifier).setSortMode(mode);
                     },
-                    itemBuilder: (ctx) => const [
+                    itemBuilder: (ctx) => [
                       PopupMenuItem(
                         value: FileSortMode.nameAsc,
-                        child: Text('Nome (A-Z)'),
+                        child: Text(l10n.sortNameAsc),
                       ),
                       PopupMenuItem(
                         value: FileSortMode.nameDesc,
-                        child: Text('Nome (Z-A)'),
+                        child: Text(l10n.sortNameDesc),
                       ),
                       PopupMenuItem(
                         value: FileSortMode.sizeDesc,
-                        child: Text('Dimensione (Grande -> Piccolo)'),
+                        child: Text(l10n.sortSizeDesc),
                       ),
                       PopupMenuItem(
                         value: FileSortMode.sizeAsc,
-                        child: Text('Dimensione (Piccolo -> Grande)'),
+                        child: Text(l10n.sortSizeAsc),
                       ),
                       PopupMenuItem(
                         value: FileSortMode.dateDesc,
-                        child: Text('Data (Recente prima)'),
+                        child: Text(l10n.sortDateDesc),
                       ),
                     ],
                   ),
@@ -977,8 +983,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                       size: 20,
                     ),
                     tooltip: state.viewMode == FileViewMode.list
-                        ? 'Vista Griglia'
-                        : 'Vista Lista',
+                        ? l10n.viewGrid
+                        : l10n.viewList,
                     onPressed: () {
                       final next = state.viewMode == FileViewMode.list
                           ? FileViewMode.grid
@@ -988,27 +994,27 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                   ),
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.upload_file_outlined, size: 20),
-                    tooltip: 'Carica dal dispositivo',
+                    tooltip: l10n.uploadFromDevice,
                     enabled: state.currentRemote != null,
                     onSelected: (choice) => _handleUploadChoice(choice, state),
                     itemBuilder: (ctx) => [
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'files',
                         child: Row(
                           children: [
-                            Icon(Icons.upload_file_outlined),
-                            SizedBox(width: 12),
-                            Expanded(child: Text('Carica file')),
+                            const Icon(Icons.upload_file_outlined),
+                            const SizedBox(width: 12),
+                            Expanded(child: Text(l10n.uploadFile)),
                           ],
                         ),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'folder',
                         child: Row(
                           children: [
-                            Icon(Icons.drive_folder_upload_outlined),
-                            SizedBox(width: 12),
-                            Expanded(child: Text('Carica intera cartella')),
+                            const Icon(Icons.drive_folder_upload_outlined),
+                            const SizedBox(width: 12),
+                            Expanded(child: Text(l10n.uploadFolder)),
                           ],
                         ),
                       ),
@@ -1016,7 +1022,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.create_new_folder_outlined, size: 20),
-                    tooltip: 'Nuova Cartella',
+                    tooltip: l10n.newFolder,
                     onPressed: state.currentRemote == null ? null : _showNewFolderDialog,
                   ),
                 ],
@@ -1029,8 +1035,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                       size: 20,
                     ),
                     tooltip: ref.watch(dualPaneActiveProvider)
-                        ? 'Disattiva doppio pannello'
-                        : 'Attiva doppio pannello (Commander)',
+                        ? l10n.disableDualPaneTooltip
+                        : l10n.enableDualPaneTooltip,
                     visualDensity: widget.isDualPane ? VisualDensity.compact : null,
                     onPressed: () {
                       ref.read(dualPaneActiveProvider.notifier).toggle();
@@ -1075,7 +1081,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
               ),
               if (isHovered)
                 Positioned.fill(
-                  child: Container(
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
                       color: AppTheme.primaryColor.withValues(alpha: 0.12),
                       border: Border.all(
@@ -1100,7 +1106,9 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                               const SizedBox(width: 10),
                               Flexible(
                                 child: Text(
-                                  'Rilascia per copiare in [${state.currentRemote ?? "destinazione"}]',
+                                  l10n.dropToCopyTo(
+                                    state.currentRemote ?? l10n.destinationFallback,
+                                  ),
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14,
@@ -1127,12 +1135,22 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     WidgetRef ref,
     FileExplorerState state,
   ) {
+    final l10n = context.l10n;
     final clipboard = ref.watch(clipboardProvider);
     if (!clipboard.hasItem) return const SizedBox.shrink();
 
+    final actionText = clipboard.localizedActionLabel(l10n);
     final label = clipboard.items.length == 1
-        ? '${clipboard.actionLabel}: "${clipboard.item!.name}" da [${clipboard.sourceRemote}]'
-        : '${clipboard.actionLabel}: ${clipboard.items.length} elementi da [${clipboard.sourceRemote}]';
+        ? l10n.clipboardBannerSingle(
+            actionText,
+            clipboard.item!.name,
+            clipboard.sourceRemote!,
+          )
+        : l10n.clipboardBannerMultiple(
+            actionText,
+            clipboard.items.length,
+            clipboard.sourceRemote!,
+          );
 
     return MaterialBanner(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -1148,11 +1166,11 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
       actions: [
         TextButton(
           onPressed: () => ref.read(clipboardProvider.notifier).clear(),
-          child: const Text('Annulla'),
+          child: Text(l10n.cancel),
         ),
         FilledButton.icon(
           icon: const Icon(Icons.paste_rounded, size: 16),
-          label: const Text('Incolla qui'),
+          label: Text(l10n.pasteHere),
           onPressed: state.currentRemote == null
               ? null
               : () async {
@@ -1164,8 +1182,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                       );
                   if (context.mounted && jobs.isNotEmpty) {
                     final msg = jobs.length == 1
-                        ? 'Trasferimento avviato per "${jobs.first.fileName}"'
-                        : '${jobs.length} trasferimenti avviati';
+                        ? l10n.transferStartedSingle(jobs.first.fileName)
+                        : l10n.transfersStartedCount(jobs.length);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(msg)),
                     );
@@ -1177,6 +1195,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
   }
 
   Widget _buildContent(BuildContext context, FileExplorerState state) {
+    final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
 
     if (state.currentRemote == null) {
@@ -1190,13 +1209,13 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Nessun Cloud Selezionato',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Text(
+              l10n.noCloudSelectedTitle,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
-              'Seleziona un cloud dal menu in alto.',
+              l10n.noCloudSelectedSubtitle,
               style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
             ),
           ],
@@ -1213,8 +1232,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             const SizedBox(height: 16),
             Text(
               state.currentPath.isEmpty
-                  ? 'Caricamento file da ${state.currentRemote}...'
-                  : 'Caricamento ${p.basename(state.currentPath)}...',
+                  ? l10n.loadingFilesFromRemote(state.currentRemote!)
+                  : l10n.loadingFolder(p.basename(state.currentPath)),
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -1223,7 +1242,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Lettura directory in corso...',
+              l10n.readingDirectory,
               style: TextStyle(
                 fontSize: 12,
                 color: colorScheme.onSurfaceVariant,
@@ -1260,7 +1279,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
               ),
               const SizedBox(height: 16),
               Text(
-                errorType.userFriendlyMessage,
+                errorType.localizedMessage(l10n),
                 style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
@@ -1274,7 +1293,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                 onPressed: () =>
                     ref.read(widget.provider.notifier).refresh(),
                 icon: const Icon(Icons.refresh, size: 18),
-                label: const Text('Riprova'),
+                label: Text(l10n.retry),
               ),
             ],
           ),
@@ -1297,8 +1316,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             const SizedBox(height: 16),
             Text(
               state.searchQuery.isNotEmpty
-                  ? 'Nessun file trovato per "${state.searchQuery}"'
-                  : 'Questa cartella è vuota',
+                  ? l10n.noMatchingResults(state.searchQuery)
+                  : l10n.emptyFolder,
               style: TextStyle(fontSize: 15, color: colorScheme.onSurfaceVariant),
             ),
           ],
@@ -1364,7 +1383,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                 overflow: TextOverflow.ellipsis,
               ),
               subtitle: Text(
-                '${item.isDir ? "Cartella" : _formatBytes(item.size)} • ${_formatDate(item.modTime)}',
+                '${item.isDir ? l10n.folder : _formatBytes(item.size)} • ${_formatDate(item.modTime)}',
                 style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
               ),
               trailing: state.isSelectionMode
@@ -1540,7 +1559,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            item.isDir ? 'Cartella' : _formatBytes(item.size),
+                            item.isDir ? l10n.folder : _formatBytes(item.size),
                             style: TextStyle(
                               fontSize: 10,
                               color: colorScheme.onSurfaceVariant,
@@ -1574,13 +1593,14 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             },
             builder: (context, candidateData, rejectedData) {
               final isFolderHovered = candidateData.isNotEmpty;
-              return Container(
-                decoration: isFolderHovered
-                    ? BoxDecoration(
-                        border: Border.all(color: AppTheme.primaryColor, width: 2),
-                        borderRadius: BorderRadius.circular(12),
-                      )
-                    : null,
+              if (!isFolderHovered) {
+                return draggableGrid;
+              }
+              return DecoratedBox(
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppTheme.primaryColor, width: 2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: draggableGrid,
               );
             },
@@ -1598,6 +1618,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     CloudItem item,
     FileExplorerState state,
   ) {
+    final l10n = context.l10n;
     final oppositeState = widget.oppositeProvider != null
         ? ref.read(widget.oppositeProvider!)
         : null;
@@ -1606,44 +1627,44 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
 
     return PopupMenuButton<String>(
       icon: const Icon(Icons.more_vert, size: 18),
-      tooltip: 'Opzioni per ${item.name}',
+      tooltip: l10n.optionsForItem(item.name),
       onSelected: (action) =>
           _handleItemAction(context, ref, item, state, action),
       itemBuilder: (context) => [
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'select',
           child: ListTile(
-            leading: Icon(Icons.check_circle_outline),
-            title: Text('Seleziona'),
+            leading: const Icon(Icons.check_circle_outline),
+            title: Text(l10n.select),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
         ),
         if (!item.isDir) ...[
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'open_with',
             child: ListTile(
-              leading: Icon(Icons.open_in_new_rounded),
-              title: Text('Apri con app di sistema'),
+              leading: const Icon(Icons.open_in_new_rounded),
+              title: Text(l10n.openWithSystemApp),
               dense: true,
               contentPadding: EdgeInsets.zero,
             ),
           ),
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'download',
             child: ListTile(
-              leading: Icon(Icons.download_outlined),
-              title: Text('Scarica in locale'),
+              leading: const Icon(Icons.download_outlined),
+              title: Text(l10n.downloadToLocal),
               dense: true,
               contentPadding: EdgeInsets.zero,
             ),
           ),
         ],
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'share_link',
           child: ListTile(
-            leading: Icon(Icons.share_outlined),
-            title: Text('Crea link condivisibile'),
+            leading: const Icon(Icons.share_outlined),
+            title: Text(l10n.createShareLink),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
@@ -1653,7 +1674,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             value: 'copy_to_opposite',
             child: ListTile(
               leading: const Icon(Icons.drive_file_move_rtl_outlined),
-              title: Text('Copia in ${oppositeState.currentRemote}'),
+              title: Text(l10n.copyToRemote(oppositeState.currentRemote!)),
               dense: true,
               contentPadding: EdgeInsets.zero,
             ),
@@ -1662,62 +1683,62 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             value: 'move_to_opposite',
             child: ListTile(
               leading: const Icon(Icons.drive_file_move_outlined),
-              title: Text('Sposta in ${oppositeState.currentRemote}'),
+              title: Text(l10n.moveToRemote(oppositeState.currentRemote!)),
               dense: true,
               contentPadding: EdgeInsets.zero,
             ),
           ),
         ],
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'copy',
           child: ListTile(
-            leading: Icon(Icons.copy_rounded),
-            title: Text('Copia'),
+            leading: const Icon(Icons.copy_rounded),
+            title: Text(l10n.copy),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'cut',
           child: ListTile(
-            leading: Icon(Icons.cut_rounded),
-            title: Text('Taglia (Sposta)'),
+            leading: const Icon(Icons.cut_rounded),
+            title: Text(l10n.cut),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'rename',
           child: ListTile(
-            leading: Icon(Icons.edit_outlined),
-            title: Text('Rinomina'),
+            leading: const Icon(Icons.edit_outlined),
+            title: Text(l10n.rename),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'copy_path',
           child: ListTile(
-            leading: Icon(Icons.content_copy_outlined),
-            title: Text('Copia percorso'),
+            leading: const Icon(Icons.content_copy_outlined),
+            title: Text(l10n.copyPath),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'info',
           child: ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('Informazioni'),
+            leading: const Icon(Icons.info_outline),
+            title: Text(l10n.info),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'delete',
           child: ListTile(
-            leading: Icon(Icons.delete_outline, color: Colors.red),
-            title: Text('Elimina', style: TextStyle(color: Colors.red)),
+            leading: const Icon(Icons.delete_outline, color: Colors.red),
+            title: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
@@ -1733,6 +1754,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     FileExplorerState state,
     String action,
   ) async {
+    final l10n = context.l10n;
     final currentRemote = state.currentRemote ?? '';
     final oppositeState = widget.oppositeProvider != null
         ? ref.read(widget.oppositeProvider!)
@@ -1741,24 +1763,21 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     switch (action) {
       case 'select':
         ref.read(widget.provider.notifier).toggleSelection(item.path);
-        break;
       case 'open_with':
-        ref.read(fileOpenerServiceProvider).openCloudItem(
+        await ref.read(fileOpenerServiceProvider).openCloudItem(
               context: context,
               item: item,
               remote: state.currentRemote,
               currentPath: state.currentPath,
             );
-        break;
       case 'download':
         _handleBatchDownload(state.copyWith(selectedPaths: {item.path}));
-        break;
       case 'share_link':
         final fullSrcPath = resolveRemoteItemPath(item.path, state.currentPath);
         final messenger = ScaffoldMessenger.of(context);
         messenger.showSnackBar(
           SnackBar(
-            content: Text('Generazione del link per "${item.name}"...'),
+            content: Text(l10n.generatingShareLink(item.name)),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -1772,18 +1791,21 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         } catch (e) {
           if (context.mounted) {
             messenger.showSnackBar(
-              SnackBar(content: Text('Errore link pubblico: $e')),
+              SnackBar(content: Text(l10n.errorPublicLink(e.toString()))),
             );
           }
         }
-        break;
       case 'copy_to_opposite':
         if (oppositeState?.currentRemote != null) {
           final messenger = ScaffoldMessenger.of(context);
           messenger.showSnackBar(
             SnackBar(
               content: Text(
-                'Copia di "${item.name}" verso [${oppositeState!.currentRemote}] avviata...',
+                l10n.transferBatchStarted(
+                  l10n.copyAction,
+                  1,
+                  oppositeState!.currentRemote!,
+                ),
               ),
               duration: const Duration(seconds: 2),
             ),
@@ -1792,18 +1814,20 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                 items: [item],
                 dstRemote: oppositeState.currentRemote!,
                 dstPath: oppositeState.currentPath,
-                isMove: false,
               );
-          ref.read(widget.oppositeProvider!.notifier).refresh();
+          await ref.read(widget.oppositeProvider!.notifier).refresh();
         }
-        break;
       case 'move_to_opposite':
         if (oppositeState?.currentRemote != null) {
           final messenger = ScaffoldMessenger.of(context);
           messenger.showSnackBar(
             SnackBar(
               content: Text(
-                'Spostamento di "${item.name}" verso [${oppositeState!.currentRemote}] avviato...',
+                l10n.transferBatchStarted(
+                  l10n.moveAction,
+                  1,
+                  oppositeState!.currentRemote!,
+                ),
               ),
               duration: const Duration(seconds: 2),
             ),
@@ -1814,43 +1838,40 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                 dstPath: oppositeState.currentPath,
                 isMove: true,
               );
-          ref.read(widget.oppositeProvider!.notifier).refresh();
+          await ref.read(widget.oppositeProvider!.notifier).refresh();
         }
-        break;
       case 'copy':
         ref.read(clipboardProvider.notifier).copy(item, currentRemote);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${item.name}" copiato negli appunti')),
+          SnackBar(content: Text(l10n.itemCopiedToClipboard(item.name))),
         );
-        break;
       case 'cut':
         ref.read(clipboardProvider.notifier).cut(item, currentRemote);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${item.name}" tagliato (pronto per lo spostamento)')),
+          SnackBar(content: Text(l10n.itemCutToClipboard(item.name))),
         );
-        break;
       case 'rename':
         final controller = TextEditingController(text: item.name);
         final confirmed = await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text('Rinomina ${item.isDir ? "cartella" : "file"}'),
+            title: Text(item.isDir ? l10n.renameFolderTitle : l10n.renameFileTitle),
             content: TextField(
               controller: controller,
               autofocus: true,
-              decoration: const InputDecoration(
-                labelText: 'Nuovo nome',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.newNameLabel,
+                border: const OutlineInputBorder(),
               ),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text('Annulla'),
+                child: Text(l10n.cancel),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
-                child: const Text('Rinomina'),
+                child: Text(l10n.rename),
               ),
             ],
           ),
@@ -1865,31 +1886,28 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
           } catch (e) {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Errore ridenominazione: $e')),
+                SnackBar(content: Text(l10n.errorRenaming(e.toString()))),
               );
             }
           }
         }
-        break;
       case 'copy_path':
-        Clipboard.setData(ClipboardData(text: item.path));
+        await Clipboard.setData(ClipboardData(text: item.path));
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Percorso copiato negli appunti')),
+            SnackBar(content: Text(l10n.pathCopiedToClipboard)),
           );
         }
-        break;
       case 'info':
         _showItemInfoDialog(context, item);
-        break;
       case 'delete':
         _handleBatchDelete(state.copyWith(selectedPaths: {item.path}));
-        break;
     }
   }
 
   void _showItemInfoDialog(BuildContext context, CloudItem item) {
-    showDialog(
+    final l10n = context.l10n;
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Row(
@@ -1903,23 +1921,23 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Percorso: ${item.path}'),
+            Text(l10n.itemDetailsPath(item.path)),
             const SizedBox(height: 8),
-            Text('Tipo: ${item.isDir ? "Cartella" : (item.mimeType ?? "File")}'),
+            Text(l10n.itemDetailsType(item.isDir ? l10n.folder : (item.mimeType ?? l10n.file))),
             if (!item.isDir) ...[
               const SizedBox(height: 8),
-              Text('Dimensione: ${_formatBytes(item.size)}'),
+              Text(l10n.itemDetailsSize(_formatBytes(item.size))),
             ],
             if (item.modTime != null) ...[
               const SizedBox(height: 8),
-              Text('Data modifica: ${_formatDate(item.modTime)}'),
+              Text(l10n.itemDetailsModified(_formatDate(item.modTime))),
             ],
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Chiudi'),
+            child: Text(l10n.close),
           ),
         ],
       ),

@@ -70,7 +70,6 @@ void main() {
             cloudAccountsProvider.overrideWith(
               () => CloudAccountsNotifierMock(
                 const CloudAccountsState(
-                  isLoading: false,
                   remotes: [
                     CloudRemote(name: 'MyDrive', type: 'drive'),
                     CloudRemote(name: 'WorkDropbox', type: 'dropbox'),
@@ -103,7 +102,6 @@ void main() {
             cloudAccountsProvider.overrideWith(
               () => CloudAccountsNotifierMock(
                 const CloudAccountsState(
-                  isLoading: false,
                   remotes: [CloudRemote(name: 'MyDrive', type: 'drive')],
                 ),
               ),
@@ -142,13 +140,13 @@ void main() {
       await tester.pumpAndSettle();
 
       // Check popup menu options appear
-      expect(find.text('Scarica in locale'), findsOneWidget);
-      expect(find.text('Copia'), findsOneWidget);
-      expect(find.text('Taglia (Sposta)'), findsOneWidget);
-      expect(find.text('Rinomina'), findsOneWidget);
-      expect(find.text('Copia percorso'), findsOneWidget);
-      expect(find.text('Informazioni'), findsOneWidget);
-      expect(find.text('Elimina'), findsOneWidget);
+      expect(find.text('Download to local'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Cut (Move)'), findsOneWidget);
+      expect(find.text('Rename'), findsOneWidget);
+      expect(find.text('Copy path'), findsOneWidget);
+      expect(find.text('Information'), findsOneWidget);
+      expect(find.text('Delete'), findsOneWidget);
     });
 
     testWidgets('FileExplorerScreen displays informative loading indicator when isLoading is true', (tester) async {
@@ -158,7 +156,6 @@ void main() {
             cloudAccountsProvider.overrideWith(
               () => CloudAccountsNotifierMock(
                 const CloudAccountsState(
-                  isLoading: false,
                   remotes: [CloudRemote(name: 'GoogleDrive', type: 'drive')],
                 ),
               ),
@@ -167,7 +164,6 @@ void main() {
               () => FileExplorerNotifierMock(
                 const FileExplorerState(
                   currentRemote: 'GoogleDrive',
-                  currentPath: '',
                   isLoading: true,
                 ),
               ),
@@ -180,16 +176,16 @@ void main() {
       );
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      expect(find.text('Caricamento file da GoogleDrive...'), findsOneWidget);
-      expect(find.text('Lettura directory in corso...'), findsOneWidget);
+      expect(find.text('Loading files from GoogleDrive...'), findsOneWidget);
+      expect(find.text('Reading directory...'), findsOneWidget);
     });
   });
 }
 
 class CloudAccountsNotifierMock extends Notifier<CloudAccountsState>
     implements CloudAccountsNotifier {
-  final CloudAccountsState _initialState;
   CloudAccountsNotifierMock(this._initialState);
+  final CloudAccountsState _initialState;
 
   @override
   CloudAccountsState build() => _initialState;
@@ -206,8 +202,8 @@ class CloudAccountsNotifierMock extends Notifier<CloudAccountsState>
 
 class FileExplorerNotifierMock extends Notifier<FileExplorerState>
     implements FileExplorerNotifier {
-  final FileExplorerState _initialState;
   FileExplorerNotifierMock(this._initialState);
+  final FileExplorerState _initialState;
 
   @override
   FileExplorerState build() => _initialState;

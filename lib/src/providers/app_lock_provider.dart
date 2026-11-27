@@ -4,20 +4,19 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 
+import '../../l10n/l10n_extension.dart';
 import '../services/app_lock_service.dart';
 import 'settings_provider.dart';
 
+/// Structured error types for App Lock authentication.
+enum AppLockErrorType {
+  incorrectPin,
+  tooManyAttempts,
+  verificationFailed,
+}
+
 /// State of the App Lock system.
 class AppLockState {
-  final bool isLocked;
-  final bool canCheckBiometrics;
-  final List<BiometricType> availableBiometrics;
-  final bool hasPin;
-  final bool isAuthenticating;
-  final String? errorMessage;
-  final DateTime? lastPausedAt;
-  final int failedAttempts;
-  final DateTime? lockoutUntil;
 
   const AppLockState({
     this.isLocked = false,
@@ -26,13 +25,42 @@ class AppLockState {
     this.hasPin = false,
     this.isAuthenticating = false,
     this.errorMessage,
+    this.errorType,
+    this.lockoutRemainingSeconds,
+    this.errorDetail,
     this.lastPausedAt,
     this.failedAttempts = 0,
     this.lockoutUntil,
   });
+  final bool isLocked;
+  final bool canCheckBiometrics;
+  final List<BiometricType> availableBiometrics;
+  final bool hasPin;
+  final bool isAuthenticating;
+  final String? errorMessage;
+  final AppLockErrorType? errorType;
+  final int? lockoutRemainingSeconds;
+  final String? errorDetail;
+  final DateTime? lastPausedAt;
+  final int failedAttempts;
+  final DateTime? lockoutUntil;
 
   bool get isLockedOut =>
       lockoutUntil != null && DateTime.now().isBefore(lockoutUntil!);
+
+  /// Resolves the localized error message if an error is present.
+  String? localizedErrorMessage(AppLocalizations l10n) {
+    switch (errorType) {
+      case AppLockErrorType.incorrectPin:
+        return l10n.pinIncorrect;
+      case AppLockErrorType.tooManyAttempts:
+        return l10n.pinTooManyAttempts(lockoutRemainingSeconds ?? 0);
+      case AppLockErrorType.verificationFailed:
+        return l10n.pinVerificationError(errorDetail ?? '');
+      case null:
+        return errorMessage;
+    }
+  }
 
   AppLockState copyWith({
     bool? isLocked,
@@ -41,6 +69,9 @@ class AppLockState {
     bool? hasPin,
     bool? isAuthenticating,
     String? Function()? errorMessage,
+    AppLockErrorType? Function()? errorType,
+    int? Function()? lockoutRemainingSeconds,
+    String? Function()? errorDetail,
     DateTime? Function()? lastPausedAt,
     int? failedAttempts,
     DateTime? Function()? lockoutUntil,
@@ -52,6 +83,11 @@ class AppLockState {
       hasPin: hasPin ?? this.hasPin,
       isAuthenticating: isAuthenticating ?? this.isAuthenticating,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
+      errorType: errorType != null ? errorType() : this.errorType,
+      lockoutRemainingSeconds: lockoutRemainingSeconds != null
+          ? lockoutRemainingSeconds()
+          : this.lockoutRemainingSeconds,
+      errorDetail: errorDetail != null ? errorDetail() : this.errorDetail,
       lastPausedAt: lastPausedAt != null ? lastPausedAt() : this.lastPausedAt,
       failedAttempts: failedAttempts ?? this.failedAttempts,
       lockoutUntil: lockoutUntil != null ? lockoutUntil() : this.lockoutUntil,
@@ -147,7 +183,7 @@ class AppLockNotifier extends Notifier<AppLockState>
 
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
-      this.state = this.state.copyWith(lastPausedAt: () => DateTime.now());
+      this.state = this.state.copyWith(lastPausedAt: DateTime.now);
     } else if (state == AppLifecycleState.resumed) {
       final lastPaused = this.state.lastPausedAt;
       if (lastPaused != null) {
@@ -170,7 +206,13 @@ class AppLockNotifier extends Notifier<AppLockState>
   void lock() {
     if (_disposed) return;
     _inactivityTimer?.cancel();
-    state = state.copyWith(isLocked: true, errorMessage: () => null);
+    state = state.copyWith(
+      isLocked: true,
+      errorMessage: () => null,
+      errorType: () => null,
+      lockoutRemainingSeconds: () => null,
+      errorDetail: () => null,
+    );
   }
 
   /// Unlocks the app and clears any error message and failed attempt counters.
@@ -180,6 +222,9 @@ class AppLockNotifier extends Notifier<AppLockState>
       isLocked: false,
       isAuthenticating: false,
       errorMessage: () => null,
+      errorType: () => null,
+      lockoutRemainingSeconds: () => null,
+      errorDetail: () => null,
       failedAttempts: 0,
       lockoutUntil: () => null,
     );
@@ -191,18 +236,27 @@ class AppLockNotifier extends Notifier<AppLockState>
   Future<bool> verifyPin(String pin) async {
     if (_disposed) return false;
 
+    final l10n = resolveAppLocalizations(ref.read(settingsProvider).locale);
     final now = DateTime.now();
     if (state.lockoutUntil != null && now.isBefore(state.lockoutUntil!)) {
       final remaining = state.lockoutUntil!.difference(now).inSeconds + 1;
       state = state.copyWith(
-        errorMessage: () =>
-            'Troppi tentativi falliti. Riprova tra ${remaining}s.',
+        errorMessage: () => l10n.pinTooManyAttempts(remaining),
+        errorType: () => AppLockErrorType.tooManyAttempts,
+        lockoutRemainingSeconds: () => remaining,
+        errorDetail: () => null,
       );
       return false;
     }
 
     final service = ref.read(appLockServiceProvider);
-    state = state.copyWith(isAuthenticating: true, errorMessage: () => null);
+    state = state.copyWith(
+      isAuthenticating: true,
+      errorMessage: () => null,
+      errorType: () => null,
+      lockoutRemainingSeconds: () => null,
+      errorDetail: () => null,
+    );
     try {
       final isValid = await service.verifyPin(pin);
       if (_disposed) return isValid;
@@ -212,18 +266,25 @@ class AppLockNotifier extends Notifier<AppLockState>
       } else {
         final nextAttempts = state.failedAttempts + 1;
         DateTime? nextLockout;
-        var msg = 'Codice PIN errato. Riprova.';
+        var msg = l10n.pinIncorrect;
+        var errType = AppLockErrorType.incorrectPin;
+        int? remainingSec;
         if (nextAttempts >= _maxFreeAttempts) {
           final exponent = (nextAttempts - _maxFreeAttempts).clamp(0, 5);
           final cooldownSec = (30 * (1 << exponent)).clamp(30, 900);
           nextLockout = DateTime.now().add(Duration(seconds: cooldownSec));
-          msg = 'Troppi tentativi falliti. Riprova tra ${cooldownSec}s.';
+          msg = l10n.pinTooManyAttempts(cooldownSec);
+          errType = AppLockErrorType.tooManyAttempts;
+          remainingSec = cooldownSec;
         }
         state = state.copyWith(
           isAuthenticating: false,
           failedAttempts: nextAttempts,
           lockoutUntil: () => nextLockout,
           errorMessage: () => msg,
+          errorType: () => errType,
+          lockoutRemainingSeconds: () => remainingSec,
+          errorDetail: () => null,
         );
         return false;
       }
@@ -231,23 +292,33 @@ class AppLockNotifier extends Notifier<AppLockState>
       if (_disposed) return false;
       state = state.copyWith(
         isAuthenticating: false,
-        errorMessage: () => 'Errore durante la verifica: $e',
+        errorMessage: () => l10n.pinVerificationError(e.toString()),
+        errorType: () => AppLockErrorType.verificationFailed,
+        lockoutRemainingSeconds: () => null,
+        errorDetail: e.toString,
       );
       return false;
     }
   }
 
   /// Prompts for biometric authentication (fingerprint / face unlock).
-  Future<bool> authenticateWithBiometrics() async {
+  Future<bool> authenticateWithBiometrics({String? reason}) async {
     if (_disposed) return false;
     final settings = ref.read(settingsProvider);
     if (!settings.useBiometrics || !state.canCheckBiometrics) return false;
 
+    final l10n = resolveAppLocalizations(settings.locale);
     final service = ref.read(appLockServiceProvider);
-    state = state.copyWith(isAuthenticating: true, errorMessage: () => null);
+    state = state.copyWith(
+      isAuthenticating: true,
+      errorMessage: () => null,
+      errorType: () => null,
+      lockoutRemainingSeconds: () => null,
+      errorDetail: () => null,
+    );
     try {
       final success = await service.authenticateWithBiometrics(
-        reason: 'Autenticati per accedere a UnifyCloud',
+        reason: reason ?? l10n.biometricAuthReason,
       );
       if (_disposed) return success;
       if (success) {

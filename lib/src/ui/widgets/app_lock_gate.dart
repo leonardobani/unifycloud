@@ -8,12 +8,12 @@ import 'app_lock_screen.dart';
 ///
 /// Ensures no route, screen, or deep link can be accessed while UnifyCloud is locked.
 class AppLockGate extends ConsumerWidget {
-  final Widget child;
 
   const AppLockGate({
     super.key,
     required this.child,
   });
+  final Widget child;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,4 +33,3 @@ class AppLockGate extends ConsumerWidget {
     );
   }
 }
-

@@ -99,7 +99,7 @@ void main() {
       expect(success, isFalse);
       final resultRule = container.read(syncProvider).first;
       expect(resultRule.lastStatus, equals(SyncStatus.failed));
-      expect(resultRule.lastError, contains('Cartella locale non trovata'));
+      expect(resultRule.lastError, contains('Local folder not found'));
     });
 
     test('executeSync successfully syncs local directory to local destination', () async {
@@ -115,7 +115,6 @@ void main() {
         localPath: srcDir.path,
         remote: '', // local
         remotePath: dstDir.path,
-        mode: SyncMode.copy,
       );
 
       final container = ProviderContainer(
@@ -144,4 +143,3 @@ void main() {
     });
   });
 }
-

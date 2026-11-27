@@ -30,10 +30,10 @@ void main() {
       await tester.pumpWidget(createTestApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('Dettagli Errore'), findsOneWidget);
-      expect(find.text('Espandi'), findsOneWidget);
+      expect(find.text('Error Details'), findsOneWidget);
+      expect(find.text('Expand'), findsOneWidget);
       expect(find.byIcon(Icons.expand_more), findsOneWidget);
-      expect(find.text('Copia errore'), findsNothing);
+      expect(find.text('Copy error'), findsNothing);
       expect(find.byType(SelectableText), findsNothing);
     });
 
@@ -43,12 +43,12 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap on the error box to expand
-      await tester.tap(find.text('Dettagli Errore'));
+      await tester.tap(find.text('Error Details'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Comprimi'), findsOneWidget);
+      expect(find.text('Collapse'), findsOneWidget);
       expect(find.byIcon(Icons.expand_less), findsOneWidget);
-      expect(find.text('Copia errore'), findsOneWidget);
+      expect(find.text('Copy error'), findsOneWidget);
       expect(find.byType(SelectableText), findsOneWidget);
 
       // Verify full error text is inside the SelectableText widget
@@ -57,15 +57,15 @@ void main() {
       expect(selectableWidget.data, equals(sampleError));
 
       // Tap to collapse again
-      await tester.tap(find.text('Comprimi'));
+      await tester.tap(find.text('Collapse'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Espandi'), findsOneWidget);
+      expect(find.text('Expand'), findsOneWidget);
       expect(find.byIcon(Icons.expand_more), findsOneWidget);
-      expect(find.text('Copia errore'), findsNothing);
+      expect(find.text('Copy error'), findsNothing);
     });
 
-    testWidgets('Copia errore copies full error to system Clipboard',
+    testWidgets('Copy error copies full error to system Clipboard',
         (tester) async {
       // Mock clipboard
       final List<MethodCall> clipboardCalls = [];
@@ -83,10 +83,10 @@ void main() {
       await tester.pumpWidget(createTestApp(initiallyExpanded: true));
       await tester.pumpAndSettle();
 
-      expect(find.text('Copia errore'), findsOneWidget);
+      expect(find.text('Copy error'), findsOneWidget);
 
       // Tap copy button
-      await tester.tap(find.text('Copia errore'));
+      await tester.tap(find.text('Copy error'));
       await tester.pumpAndSettle();
 
       // Verify clipboard call was made with full error
@@ -98,12 +98,12 @@ void main() {
         equals(sampleError),
       );
 
-      // Verify button feedback changed to "Copiato!"
-      expect(find.text('Copiato!'), findsOneWidget);
+      // Verify button feedback changed to "Copied!"
+      expect(find.text('Copied!'), findsOneWidget);
 
       // Advance timer by 3 seconds to reset button and close timers cleanly
       await tester.pump(const Duration(seconds: 3));
-      expect(find.text('Copia errore'), findsOneWidget);
+      expect(find.text('Copy error'), findsOneWidget);
     });
 
     testWidgets('Scrollbar renders with attached ScrollController and scrolls smoothly',

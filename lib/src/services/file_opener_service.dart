@@ -7,6 +7,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../l10n/l10n_extension.dart';
 import '../models/cloud_models.dart';
 import '../providers/cloud_accounts_provider.dart';
 import '../providers/file_explorer_provider.dart';
@@ -25,12 +26,12 @@ final fileOpenerServiceProvider = Provider<FileOpenerService>((ref) {
 /// Ensures no redundant leading slashes, and avoids duplicating folder prefixes
 /// (e.g. currentPath="/Photos" and item.path="Photos/img.png" remains "Photos/img.png").
 String resolveRemoteItemPath(String itemPath, [String? currentPath]) {
-  final cleanItem = itemPath.replaceAll(RegExp(r'^/+'), '');
+  final cleanItem = itemPath.replaceAll(RegExp('^/+'), '');
   if (currentPath == null || currentPath.trim().isEmpty) {
     return cleanItem;
   }
   final cleanCurrent =
-      currentPath.replaceAll(RegExp(r'^/+'), '').replaceAll(RegExp(r'/+$'), '');
+      currentPath.replaceAll(RegExp('^/+'), '').replaceAll(RegExp(r'/+$'), '');
   if (cleanCurrent.isEmpty) {
     return cleanItem;
   }
@@ -43,7 +44,7 @@ String resolveRemoteItemPath(String itemPath, [String? currentPath]) {
 /// Extracts a safe single filename from a remote path or item name, preventing
 /// path traversal (`../`), null bytes, or directory escape.
 String sanitizeLocalFileName(String rawName, {String fallback = 'file'}) {
-  final normalized = rawName.replaceAll('\x00', '').replaceAll('\\', '/');
+  final normalized = rawName.replaceAll('\x00', '').replaceAll(r'\', '/');
   final stripped = normalized.replaceAll(RegExp(r'/+$'), '');
   final base = p.posix.basename(stripped).trim();
   if (base.isEmpty || base == '.' || base == '..') {
@@ -55,6 +56,14 @@ String sanitizeLocalFileName(String rawName, {String fallback = 'file'}) {
 /// Service responsible for downloading files to a local preview cache and opening them
 /// using the host platform's default application.
 class FileOpenerService {
+
+  FileOpenerService({
+    required this.rcloneService,
+    this.ref,
+    Future<Directory> Function()? getTempDir,
+    Future<OpenResult> Function(String filePath)? openFile,
+  })  : _getTempDir = getTempDir ?? _defaultCacheDir,
+        _openFile = openFile ?? openSystemFile;
   final RcloneService rcloneService;
   final Ref? ref;
   final Future<Directory> Function() _getTempDir;
@@ -72,14 +81,6 @@ class FileOpenerService {
     }
     return getTemporaryDirectory();
   }
-
-  FileOpenerService({
-    required this.rcloneService,
-    this.ref,
-    Future<Directory> Function()? getTempDir,
-    Future<OpenResult> Function(String filePath)? openFile,
-  })  : _getTempDir = getTempDir ?? _defaultCacheDir,
-        _openFile = openFile ?? openSystemFile;
 
   /// Checks whether a [CloudItem] is a PDF file based on its name or mimeType.
   static bool isPdf(CloudItem item) {
@@ -133,7 +134,7 @@ class FileOpenerService {
 
       for (final launcher in desktopLaunchers) {
         if (await _tryLaunchProcess(launcher.$1, launcher.$2)) {
-          return OpenResult(type: ResultType.done, message: 'done');
+          return OpenResult();
         }
       }
 
@@ -145,7 +146,7 @@ class FileOpenerService {
           mode: LaunchMode.externalApplication,
         );
         if (launched) {
-          return OpenResult(type: ResultType.done, message: 'done');
+          return OpenResult();
         }
       } catch (_) {}
 
@@ -172,10 +173,10 @@ class FileOpenerService {
 
         for (final viewer in pdfViewers) {
           if (await _tryLaunchProcess(viewer, [safePath])) {
-            return OpenResult(type: ResultType.done, message: 'done');
+            return OpenResult();
           }
           if (await _tryLaunchProcess('/usr/bin/distrobox-host-exec', [viewer, safePath])) {
-            return OpenResult(type: ResultType.done, message: 'done');
+            return OpenResult();
           }
         }
 
@@ -188,7 +189,7 @@ class FileOpenerService {
         ];
         for (final fp in flatpaks) {
           if (await _tryLaunchProcess('/usr/bin/distrobox-host-exec', fp)) {
-            return OpenResult(type: ResultType.done, message: 'done');
+            return OpenResult();
           }
         }
       }
@@ -207,7 +208,7 @@ class FileOpenerService {
     required CloudItem item,
   }) async {
     final tempDir = await _getTempDir();
-    final sanitizedRemote = remote.replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '_');
+    final sanitizedRemote = remote.replaceAll(RegExp('[^a-zA-Z0-9_-]'), '_');
     final previewDir = Directory(p.join(tempDir.path, 'unifycloud_previews', sanitizedRemote));
     if (!previewDir.existsSync()) {
       previewDir.createSync(recursive: true);
@@ -224,6 +225,8 @@ class FileOpenerService {
     final trimmed = remote.trim();
     if (trimmed.isEmpty ||
         trimmed.toLowerCase() == 'local' ||
+        trimmed.toLowerCase() == 'localdisk' ||
+        trimmed.toLowerCase() == 'local disk' ||
         trimmed.toLowerCase() == 'discolocale' ||
         trimmed.toLowerCase() == 'disco locale') {
       return true;
@@ -243,6 +246,7 @@ class FileOpenerService {
   void _handleOpenResult(BuildContext? context, CloudItem item, OpenResult result) {
     if (context == null || !context.mounted) return;
 
+    final l10n = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
 
     switch (result.type) {
@@ -252,31 +256,27 @@ class FileOpenerService {
         messenger.showSnackBar(
           SnackBar(
             content: Text(
-              'Nessuna applicazione installata per aprire "${item.name}".',
+              l10n.noAppToOpenFile(item.name),
             ),
-            duration: const Duration(seconds: 4),
           ),
         );
-        break;
       case ResultType.permissionDenied:
         messenger.showSnackBar(
-          const SnackBar(
-            content: Text('Permesso negato per aprire il file con l\'app di sistema.'),
+          SnackBar(
+            content: Text(l10n.permissionDeniedOpenFile),
           ),
         );
-        break;
       case ResultType.fileNotFound:
       case ResultType.error:
         final rawMsg = result.message;
         final displayMsg = (rawMsg.contains('there are some errors') || rawMsg.isEmpty)
-            ? 'Nessuna applicazione predefinita trovata per aprire questo file.'
+            ? l10n.noDefaultAppFound
             : rawMsg;
         messenger.showSnackBar(
           SnackBar(
-            content: Text('Impossibile aprire il file: $displayMsg'),
+            content: Text(l10n.unableToOpenFile(displayMsg)),
           ),
         );
-        break;
     }
   }
 
@@ -334,7 +334,7 @@ class FileOpenerService {
     if (effectiveRemote.isEmpty) {
       if (context != null && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Nessun cloud selezionato.')),
+          SnackBar(content: Text(context.l10n.noCloudSelected)),
         );
       }
       return;
@@ -362,7 +362,9 @@ class FileOpenerService {
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text('Download di "${item.name}" per apertura esterna...'),
+                    child: Text(
+                      context.l10n.downloadingForExternalOpen(item.name),
+                    ),
                   ),
                 ],
               ),
@@ -388,7 +390,7 @@ class FileOpenerService {
       if (context != null && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Errore durante l\'apertura del file: $e'),
+            content: Text(context.l10n.errorOpeningFile(e.toString())),
           ),
         );
       }

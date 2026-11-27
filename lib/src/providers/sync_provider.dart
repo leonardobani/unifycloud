@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../l10n/l10n_extension.dart';
 import '../models/sync_rule_model.dart';
 import '../models/transfer_models.dart';
 import '../services/rclone_service.dart';
@@ -16,11 +17,11 @@ final syncProvider =
 
 /// Riverpod Notifier managing sync rules persistence, scheduling and execution.
 class SyncNotifier extends Notifier<List<SyncRule>> {
+
+  SyncNotifier([this._initialRules]);
   static const String syncRulesStorageKey = 'unifycloud_sync_rules_v1';
   final List<SyncRule>? _initialRules;
   Timer? _scheduleTimer;
-
-  SyncNotifier([this._initialRules]);
 
   FlutterSecureStorage get _storage => ref.read(settingsStorageProvider);
   RcloneService get _rclone => ref.read(rcloneServiceProvider);
@@ -117,7 +118,7 @@ class SyncNotifier extends Notifier<List<SyncRule>> {
 
   /// Executes synchronization for the given [ruleId].
   ///
-  /// Can be triggered either manually via "Sincronizza ora" or automatically by the scheduler.
+  /// Can be triggered either manually via "Sync now" or automatically by the scheduler.
   Future<bool> executeSync(String ruleId) async {
     final ruleIndex = state.indexWhere((r) => r.id == ruleId);
     if (ruleIndex == -1) return false;
@@ -127,6 +128,8 @@ class SyncNotifier extends Notifier<List<SyncRule>> {
       return false; // Already running
     }
 
+    final l10n = resolveAppLocalizations(ref.read(settingsProvider).locale);
+
     // 1. Validate local directory
     final localDir = Directory(rule.localPath);
     if (!localDir.existsSync()) {
@@ -134,7 +137,7 @@ class SyncNotifier extends Notifier<List<SyncRule>> {
         ruleId,
         (r) => r.copyWith(
           lastStatus: SyncStatus.failed,
-          lastError: () => 'Cartella locale non trovata: ${rule.localPath}',
+          lastError: () => l10n.localFolderNotFound(rule.localPath),
           activeJobId: () => null,
         ),
       );
@@ -194,18 +197,19 @@ class SyncNotifier extends Notifier<List<SyncRule>> {
             ruleId,
             (r) => r.copyWith(
               lastStatus: SyncStatus.completed,
-              lastSyncTime: () => DateTime.now(),
+              lastSyncTime: DateTime.now,
               activeJobId: () => null,
               lastError: () => null,
             ),
           );
           return true;
         } else if (job.status == TransferStatus.failed) {
+          final l10n = resolveAppLocalizations(ref.read(settingsProvider).locale);
           _updateRuleInState(
             ruleId,
             (r) => r.copyWith(
               lastStatus: SyncStatus.failed,
-              lastError: () => job.error ?? 'Sincronizzazione fallita',
+              lastError: () => job.error ?? l10n.syncFailed,
               activeJobId: () => null,
             ),
           );

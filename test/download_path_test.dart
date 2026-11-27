@@ -38,12 +38,7 @@ class FakeRcloneService extends RcloneService {
       dstRemote: dstRemote,
       dstPath: dstPath,
       isMove: isMove,
-      status: TransferStatus.queued,
-      bytes: 0,
       totalBytes: 1024,
-      percentage: 0,
-      speed: 0,
-      eta: 0,
     );
   }
 }
@@ -112,7 +107,7 @@ void main() {
         overrides: [
           rcloneServiceProvider.overrideWithValue(fakeRclone),
           settingsProvider.overrideWith(
-            () => SettingsNotifier(const AppSettings(customDownloadPath: null)),
+            () => SettingsNotifier(const AppSettings()),
           ),
         ],
       );
@@ -192,4 +187,3 @@ void main() {
     });
   });
 }
-

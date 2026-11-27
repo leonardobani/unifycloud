@@ -28,7 +28,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(12)),
-          side: BorderSide(color: borderDark, width: 1),
+          side: BorderSide(color: borderDark),
         ),
       ),
       appBarTheme: const AppBarTheme(
@@ -73,7 +73,6 @@ class AppTheme {
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
-        brightness: Brightness.light,
         surface: surfaceLight,
       ),
       scaffoldBackgroundColor: backgroundLight,
@@ -82,7 +81,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(12)),
-          side: BorderSide(color: borderLight, width: 1),
+          side: BorderSide(color: borderLight),
         ),
       ),
       appBarTheme: const AppBarTheme(

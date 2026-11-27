@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/l10n_extension.dart';
 import '../../models/cloud_models.dart';
 import '../../providers/clipboard_provider.dart';
 import '../../providers/file_explorer_provider.dart';
@@ -12,10 +13,6 @@ import 'share_link_dialog.dart';
 
 /// Wraps a file or folder tile with context menu support (Desktop right-click & Mobile long-press).
 class FileContextMenuRegion extends ConsumerWidget {
-  final CloudItem item;
-  final Widget child;
-  final NotifierProvider<FileExplorerNotifier, FileExplorerState>? provider;
-  final NotifierProvider<FileExplorerNotifier, FileExplorerState>? oppositeProvider;
 
   const FileContextMenuRegion({
     super.key,
@@ -24,6 +21,10 @@ class FileContextMenuRegion extends ConsumerWidget {
     this.provider,
     this.oppositeProvider,
   });
+  final CloudItem item;
+  final Widget child;
+  final NotifierProvider<FileExplorerNotifier, FileExplorerState>? provider;
+  final NotifierProvider<FileExplorerNotifier, FileExplorerState>? oppositeProvider;
 
   NotifierProvider<FileExplorerNotifier, FileExplorerState> get _provider =>
       provider ?? fileExplorerProvider;
@@ -41,6 +42,7 @@ class FileContextMenuRegion extends ConsumerWidget {
   }
 
   void _showContextMenu(BuildContext context, WidgetRef ref, Offset globalPosition) async {
+    final l10n = context.l10n;
     final overlay = Overlay.of(context).context.findRenderObject() as RenderBox?;
     if (overlay == null) return;
 
@@ -55,40 +57,40 @@ class FileContextMenuRegion extends ConsumerWidget {
         Offset.zero & overlay.size,
       ),
       items: [
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'select',
           child: ListTile(
-            leading: Icon(Icons.check_circle_outline),
-            title: Text('Seleziona'),
+            leading: const Icon(Icons.check_circle_outline),
+            title: Text(l10n.select),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
         ),
         if (!item.isDir) ...[
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'open_with',
             child: ListTile(
-              leading: Icon(Icons.open_in_new_rounded),
-              title: Text('Apri con app di sistema'),
+              leading: const Icon(Icons.open_in_new_rounded),
+              title: Text(l10n.openWithSystemApp),
               dense: true,
               contentPadding: EdgeInsets.zero,
             ),
           ),
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'download',
             child: ListTile(
-              leading: Icon(Icons.download_outlined),
-              title: Text('Scarica in locale'),
+              leading: const Icon(Icons.download_outlined),
+              title: Text(l10n.downloadToLocal),
               dense: true,
               contentPadding: EdgeInsets.zero,
             ),
           ),
         ],
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'share_link',
           child: ListTile(
-            leading: Icon(Icons.share_outlined),
-            title: Text('Crea link condivisibile'),
+            leading: const Icon(Icons.share_outlined),
+            title: Text(l10n.createShareLink),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
@@ -98,7 +100,7 @@ class FileContextMenuRegion extends ConsumerWidget {
             value: 'copy_to_opposite',
             child: ListTile(
               leading: const Icon(Icons.drive_file_move_rtl_outlined),
-              title: Text('Copia in ${oppositeState.currentRemote}'),
+              title: Text(l10n.copyToRemote(oppositeState.currentRemote!)),
               dense: true,
               contentPadding: EdgeInsets.zero,
             ),
@@ -107,63 +109,63 @@ class FileContextMenuRegion extends ConsumerWidget {
             value: 'move_to_opposite',
             child: ListTile(
               leading: const Icon(Icons.drive_file_move_outlined),
-              title: Text('Sposta in ${oppositeState.currentRemote}'),
+              title: Text(l10n.moveToRemote(oppositeState.currentRemote!)),
               dense: true,
               contentPadding: EdgeInsets.zero,
             ),
           ),
         ],
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'copy',
           child: ListTile(
-            leading: Icon(Icons.copy_rounded),
-            title: Text('Copia'),
+            leading: const Icon(Icons.copy_rounded),
+            title: Text(l10n.copy),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'cut',
           child: ListTile(
-            leading: Icon(Icons.cut_rounded),
-            title: Text('Taglia (Sposta)'),
+            leading: const Icon(Icons.cut_rounded),
+            title: Text(l10n.cut),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'rename',
           child: ListTile(
-            leading: Icon(Icons.edit_outlined),
-            title: Text('Rinomina'),
+            leading: const Icon(Icons.edit_outlined),
+            title: Text(l10n.rename),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'copy_path',
           child: ListTile(
-            leading: Icon(Icons.content_copy_outlined),
-            title: Text('Copia percorso'),
+            leading: const Icon(Icons.content_copy_outlined),
+            title: Text(l10n.copyPath),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'info',
           child: ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('Informazioni'),
+            leading: const Icon(Icons.info_outline),
+            title: Text(l10n.info),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
         ),
         const PopupMenuDivider(),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'delete',
           child: ListTile(
-            leading: Icon(Icons.delete_outline, color: Colors.red),
-            title: Text('Elimina', style: TextStyle(color: Colors.red)),
+            leading: const Icon(Icons.delete_outline, color: Colors.red),
+            title: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
@@ -178,56 +180,44 @@ class FileContextMenuRegion extends ConsumerWidget {
     switch (result) {
       case 'select':
         ref.read(_provider.notifier).toggleSelection(item.path);
-        break;
       case 'open_with':
-        ref.read(fileOpenerServiceProvider).openCloudItem(
+        await ref.read(fileOpenerServiceProvider).openCloudItem(
               context: context,
               item: item,
               remote: ref.read(_provider).currentRemote,
               currentPath: ref.read(_provider).currentPath,
             );
-        break;
       case 'copy_to_opposite':
         _handleDirectTransfer(context, ref, isMove: false);
-        break;
       case 'move_to_opposite':
         _handleDirectTransfer(context, ref, isMove: true);
-        break;
       case 'download':
         _handleDownload(context, ref, currentRemote);
-        break;
       case 'share_link':
         _handleShareLink(context, ref, currentRemote);
-        break;
       case 'copy':
         ref.read(clipboardProvider.notifier).copy(item, currentRemote);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${item.name}" copiato negli appunti')),
+          SnackBar(content: Text(l10n.itemCopiedToClipboard(item.name))),
         );
-        break;
       case 'cut':
         ref.read(clipboardProvider.notifier).cut(item, currentRemote);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${item.name}" tagliato (pronto per lo spostamento)')),
+          SnackBar(content: Text(l10n.itemCutToClipboard(item.name))),
         );
-        break;
       case 'rename':
         _handleRename(context, ref);
-        break;
       case 'copy_path':
         await Clipboard.setData(ClipboardData(text: item.path));
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Percorso copiato negli appunti')),
+            SnackBar(content: Text(l10n.pathCopiedToClipboard)),
           );
         }
-        break;
       case 'info':
         _showInfoDialog(context);
-        break;
       case 'delete':
         _handleDelete(context, ref);
-        break;
     }
   }
 
@@ -237,6 +227,7 @@ class FileContextMenuRegion extends ConsumerWidget {
     required bool isMove,
   }) async {
     if (oppositeProvider == null) return;
+    final l10n = context.l10n;
     final srcState = ref.read(_provider);
     final dstState = ref.read(oppositeProvider!);
     final srcRemote = srcState.currentRemote ?? '';
@@ -244,10 +235,10 @@ class FileContextMenuRegion extends ConsumerWidget {
     if (srcRemote.isEmpty || dstRemote.isEmpty) return;
 
     final messenger = ScaffoldMessenger.of(context);
-    final actionLabel = isMove ? 'Spostamento' : 'Copia';
+    final actionLabel = isMove ? l10n.moveAction : l10n.copyAction;
     messenger.showSnackBar(
       SnackBar(
-        content: Text('$actionLabel di "${item.name}" verso $dstRemote avviato...'),
+        content: Text(l10n.transferBatchStarted(actionLabel, 1, dstRemote)),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -259,15 +250,16 @@ class FileContextMenuRegion extends ConsumerWidget {
             dstPath: dstState.currentPath,
             isMove: isMove,
           );
-      ref.read(oppositeProvider!.notifier).refresh();
+      await ref.read(oppositeProvider!.notifier).refresh();
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Errore durante il trasferimento: $e')),
+        SnackBar(content: Text(l10n.errorTransferring(e.toString()))),
       );
     }
   }
 
   void _handleDownload(BuildContext context, WidgetRef ref, String currentRemote) async {
+    final l10n = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
     final currentPath = ref.read(_provider).currentPath;
     final fullSrcPath = resolveRemoteItemPath(item.path, currentPath);
@@ -282,7 +274,7 @@ class FileContextMenuRegion extends ConsumerWidget {
               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
             ),
             const SizedBox(width: 10),
-            Expanded(child: Text('Download avviato per "${item.name}"...')),
+            Expanded(child: Text(l10n.downloadingSingleItem(item.name))),
           ],
         ),
         duration: const Duration(seconds: 2),
@@ -296,25 +288,25 @@ class FileContextMenuRegion extends ConsumerWidget {
           );
       messenger.showSnackBar(
         SnackBar(
-          content: Text('Download avviato: salvataggio in ${job.dstPath}'),
-          duration: const Duration(seconds: 4),
+          content: Text(l10n.downloadStartedSavedTo(job.dstPath)),
         ),
       );
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Errore durante l\'avvio del download: $e')),
+        SnackBar(content: Text(l10n.errorStartingDownload(e.toString()))),
       );
     }
   }
 
   void _handleShareLink(BuildContext context, WidgetRef ref, String currentRemote) async {
+    final l10n = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
     final currentPath = ref.read(_provider).currentPath;
     final fullSrcPath = resolveRemoteItemPath(item.path, currentPath);
 
     if (currentRemote.isEmpty) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Nessun cloud selezionato.')),
+        SnackBar(content: Text(l10n.noCloudSelected)),
       );
       return;
     }
@@ -329,7 +321,7 @@ class FileContextMenuRegion extends ConsumerWidget {
               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
             ),
             const SizedBox(width: 12),
-            Expanded(child: Text('Generazione del link per "${item.name}"...')),
+            Expanded(child: Text(l10n.generatingShareLink(item.name))),
           ],
         ),
         duration: const Duration(seconds: 2),
@@ -346,7 +338,7 @@ class FileContextMenuRegion extends ConsumerWidget {
 
       if (link.trim().isEmpty) {
         messenger.showSnackBar(
-          const SnackBar(content: Text('Nessun link restituito dal provider.')),
+          SnackBar(content: Text(l10n.noLinkReturnedByProvider)),
         );
         return;
       }
@@ -357,8 +349,8 @@ class FileContextMenuRegion extends ConsumerWidget {
       final errorStr = e.toString();
       final msg = errorStr.contains("doesn't support public links") ||
               errorStr.contains('not supported')
-          ? 'Questo provider cloud non supporta la creazione di link pubblici.'
-          : 'Errore durante la creazione del link: $e';
+          ? l10n.publicLinksNotSupported
+          : l10n.errorCreatingShareLink(e.toString());
       messenger.showSnackBar(
         SnackBar(content: Text(msg)),
       );
@@ -366,27 +358,28 @@ class FileContextMenuRegion extends ConsumerWidget {
   }
 
   void _handleRename(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
     final controller = TextEditingController(text: item.name);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Rinomina ${item.isDir ? "cartella" : "file"}'),
+        title: Text(item.isDir ? l10n.renameFolderTitle : l10n.renameFileTitle),
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(
-            labelText: 'Nuovo nome',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: l10n.newNameLabel,
+            border: const OutlineInputBorder(),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Annulla'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Rinomina'),
+            child: Text(l10n.rename),
           ),
         ],
       ),
@@ -398,7 +391,7 @@ class FileContextMenuRegion extends ConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Errore durante la ridenominazione: $e')),
+            SnackBar(content: Text(l10n.errorRenaming(e.toString()))),
           );
         }
       }
@@ -406,22 +399,23 @@ class FileContextMenuRegion extends ConsumerWidget {
   }
 
   void _handleDelete(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Elimina ${item.isDir ? "cartella" : "file"}?'),
-        content: Text(
-          'Sei sicuro di voler eliminare definitivamente "${item.name}"?',
+        title: Text(
+          item.isDir ? l10n.deleteSingleFolderTitle : l10n.deleteSingleFileTitle,
         ),
+        content: Text(l10n.deleteSingleItemPrompt(item.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Annulla'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Elimina'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -433,7 +427,7 @@ class FileContextMenuRegion extends ConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Errore durante l\'eliminazione: $e')),
+            SnackBar(content: Text(l10n.errorDeleting(e.toString()))),
           );
         }
       }
@@ -441,7 +435,8 @@ class FileContextMenuRegion extends ConsumerWidget {
   }
 
   void _showInfoDialog(BuildContext context) {
-    showDialog(
+    final l10n = context.l10n;
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Row(
@@ -455,23 +450,23 @@ class FileContextMenuRegion extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Percorso: ${item.path}'),
+            Text(l10n.itemDetailsPath(item.path)),
             const SizedBox(height: 8),
-            Text('Tipo: ${item.isDir ? "Cartella" : (item.mimeType ?? "File")}'),
+            Text(l10n.itemDetailsType(item.isDir ? l10n.folder : (item.mimeType ?? l10n.file))),
             if (!item.isDir) ...[
               const SizedBox(height: 8),
-              Text('Dimensione: ${_formatBytes(item.size)} (${item.size} bytes)'),
+              Text(l10n.itemDetailsSizeWithBytes(_formatBytes(item.size), item.size)),
             ],
             if (item.modTime != null) ...[
               const SizedBox(height: 8),
-              Text('Ultima modifica: ${item.modTime!.toLocal().toString().split(".")[0]}'),
+              Text(l10n.itemDetailsModified(item.modTime!.toLocal().toString().split('.')[0])),
             ],
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Chiudi'),
+            child: Text(l10n.close),
           ),
         ],
       ),

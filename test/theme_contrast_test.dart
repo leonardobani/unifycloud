@@ -17,24 +17,24 @@ import 'package:unifycloud/src/ui/widgets/file_type_icon.dart';
 import 'package:unifycloud/src/ui/widgets/transfer_panel.dart';
 
 class CloudAccountsMock extends CloudAccountsNotifier {
-  final CloudAccountsState _initial;
   CloudAccountsMock(this._initial);
+  final CloudAccountsState _initial;
 
   @override
   CloudAccountsState build() => _initial;
 }
 
 class FileExplorerMock extends FileExplorerNotifier {
-  final FileExplorerState _initial;
   FileExplorerMock(this._initial);
+  final FileExplorerState _initial;
 
   @override
   FileExplorerState build() => _initial;
 }
 
 class SettingsMock extends SettingsNotifier {
-  final AppSettings _initial;
   SettingsMock(this._initial);
+  final AppSettings _initial;
 
   @override
   AppSettings build() => _initial;
@@ -68,19 +68,18 @@ void main() {
 
   group('Light Theme Widget & Contrast Tests', () {
     testWidgets('HomeScreen renders properly in Light Mode with high contrast text', (tester) async {
-      final mockState = CloudAccountsState(
+      const mockState = CloudAccountsState(
         remotes: [
           CloudRemote(
             name: 'MyDrive',
             type: 'drive',
-            quota: const StorageQuota(
+            quota: StorageQuota(
               total: 15 * 1024 * 1024 * 1024,
               used: 5 * 1024 * 1024 * 1024,
               free: 10 * 1024 * 1024 * 1024,
             ),
           ),
         ],
-        isLoading: false,
       );
 
       await tester.pumpWidget(
@@ -111,11 +110,9 @@ void main() {
     });
 
     testWidgets('FileExplorerScreen empty state is clearly readable in Light Mode', (tester) async {
-      final mockState = const FileExplorerState(
+      const mockState = FileExplorerState(
         currentRemote: 'MyDrive',
         currentPath: 'Documents',
-        items: [],
-        isLoading: false,
       );
 
       await tester.pumpWidget(
@@ -132,8 +129,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('Questa cartella è vuota'), findsOneWidget);
-      final emptyText = tester.widget<Text>(find.text('Questa cartella è vuota'));
+      expect(find.text('This folder is empty'), findsOneWidget);
+      final emptyText = tester.widget<Text>(find.text('This folder is empty'));
       expect(emptyText.style?.color, equals(AppTheme.lightTheme.colorScheme.onSurfaceVariant));
     });
 
@@ -178,16 +175,16 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('Espandi'), findsOneWidget);
-      final expandText = tester.widget<Text>(find.text('Espandi'));
+      expect(find.text('Expand'), findsOneWidget);
+      final expandText = tester.widget<Text>(find.text('Expand'));
       expect(expandText.style?.color, equals(AppTheme.lightTheme.colorScheme.onSurfaceVariant));
 
       // Expand the box
       await tester.tap(find.byType(ExpandableErrorBox));
       await tester.pumpAndSettle();
 
-      expect(find.text('Comprimi'), findsOneWidget);
-      final compressedText = tester.widget<Text>(find.text('Comprimi'));
+      expect(find.text('Collapse'), findsOneWidget);
+      final compressedText = tester.widget<Text>(find.text('Collapse'));
       expect(compressedText.style?.color, equals(AppTheme.lightTheme.colorScheme.onSurfaceVariant));
     });
 
@@ -245,9 +242,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('Coda Trasferimenti (0)'), findsOneWidget);
-      expect(find.text('Nessun trasferimento recente'), findsOneWidget);
-      final subtitle = tester.widget<Text>(find.text('I download, gli upload e le copie cloud appariranno qui.'));
+      expect(find.text('Transfer Queue (0)'), findsOneWidget);
+      expect(find.text('No recent transfers'), findsOneWidget);
+      final subtitle = tester.widget<Text>(find.text('Downloads, uploads, and cloud copies will appear here.'));
       expect(subtitle.style?.color, equals(AppTheme.lightTheme.colorScheme.onSurfaceVariant));
     });
   });

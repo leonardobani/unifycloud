@@ -11,10 +11,10 @@ import 'package:unifycloud/src/services/rclone_service.dart';
 import 'package:unifycloud/src/ui/screens/file_explorer_screen.dart';
 
 class RcloneServiceMock implements RcloneService {
-  final List<String> deletedPaths = [];
-  final List<CloudItem> itemsToReturn;
 
   RcloneServiceMock({this.itemsToReturn = const []});
+  final List<String> deletedPaths = [];
+  final List<CloudItem> itemsToReturn;
 
   @override
   Future<void> deleteFile({required String remote, required String filePath}) async {
@@ -54,9 +54,7 @@ class TransferNotifierMock extends Notifier<TransferState> implements TransferNo
       isMove: isMove,
       status: TransferStatus.running,
       totalBytes: 1000,
-      bytes: 0,
       speed: 100,
-      percentage: 0,
       startTime: DateTime.now(),
     );
   }
@@ -74,12 +72,9 @@ class TransferNotifierMock extends Notifier<TransferState> implements TransferNo
       srcPath: srcPath,
       dstRemote: '',
       dstPath: '/downloads/$srcPath',
-      isMove: false,
       status: TransferStatus.running,
       totalBytes: 2000,
-      bytes: 0,
       speed: 200,
-      percentage: 0,
       startTime: DateTime.now(),
     );
   }
@@ -90,10 +85,10 @@ class TransferNotifierMock extends Notifier<TransferState> implements TransferNo
 
 class InteractiveFileExplorerNotifier extends Notifier<FileExplorerState>
     implements FileExplorerNotifier {
-  final FileExplorerState _initialState;
-  final List<CloudItem> deletedItems = [];
 
   InteractiveFileExplorerNotifier(this._initialState);
+  final FileExplorerState _initialState;
+  final List<CloudItem> deletedItems = [];
 
   @override
   FileExplorerState build() => _initialState;
@@ -139,13 +134,12 @@ void main() {
 
       const emptyState = FileExplorerState(
         items: [item1, item2, folder],
-        selectedPaths: {},
       );
       expect(emptyState.isSelectionMode, isFalse);
       expect(emptyState.selectedCount, 0);
       expect(emptyState.selectedItems, isEmpty);
 
-      final selectedState = FileExplorerState(
+      const selectedState = FileExplorerState(
         items: [item1, item2, folder],
         selectedPaths: {'Docs/file1.txt', 'Docs/Folder'},
       );
@@ -224,7 +218,7 @@ void main() {
       expect(state.hasItem, isTrue);
       expect(state.count, 2);
       expect(state.isCut, isFalse);
-      expect(state.actionLabel, 'Copia');
+      expect(state.actionLabel, 'Copy');
 
       // Paste
       final copyJobs = await clipboardNotifier.pasteTo(
@@ -241,7 +235,7 @@ void main() {
       clipboardNotifier.cutAll([itemA, itemB], 'CloudSrc');
       state = container.read(clipboardProvider);
       expect(state.isCut, isTrue);
-      expect(state.actionLabel, 'Sposta');
+      expect(state.actionLabel, 'Move');
 
       // Paste cut items
       final cutJobs = await clipboardNotifier.pasteTo(
@@ -261,10 +255,10 @@ void main() {
 
     testWidgets('Renders Contextual Action Bar when items are selected', (tester) async {
       final notifier = InteractiveFileExplorerNotifier(
-        FileExplorerState(
+        const FileExplorerState(
           currentRemote: 'MyDrive',
           currentPath: 'Photos',
-          items: const [item1, item2, folder],
+          items: [item1, item2, folder],
           selectedPaths: {'Photos/photo.jpg'},
         ),
       );
@@ -288,7 +282,7 @@ void main() {
       );
 
       // Check CAB header
-      expect(find.text('1 selezionati'), findsOneWidget);
+      expect(find.text('1 selected'), findsOneWidget);
       expect(find.byIcon(Icons.close), findsOneWidget);
       expect(find.byIcon(Icons.select_all), findsOneWidget);
       expect(find.byIcon(Icons.download_outlined), findsOneWidget);
@@ -305,10 +299,10 @@ void main() {
 
     testWidgets('Tapping Close button in CAB clears selection', (tester) async {
       final notifier = InteractiveFileExplorerNotifier(
-        FileExplorerState(
+        const FileExplorerState(
           currentRemote: 'MyDrive',
           currentPath: 'Photos',
-          items: const [item1, item2, folder],
+          items: [item1, item2, folder],
           selectedPaths: {'Photos/photo.jpg', 'Photos/video.mp4'},
         ),
       );
@@ -331,23 +325,23 @@ void main() {
         ),
       );
 
-      expect(find.text('2 selezionati'), findsOneWidget);
+      expect(find.text('2 selected'), findsOneWidget);
 
       // Tap close button
       await tester.tap(find.byIcon(Icons.close));
       await tester.pumpAndSettle();
 
       // Should return to normal AppBar
-      expect(find.text('2 selezionati'), findsNothing);
+      expect(find.text('2 selected'), findsNothing);
       expect(find.byIcon(Icons.upload_file_outlined), findsOneWidget);
     });
 
     testWidgets('Tapping Select All selects all items and updates icon to deselect', (tester) async {
       final notifier = InteractiveFileExplorerNotifier(
-        FileExplorerState(
+        const FileExplorerState(
           currentRemote: 'MyDrive',
           currentPath: 'Photos',
-          items: const [item1, item2, folder],
+          items: [item1, item2, folder],
           selectedPaths: {'Photos/photo.jpg'},
         ),
       );
@@ -370,29 +364,29 @@ void main() {
         ),
       );
 
-      expect(find.text('1 selezionati'), findsOneWidget);
+      expect(find.text('1 selected'), findsOneWidget);
 
       // Tap select all
       await tester.tap(find.byIcon(Icons.select_all));
       await tester.pumpAndSettle();
 
-      expect(find.text('3 selezionati'), findsOneWidget);
+      expect(find.text('3 selected'), findsOneWidget);
       expect(find.byIcon(Icons.deselect), findsOneWidget);
 
       // Tap deselect all
       await tester.tap(find.byIcon(Icons.deselect));
       await tester.pumpAndSettle();
 
-      expect(find.text('3 selezionati'), findsNothing);
+      expect(find.text('3 selected'), findsNothing);
       expect(find.byIcon(Icons.upload_file_outlined), findsOneWidget);
     });
 
     testWidgets('Tapping an item in selection mode toggles selection', (tester) async {
       final notifier = InteractiveFileExplorerNotifier(
-        FileExplorerState(
+        const FileExplorerState(
           currentRemote: 'MyDrive',
           currentPath: 'Photos',
-          items: const [item1, item2],
+          items: [item1, item2],
           selectedPaths: {'Photos/photo.jpg'},
         ),
       );
@@ -415,27 +409,27 @@ void main() {
         ),
       );
 
-      expect(find.text('1 selezionati'), findsOneWidget);
+      expect(find.text('1 selected'), findsOneWidget);
 
       // Tap second item (video.mp4) to select it as well
       await tester.tap(find.text('video.mp4'));
       await tester.pumpAndSettle();
 
-      expect(find.text('2 selezionati'), findsOneWidget);
+      expect(find.text('2 selected'), findsOneWidget);
 
       // Tap photo.jpg to deselect it
       await tester.tap(find.text('photo.jpg'));
       await tester.pumpAndSettle();
 
-      expect(find.text('1 selezionati'), findsOneWidget);
+      expect(find.text('1 selected'), findsOneWidget);
     });
 
     testWidgets('Grid view renders checkboxes in selection mode', (tester) async {
       final notifier = InteractiveFileExplorerNotifier(
-        FileExplorerState(
+        const FileExplorerState(
           currentRemote: 'MyDrive',
           currentPath: 'Photos',
-          items: const [item1, item2],
+          items: [item1, item2],
           viewMode: FileViewMode.grid,
           selectedPaths: {'Photos/photo.jpg'},
         ),
@@ -461,15 +455,15 @@ void main() {
 
       // Grid items should have Checkbox widgets rendered
       expect(find.byType(Checkbox), findsNWidgets(2));
-      expect(find.text('1 selezionati'), findsOneWidget);
+      expect(find.text('1 selected'), findsOneWidget);
     });
   });
 }
 
 class CloudAccountsNotifierMock extends Notifier<CloudAccountsState>
     implements CloudAccountsNotifier {
-  final CloudAccountsState _initial;
   CloudAccountsNotifierMock(this._initial);
+  final CloudAccountsState _initial;
 
   @override
   CloudAccountsState build() => _initial;

@@ -3,14 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../l10n/l10n_extension.dart';
+
 /// An interactive, expandable error box that displays an error snippet when collapsed
 /// and expands on click to show the full, selectable, and scrollable error message
 /// with a quick copy-to-clipboard action.
 class ExpandableErrorBox extends StatefulWidget {
-  final String error;
-  final Color? accentColor;
-  final bool initiallyExpanded;
-  final double maxWidth;
 
   const ExpandableErrorBox({
     super.key,
@@ -19,6 +17,10 @@ class ExpandableErrorBox extends StatefulWidget {
     this.initiallyExpanded = false,
     this.maxWidth = 480,
   });
+  final String error;
+  final Color? accentColor;
+  final bool initiallyExpanded;
+  final double maxWidth;
 
   @override
   State<ExpandableErrorBox> createState() => _ExpandableErrorBoxState();
@@ -46,13 +48,14 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
   void _copyToClipboard() async {
     await Clipboard.setData(ClipboardData(text: widget.error));
     if (mounted) {
+      final l10n = context.l10n;
       _copyTimer?.cancel();
       setState(() => _copied = true);
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Dettagli errore copiati negli appunti'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(l10n.errorDetailsCopied),
+          duration: const Duration(seconds: 2),
         ),
       );
       _copyTimer = Timer(const Duration(seconds: 2), () {
@@ -65,6 +68,7 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final accent = widget.accentColor ?? Colors.red;
 
     return ConstrainedBox(
@@ -88,7 +92,6 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: accent.withValues(alpha: 0.3),
-                  width: 1,
                 ),
               ),
               child: Column(
@@ -105,7 +108,7 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Dettagli Errore',
+                        l10n.errorDetails,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -115,7 +118,7 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
                       const Spacer(),
                       Flexible(
                         child: Text(
-                          _isExpanded ? 'Comprimi' : 'Espandi',
+                          _isExpanded ? l10n.collapse : l10n.expand,
                           style: TextStyle(
                             fontSize: 11,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -187,7 +190,7 @@ class _ExpandableErrorBoxState extends State<ExpandableErrorBox> {
                             color: _copied ? Colors.green : accent,
                           ),
                           label: Text(
-                            _copied ? 'Copiato!' : 'Copia errore',
+                            _copied ? l10n.copiedExclamation : l10n.copyError,
                             style: TextStyle(
                               fontSize: 11,
                               color: _copied ? Colors.green : accent,

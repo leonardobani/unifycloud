@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,6 +26,7 @@ class FakeBackgroundService extends AppBackgroundService {
     required double totalSpeed,
     required int averagePercentage,
     required String formattedSpeed,
+    Locale? locale,
   }) async {
     progressNotificationCount++;
     lastActiveCount = activeCount;
@@ -33,15 +35,15 @@ class FakeBackgroundService extends AppBackgroundService {
   }
 
   @override
-  Future<void> notifyTransfersIdle() async {
+  Future<void> notifyTransfersIdle({Locale? locale}) async {
     idleNotificationCount++;
   }
 }
 
 class FakeRcloneService extends RcloneService {
-  List<TransferJob> mockTransfers = [];
 
   FakeRcloneService() : super();
+  List<TransferJob> mockTransfers = [];
 
   @override
   Future<List<TransferJob>> getAllTransfers() async {
@@ -186,7 +188,6 @@ void main() {
           bytes: 10000000,
           totalBytes: 10000000,
           percentage: 100,
-          speed: 0,
         ),
       ];
 

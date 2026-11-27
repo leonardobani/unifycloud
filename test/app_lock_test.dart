@@ -15,13 +15,13 @@ import 'package:unifycloud/src/ui/widgets/pin_setup_dialog.dart';
 
 /// In-memory fake implementation of [FlutterSecureStorage].
 class FakeSecureStorage extends FlutterSecureStorage {
-  final Map<String, String> _data = {};
 
   FakeSecureStorage([Map<String, String>? initialData]) {
     if (initialData != null) {
       _data.addAll(initialData);
     }
   }
+  final Map<String, String> _data = {};
 
   @override
   Future<void> write({
@@ -82,10 +82,6 @@ class FakeSecureStorage extends FlutterSecureStorage {
 
 /// Fake implementation of [LocalAuthentication].
 class FakeLocalAuthentication extends LocalAuthentication {
-  final bool isSupported;
-  final bool canCheck;
-  final List<BiometricType> biometrics;
-  final bool authResult;
 
   FakeLocalAuthentication({
     this.isSupported = true,
@@ -93,6 +89,10 @@ class FakeLocalAuthentication extends LocalAuthentication {
     this.biometrics = const [BiometricType.fingerprint],
     this.authResult = true,
   });
+  final bool isSupported;
+  final bool canCheck;
+  final List<BiometricType> biometrics;
+  final bool authResult;
 
   @override
   Future<bool> isDeviceSupported() async => isSupported;
@@ -193,14 +193,14 @@ void main() {
       await service.savePin('123456');
       final stored = await fakeStorage.read(key: AppLockService.pinStorageKey);
       expect(stored, isNotNull);
-      expect(stored, startsWith('pbkdf2_sha256\$'));
+      expect(stored, startsWith(r'pbkdf2_sha256$'));
       expect(stored, isNot(contains('123456')));
 
       // Legacy plaintext PIN still verifies and auto-migrates to hash
       await fakeStorage.write(key: AppLockService.pinStorageKey, value: '654321');
       expect(await service.verifyPin('654321'), isTrue);
       final migrated = await fakeStorage.read(key: AppLockService.pinStorageKey);
-      expect(migrated, startsWith('pbkdf2_sha256\$'));
+      expect(migrated, startsWith(r'pbkdf2_sha256$'));
     });
 
     test('clearPin deletes the saved PIN', () async {
@@ -226,7 +226,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           settingsProvider.overrideWith(
-            () => SettingsNotifier(const AppSettings(appLockEnabled: false)),
+            () => SettingsNotifier(const AppSettings()),
           ),
           appLockServiceProvider.overrideWithValue(
             AppLockService(storage: fakeStorage, localAuth: fakeAuth),
@@ -266,7 +266,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           settingsProvider.overrideWith(
-            () => SettingsNotifier(const AppSettings(appLockEnabled: false)),
+            () => SettingsNotifier(const AppSettings()),
           ),
           appLockServiceProvider.overrideWithValue(
             AppLockService(storage: fakeStorage, localAuth: fakeAuth),
@@ -308,7 +308,7 @@ void main() {
       final wrongResult = await notifier.verifyPin('000000');
       expect(wrongResult, isFalse);
       expect(container.read(appLockProvider).isLocked, isTrue);
-      expect(container.read(appLockProvider).errorMessage, contains('PIN errato'));
+      expect(container.read(appLockProvider).errorMessage, contains('Incorrect PIN'));
 
       // Correct PIN
       final rightResult = await notifier.verifyPin('654321');
@@ -338,7 +338,7 @@ void main() {
         expect(await notifier.verifyPin('000000'), isFalse);
       }
       expect(container.read(appLockProvider).isLockedOut, isTrue);
-      expect(container.read(appLockProvider).errorMessage, contains('Troppi tentativi'));
+      expect(container.read(appLockProvider).errorMessage, contains('Too many failed attempts'));
       // Even correct PIN is rejected while locked out
       expect(await notifier.verifyPin('654321'), isFalse);
     });
@@ -353,7 +353,6 @@ void main() {
             () => SettingsNotifier(
               const AppSettings(
                 appLockEnabled: true,
-                autoLockTimeoutMinutes: 0, // Immediately
               ),
             ),
           ),
@@ -387,7 +386,7 @@ void main() {
         ProviderScope(
           overrides: [
             settingsProvider.overrideWith(
-              () => SettingsNotifier(const AppSettings(appLockEnabled: false)),
+              () => SettingsNotifier(const AppSettings()),
             ),
             appLockServiceProvider.overrideWithValue(
               AppLockService(storage: fakeStorage, localAuth: fakeAuth),
@@ -436,7 +435,7 @@ void main() {
       expect(find.text('Protected App Content'), findsNothing);
       expect(find.byType(AppLockScreen), findsOneWidget);
       expect(find.text('UnifyCloud'), findsOneWidget);
-      expect(find.text('Applicazione bloccata'), findsOneWidget);
+      expect(find.text('Application Locked'), findsOneWidget);
     });
 
     testWidgets('AppLockScreen entering digits and backspace updates PIN dots',
@@ -533,7 +532,7 @@ void main() {
             body: Builder(
               builder: (context) => ElevatedButton(
                 onPressed: () {
-                  showDialog(
+                  showDialog<void>(
                     context: context,
                     builder: (_) => PinSetupDialog(
                       mode: PinDialogMode.setup,
@@ -553,38 +552,38 @@ void main() {
       await tester.tap(find.text('Open Dialog'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Imposta Codice PIN'), findsOneWidget);
+      expect(find.text('Setup Security PIN'), findsOneWidget);
 
       // Enter '123456' on step 1
-      for (var d in ['1', '2', '3', '4', '5', '6']) {
+      for (final d in ['1', '2', '3', '4', '5', '6']) {
         await tester.tap(find.text(d));
         await tester.pump();
       }
 
-      await tester.tap(find.text('Continua'));
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
 
       // Step 2: Confirm
-      expect(find.text('Conferma Codice PIN'), findsOneWidget);
+      expect(find.text('Confirm PIN Code'), findsOneWidget);
 
       // Enter mismatched PIN '111111'
-      for (var d in ['1', '1', '1', '1', '1', '1']) {
+      for (final d in ['1', '1', '1', '1', '1', '1']) {
         await tester.tap(find.text(d));
         await tester.pump();
       }
 
-      await tester.tap(find.text('Conferma'));
+      await tester.tap(find.text('Confirm'));
       await tester.pumpAndSettle();
 
-      expect(find.text('I codici PIN non corrispondono. Riprova.'), findsOneWidget);
+      expect(find.text('PINs do not match. Try again.'), findsOneWidget);
 
       // Now enter matching PIN '123456'
-      for (var d in ['1', '2', '3', '4', '5', '6']) {
+      for (final d in ['1', '2', '3', '4', '5', '6']) {
         await tester.tap(find.text(d));
         await tester.pump();
       }
 
-      await tester.tap(find.text('Conferma'));
+      await tester.tap(find.text('Confirm'));
       await tester.pumpAndSettle();
 
       expect(savedPin, equals('123456'));
@@ -608,7 +607,6 @@ void main() {
               () => SettingsNotifier(
                 const AppSettings(
                   appLockEnabled: true,
-                  useBiometrics: true,
                   autoLockTimeoutMinutes: 5,
                   language: 'it',
                 ),

@@ -17,14 +17,14 @@ final rcloneServiceProvider = Provider<RcloneService>((ref) {
 
 /// Service providing typed Dart APIs over the Go Rclone CGO native shared library.
 class RcloneService {
-  late final ffi.DynamicLibrary _dylib;
-  late final RcloneBindings _bindings;
-  final bool _isCustomDylib;
 
   RcloneService([ffi.DynamicLibrary? dylib]) : _isCustomDylib = dylib != null {
     _dylib = dylib ?? _loadLibrary();
     _bindings = RcloneBindings(_dylib);
   }
+  late final ffi.DynamicLibrary _dylib;
+  late final RcloneBindings _bindings;
+  final bool _isCustomDylib;
 
   static ffi.DynamicLibrary _loadLibrary() {
     if (Platform.isLinux) {

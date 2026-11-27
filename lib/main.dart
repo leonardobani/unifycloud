@@ -19,10 +19,6 @@ void main([List<String> args = const []]) async {
   final startHidden =
       args.contains('--background') || args.contains('--minimized');
 
-  // Initialize background services (Android foreground & iOS background tasks)
-  final backgroundService = AppBackgroundService();
-  await backgroundService.initialize();
-
   // Load persisted settings synchronously before building UI so App Lock engages immediately
   const storage = SecureConfigService.defaultStorage;
   final autostartService = DesktopAutostartService();
@@ -30,6 +26,10 @@ void main([List<String> args = const []]) async {
     storage,
     autostartService: autostartService,
   );
+
+  // Initialize background services (Android foreground & iOS background tasks)
+  final backgroundService = AppBackgroundService();
+  await backgroundService.initialize(locale: initialSettings.locale);
 
   // Initialize native Rclone engine and secure configuration bootstrapping
   final rclone = RcloneService();
@@ -99,6 +99,16 @@ class UnifyCloudApp extends ConsumerWidget {
       locale: settings.locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localeResolutionCallback: (locale, supportedLocales) {
+        if (locale != null) {
+          for (final supported in supportedLocales) {
+            if (supported.languageCode == locale.languageCode) {
+              return supported;
+            }
+          }
+        }
+        return const Locale('en');
+      },
       routerConfig: appRouter,
       builder: (context, child) =>
           AppLockGate(child: child ?? const SizedBox.shrink()),

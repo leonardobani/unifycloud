@@ -5,58 +5,217 @@
     "description": "Application title"
   },
   "home": "Home",
+  "@home": {
+    "description": "Localized message for home."
+  },
   "explorer": "Explorer",
+  "@explorer": {
+    "description": "Localized message for explorer."
+  },
   "sync": "Sync",
+  "@sync": {
+    "description": "Localized message for sync."
+  },
   "settings": "Settings",
+  "@settings": {
+    "description": "Localized message for settings."
+  },
   "cancel": "Cancel",
+  "@cancel": {
+    "description": "Localized message for cancel."
+  },
   "confirm": "Confirm",
+  "@confirm": {
+    "description": "Localized message for confirm."
+  },
   "delete": "Delete",
+  "@delete": {
+    "description": "Localized message for delete."
+  },
   "save": "Save",
+  "@save": {
+    "description": "Localized message for save."
+  },
   "close": "Close",
+  "@close": {
+    "description": "Localized message for close."
+  },
   "edit": "Edit",
+  "@edit": {
+    "description": "Localized message for edit."
+  },
   "create": "Create",
+  "@create": {
+    "description": "Localized message for create."
+  },
   "retry": "Retry",
+  "@retry": {
+    "description": "Localized message for retry."
+  },
   "copy": "Copy",
+  "@copy": {
+    "description": "Localized message for copy."
+  },
   "move": "Move",
+  "@move": {
+    "description": "Localized message for move."
+  },
   "rename": "Rename",
+  "@rename": {
+    "description": "Localized message for rename."
+  },
   "download": "Download",
+  "@download": {
+    "description": "Localized message for download."
+  },
   "upload": "Upload",
+  "@upload": {
+    "description": "Localized message for upload."
+  },
   "share": "Share",
+  "@share": {
+    "description": "Localized message for share."
+  },
   "details": "Details",
+  "@details": {
+    "description": "Localized message for details."
+  },
   "search": "Search",
+  "@search": {
+    "description": "Localized message for search."
+  },
   "change": "Change",
+  "@change": {
+    "description": "Localized message for change."
+  },
   "reset": "Reset",
+  "@reset": {
+    "description": "Localized message for reset."
+  },
   "done": "Done",
+  "@done": {
+    "description": "Localized message for done."
+  },
   "loading": "Loading...",
+  "@loading": {
+    "description": "Localized message for loading."
+  },
   "success": "Operation completed",
+  "@success": {
+    "description": "Localized message for success."
+  },
   "error": "Error",
+  "@error": {
+    "description": "Localized message for error."
+  },
   "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Localized message for settings title."
+  },
   "resetDefaultsTooltip": "Restore Default Settings",
+  "@resetDefaultsTooltip": {
+    "description": "Localized message for reset defaults tooltip."
+  },
   "resetDialogTitle": "Reset Settings",
+  "@resetDialogTitle": {
+    "description": "Localized message for reset dialog title."
+  },
   "resetDialogContent": "Do you want to reset all preferences (theme, language, folders, display) to factory defaults?",
+  "@resetDialogContent": {
+    "description": "Localized message for reset dialog content."
+  },
   "resetSuccessSnackbar": "Settings restored to default values",
+  "@resetSuccessSnackbar": {
+    "description": "Localized message for reset success snackbar."
+  },
   "appearanceAndTheme": "Appearance & Theme",
+  "@appearanceAndTheme": {
+    "description": "Localized message for appearance and theme."
+  },
   "chooseVisualThemeSubtitle": "Choose visual theme for UnifyCloud interface:",
+  "@chooseVisualThemeSubtitle": {
+    "description": "Localized message for choose visual theme subtitle."
+  },
   "themeSystem": "System",
+  "@themeSystem": {
+    "description": "Localized message for theme system."
+  },
   "themeLight": "Light",
+  "@themeLight": {
+    "description": "Localized message for theme light."
+  },
   "themeDark": "Dark",
+  "@themeDark": {
+    "description": "Localized message for theme dark."
+  },
   "language": "Language",
+  "@language": {
+    "description": "Localized message for language."
+  },
   "languageSubtitle": "Select application interface language",
+  "@languageSubtitle": {
+    "description": "Localized message for language subtitle."
+  },
   "langEnglish": "English",
+  "@langEnglish": {
+    "description": "Localized message for lang english."
+  },
   "langItalian": "Italiano",
+  "@langItalian": {
+    "description": "Localized message for lang italian."
+  },
   "langSystem": "System Default",
+  "@langSystem": {
+    "description": "Localized message for lang system."
+  },
   "filesAndExploration": "Files & Exploration",
+  "@filesAndExploration": {
+    "description": "Localized message for files and exploration."
+  },
   "showHiddenFiles": "Show hidden files",
+  "@showHiddenFiles": {
+    "description": "Localized message for show hidden files."
+  },
   "showHiddenFilesSubtitle": "Display files and folders starting with a dot",
+  "@showHiddenFilesSubtitle": {
+    "description": "Localized message for show hidden files subtitle."
+  },
   "confirmBeforeDelete": "Confirm before deleting",
+  "@confirmBeforeDelete": {
+    "description": "Localized message for confirm before delete."
+  },
   "confirmBeforeDeleteSubtitle": "Ask for confirmation before permanently deleting files",
+  "@confirmBeforeDeleteSubtitle": {
+    "description": "Localized message for confirm before delete subtitle."
+  },
   "defaultDownloadFolder": "Default Download Folder",
+  "@defaultDownloadFolder": {
+    "description": "Localized message for default download folder."
+  },
   "defaultDownloadFolderSystem": "System default download directory",
+  "@defaultDownloadFolderSystem": {
+    "description": "Localized message for default download folder system."
+  },
   "restoreDefaultPath": "Restore default path",
+  "@restoreDefaultPath": {
+    "description": "Localized message for restore default path."
+  },
   "customDownloadFolderDialogPrompt": "Select a folder using the system picker or enter the desired path manually:",
+  "@customDownloadFolderDialogPrompt": {
+    "description": "Localized message for custom download folder dialog prompt."
+  },
   "folderPath": "Folder path",
+  "@folderPath": {
+    "description": "Localized message for folder path."
+  },
   "folderPathHint": "e.g. /home/user/Downloads",
+  "@folderPathHint": {
+    "description": "Localized message for folder path hint."
+  },
   "browseWithSystemPicker": "Browse with system picker",
+  "@browseWithSystemPicker": {
+    "description": "Localized message for browse with system picker."
+  },
   "errorOpenPicker": "Unable to open system picker: {error}",
   "@errorOpenPicker": {
     "description": "Error snackbar when opening file picker fails",
@@ -67,16 +226,49 @@
     }
   },
   "restoreDefault": "Restore default",
+  "@restoreDefault": {
+    "description": "Localized message for restore default."
+  },
   "maxConcurrentTransfers": "Concurrent Transfers",
+  "@maxConcurrentTransfers": {
+    "description": "Localized message for max concurrent transfers."
+  },
   "maxConcurrentTransfersSubtitle": "Maximum number of simultaneous active file transfers",
+  "@maxConcurrentTransfersSubtitle": {
+    "description": "Localized message for max concurrent transfers subtitle."
+  },
   "dualPaneMode": "Dual-Pane Commander Mode",
+  "@dualPaneMode": {
+    "description": "Localized message for dual pane mode."
+  },
   "dualPaneModeSubtitle": "Show two side-by-side panes on wide screens and tablets",
+  "@dualPaneModeSubtitle": {
+    "description": "Localized message for dual pane mode subtitle."
+  },
   "communityAndSupport": "Community & Support",
+  "@communityAndSupport": {
+    "description": "Localized message for community and support."
+  },
   "openSourceDescription": "UnifyCloud is free and open-source software built to unify your cloud data without trackers or proprietary intermediaries.",
+  "@openSourceDescription": {
+    "description": "Localized message for open source description."
+  },
   "supportDeveloper": "Support the Developer",
+  "@supportDeveloper": {
+    "description": "Localized message for support developer."
+  },
   "supportDeveloperSubtitle": "Buy a coffee to support independent development",
+  "@supportDeveloperSubtitle": {
+    "description": "Localized message for support developer subtitle."
+  },
   "viewSourceOnGitLab": "View Code on GitLab",
+  "@viewSourceOnGitLab": {
+    "description": "Localized message for view source on git lab."
+  },
   "viewSourceOnGitLabSubtitle": "Official repository, bug reports, and contributions",
+  "@viewSourceOnGitLabSubtitle": {
+    "description": "Localized message for view source on git lab subtitle."
+  },
   "errorOpenBrowser": "Unable to open browser. Repository: {url}",
   "@errorOpenBrowser": {
     "description": "Error snackbar when opening browser fails",
@@ -87,375 +279,512 @@
     }
   },
   "supportDialogTitle": "Support UnifyCloud",
+  "@supportDialogTitle": {
+    "description": "Localized message for support dialog title."
+  },
   "supportDialogDescription1": "UnifyCloud is a free and open-source project designed to give you full control over your cloud files.",
+  "@supportDialogDescription1": {
+    "description": "Localized message for support dialog description1."
+  },
   "supportDialogDescription2": "If you find this application helpful, consider buying a coffee or donating to support continuous development and new features!",
+  "@supportDialogDescription2": {
+    "description": "Localized message for support dialog description2."
+  },
   "supportKofiTitle": "Buy a coffee on Ko-fi",
+  "@supportKofiTitle": {
+    "description": "Localized message for support kofi title."
+  },
   "supportLiberapayTitle": "Donate on Liberapay",
+  "@supportLiberapayTitle": {
+    "description": "Localized message for support liberapay title."
+  },
   "supportPaypalTitle": "Donate via PayPal",
+  "@supportPaypalTitle": {
+    "description": "Localized message for support paypal title."
+  },
   "securityAndEncryption": "Security & Encryption",
+  "@securityAndEncryption": {
+    "description": "Localized message for security and encryption."
+  },
   "securityArchitectureDescription": "UnifyCloud employs a Zero-Plaintext architecture. All OAuth tokens and credentials are securely protected in the system Keychain/Keystore and injected exclusively into Go engine RAM memory.",
+  "@securityArchitectureDescription": {
+    "description": "Localized message for security architecture description."
+  },
   "appLock": "App Lock (PIN / Biometrics)",
+  "@appLock": {
+    "description": "Localized message for app lock."
+  },
   "appLockSubtitle": "Require PIN or fingerprint to access",
+  "@appLockSubtitle": {
+    "description": "Localized message for app lock subtitle."
+  },
   "appLockActiveSubtitle": "Active at startup and after inactivity",
+  "@appLockActiveSubtitle": {
+    "description": "Localized message for app lock active subtitle."
+  },
   "appLockEnabledSnackbar": "App Lock enabled successfully",
+  "@appLockEnabledSnackbar": {
+    "description": "Localized message for app lock enabled snackbar."
+  },
   "appLockDisabledSnackbar": "App Lock disabled",
+  "@appLockDisabledSnackbar": {
+    "description": "Localized message for app lock disabled snackbar."
+  },
   "changePin": "Change PIN",
+  "@changePin": {
+    "description": "Localized message for change pin."
+  },
   "changePinSubtitle": "Set a new 6-digit security PIN",
+  "@changePinSubtitle": {
+    "description": "Localized message for change pin subtitle."
+  },
   "pinChangedSnackbar": "Security PIN updated successfully",
+  "@pinChangedSnackbar": {
+    "description": "Localized message for pin changed snackbar."
+  },
   "biometricAuth": "Biometric Authentication",
+  "@biometricAuth": {
+    "description": "Localized message for biometric auth."
+  },
   "biometricAuthSubtitle": "Use fingerprint or biometric sensor if available",
+  "@biometricAuthSubtitle": {
+    "description": "Localized message for biometric auth subtitle."
+  },
   "biometricNotAvailable": "Not available or not configured on this device",
+  "@biometricNotAvailable": {
+    "description": "Localized message for biometric not available."
+  },
   "autoLock": "Auto Lock",
+  "@autoLock": {
+    "description": "Localized message for auto lock."
+  },
   "autoLockSubtitle": "Background inactivity timeout before locking",
+  "@autoLockSubtitle": {
+    "description": "Localized message for auto lock subtitle."
+  },
   "lockImmediately": "Immediately",
+  "@lockImmediately": {
+    "description": "Localized message for lock immediately."
+  },
   "lockAfter1Minute": "After 1 minute",
+  "@lockAfter1Minute": {
+    "description": "Localized message for lock after1 minute."
+  },
   "lockAfter5Minutes": "After 5 minutes",
+  "@lockAfter5Minutes": {
+    "description": "Localized message for lock after5 minutes."
+  },
   "lockAfter15Minutes": "After 15 minutes",
+  "@lockAfter15Minutes": {
+    "description": "Localized message for lock after15 minutes."
+  },
   "lockAfter30Minutes": "After 30 minutes",
+  "@lockAfter30Minutes": {
+    "description": "Localized message for lock after30 minutes."
+  },
   "syncCloudAccounts": "Sync Cloud Accounts",
+  "@syncCloudAccounts": {
+    "description": "Localized message for sync cloud accounts."
+  },
   "syncCloudAccountsSubtitle": "Reload configurations from secure storage",
+  "@syncCloudAccountsSubtitle": {
+    "description": "Localized message for sync cloud accounts subtitle."
+  },
   "syncCloudAccountsSuccess": "Cloud accounts reloaded successfully",
+  "@syncCloudAccountsSuccess": {
+    "description": "Localized message for sync cloud accounts success."
+  },
   "clearAllCredentials": "Clear All Credentials",
+  "@clearAllCredentials": {
+    "description": "Localized message for clear all credentials."
+  },
   "clearAllCredentialsSubtitle": "Removes encrypted configuration and disconnects all clouds",
+  "@clearAllCredentialsSubtitle": {
+    "description": "Localized message for clear all credentials subtitle."
+  },
   "clearCredentialsDialogTitle": "Warning: Reset Credentials",
+  "@clearCredentialsDialogTitle": {
+    "description": "Localized message for clear credentials dialog title."
+  },
   "clearCredentialsDialogContent": "Are you sure you want to delete all saved credentials? You will need to reconnect your cloud accounts.",
+  "@clearCredentialsDialogContent": {
+    "description": "Localized message for clear credentials dialog content."
+  },
   "clearCredentialsSuccess": "Credentials deleted successfully",
+  "@clearCredentialsSuccess": {
+    "description": "Localized message for clear credentials success."
+  },
   "aboutUnifyCloud": "About UnifyCloud",
-  "appVersion": "App Version: 1.0.0",
+  "@aboutUnifyCloud": {
+    "description": "Localized message for about unify cloud."
+  },
+  "appVersion": "App Version: 1.0.1",
+  "@appVersion": {
+    "description": "Localized message for app version."
+  },
   "developerInfo": "Developer: Leonardo Bani (@leonardobani)",
+  "@developerInfo": {
+    "description": "Localized message for developer info."
+  },
   "engineInfo": "Engine: Rclone Core CGO (Go v1.22+ / C FFI)",
+  "@engineInfo": {
+    "description": "Localized message for engine info."
+  },
   "frameworkInfo": "Framework: Flutter (Material 3 Responsive)",
+  "@frameworkInfo": {
+    "description": "Localized message for framework info."
+  },
   "licenseInfo": "License: GNU General Public License v3.0 (GPL-3.0)",
+  "@licenseInfo": {
+    "description": "Localized message for license info."
+  },
   "copyrightInfo": "Copyright: © 2026 Leonardo Bani",
+  "@copyrightInfo": {
+    "description": "Localized message for copyright info."
+  },
   "storageOverview": "Storage Overview",
+  "@storageOverview": {
+    "description": "Localized message for storage overview."
+  },
   "connectedClouds": "Connected Clouds",
+  "@connectedClouds": {
+    "description": "Localized message for connected clouds."
+  },
   "noCloudsConfigured": "No cloud accounts configured",
+  "@noCloudsConfigured": {
+    "description": "Localized message for no clouds configured."
+  },
   "noCloudsDescription": "Connect your first cloud storage account to start managing and syncing files.",
+  "@noCloudsDescription": {
+    "description": "Localized message for no clouds description."
+  },
   "addCloud": "Add Cloud",
+  "@addCloud": {
+    "description": "Localized message for add cloud."
+  },
   "used": "used",
+  "@used": {
+    "description": "Localized message for used."
+  },
   "free": "free",
+  "@free": {
+    "description": "Localized message for free."
+  },
   "total": "total",
+  "@total": {
+    "description": "Localized message for total."
+  },
   "manageAccounts": "Manage Accounts",
+  "@manageAccounts": {
+    "description": "Localized message for manage accounts."
+  },
   "viewFiles": "View Files",
+  "@viewFiles": {
+    "description": "Localized message for view files."
+  },
   "createVaultHere": "Create Encrypted Vault here...",
+  "@createVaultHere": {
+    "description": "Localized message for create vault here."
+  },
   "disconnectAccount": "Disconnect account",
+  "@disconnectAccount": {
+    "description": "Localized message for disconnect account."
+  },
   "disconnectConfirmTitle": "Disconnect account?",
+  "@disconnectConfirmTitle": {
+    "description": "Localized message for disconnect confirm title."
+  },
   "disconnectConfirmContent": "Are you sure you want to disconnect this account? Remote files will remain intact.",
+  "@disconnectConfirmContent": {
+    "description": "Localized message for disconnect confirm content."
+  },
   "allFiles": "All Files",
+  "@allFiles": {
+    "description": "Localized message for all files."
+  },
   "emptyFolder": "This folder is empty",
+  "@emptyFolder": {
+    "description": "Localized message for empty folder."
+  },
   "emptyFolderSubtitle": "Upload files or create a subfolder to get started.",
+  "@emptyFolderSubtitle": {
+    "description": "Localized message for empty folder subtitle."
+  },
   "uploadFile": "Upload file",
+  "@uploadFile": {
+    "description": "Localized message for upload file."
+  },
   "uploadFolder": "Upload entire folder",
+  "@uploadFolder": {
+    "description": "Localized message for upload folder."
+  },
   "newFolder": "New Folder",
+  "@newFolder": {
+    "description": "Localized message for new folder."
+  },
   "newFolderPrompt": "Enter the name for the new folder:",
+  "@newFolderPrompt": {
+    "description": "Localized message for new folder prompt."
+  },
   "folderNameHint": "Folder name",
+  "@folderNameHint": {
+    "description": "Localized message for folder name hint."
+  },
   "selectAll": "Select all",
+  "@selectAll": {
+    "description": "Localized message for select all."
+  },
   "clearSelection": "Clear selection",
+  "@clearSelection": {
+    "description": "Localized message for clear selection."
+  },
   "deleteSelected": "Delete selected",
+  "@deleteSelected": {
+    "description": "Localized message for delete selected."
+  },
   "deleteSelectedPrompt": "Are you sure you want to delete the selected items?",
+  "@deleteSelectedPrompt": {
+    "description": "Localized message for delete selected prompt."
+  },
   "deleteItemPrompt": "Are you sure you want to delete this item?",
+  "@deleteItemPrompt": {
+    "description": "Localized message for delete item prompt."
+  },
   "shareLink": "Share Link",
+  "@shareLink": {
+    "description": "Localized message for share link."
+  },
   "createShareLink": "Create shareable link",
+  "@createShareLink": {
+    "description": "Localized message for create share link."
+  },
   "copyShareLink": "Copy Link",
+  "@copyShareLink": {
+    "description": "Localized message for copy share link."
+  },
   "copiedToClipboard": "Copied to clipboard",
+  "@copiedToClipboard": {
+    "description": "Localized message for copied to clipboard."
+  },
   "transfers": "Transfers",
+  "@transfers": {
+    "description": "Localized message for transfers."
+  },
   "activeTransfers": "Active Transfers",
+  "@activeTransfers": {
+    "description": "Localized message for active transfers."
+  },
   "completed": "Completed",
+  "@completed": {
+    "description": "Localized message for completed."
+  },
   "failed": "Failed",
+  "@failed": {
+    "description": "Localized message for failed."
+  },
   "queued": "Queued",
+  "@queued": {
+    "description": "Localized message for queued."
+  },
   "cancelTransfer": "Cancel transfer",
+  "@cancelTransfer": {
+    "description": "Localized message for cancel transfer."
+  },
   "clearCompleted": "Clear completed",
+  "@clearCompleted": {
+    "description": "Localized message for clear completed."
+  },
   "syncRulesTitle": "Backup & Sync Rules",
+  "@syncRulesTitle": {
+    "description": "Localized message for sync rules title."
+  },
   "newRule": "New Rule",
+  "@newRule": {
+    "description": "Localized message for new rule."
+  },
   "noSyncRules": "No synchronization rules configured",
+  "@noSyncRules": {
+    "description": "Localized message for no sync rules."
+  },
   "noSyncRulesSubtitle": "Create an automated rule to sync local folders with your cloud storage.",
+  "@noSyncRulesSubtitle": {
+    "description": "Localized message for no sync rules subtitle."
+  },
   "ruleName": "Rule Name",
+  "@ruleName": {
+    "description": "Localized message for rule name."
+  },
   "sourcePath": "Source Folder",
+  "@sourcePath": {
+    "description": "Localized message for source path."
+  },
   "destinationCloud": "Destination Cloud",
+  "@destinationCloud": {
+    "description": "Localized message for destination cloud."
+  },
   "destinationPath": "Remote Path",
+  "@destinationPath": {
+    "description": "Localized message for destination path."
+  },
   "direction": "Direction",
+  "@direction": {
+    "description": "Localized message for direction."
+  },
   "frequency": "Frequency",
+  "@frequency": {
+    "description": "Localized message for frequency."
+  },
   "runNow": "Run Now",
+  "@runNow": {
+    "description": "Localized message for run now."
+  },
   "syncInProgress": "Synchronization in progress...",
+  "@syncInProgress": {
+    "description": "Localized message for sync in progress."
+  },
   "syncSuccess": "Synchronization completed",
+  "@syncSuccess": {
+    "description": "Localized message for sync success."
+  },
   "syncFailed": "Synchronization failed",
+  "@syncFailed": {
+    "description": "Localized message for sync failed."
+  },
   "addCloudDialogTitle": "Connect New Cloud",
+  "@addCloudDialogTitle": {
+    "description": "Localized message for add cloud dialog title."
+  },
   "selectProvider": "Select Cloud Provider",
+  "@selectProvider": {
+    "description": "Localized message for select provider."
+  },
   "accountNameLabel": "Account Name / Alias",
+  "@accountNameLabel": {
+    "description": "Localized message for account name label."
+  },
   "connectButton": "Connect Account",
+  "@connectButton": {
+    "description": "Localized message for connect button."
+  },
   "vaultTitle": "E2E Encryption (Crypt)",
+  "@vaultTitle": {
+    "description": "Localized message for vault title."
+  },
   "vaultPassword": "Vault Password",
+  "@vaultPassword": {
+    "description": "Localized message for vault password."
+  },
   "vaultConfirmPassword": "Confirm Password",
+  "@vaultConfirmPassword": {
+    "description": "Localized message for vault confirm password."
+  },
   "vaultSalt": "Salt / Secondary Password (Optional)",
+  "@vaultSalt": {
+    "description": "Localized message for vault salt."
+  },
   "encryptFileNames": "Encrypt file names",
+  "@encryptFileNames": {
+    "description": "Localized message for encrypt file names."
+  },
   "encryptDirNames": "Encrypt directory names",
+  "@encryptDirNames": {
+    "description": "Localized message for encrypt dir names."
+  },
   "langSpanish": "Español",
+  "@langSpanish": {
+    "description": "Localized message for lang spanish."
+  },
   "langFrench": "Français",
-  "langGerman": "Deutsch",
-  "langPortuguese": "Português",
-  "langRussian": "Русский",
-  "langChinese": "简体中文",
-  "langJapanese": "日本語",
-  "langKorean": "한국어",
+  "@langFrench": {
+    "description": "Localized message for lang french."
+  },
   "langArabic": "العربية",
-  "langHindi": "हिन्दी",
-  "langDutch": "Nederlands",
+  "@langArabic": {
+    "description": "Localized message for lang arabic."
+  },
   "langPolish": "Polski",
-  "langTurkish": "Türkçe",
+  "@langPolish": {
+    "description": "Localized message for lang polish."
+  },
   "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Localized message for select language."
+  },
   "searchLanguageHint": "Search language or country...",
+  "@searchLanguageHint": {
+    "description": "Localized message for search language hint."
+  },
   "currentLanguage": "Current Language",
+  "@currentLanguage": {
+    "description": "Localized message for current language."
+  },
   "systemDefaultWithLocale": "System Default ({locale})",
-  "refreshCloudsTooltip": "Refresh cloud configurations",
-  "storageOverviewAggregated": "Aggregated Storage Overview",
-  "ramEncryptionActive": "RAM Encryption Active",
-  "connectedAccountsCount": "Connected Cloud Accounts: {count}",
-  "noCloudsConfiguredHint": "No cloud accounts configured. Tap \"+ Connect New Cloud\" below.",
-  "percentUsed": "{percent}% used",
-  "availableSpace": "{space} available",
-  "calculatingQuota": "Calculating storage quotas or unlimited space...",
-  "syncAndBackup": "Sync & Backup",
-  "noRulesConfigured": "No rules configured",
-  "activeRulesCount": "{active}/{total} active rules",
-  "manage": "Manage",
-  "connectedCloudsCount": "Connected Clouds ({count})",
-  "connectNewCloud": "Connect New Cloud",
-  "noCloudProvidersConnected": "No Cloud Providers Connected",
-  "connectCloudDescription": "Connect Google Drive, Dropbox, OneDrive, SFTP or WebDAV to start syncing and exploring your files.",
-  "addFirstCloud": "Add First Cloud",
-  "vaultOnRemote": "VAULT ON {remote}",
-  "disconnectCloudTitle": "Disconnect Cloud",
-  "disconnectCloudPrompt": "Do you want to disconnect \"{name}\"? Credentials will be removed from encrypted storage.",
-  "disconnect": "Disconnect",
-  "freeSpace": "{space} free",
-  "storage": "Storage",
-  "available": "Available",
-  "exploreFiles": "Explore Files",
-  "paneLeft": "Left",
-  "paneRight": "Right",
-  "folderName": "Folder name",
-  "errorCreatingFolder": "Error creating folder: {error}",
-  "moveAction": "Move",
-  "copyAction": "Copy",
-  "transferBatchStarted": "{action} of {count} items to [{remote}] started...",
-  "errorTransferring": "Error during transfer: {error}",
-  "itemCopiedToClipboard": "\"{name}\" copied to clipboard",
-  "itemsCopiedToClipboard": "{count} items copied to clipboard",
-  "itemCutToClipboard": "\"{name}\" cut (ready to move)",
-  "itemsCutToClipboard": "{count} items cut (ready to move)",
-  "noFilesSelectedForDownload": "No files selected for download.",
-  "downloadingItems": "Downloading {count} items...",
-  "itemsDownloadedSuccess": "{count} items downloaded to \"{path}\"",
-  "errorStartingDownload": "Error starting download: {error}",
-  "deleteItemsConfirmTitle": "Delete {count} selected items?",
-  "deleteItemsConfirmPrompt": "Are you sure you want to permanently delete {count} selected items from the cloud?",
-  "itemsDeletedSuccess": "{count} items deleted",
-  "errorDeleting": "Error during deletion: {error}",
-  "uploadCompletedSuccess": "Upload completed successfully",
-  "errorUploading": "Error during upload: {error}",
-  "folderUploadCompletedSuccess": "Folder upload completed successfully",
-  "errorFolderUploading": "Error uploading folder: {error}",
-  "filesAlreadyInDirectory": "Files are already in this folder.",
-  "dragDropTransferStarted": "{action} of {count} items to [{remote}] started...",
-  "errorDragDrop": "Error during drag-and-drop transfer: {error}",
-  "closeSelection": "Close selection",
-  "itemsSelectedCount": "{count} selected",
-  "deselectAll": "Deselect all",
-  "copyToRemote": "Copy to {remote}",
-  "moveToRemote": "Move to {remote}",
-  "moreActions": "More actions",
-  "downloadSelected": "Download selected",
-  "copyToClipboard": "Copy to clipboard",
-  "cutToClipboard": "Cut to clipboard",
-  "selectCloud": "Select Cloud",
-  "closeSearch": "Close search",
-  "uploadFromDevice": "Upload from device",
-  "moreOptions": "More options",
-  "viewGrid": "Grid view",
-  "viewList": "List view",
-  "multiSelection": "Multiple selection",
-  "sortNameAsc": "Name (A-Z)",
-  "sortNameDesc": "Name (Z-A)",
-  "sortSizeDesc": "Size (Large -> Small)",
-  "sortSizeAsc": "Size (Small -> Large)",
-  "sortDateDesc": "Date (Newest first)",
-  "disableDualPane": "Disable Commander (Single Pane)",
-  "enableDualPane": "Enable Commander (Dual Pane)",
-  "itemsInClipboard": "{count} items in clipboard",
-  "pasteHere": "Paste here",
-  "noResults": "No results",
-  "noMatchingResults": "No files or folders match \"{query}\"",
-  "selectACloud": "Select a Cloud",
-  "selectCloudDescription": "Select a cloud provider from the menu above to view and explore your remote files.",
-  "optionsForItem": "Options for {name}",
-  "select": "Select",
-  "openWithSystemApp": "Open with system app",
-  "downloadToLocal": "Download to local",
-  "cut": "Cut (Move)",
-  "copyPath": "Copy path",
-  "info": "Information",
-  "generatingShareLink": "Generating share link for \"{name}\"...",
-  "errorPublicLink": "Public link error: {error}",
-  "noLinkGenerated": "No link generated by provider.",
-  "errorDownloading": "Error downloading: {error}",
-  "renameFolderTitle": "Rename folder",
-  "renameFileTitle": "Rename file",
-  "errorRenaming": "Error renaming: {error}",
-  "pathCopiedToClipboard": "Path copied to clipboard",
-  "itemDetailsPath": "Path: {path}",
-  "itemDetailsType": "Type: {type}",
-  "itemDetailsSize": "Size: {size}",
-  "itemDetailsModified": "Modified date: {date}",
-  "folder": "Folder",
-  "file": "File",
-  "selectCloudFirstLeft": "Select a cloud in the left pane first.",
-  "selectCloudFirstRight": "Select a cloud in the right pane first.",
-  "selectDestinationCloudLeft": "Select a destination cloud in the left pane first.",
-  "selectDestinationCloudRight": "Select a destination cloud in the right pane first.",
-  "noFilesToTransfer": "No files present or selected to transfer.",
-  "transferStarted": "{action} of {count} items from [{src}] to [{dst}] started...",
-  "swapPanesTooltip": "Swap panes (<->)",
-  "refreshBothPanesTooltip": "Refresh both panes",
-  "copyRight": "Copy to right ->",
-  "moveRight": "Move to right ->",
-  "copyLeft": "<- Copy to left",
-  "moveLeft": "<- Move to left",
-  "copyRightWithCount": "Copy right ({count}) ->",
-  "moveRightWithCount": "Move right ({count}) ->",
-  "copyLeftWithCount": "<- Copy left ({count})",
-  "moveLeftWithCount": "<- Move left ({count})",
-  "deleteRuleTitle": "Delete Rule",
-  "deleteRulePrompt": "Are you sure you want to delete sync rule \"{name}\"? Files on your device and in the cloud will not be deleted.",
-  "syncAll": "Sync All",
-  "newRuleTooltip": "New rule",
-  "backupBannerTitle": "Continuous Backup & Cloud Sync",
-  "backupBannerSubtitle": "Configure scheduled synchronizations between local folders and cloud remotes.",
-  "noActiveRules": "No Active Rules",
-  "noActiveRulesSubtitle": "Create your first rule to run automatic backups from your phone to Google Drive, Dropbox, SFTP or any other cloud.",
-  "createNewRule": "Create New Rule",
-  "ruleOptionsTooltip": "Rule options",
-  "syncNow": "Sync now",
-  "statusWaiting": "Pending",
-  "statusInProgress": "In progress...",
-  "statusCompleted": "Completed",
-  "statusFailed": "Failed",
-  "editRuleTitle": "Edit Backup Rule",
-  "newRuleTitle": "New Synchronization Rule",
-  "ruleDialogSubtitle": "Configure automatic backup between a local folder and the cloud.",
-  "ruleNameOptional": "Rule Name (optional)",
-  "ruleNameHint": "e.g. DCIM Photo Backup or Work Documents",
-  "sourceLocalFolder": "Local Source Folder",
-  "sourceLocalFolderHint": "/storage/emulated/0/DCIM or /home/user/Pictures",
-  "browseFolders": "Browse folders",
-  "selectLocalFolderError": "Please enter or select a local folder",
-  "noCloudsConfiguredSync": "No cloud configured. Configure a cloud account from Home before continuing.",
-  "remoteDestinationPath": "Remote Destination Path",
-  "syncMode": "Sync Mode",
-  "syncModeCopy": "Incremental Backup",
-  "syncModeCopyDesc": "Uploads new and modified files, preserving existing cloud files.",
-  "syncModeSync": "Mirror Synchronization",
-  "syncModeSyncDesc": "Makes the remote destination identical to the local folder (deletions locally are deleted on cloud).",
-  "syncFrequency": "Execution Frequency",
-  "freqManual": "Manual (on demand only)",
-  "freq15Min": "Every 15 minutes",
-  "freq30Min": "Every 30 minutes",
-  "freqHourly": "Every hour",
-  "freq6Hours": "Every 6 hours",
-  "freq12Hours": "Every 12 hours",
-  "freqDaily": "Every day (24 hours)",
-  "activateRuleImmediately": "Activate rule immediately",
-  "activateRuleImmediatelyDesc": "Sync will run in background according to the specified interval",
-  "updateRule": "Update",
-  "saveRule": "Save Rule",
-  "selectCloudProvider": "Select Cloud Provider:",
-  "cloudAccountName": "Cloud Account Name",
-  "cloudAccountNameHint": "e.g. GoogleDrive, WorkDropbox (no spaces)",
-  "enterNameError": "Please enter a name",
-  "noSpacesOrColons": "Spaces and \":\" are not allowed",
-  "oauthMode": "Client ID Mode (OAuth2)",
-  "oauthOfficial": "UnifyCloud (Official / Recommended)",
-  "oauthRclone": "Rclone (Not recommended - Shared quota)",
-  "oauthCustom": "Personal Client ID (Advanced)",
-  "officialOauthTitle": "Official UnifyCloud Credentials",
-  "officialOauthDesc": "Pre-configured credentials to connect immediately with dedicated quota and maximum speed.",
-  "rcloneOauthDesc": "Shared open-source Rclone keys. May encounter rate-limits or temporary Google 403 errors.",
-  "customClientId": "Client ID",
-  "customClientSecret": "Client Secret",
-  "selectVaultDestination": "Select destination cloud for Vault",
-  "vaultPasswordRequired": "Vault encryption password is required",
-  "vaultPasswordsDoNotMatch": "Passwords do not match",
-  "errorAddingRemote": "Error adding remote: {error}",
-  "fileNameEncryption": "File Name Encryption",
-  "encryptStandard": "Standard (Fully encrypted file names - Recommended)",
-  "encryptObscure": "Simple Obfuscation (Preserves extensions)",
-  "encryptOff": "Disabled (Visible file names)",
-  "encryptFolderNames": "Also encrypt folder names",
-  "encryptFolderNamesDesc": "Completely conceals directory structure on the cloud",
-  "connectCloud": "Connect Cloud",
-  "reopenAuth": "Reopen",
-  "linkCopiedToClipboard": "Link copied to clipboard!",
-  "errorOpenBrowserGeneric": "Unable to open browser: {error}",
-  "shareableLinkTitle": "Shareable Link",
-  "shareLinkAccessDescription": "Anyone with this link will be able to access {item}:",
-  "open": "Open",
-  "activeTransfersCount": "{count} active transfers",
-  "transfersQueueCount": "Transfer Queue ({count})",
-  "noTransfersInProgress": "No transfers in progress",
-  "transfersEmptySubtitle": "All downloaded or uploaded files will appear here",
-  "cancelled": "Cancelled",
-  "appLockedTitle": "Application Locked",
-  "unlockWithBiometrics": "Unlock with Biometrics",
-  "pinMustBe6Digits": "PIN must be exactly 6 digits",
-  "pinIncorrect": "Incorrect PIN. Try again.",
-  "pinsDoNotMatch": "PINs do not match. Try again.",
-  "pinStepOld": "Enter your current PIN to continue.",
-  "pinStepNew": "Enter your new 6-digit security PIN.",
-  "pinStepConfirm": "Re-enter the new PIN to confirm.",
-  "pinStepVerify": "Enter your PIN to confirm the operation.",
-  "pinTitleSetup": "Setup Security PIN",
-  "pinTitleChange": "Change Security PIN",
-  "pinTitleVerify": "Security Verification",
-  "pinContinue": "Continue",
-  "errorDetails": "Error Details",
-  "errorDetailsCopied": "Error details copied to clipboard",
-  "collapse": "Collapse",
-  "expand": "Expand",
-  "copyError": "Copy error",
-  "errorNetwork": "No connection or unstable network. Check your internet connection and try again.",
-  "errorDiskSpace": "Insufficient storage space or disk full. Free up memory to continue.",
-  "errorAuthExpired": "Session or token expired/revoked. Reconnect your account.",
-  "errorNotFound": "Item or folder not found on cloud provider.",
-  "errorPermissionDenied": "Permission denied for this operation on cloud.",
-  "errorGeneric": "An error occurred during the operation.",
   "@systemDefaultWithLocale": {
+    "description": "Localized message for system default with locale.",
     "placeholders": {
       "locale": {
         "type": "String"
       }
     }
   },
+  "refreshCloudsTooltip": "Refresh cloud configurations",
+  "@refreshCloudsTooltip": {
+    "description": "Localized message for refresh clouds tooltip."
+  },
+  "storageOverviewAggregated": "Aggregated Storage Overview",
+  "@storageOverviewAggregated": {
+    "description": "Localized message for storage overview aggregated."
+  },
+  "ramEncryptionActive": "RAM Encryption Active",
+  "@ramEncryptionActive": {
+    "description": "Localized message for ram encryption active."
+  },
+  "connectedAccountsCount": "Connected Cloud Accounts: {count}",
   "@connectedAccountsCount": {
+    "description": "Localized message for connected accounts count.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "noCloudsConfiguredHint": "No cloud accounts configured. Tap \"+ Connect New Cloud\" below.",
+  "@noCloudsConfiguredHint": {
+    "description": "Localized message for no clouds configured hint."
+  },
+  "percentUsed": "{percent}% used",
   "@percentUsed": {
+    "description": "Localized message for percent used.",
     "placeholders": {
       "percent": {
         "type": "String"
       }
     }
   },
+  "availableSpace": "{space} available",
   "@availableSpace": {
+    "description": "Localized message for available space.",
     "placeholders": {
       "space": {
         "type": "String"
       }
     }
   },
+  "calculatingQuota": "Calculating storage quotas or unlimited space...",
+  "@calculatingQuota": {
+    "description": "Localized message for calculating quota."
+  },
+  "syncAndBackup": "Sync & Backup",
+  "@syncAndBackup": {
+    "description": "Localized message for sync and backup."
+  },
+  "noRulesConfigured": "No rules configured",
+  "@noRulesConfigured": {
+    "description": "Localized message for no rules configured."
+  },
+  "activeRulesCount": "{active}/{total} active rules",
   "@activeRulesCount": {
+    "description": "Localized message for active rules count.",
     "placeholders": {
       "active": {
         "type": "int"
@@ -465,42 +794,114 @@
       }
     }
   },
+  "manage": "Manage",
+  "@manage": {
+    "description": "Localized message for manage."
+  },
+  "connectedCloudsCount": "Connected Clouds ({count})",
   "@connectedCloudsCount": {
+    "description": "Localized message for connected clouds count.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "connectNewCloud": "Connect New Cloud",
+  "@connectNewCloud": {
+    "description": "Localized message for connect new cloud."
+  },
+  "noCloudProvidersConnected": "No Cloud Providers Connected",
+  "@noCloudProvidersConnected": {
+    "description": "Localized message for no cloud providers connected."
+  },
+  "connectCloudDescription": "Connect Google Drive, Dropbox, OneDrive, SFTP or WebDAV to start syncing and exploring your files.",
+  "@connectCloudDescription": {
+    "description": "Localized message for connect cloud description."
+  },
+  "addFirstCloud": "Add First Cloud",
+  "@addFirstCloud": {
+    "description": "Localized message for add first cloud."
+  },
+  "vaultOnRemote": "VAULT ON {remote}",
   "@vaultOnRemote": {
+    "description": "Localized message for vault on remote.",
     "placeholders": {
       "remote": {
         "type": "String"
       }
     }
   },
+  "disconnectCloudTitle": "Disconnect Cloud",
+  "@disconnectCloudTitle": {
+    "description": "Localized message for disconnect cloud title."
+  },
+  "disconnectCloudPrompt": "Do you want to disconnect \"{name}\"? Credentials will be removed from encrypted storage.",
   "@disconnectCloudPrompt": {
+    "description": "Localized message for disconnect cloud prompt.",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
+  "disconnect": "Disconnect",
+  "@disconnect": {
+    "description": "Localized message for disconnect."
+  },
+  "freeSpace": "{space} free",
   "@freeSpace": {
+    "description": "Localized message for free space.",
     "placeholders": {
       "space": {
         "type": "String"
       }
     }
   },
+  "storage": "Storage",
+  "@storage": {
+    "description": "Localized message for storage."
+  },
+  "available": "Available",
+  "@available": {
+    "description": "Localized message for available."
+  },
+  "exploreFiles": "Explore Files",
+  "@exploreFiles": {
+    "description": "Localized message for explore files."
+  },
+  "paneLeft": "Left",
+  "@paneLeft": {
+    "description": "Localized message for pane left."
+  },
+  "paneRight": "Right",
+  "@paneRight": {
+    "description": "Localized message for pane right."
+  },
+  "folderName": "Folder name",
+  "@folderName": {
+    "description": "Localized message for folder name."
+  },
+  "errorCreatingFolder": "Error creating folder: {error}",
   "@errorCreatingFolder": {
+    "description": "Localized message for error creating folder.",
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
+  "moveAction": "Move",
+  "@moveAction": {
+    "description": "Localized message for move action."
+  },
+  "copyAction": "Copy",
+  "@copyAction": {
+    "description": "Localized message for copy action."
+  },
+  "transferBatchStarted": "{action} of {count} items to [{remote}] started...",
   "@transferBatchStarted": {
+    "description": "Localized message for transfer batch started.",
     "placeholders": {
       "action": {
         "type": "String"
@@ -513,49 +914,67 @@
       }
     }
   },
+  "errorTransferring": "Error during transfer: {error}",
   "@errorTransferring": {
+    "description": "Localized message for error transferring.",
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
+  "itemCopiedToClipboard": "\"{name}\" copied to clipboard",
   "@itemCopiedToClipboard": {
+    "description": "Localized message for item copied to clipboard.",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
+  "itemsCopiedToClipboard": "{count} items copied to clipboard",
   "@itemsCopiedToClipboard": {
+    "description": "Localized message for items copied to clipboard.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "itemCutToClipboard": "\"{name}\" cut (ready to move)",
   "@itemCutToClipboard": {
+    "description": "Localized message for item cut to clipboard.",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
+  "itemsCutToClipboard": "{count} items cut (ready to move)",
   "@itemsCutToClipboard": {
+    "description": "Localized message for items cut to clipboard.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "noFilesSelectedForDownload": "No files selected for download.",
+  "@noFilesSelectedForDownload": {
+    "description": "Localized message for no files selected for download."
+  },
+  "downloadingItems": "Downloading {count} items...",
   "@downloadingItems": {
+    "description": "Localized message for downloading items.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "itemsDownloadedSuccess": "{count} items downloaded to \"{path}\"",
   "@itemsDownloadedSuccess": {
+    "description": "Localized message for items downloaded success.",
     "placeholders": {
       "count": {
         "type": "int"
@@ -565,56 +984,84 @@
       }
     }
   },
+  "errorStartingDownload": "Error starting download: {error}",
   "@errorStartingDownload": {
+    "description": "Localized message for error starting download.",
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
+  "deleteItemsConfirmTitle": "Delete {count} selected items?",
   "@deleteItemsConfirmTitle": {
+    "description": "Localized message for delete items confirm title.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "deleteItemsConfirmPrompt": "Are you sure you want to permanently delete {count} selected items from the cloud?",
   "@deleteItemsConfirmPrompt": {
+    "description": "Localized message for delete items confirm prompt.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "itemsDeletedSuccess": "{count} items deleted",
   "@itemsDeletedSuccess": {
+    "description": "Localized message for items deleted success.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "errorDeleting": "Error during deletion: {error}",
   "@errorDeleting": {
+    "description": "Localized message for error deleting.",
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
+  "uploadCompletedSuccess": "Upload completed successfully",
+  "@uploadCompletedSuccess": {
+    "description": "Localized message for upload completed success."
+  },
+  "errorUploading": "Error during upload: {error}",
   "@errorUploading": {
+    "description": "Localized message for error uploading.",
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
+  "folderUploadCompletedSuccess": "Folder upload completed successfully",
+  "@folderUploadCompletedSuccess": {
+    "description": "Localized message for folder upload completed success."
+  },
+  "errorFolderUploading": "Error uploading folder: {error}",
   "@errorFolderUploading": {
+    "description": "Localized message for error folder uploading.",
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
+  "filesAlreadyInDirectory": "Files are already in this folder.",
+  "@filesAlreadyInDirectory": {
+    "description": "Localized message for files already in directory."
+  },
+  "dragDropTransferStarted": "{action} of {count} items to [{remote}] started...",
   "@dragDropTransferStarted": {
+    "description": "Localized message for drag drop transfer started.",
     "placeholders": {
       "action": {
         "type": "String"
@@ -627,112 +1074,308 @@
       }
     }
   },
+  "errorDragDrop": "Error during drag-and-drop transfer: {error}",
   "@errorDragDrop": {
+    "description": "Localized message for error drag drop.",
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
+  "closeSelection": "Close selection",
+  "@closeSelection": {
+    "description": "Localized message for close selection."
+  },
+  "itemsSelectedCount": "{count} selected",
   "@itemsSelectedCount": {
+    "description": "Localized message for items selected count.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "deselectAll": "Deselect all",
+  "@deselectAll": {
+    "description": "Localized message for deselect all."
+  },
+  "copyToRemote": "Copy to {remote}",
   "@copyToRemote": {
+    "description": "Localized message for copy to remote.",
     "placeholders": {
       "remote": {
         "type": "String"
       }
     }
   },
+  "moveToRemote": "Move to {remote}",
   "@moveToRemote": {
+    "description": "Localized message for move to remote.",
     "placeholders": {
       "remote": {
         "type": "String"
       }
     }
   },
+  "moreActions": "More actions",
+  "@moreActions": {
+    "description": "Localized message for more actions."
+  },
+  "downloadSelected": "Download selected",
+  "@downloadSelected": {
+    "description": "Localized message for download selected."
+  },
+  "copyToClipboard": "Copy to clipboard",
+  "@copyToClipboard": {
+    "description": "Localized message for copy to clipboard."
+  },
+  "cutToClipboard": "Cut to clipboard",
+  "@cutToClipboard": {
+    "description": "Localized message for cut to clipboard."
+  },
+  "selectCloud": "Select Cloud",
+  "@selectCloud": {
+    "description": "Localized message for select cloud."
+  },
+  "closeSearch": "Close search",
+  "@closeSearch": {
+    "description": "Localized message for close search."
+  },
+  "uploadFromDevice": "Upload from device",
+  "@uploadFromDevice": {
+    "description": "Localized message for upload from device."
+  },
+  "moreOptions": "More options",
+  "@moreOptions": {
+    "description": "Localized message for more options."
+  },
+  "viewGrid": "Grid view",
+  "@viewGrid": {
+    "description": "Localized message for view grid."
+  },
+  "viewList": "List view",
+  "@viewList": {
+    "description": "Localized message for view list."
+  },
+  "multiSelection": "Multiple selection",
+  "@multiSelection": {
+    "description": "Localized message for multi selection."
+  },
+  "sortNameAsc": "Name (A-Z)",
+  "@sortNameAsc": {
+    "description": "Localized message for sort name asc."
+  },
+  "sortNameDesc": "Name (Z-A)",
+  "@sortNameDesc": {
+    "description": "Localized message for sort name desc."
+  },
+  "sortSizeDesc": "Size (Large -> Small)",
+  "@sortSizeDesc": {
+    "description": "Localized message for sort size desc."
+  },
+  "sortSizeAsc": "Size (Small -> Large)",
+  "@sortSizeAsc": {
+    "description": "Localized message for sort size asc."
+  },
+  "sortDateDesc": "Date (Newest first)",
+  "@sortDateDesc": {
+    "description": "Localized message for sort date desc."
+  },
+  "disableDualPane": "Disable Commander (Single Pane)",
+  "@disableDualPane": {
+    "description": "Localized message for disable dual pane."
+  },
+  "enableDualPane": "Enable Commander (Dual Pane)",
+  "@enableDualPane": {
+    "description": "Localized message for enable dual pane."
+  },
+  "itemsInClipboard": "{count} items in clipboard",
   "@itemsInClipboard": {
+    "description": "Localized message for items in clipboard.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "pasteHere": "Paste here",
+  "@pasteHere": {
+    "description": "Localized message for paste here."
+  },
+  "noResults": "No results",
+  "@noResults": {
+    "description": "Localized message for no results."
+  },
+  "noMatchingResults": "No files or folders match \"{query}\"",
   "@noMatchingResults": {
+    "description": "Localized message for no matching results.",
     "placeholders": {
       "query": {
         "type": "String"
       }
     }
   },
+  "selectACloud": "Select a Cloud",
+  "@selectACloud": {
+    "description": "Localized message for select acloud."
+  },
+  "selectCloudDescription": "Select a cloud provider from the menu above to view and explore your remote files.",
+  "@selectCloudDescription": {
+    "description": "Localized message for select cloud description."
+  },
+  "optionsForItem": "Options for {name}",
   "@optionsForItem": {
+    "description": "Localized message for options for item.",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
+  "select": "Select",
+  "@select": {
+    "description": "Localized message for select."
+  },
+  "openWithSystemApp": "Open with system app",
+  "@openWithSystemApp": {
+    "description": "Localized message for open with system app."
+  },
+  "downloadToLocal": "Download to local",
+  "@downloadToLocal": {
+    "description": "Localized message for download to local."
+  },
+  "cut": "Cut (Move)",
+  "@cut": {
+    "description": "Localized message for cut."
+  },
+  "copyPath": "Copy path",
+  "@copyPath": {
+    "description": "Localized message for copy path."
+  },
+  "info": "Information",
+  "@info": {
+    "description": "Localized message for info."
+  },
+  "generatingShareLink": "Generating share link for \"{name}\"...",
   "@generatingShareLink": {
+    "description": "Localized message for generating share link.",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
+  "errorPublicLink": "Public link error: {error}",
   "@errorPublicLink": {
+    "description": "Localized message for error public link.",
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
+  "noLinkGenerated": "No link generated by provider.",
+  "@noLinkGenerated": {
+    "description": "Localized message for no link generated."
+  },
+  "errorDownloading": "Error downloading: {error}",
   "@errorDownloading": {
+    "description": "Localized message for error downloading.",
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
+  "renameFolderTitle": "Rename folder",
+  "@renameFolderTitle": {
+    "description": "Localized message for rename folder title."
+  },
+  "renameFileTitle": "Rename file",
+  "@renameFileTitle": {
+    "description": "Localized message for rename file title."
+  },
+  "errorRenaming": "Error renaming: {error}",
   "@errorRenaming": {
+    "description": "Localized message for error renaming.",
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
+  "pathCopiedToClipboard": "Path copied to clipboard",
+  "@pathCopiedToClipboard": {
+    "description": "Localized message for path copied to clipboard."
+  },
+  "itemDetailsPath": "Path: {path}",
   "@itemDetailsPath": {
+    "description": "Localized message for item details path.",
     "placeholders": {
       "path": {
         "type": "String"
       }
     }
   },
+  "itemDetailsType": "Type: {type}",
   "@itemDetailsType": {
+    "description": "Localized message for item details type.",
     "placeholders": {
       "type": {
         "type": "String"
       }
     }
   },
+  "itemDetailsSize": "Size: {size}",
   "@itemDetailsSize": {
+    "description": "Localized message for item details size.",
     "placeholders": {
       "size": {
         "type": "String"
       }
     }
   },
+  "itemDetailsModified": "Modified date: {date}",
   "@itemDetailsModified": {
+    "description": "Localized message for item details modified.",
     "placeholders": {
       "date": {
         "type": "String"
       }
     }
   },
+  "folder": "Folder",
+  "@folder": {
+    "description": "Localized message for folder."
+  },
+  "file": "File",
+  "@file": {
+    "description": "Localized message for file."
+  },
+  "selectCloudFirstLeft": "Select a cloud in the left pane first.",
+  "@selectCloudFirstLeft": {
+    "description": "Localized message for select cloud first left."
+  },
+  "selectCloudFirstRight": "Select a cloud in the right pane first.",
+  "@selectCloudFirstRight": {
+    "description": "Localized message for select cloud first right."
+  },
+  "selectDestinationCloudLeft": "Select a destination cloud in the left pane first.",
+  "@selectDestinationCloudLeft": {
+    "description": "Localized message for select destination cloud left."
+  },
+  "selectDestinationCloudRight": "Select a destination cloud in the right pane first.",
+  "@selectDestinationCloudRight": {
+    "description": "Localized message for select destination cloud right."
+  },
+  "noFilesToTransfer": "No files present or selected to transfer.",
+  "@noFilesToTransfer": {
+    "description": "Localized message for no files to transfer."
+  },
+  "transferStarted": "{action} of {count} items from [{src}] to [{dst}] started...",
   "@transferStarted": {
+    "description": "Localized message for transfer started.",
     "placeholders": {
       "action": {
         "type": "String"
@@ -748,85 +1391,539 @@
       }
     }
   },
+  "swapPanesTooltip": "Swap panes (<->)",
+  "@swapPanesTooltip": {
+    "description": "Localized message for swap panes tooltip."
+  },
+  "refreshBothPanesTooltip": "Refresh both panes",
+  "@refreshBothPanesTooltip": {
+    "description": "Localized message for refresh both panes tooltip."
+  },
+  "copyRight": "Copy to right ->",
+  "@copyRight": {
+    "description": "Localized message for copy right."
+  },
+  "moveRight": "Move to right ->",
+  "@moveRight": {
+    "description": "Localized message for move right."
+  },
+  "copyLeft": "<- Copy to left",
+  "@copyLeft": {
+    "description": "Localized message for copy left."
+  },
+  "moveLeft": "<- Move to left",
+  "@moveLeft": {
+    "description": "Localized message for move left."
+  },
+  "copyRightWithCount": "Copy right ({count}) ->",
   "@copyRightWithCount": {
+    "description": "Localized message for copy right with count.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "moveRightWithCount": "Move right ({count}) ->",
   "@moveRightWithCount": {
+    "description": "Localized message for move right with count.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "copyLeftWithCount": "<- Copy left ({count})",
   "@copyLeftWithCount": {
+    "description": "Localized message for copy left with count.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "moveLeftWithCount": "<- Move left ({count})",
   "@moveLeftWithCount": {
+    "description": "Localized message for move left with count.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "deleteRuleTitle": "Delete Rule",
+  "@deleteRuleTitle": {
+    "description": "Localized message for delete rule title."
+  },
+  "deleteRulePrompt": "Are you sure you want to delete sync rule \"{name}\"? Files on your device and in the cloud will not be deleted.",
   "@deleteRulePrompt": {
+    "description": "Localized message for delete rule prompt.",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
+  "syncAll": "Sync All",
+  "@syncAll": {
+    "description": "Localized message for sync all."
+  },
+  "newRuleTooltip": "New rule",
+  "@newRuleTooltip": {
+    "description": "Localized message for new rule tooltip."
+  },
+  "backupBannerTitle": "Continuous Backup & Cloud Sync",
+  "@backupBannerTitle": {
+    "description": "Localized message for backup banner title."
+  },
+  "backupBannerSubtitle": "Configure scheduled synchronizations between local folders and cloud remotes.",
+  "@backupBannerSubtitle": {
+    "description": "Localized message for backup banner subtitle."
+  },
+  "noActiveRules": "No Active Rules",
+  "@noActiveRules": {
+    "description": "Localized message for no active rules."
+  },
+  "noActiveRulesSubtitle": "Create your first rule to run automatic backups from your phone to Google Drive, Dropbox, SFTP or any other cloud.",
+  "@noActiveRulesSubtitle": {
+    "description": "Localized message for no active rules subtitle."
+  },
+  "createNewRule": "Create New Rule",
+  "@createNewRule": {
+    "description": "Localized message for create new rule."
+  },
+  "ruleOptionsTooltip": "Rule options",
+  "@ruleOptionsTooltip": {
+    "description": "Localized message for rule options tooltip."
+  },
+  "syncNow": "Sync now",
+  "@syncNow": {
+    "description": "Localized message for sync now."
+  },
+  "statusWaiting": "Pending",
+  "@statusWaiting": {
+    "description": "Localized message for status waiting."
+  },
+  "statusInProgress": "In progress...",
+  "@statusInProgress": {
+    "description": "Localized message for status in progress."
+  },
+  "statusCompleted": "Completed",
+  "@statusCompleted": {
+    "description": "Localized message for status completed."
+  },
+  "statusFailed": "Failed",
+  "@statusFailed": {
+    "description": "Localized message for status failed."
+  },
+  "editRuleTitle": "Edit Backup Rule",
+  "@editRuleTitle": {
+    "description": "Localized message for edit rule title."
+  },
+  "newRuleTitle": "New Synchronization Rule",
+  "@newRuleTitle": {
+    "description": "Localized message for new rule title."
+  },
+  "ruleDialogSubtitle": "Configure automatic backup between a local folder and the cloud.",
+  "@ruleDialogSubtitle": {
+    "description": "Localized message for rule dialog subtitle."
+  },
+  "ruleNameOptional": "Rule Name (optional)",
+  "@ruleNameOptional": {
+    "description": "Localized message for rule name optional."
+  },
+  "ruleNameHint": "e.g. DCIM Photo Backup or Work Documents",
+  "@ruleNameHint": {
+    "description": "Localized message for rule name hint."
+  },
+  "sourceLocalFolder": "Local Source Folder",
+  "@sourceLocalFolder": {
+    "description": "Localized message for source local folder."
+  },
+  "sourceLocalFolderHint": "/storage/emulated/0/DCIM or /home/user/Pictures",
+  "@sourceLocalFolderHint": {
+    "description": "Localized message for source local folder hint."
+  },
+  "browseFolders": "Browse folders",
+  "@browseFolders": {
+    "description": "Localized message for browse folders."
+  },
+  "selectLocalFolderError": "Please enter or select a local folder",
+  "@selectLocalFolderError": {
+    "description": "Localized message for select local folder error."
+  },
+  "noCloudsConfiguredSync": "No cloud configured. Configure a cloud account from Home before continuing.",
+  "@noCloudsConfiguredSync": {
+    "description": "Localized message for no clouds configured sync."
+  },
+  "remoteDestinationPath": "Remote Destination Path",
+  "@remoteDestinationPath": {
+    "description": "Localized message for remote destination path."
+  },
+  "syncMode": "Sync Mode",
+  "@syncMode": {
+    "description": "Localized message for sync mode."
+  },
+  "syncModeCopy": "Incremental Backup",
+  "@syncModeCopy": {
+    "description": "Localized message for sync mode copy."
+  },
+  "syncModeCopyDesc": "Uploads new and modified files, preserving existing cloud files.",
+  "@syncModeCopyDesc": {
+    "description": "Localized message for sync mode copy desc."
+  },
+  "syncModeSync": "Mirror Synchronization",
+  "@syncModeSync": {
+    "description": "Localized message for sync mode sync."
+  },
+  "syncModeSyncDesc": "Makes the remote destination identical to the local folder (deletions locally are deleted on cloud).",
+  "@syncModeSyncDesc": {
+    "description": "Localized message for sync mode sync desc."
+  },
+  "syncFrequency": "Execution Frequency",
+  "@syncFrequency": {
+    "description": "Localized message for sync frequency."
+  },
+  "freqManual": "Manual (on demand only)",
+  "@freqManual": {
+    "description": "Localized message for freq manual."
+  },
+  "freq15Min": "Every 15 minutes",
+  "@freq15Min": {
+    "description": "Localized message for freq15 min."
+  },
+  "freq30Min": "Every 30 minutes",
+  "@freq30Min": {
+    "description": "Localized message for freq30 min."
+  },
+  "freqHourly": "Every hour",
+  "@freqHourly": {
+    "description": "Localized message for freq hourly."
+  },
+  "freq6Hours": "Every 6 hours",
+  "@freq6Hours": {
+    "description": "Localized message for freq6 hours."
+  },
+  "freq12Hours": "Every 12 hours",
+  "@freq12Hours": {
+    "description": "Localized message for freq12 hours."
+  },
+  "freqDaily": "Every day (24 hours)",
+  "@freqDaily": {
+    "description": "Localized message for freq daily."
+  },
+  "activateRuleImmediately": "Activate rule immediately",
+  "@activateRuleImmediately": {
+    "description": "Localized message for activate rule immediately."
+  },
+  "activateRuleImmediatelyDesc": "Sync will run in background according to the specified interval",
+  "@activateRuleImmediatelyDesc": {
+    "description": "Localized message for activate rule immediately desc."
+  },
+  "updateRule": "Update",
+  "@updateRule": {
+    "description": "Localized message for update rule."
+  },
+  "saveRule": "Save Rule",
+  "@saveRule": {
+    "description": "Localized message for save rule."
+  },
+  "selectCloudProvider": "Select Cloud Provider:",
+  "@selectCloudProvider": {
+    "description": "Localized message for select cloud provider."
+  },
+  "cloudAccountName": "Cloud Account Name",
+  "@cloudAccountName": {
+    "description": "Localized message for cloud account name."
+  },
+  "cloudAccountNameHint": "e.g. GoogleDrive, WorkDropbox (no spaces)",
+  "@cloudAccountNameHint": {
+    "description": "Localized message for cloud account name hint."
+  },
+  "enterNameError": "Please enter a name",
+  "@enterNameError": {
+    "description": "Localized message for enter name error."
+  },
+  "noSpacesOrColons": "Spaces and \":\" are not allowed",
+  "@noSpacesOrColons": {
+    "description": "Localized message for no spaces or colons."
+  },
+  "oauthMode": "Client ID Mode (OAuth2)",
+  "@oauthMode": {
+    "description": "Localized message for oauth mode."
+  },
+  "oauthOfficial": "UnifyCloud (Official / Recommended)",
+  "@oauthOfficial": {
+    "description": "Localized message for oauth official."
+  },
+  "oauthRclone": "Rclone (Not recommended - Shared quota)",
+  "@oauthRclone": {
+    "description": "Localized message for oauth rclone."
+  },
+  "oauthCustom": "Personal Client ID (Advanced)",
+  "@oauthCustom": {
+    "description": "Localized message for oauth custom."
+  },
+  "officialOauthTitle": "Official UnifyCloud Credentials",
+  "@officialOauthTitle": {
+    "description": "Localized message for official oauth title."
+  },
+  "officialOauthDesc": "Pre-configured credentials to connect immediately with dedicated quota and maximum speed.",
+  "@officialOauthDesc": {
+    "description": "Localized message for official oauth desc."
+  },
+  "rcloneOauthDesc": "Shared open-source Rclone keys. May encounter rate-limits or temporary Google 403 errors.",
+  "@rcloneOauthDesc": {
+    "description": "Localized message for rclone oauth desc."
+  },
+  "customClientId": "Client ID",
+  "@customClientId": {
+    "description": "Localized message for custom client id."
+  },
+  "customClientSecret": "Client Secret",
+  "@customClientSecret": {
+    "description": "Localized message for custom client secret."
+  },
+  "selectVaultDestination": "Select destination cloud for Vault",
+  "@selectVaultDestination": {
+    "description": "Localized message for select vault destination."
+  },
+  "vaultPasswordRequired": "Vault encryption password is required",
+  "@vaultPasswordRequired": {
+    "description": "Localized message for vault password required."
+  },
+  "vaultPasswordsDoNotMatch": "Passwords do not match",
+  "@vaultPasswordsDoNotMatch": {
+    "description": "Localized message for vault passwords do not match."
+  },
+  "errorAddingRemote": "Error adding remote: {error}",
   "@errorAddingRemote": {
+    "description": "Localized message for error adding remote.",
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
+  "fileNameEncryption": "File Name Encryption",
+  "@fileNameEncryption": {
+    "description": "Localized message for file name encryption."
+  },
+  "encryptStandard": "Standard (Fully encrypted file names - Recommended)",
+  "@encryptStandard": {
+    "description": "Localized message for encrypt standard."
+  },
+  "encryptObscure": "Simple Obfuscation (Preserves extensions)",
+  "@encryptObscure": {
+    "description": "Localized message for encrypt obscure."
+  },
+  "encryptOff": "Disabled (Visible file names)",
+  "@encryptOff": {
+    "description": "Localized message for encrypt off."
+  },
+  "encryptFolderNames": "Also encrypt folder names",
+  "@encryptFolderNames": {
+    "description": "Localized message for encrypt folder names."
+  },
+  "encryptFolderNamesDesc": "Completely conceals directory structure on the cloud",
+  "@encryptFolderNamesDesc": {
+    "description": "Localized message for encrypt folder names desc."
+  },
+  "connectCloud": "Connect Cloud",
+  "@connectCloud": {
+    "description": "Localized message for connect cloud."
+  },
+  "reopenAuth": "Reopen",
+  "@reopenAuth": {
+    "description": "Localized message for reopen auth."
+  },
+  "linkCopiedToClipboard": "Link copied to clipboard!",
+  "@linkCopiedToClipboard": {
+    "description": "Localized message for link copied to clipboard."
+  },
+  "errorOpenBrowserGeneric": "Unable to open browser: {error}",
   "@errorOpenBrowserGeneric": {
+    "description": "Localized message for error open browser generic.",
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
+  "shareableLinkTitle": "Shareable Link",
+  "@shareableLinkTitle": {
+    "description": "Localized message for shareable link title."
+  },
+  "shareLinkAccessDescription": "Anyone with this link will be able to access {item}:",
   "@shareLinkAccessDescription": {
+    "description": "Localized message for share link access description.",
     "placeholders": {
       "item": {
         "type": "String"
       }
     }
   },
+  "open": "Open",
+  "@open": {
+    "description": "Localized message for open."
+  },
+  "activeTransfersCount": "{count, plural, =1{1 active transfer} other{{count} active transfers}}",
   "@activeTransfersCount": {
+    "description": "Localized message for active transfers count.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "transfersQueueCount": "Transfer Queue ({count})",
   "@transfersQueueCount": {
+    "description": "Localized message for transfers queue count.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
+  },
+  "noTransfersInProgress": "No transfers in progress",
+  "@noTransfersInProgress": {
+    "description": "Localized message for no transfers in progress."
+  },
+  "transfersEmptySubtitle": "All downloaded or uploaded files will appear here",
+  "@transfersEmptySubtitle": {
+    "description": "Localized message for transfers empty subtitle."
+  },
+  "cancelled": "Cancelled",
+  "@cancelled": {
+    "description": "Localized message for cancelled."
+  },
+  "appLockedTitle": "Application Locked",
+  "@appLockedTitle": {
+    "description": "Localized message for app locked title."
+  },
+  "unlockWithBiometrics": "Unlock with Biometrics",
+  "@unlockWithBiometrics": {
+    "description": "Localized message for unlock with biometrics."
+  },
+  "pinMustBe6Digits": "PIN must be exactly 6 digits",
+  "@pinMustBe6Digits": {
+    "description": "Localized message for pin must be6 digits."
+  },
+  "pinIncorrect": "Incorrect PIN. Try again.",
+  "@pinIncorrect": {
+    "description": "Localized message for pin incorrect."
+  },
+  "pinsDoNotMatch": "PINs do not match. Try again.",
+  "@pinsDoNotMatch": {
+    "description": "Localized message for pins do not match."
+  },
+  "pinStepOld": "Enter your current PIN to continue.",
+  "@pinStepOld": {
+    "description": "Localized message for pin step old."
+  },
+  "pinStepNew": "Enter your new 6-digit security PIN.",
+  "@pinStepNew": {
+    "description": "Localized message for pin step new."
+  },
+  "pinStepConfirm": "Re-enter the new PIN to confirm.",
+  "@pinStepConfirm": {
+    "description": "Localized message for pin step confirm."
+  },
+  "pinStepVerify": "Enter your PIN to confirm the operation.",
+  "@pinStepVerify": {
+    "description": "Localized message for pin step verify."
+  },
+  "pinTitleSetup": "Setup Security PIN",
+  "@pinTitleSetup": {
+    "description": "Localized message for pin title setup."
+  },
+  "pinTitleChange": "Change Security PIN",
+  "@pinTitleChange": {
+    "description": "Localized message for pin title change."
+  },
+  "pinTitleVerify": "Security Verification",
+  "@pinTitleVerify": {
+    "description": "Localized message for pin title verify."
+  },
+  "pinContinue": "Continue",
+  "@pinContinue": {
+    "description": "Localized message for pin continue."
+  },
+  "errorDetails": "Error Details",
+  "@errorDetails": {
+    "description": "Localized message for error details."
+  },
+  "errorDetailsCopied": "Error details copied to clipboard",
+  "@errorDetailsCopied": {
+    "description": "Localized message for error details copied."
+  },
+  "collapse": "Collapse",
+  "@collapse": {
+    "description": "Localized message for collapse."
+  },
+  "expand": "Expand",
+  "@expand": {
+    "description": "Localized message for expand."
+  },
+  "copyError": "Copy error",
+  "@copyError": {
+    "description": "Localized message for copy error."
+  },
+  "errorNetwork": "No connection or unstable network. Check your internet connection and try again.",
+  "@errorNetwork": {
+    "description": "Localized message for error network."
+  },
+  "errorDiskSpace": "Insufficient storage space or disk full. Free up memory to continue.",
+  "@errorDiskSpace": {
+    "description": "Localized message for error disk space."
+  },
+  "errorAuthExpired": "Session or token expired/revoked. Reconnect your account.",
+  "@errorAuthExpired": {
+    "description": "Localized message for error auth expired."
+  },
+  "errorNotFound": "Item or folder not found on cloud provider.",
+  "@errorNotFound": {
+    "description": "Localized message for error not found."
+  },
+  "errorPermissionDenied": "Permission denied for this operation on cloud.",
+  "@errorPermissionDenied": {
+    "description": "Localized message for error permission denied."
+  },
+  "errorGeneric": "An error occurred during the operation.",
+  "@errorGeneric": {
+    "description": "Localized message for error generic."
   },
   "desktopAndSystem": "Desktop & System",
+  "@desktopAndSystem": {
+    "description": "Localized message for desktop and system."
+  },
   "desktopAndSystemSubtitle": "Startup behavior, background execution, and system tray",
+  "@desktopAndSystemSubtitle": {
+    "description": "Localized message for desktop and system subtitle."
+  },
   "autostartOnBoot": "Start on system boot",
+  "@autostartOnBoot": {
+    "description": "Localized message for autostart on boot."
+  },
   "autostartOnBootSubtitle": "Automatically launch UnifyCloud in the background on login",
+  "@autostartOnBootSubtitle": {
+    "description": "Localized message for autostart on boot subtitle."
+  },
   "minimizeToTray": "Minimize to system tray",
+  "@minimizeToTray": {
+    "description": "Localized message for minimize to tray."
+  },
   "minimizeToTraySubtitle": "Keep UnifyCloud running in the background when the window is closed",
+  "@minimizeToTraySubtitle": {
+    "description": "Localized message for minimize to tray subtitle."
+  },
   "trayStatusIdle": "Idle (No active transfers)",
-  "trayStatusActive": "{count} active transfers ({speed})",
+  "@trayStatusIdle": {
+    "description": "Localized message for tray status idle."
+  },
+  "trayStatusActive": "{count, plural, =1{1 active transfer ({speed})} other{{count} active transfers ({speed})}}",
   "@trayStatusActive": {
+    "description": "Localized message for tray status active.",
     "placeholders": {
       "count": {
         "type": "int"
@@ -837,7 +1934,922 @@
     }
   },
   "trayShowWindow": "Show UnifyCloud",
+  "@trayShowWindow": {
+    "description": "Localized message for tray show window."
+  },
   "trayHideWindow": "Hide to system tray",
+  "@trayHideWindow": {
+    "description": "Localized message for tray hide window."
+  },
   "trayQuit": "Quit UnifyCloud",
-  "trayTooltip": "UnifyCloud - Cloud Storage Manager"
+  "@trayQuit": {
+    "description": "Localized message for tray quit."
+  },
+  "trayTooltip": "UnifyCloud - Cloud Storage Manager",
+  "@trayTooltip": {
+    "description": "Localized message for tray tooltip."
+  },
+  "trayStatusLine": "Status: {status}",
+  "@trayStatusLine": {
+    "description": "Localized message for tray status line.",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "bgNotificationInitialTitle": "UnifyCloud Transfers",
+  "@bgNotificationInitialTitle": {
+    "description": "Localized message for bg notification initial title."
+  },
+  "bgNotificationInitialContent": "Managing transfers in background...",
+  "@bgNotificationInitialContent": {
+    "description": "Localized message for bg notification initial content."
+  },
+  "bgNotificationProgressContent": "{speed} • {percentage}% completed",
+  "@bgNotificationProgressContent": {
+    "description": "Localized message for bg notification progress content.",
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      },
+      "percentage": {
+        "type": "int"
+      }
+    }
+  },
+  "bgNotificationIdleContent": "All transfers have been completed.",
+  "@bgNotificationIdleContent": {
+    "description": "Localized message for bg notification idle content."
+  },
+  "pinTitleConfirm": "Confirm PIN Code",
+  "@pinTitleConfirm": {
+    "description": "Localized message for pin title confirm."
+  },
+  "pinTitleEnterCurrent": "Enter Current PIN",
+  "@pinTitleEnterCurrent": {
+    "description": "Localized message for pin title enter current."
+  },
+  "pinTitleNew": "New PIN Code",
+  "@pinTitleNew": {
+    "description": "Localized message for pin title new."
+  },
+  "pinTitleConfirmNew": "Confirm New PIN",
+  "@pinTitleConfirmNew": {
+    "description": "Localized message for pin title confirm new."
+  },
+  "pinStepSetupNew": "Create a 6-digit numeric code to protect the app.",
+  "@pinStepSetupNew": {
+    "description": "Localized message for pin step setup new."
+  },
+  "pinStepSetupConfirm": "Re-enter the PIN code to confirm it.",
+  "@pinStepSetupConfirm": {
+    "description": "Localized message for pin step setup confirm."
+  },
+  "pinTooManyAttempts": "Too many failed attempts. Try again in {seconds}s.",
+  "@pinTooManyAttempts": {
+    "description": "Localized message for pin too many attempts.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "pinVerificationError": "Verification error: {error}",
+  "@pinVerificationError": {
+    "description": "Localized message for pin verification error.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "biometricAuthReason": "Authenticate to access UnifyCloud",
+  "@biometricAuthReason": {
+    "description": "Localized message for biometric auth reason."
+  },
+  "syncRulesCount": "Synchronization Rules ({count})",
+  "@syncRulesCount": {
+    "description": "Localized message for sync rules count.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noSyncRulesEmptyDesc": "Configure a rule to run automatic backups at regular intervals or on demand with the \"Sync now\" button.",
+  "@noSyncRulesEmptyDesc": {
+    "description": "Localized message for no sync rules empty desc."
+  },
+  "neverSynced": "Never synced",
+  "@neverSynced": {
+    "description": "Localized message for never synced."
+  },
+  "lastSyncNow": "Last sync: just now",
+  "@lastSyncNow": {
+    "description": "Localized message for last sync now."
+  },
+  "lastSyncMinutesAgo": "Last sync: {minutes} min ago",
+  "@lastSyncMinutesAgo": {
+    "description": "Localized message for last sync minutes ago.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "lastSyncHoursAgo": "Last sync: {hours} hr ago",
+  "@lastSyncHoursAgo": {
+    "description": "Localized message for last sync hours ago.",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "lastSyncDate": "Last sync: {date}",
+  "@lastSyncDate": {
+    "description": "Localized message for last sync date.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "localFolderNotFound": "Local folder not found: {path}",
+  "@localFolderNotFound": {
+    "description": "Localized message for local folder not found.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "selectDestinationCloudError": "Select a destination cloud",
+  "@selectDestinationCloudError": {
+    "description": "Localized message for select destination cloud error."
+  },
+  "remoteDestinationPathHint": "Backup/Photos or /",
+  "@remoteDestinationPathHint": {
+    "description": "Localized message for remote destination path hint."
+  },
+  "enterDestinationPathError": "Enter a destination path",
+  "@enterDestinationPathError": {
+    "description": "Localized message for enter destination path error."
+  },
+  "activateRuleManualOnlyDesc": "When disabled, the rule can only be started manually.",
+  "@activateRuleManualOnlyDesc": {
+    "description": "Localized message for activate rule manual only desc."
+  },
+  "presetPhotosDcim": "Photos (DCIM)",
+  "@presetPhotosDcim": {
+    "description": "Localized message for preset photos dcim."
+  },
+  "presetPictures": "Pictures",
+  "@presetPictures": {
+    "description": "Localized message for preset pictures."
+  },
+  "presetDocuments": "Documents",
+  "@presetDocuments": {
+    "description": "Localized message for preset documents."
+  },
+  "presetDownloads": "Downloads",
+  "@presetDownloads": {
+    "description": "Localized message for preset downloads."
+  },
+  "defaultBackupRuleName": "Backup {name}",
+  "@defaultBackupRuleName": {
+    "description": "Localized message for default backup rule name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "defaultSyncRuleName": "Sync {name}",
+  "@defaultSyncRuleName": {
+    "description": "Localized message for default sync rule name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "folderFallbackName": "Folder",
+  "@folderFallbackName": {
+    "description": "Localized message for folder fallback name."
+  },
+  "providerLocalName": "Local Disk",
+  "@providerLocalName": {
+    "description": "Localized message for provider local name."
+  },
+  "providerCryptName": "E2E Encryption (Crypt)",
+  "@providerCryptName": {
+    "description": "Localized message for provider crypt name."
+  },
+  "providerSubtitleDrive": "OAuth2 cloud storage",
+  "@providerSubtitleDrive": {
+    "description": "Localized message for provider subtitle drive."
+  },
+  "providerSubtitleDropbox": "File sync and share",
+  "@providerSubtitleDropbox": {
+    "description": "Localized message for provider subtitle dropbox."
+  },
+  "providerSubtitleOneDrive": "Personal and business storage",
+  "@providerSubtitleOneDrive": {
+    "description": "Localized message for provider subtitle one drive."
+  },
+  "providerSubtitleWebdav": "Self-hosted or corporate cloud",
+  "@providerSubtitleWebdav": {
+    "description": "Localized message for provider subtitle webdav."
+  },
+  "providerSubtitleSftp": "Secure remote server",
+  "@providerSubtitleSftp": {
+    "description": "Localized message for provider subtitle sftp."
+  },
+  "providerSubtitleS3": "Object storage bucket",
+  "@providerSubtitleS3": {
+    "description": "Localized message for provider subtitle s3."
+  },
+  "providerSubtitleLocal": "Local system folder",
+  "@providerSubtitleLocal": {
+    "description": "Localized message for provider subtitle local."
+  },
+  "providerSubtitleCrypt": "Encrypt files and names with AES-256 on any cloud",
+  "@providerSubtitleCrypt": {
+    "description": "Localized message for provider subtitle crypt."
+  },
+  "noUnifyCloudClientId": "No UnifyCloud Client ID available for this provider. Use Rclone or a personal Client ID.",
+  "@noUnifyCloudClientId": {
+    "description": "Localized message for no unify cloud client id."
+  },
+  "noRcloneClientId": "No Rclone Client ID available for this provider. Use a personal Client ID.",
+  "@noRcloneClientId": {
+    "description": "Localized message for no rclone client id."
+  },
+  "enterClientIdForOauth": "Enter the Client ID to start OAuth2 login",
+  "@enterClientIdForOauth": {
+    "description": "Localized message for enter client id for oauth."
+  },
+  "oauthStartingLocalServer": "Starting local login server...",
+  "@oauthStartingLocalServer": {
+    "description": "Localized message for oauth starting local server."
+  },
+  "oauthBrowserOpened": "Browser opened. Waiting for authorization...",
+  "@oauthBrowserOpened": {
+    "description": "Localized message for oauth browser opened."
+  },
+  "oauthBrowserNotSupported": "Automatic opening not supported. Open or copy the link below in your browser:",
+  "@oauthBrowserNotSupported": {
+    "description": "Localized message for oauth browser not supported."
+  },
+  "oauthCompletedSuccess": "Authentication completed successfully!",
+  "@oauthCompletedSuccess": {
+    "description": "Localized message for oauth completed success."
+  },
+  "oauthErrorPrefix": "OAuth Error: {error}",
+  "@oauthErrorPrefix": {
+    "description": "Localized message for oauth error prefix.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "officialOauthActionDesc": "Fast verified login with dedicated credentials for UnifyCloud. Click \"Start Browser Login\" to authenticate without manual setup.",
+  "@officialOauthActionDesc": {
+    "description": "Localized message for official oauth action desc."
+  },
+  "rcloneOauthTitle": "Rclone Public Client ID (Not Recommended)",
+  "@rcloneOauthTitle": {
+    "description": "Localized message for rclone oauth title."
+  },
+  "rcloneOauthWarningDesc": "Uses legacy public keys shared across all Rclone users. May experience slowdowns or rate limits due to shared quotas.",
+  "@rcloneOauthWarningDesc": {
+    "description": "Localized message for rclone oauth warning desc."
+  },
+  "customOauthGuideInfo": "Create your own IDs independently: see docs/oauth_setup_guide.md for a step-by-step guide.",
+  "@customOauthGuideInfo": {
+    "description": "Localized message for custom oauth guide info."
+  },
+  "customGoogleClientIdLabel": "Personal Google Client ID",
+  "@customGoogleClientIdLabel": {
+    "description": "Localized message for custom google client id label."
+  },
+  "customOauthClientIdLabel": "Personal Client ID (OAuth2)",
+  "@customOauthClientIdLabel": {
+    "description": "Localized message for custom oauth client id label."
+  },
+  "customGoogleClientIdHint": "e.g. xxxxx.apps.googleusercontent.com",
+  "@customGoogleClientIdHint": {
+    "description": "Localized message for custom google client id hint."
+  },
+  "enterYourClientIdError": "Enter your Client ID",
+  "@enterYourClientIdError": {
+    "description": "Localized message for enter your client id error."
+  },
+  "customClientSecretOptional": "Client Secret (Optional)",
+  "@customClientSecretOptional": {
+    "description": "Localized message for custom client secret optional."
+  },
+  "authenticating": "Authenticating...",
+  "@authenticating": {
+    "description": "Localized message for authenticating."
+  },
+  "startBrowserLogin": "Start Browser Login (OAuth2)",
+  "@startBrowserLogin": {
+    "description": "Localized message for start browser login."
+  },
+  "browserLaunchedOrCopy": "Browser launched (or copy the link below)",
+  "@browserLaunchedOrCopy": {
+    "description": "Localized message for browser launched or copy."
+  },
+  "copyLinkToCompleteLogin": "Copy the link to complete login in your browser",
+  "@copyLinkToCompleteLogin": {
+    "description": "Localized message for copy link to complete login."
+  },
+  "copyLinkAndPasteHint": "Link copied to clipboard! Paste it into your browser.",
+  "@copyLinkAndPasteHint": {
+    "description": "Localized message for copy link and paste hint."
+  },
+  "tokenJsonLabel": "Token JSON (generated or pasted)",
+  "@tokenJsonLabel": {
+    "description": "Localized message for token json label."
+  },
+  "webdavUrlLabel": "WebDAV / Nextcloud URL",
+  "@webdavUrlLabel": {
+    "description": "Localized message for webdav url label."
+  },
+  "s3EndpointLabel": "S3 Endpoint",
+  "@s3EndpointLabel": {
+    "description": "Localized message for s3 endpoint label."
+  },
+  "sftpHostLabel": "SFTP Host / Server",
+  "@sftpHostLabel": {
+    "description": "Localized message for sftp host label."
+  },
+  "requiredFieldError": "Required field",
+  "@requiredFieldError": {
+    "description": "Localized message for required field error."
+  },
+  "s3AccessKeyId": "Access Key ID",
+  "@s3AccessKeyId": {
+    "description": "Localized message for s3 access key id."
+  },
+  "usernameLabel": "Username",
+  "@usernameLabel": {
+    "description": "Localized message for username label."
+  },
+  "s3SecretAccessKey": "Secret Access Key",
+  "@s3SecretAccessKey": {
+    "description": "Localized message for s3 secret access key."
+  },
+  "passwordLabel": "Password",
+  "@passwordLabel": {
+    "description": "Localized message for password label."
+  },
+  "localProviderInfo": "The local provider lets you browse and copy files to/from your device's filesystem.",
+  "@localProviderInfo": {
+    "description": "Localized message for local provider info."
+  },
+  "e2eEncryptionTitle": "Client-Side End-to-End Encryption (AES-256)",
+  "@e2eEncryptionTitle": {
+    "description": "Localized message for e2e encryption title."
+  },
+  "e2eEncryptionDesc": "Files and their names are encrypted on your device before being uploaded to the destination cloud. Not even the cloud provider can read them.",
+  "@e2eEncryptionDesc": {
+    "description": "Localized message for e2e encryption desc."
+  },
+  "noTargetCloudForVault": "No destination cloud available. Connect another cloud first (e.g. Google Drive, OneDrive, or Local Disk) to create an encrypted Vault on it.",
+  "@noTargetCloudForVault": {
+    "description": "Localized message for no target cloud for vault."
+  },
+  "vaultTargetCloudLabel": "Destination Cloud *",
+  "@vaultTargetCloudLabel": {
+    "description": "Localized message for vault target cloud label."
+  },
+  "vaultTargetCloudHelper": "The cloud where encrypted files will be stored",
+  "@vaultTargetCloudHelper": {
+    "description": "Localized message for vault target cloud helper."
+  },
+  "vaultTargetPathLabel": "Destination Path or Folder",
+  "@vaultTargetPathLabel": {
+    "description": "Localized message for vault target path label."
+  },
+  "vaultTargetPathHint": "e.g. vault or secret_data",
+  "@vaultTargetPathHint": {
+    "description": "Localized message for vault target path hint."
+  },
+  "vaultTargetPathHelper": "Folder on the remote cloud where encrypted files will be saved (optional)",
+  "@vaultTargetPathHelper": {
+    "description": "Localized message for vault target path helper."
+  },
+  "vaultMasterPasswordLabel": "Encryption Password (Master Password) *",
+  "@vaultMasterPasswordLabel": {
+    "description": "Localized message for vault master password label."
+  },
+  "vaultMasterPasswordHelper": "Keep it safe: without this password files cannot be recovered",
+  "@vaultMasterPasswordHelper": {
+    "description": "Localized message for vault master password helper."
+  },
+  "vaultEnterPasswordError": "Enter the encryption password",
+  "@vaultEnterPasswordError": {
+    "description": "Localized message for vault enter password error."
+  },
+  "vaultConfirmPasswordRequired": "Confirm Password *",
+  "@vaultConfirmPasswordRequired": {
+    "description": "Localized message for vault confirm password required."
+  },
+  "vaultConfirmPasswordError": "Confirm the password",
+  "@vaultConfirmPasswordError": {
+    "description": "Localized message for vault confirm password error."
+  },
+  "vaultSaltOptionalLabel": "Salt / Secondary Password (Optional)",
+  "@vaultSaltOptionalLabel": {
+    "description": "Localized message for vault salt optional label."
+  },
+  "vaultSaltHelper": "Adds extra protection against brute-force attacks",
+  "@vaultSaltHelper": {
+    "description": "Localized message for vault salt helper."
+  },
+  "oauthPortOccupied": "Port {port} is already in use by another process. Close any open Rclone or browser sessions and try again.",
+  "@oauthPortOccupied": {
+    "description": "Localized message for oauth port occupied.",
+    "placeholders": {
+      "port": {
+        "type": "int"
+      }
+    }
+  },
+  "oauthHtmlSuccessTitle": "UnifyCloud - Authenticated",
+  "@oauthHtmlSuccessTitle": {
+    "description": "Localized message for oauth html success title."
+  },
+  "oauthHtmlSuccessHeading": "Authentication successful!",
+  "@oauthHtmlSuccessHeading": {
+    "description": "Localized message for oauth html success heading."
+  },
+  "oauthHtmlSuccessBody": "You can close this tab and return to the UnifyCloud application.",
+  "@oauthHtmlSuccessBody": {
+    "description": "Localized message for oauth html success body."
+  },
+  "oauthHtmlErrorTitle": "UnifyCloud - Error",
+  "@oauthHtmlErrorTitle": {
+    "description": "Localized message for oauth html error title."
+  },
+  "oauthHtmlErrorHeading": "Authentication error",
+  "@oauthHtmlErrorHeading": {
+    "description": "Localized message for oauth html error heading."
+  },
+  "oauthInvalidState": "Invalid OAuth state parameter.",
+  "@oauthInvalidState": {
+    "description": "Localized message for oauth invalid state."
+  },
+  "oauthInvalidCode": "Invalid authorization code.",
+  "@oauthInvalidCode": {
+    "description": "Localized message for oauth invalid code."
+  },
+  "folderDownloadUnsupported": "Direct folder download is not supported. Select individual files.",
+  "@folderDownloadUnsupported": {
+    "description": "Localized message for folder download unsupported."
+  },
+  "downloadingSingleItem": "Starting download for \"{name}\"...",
+  "@downloadingSingleItem": {
+    "description": "Localized message for downloading single item.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadingMultipleItems": "Starting download for {count} files...",
+  "@downloadingMultipleItems": {
+    "description": "Localized message for downloading multiple items.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filesAddedToDownloadQueue": "{count} files added to download queue.",
+  "@filesAddedToDownloadQueue": {
+    "description": "Localized message for files added to download queue.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filesAddedToDownloadQueueWithSkipped": "{count} files added to download queue ({dirs} folders excluded).",
+  "@filesAddedToDownloadQueueWithSkipped": {
+    "description": "Localized message for files added to download queue with skipped.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "dirs": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteSingleFolderTitle": "Delete folder?",
+  "@deleteSingleFolderTitle": {
+    "description": "Localized message for delete single folder title."
+  },
+  "deleteSingleFileTitle": "Delete file?",
+  "@deleteSingleFileTitle": {
+    "description": "Localized message for delete single file title."
+  },
+  "deleteSingleItemPrompt": "Are you sure you want to permanently delete \"{name}\"?",
+  "@deleteSingleItemPrompt": {
+    "description": "Localized message for delete single item prompt.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDeletedSuccess": "Item deleted",
+  "@itemDeletedSuccess": {
+    "description": "Localized message for item deleted success."
+  },
+  "sortDateAsc": "Date (Oldest first)",
+  "@sortDateAsc": {
+    "description": "Localized message for sort date asc."
+  },
+  "sortByTooltip": "Sort by",
+  "@sortByTooltip": {
+    "description": "Localized message for sort by tooltip."
+  },
+  "filesAddedToUploadQueue": "{count, plural, =1{1 file added to upload queue} other{{count} files added to upload queue}}",
+  "@filesAddedToUploadQueue": {
+    "description": "Localized message for files added to upload queue.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "folderAddedToUploadQueue": "Folder added to upload ({count} files queued)",
+  "@folderAddedToUploadQueue": {
+    "description": "Localized message for folder added to upload queue.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dragDropInProgress": "{action} of {count} items from [{src}] to [{dst}] in progress...",
+  "@dragDropInProgress": {
+    "description": "Localized message for drag drop in progress.",
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      },
+      "src": {
+        "type": "String"
+      },
+      "dst": {
+        "type": "String"
+      }
+    }
+  },
+  "copySelected": "Copy selected",
+  "@copySelected": {
+    "description": "Localized message for copy selected."
+  },
+  "cutSelected": "Cut selected",
+  "@cutSelected": {
+    "description": "Localized message for cut selected."
+  },
+  "searchFilesHint": "Search files or folders...",
+  "@searchFilesHint": {
+    "description": "Localized message for search files hint."
+  },
+  "e2eActiveTooltip": "End-to-End Encryption active (AES-256)\nFiles and folders encrypted client-side",
+  "@e2eActiveTooltip": {
+    "description": "Localized message for e2e active tooltip."
+  },
+  "disableDualPaneTooltip": "Disable dual pane",
+  "@disableDualPaneTooltip": {
+    "description": "Localized message for disable dual pane tooltip."
+  },
+  "enableDualPaneTooltip": "Enable dual pane (Commander)",
+  "@enableDualPaneTooltip": {
+    "description": "Localized message for enable dual pane tooltip."
+  },
+  "dropToCopyTo": "Drop to copy to [{remote}]",
+  "@dropToCopyTo": {
+    "description": "Localized message for drop to copy to.",
+    "placeholders": {
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "destinationFallback": "destination",
+  "@destinationFallback": {
+    "description": "Localized message for destination fallback."
+  },
+  "clipboardBannerSingle": "{action}: \"{name}\" from [{remote}]",
+  "@clipboardBannerSingle": {
+    "description": "Localized message for clipboard banner single.",
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      },
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "clipboardBannerMultiple": "{action}: {count} items from [{remote}]",
+  "@clipboardBannerMultiple": {
+    "description": "Localized message for clipboard banner multiple.",
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      },
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "transferStartedSingle": "Transfer started for \"{name}\"",
+  "@transferStartedSingle": {
+    "description": "Localized message for transfer started single.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "transfersStartedCount": "{count} transfers started",
+  "@transfersStartedCount": {
+    "description": "Localized message for transfers started count.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noCloudSelectedTitle": "No Cloud Selected",
+  "@noCloudSelectedTitle": {
+    "description": "Localized message for no cloud selected title."
+  },
+  "noCloudSelectedSubtitle": "Select a cloud from the menu above.",
+  "@noCloudSelectedSubtitle": {
+    "description": "Localized message for no cloud selected subtitle."
+  },
+  "loadingFilesFromRemote": "Loading files from {remote}...",
+  "@loadingFilesFromRemote": {
+    "description": "Localized message for loading files from remote.",
+    "placeholders": {
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "loadingFolder": "Loading {folder}...",
+  "@loadingFolder": {
+    "description": "Localized message for loading folder.",
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
+  "readingDirectory": "Reading directory...",
+  "@readingDirectory": {
+    "description": "Localized message for reading directory."
+  },
+  "downloadStartedSavedTo": "Download started: saving to {path}",
+  "@downloadStartedSavedTo": {
+    "description": "Localized message for download started saved to.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "noCloudSelected": "No cloud selected.",
+  "@noCloudSelected": {
+    "description": "Localized message for no cloud selected."
+  },
+  "noLinkReturnedByProvider": "No link returned by provider.",
+  "@noLinkReturnedByProvider": {
+    "description": "Localized message for no link returned by provider."
+  },
+  "publicLinksNotSupported": "This cloud provider does not support creating public links.",
+  "@publicLinksNotSupported": {
+    "description": "Localized message for public links not supported."
+  },
+  "errorCreatingShareLink": "Error creating link: {error}",
+  "@errorCreatingShareLink": {
+    "description": "Localized message for error creating share link.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "newNameLabel": "New name",
+  "@newNameLabel": {
+    "description": "Localized message for new name label."
+  },
+  "itemDetailsSizeWithBytes": "Size: {size} ({bytes} bytes)",
+  "@itemDetailsSizeWithBytes": {
+    "description": "Localized message for item details size with bytes.",
+    "placeholders": {
+      "size": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "shareLinkAccessFile": "Anyone with this link will be able to access this file:",
+  "@shareLinkAccessFile": {
+    "description": "Localized message for share link access file."
+  },
+  "shareLinkAccessFolder": "Anyone with this link will be able to access this folder:",
+  "@shareLinkAccessFolder": {
+    "description": "Localized message for share link access folder."
+  },
+  "invalidUrlOrBrowser": "Invalid URL or unable to open browser.",
+  "@invalidUrlOrBrowser": {
+    "description": "Localized message for invalid url or browser."
+  },
+  "noAppToOpenFile": "No application installed to open \"{name}\".",
+  "@noAppToOpenFile": {
+    "description": "Localized message for no app to open file.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "permissionDeniedOpenFile": "Permission denied to open file with system app.",
+  "@permissionDeniedOpenFile": {
+    "description": "Localized message for permission denied open file."
+  },
+  "noDefaultAppFound": "No default application found to open this file.",
+  "@noDefaultAppFound": {
+    "description": "Localized message for no default app found."
+  },
+  "unableToOpenFile": "Unable to open file: {error}",
+  "@unableToOpenFile": {
+    "description": "Localized message for unable to open file.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadingForExternalOpen": "Downloading \"{name}\" to open externally...",
+  "@downloadingForExternalOpen": {
+    "description": "Localized message for downloading for external open.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "errorOpeningFile": "Error opening file: {error}",
+  "@errorOpeningFile": {
+    "description": "Localized message for error opening file.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "selectFilesToUpload": "Select files to upload to Cloud",
+  "@selectFilesToUpload": {
+    "description": "Localized message for select files to upload."
+  },
+  "selectFolderToUpload": "Select folder to upload to Cloud",
+  "@selectFolderToUpload": {
+    "description": "Localized message for select folder to upload."
+  },
+  "copyRightCompact": "Copy ->",
+  "@copyRightCompact": {
+    "description": "Localized message for copy right compact."
+  },
+  "copyRightCountCompact": "Copy ({count}) ->",
+  "@copyRightCountCompact": {
+    "description": "Localized message for copy right count compact.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "moveRightCompact": "Move ->",
+  "@moveRightCompact": {
+    "description": "Localized message for move right compact."
+  },
+  "moveRightCountCompact": "Move ({count}) ->",
+  "@moveRightCountCompact": {
+    "description": "Localized message for move right count compact.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "copyLeftCompact": "<- Copy",
+  "@copyLeftCompact": {
+    "description": "Localized message for copy left compact."
+  },
+  "copyLeftCountCompact": "<- Copy ({count})",
+  "@copyLeftCountCompact": {
+    "description": "Localized message for copy left count compact.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "moveLeftCompact": "<- Move",
+  "@moveLeftCompact": {
+    "description": "Localized message for move left compact."
+  },
+  "moveLeftCountCompact": "<- Move ({count})",
+  "@moveLeftCountCompact": {
+    "description": "Localized message for move left count compact.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "clear": "Clear",
+  "@clear": {
+    "description": "Localized message for clear."
+  },
+  "noRecentTransfers": "No recent transfers",
+  "@noRecentTransfers": {
+    "description": "Localized message for no recent transfers."
+  },
+  "recentTransfersSubtitle": "Downloads, uploads, and cloud copies will appear here.",
+  "@recentTransfersSubtitle": {
+    "description": "Localized message for recent transfers subtitle."
+  },
+  "completedWithProgress": "Completed • {progress}",
+  "@completedWithProgress": {
+    "description": "Localized message for completed with progress.",
+    "placeholders": {
+      "progress": {
+        "type": "String"
+      }
+    }
+  },
+  "transferFailedError": "Error: {error}",
+  "@transferFailedError": {
+    "description": "Localized message for transfer failed error.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "transferFailedFallback": "Transfer failed",
+  "@transferFailedFallback": {
+    "description": "Localized message for transfer failed fallback."
+  },
+  "cancelledByUser": "Cancelled by user",
+  "@cancelledByUser": {
+    "description": "Localized message for cancelled by user."
+  },
+  "localLocation": "Local",
+  "@localLocation": {
+    "description": "Localized message for local location."
+  },
+  "moveToBadge": "Move to",
+  "@moveToBadge": {
+    "description": "Localized message for move to badge."
+  },
+  "copyToBadge": "Copy to",
+  "@copyToBadge": {
+    "description": "Localized message for copy to badge."
+  },
+  "copiedExclamation": "Copied!",
+  "@copiedExclamation": {
+    "description": "Localized message for copied exclamation."
+  },
+  "running": "Running",
+  "@running": {
+    "description": "Localized message for running."
+  }
 }

@@ -2,18 +2,6 @@ import 'package:flutter/material.dart';
 
 /// Representation of user-configurable application preferences.
 class AppSettings {
-  final ThemeMode themeMode;
-  final bool showHiddenFiles;
-  final bool confirmDelete;
-  final String? customDownloadPath;
-  final int maxConcurrentTransfers;
-  final bool dualPaneEnabled;
-  final bool appLockEnabled;
-  final bool useBiometrics;
-  final int autoLockTimeoutMinutes;
-  final bool autostartOnBoot;
-  final bool minimizeToTray;
-  final String language; // 'en', 'it', or 'system'
 
   const AppSettings({
     this.themeMode = ThemeMode.system,
@@ -29,6 +17,54 @@ class AppSettings {
     this.minimizeToTray = true,
     this.language = 'en',
   });
+
+  factory AppSettings.fromJson(Map<String, dynamic> json) {
+    ThemeMode mode = ThemeMode.system;
+    final themeStr = json['theme_mode'] as String?;
+    if (themeStr == 'dark') {
+      mode = ThemeMode.dark;
+    } else if (themeStr == 'light') {
+      mode = ThemeMode.light;
+    }
+
+    return AppSettings(
+      themeMode: mode,
+      showHiddenFiles: json['show_hidden_files'] as bool? ?? false,
+      confirmDelete: json['confirm_delete'] as bool? ?? true,
+      customDownloadPath: json['custom_download_path'] as String?,
+      maxConcurrentTransfers:
+          json['max_concurrent_transfers'] as int? ?? 4,
+      dualPaneEnabled: json['dual_pane_enabled'] as bool? ?? true,
+      appLockEnabled: json['app_lock_enabled'] as bool? ?? false,
+      useBiometrics: json['use_biometrics'] as bool? ?? true,
+      autoLockTimeoutMinutes:
+          json['auto_lock_timeout_minutes'] as int? ?? 0,
+      autostartOnBoot: json['autostart_on_boot'] as bool? ?? false,
+      minimizeToTray: json['minimize_to_tray'] as bool? ?? true,
+      language: json['language'] as String? ?? 'en',
+    );
+  }
+  final ThemeMode themeMode;
+  final bool showHiddenFiles;
+  final bool confirmDelete;
+  final String? customDownloadPath;
+  final int maxConcurrentTransfers;
+  final bool dualPaneEnabled;
+  final bool appLockEnabled;
+  final bool useBiometrics;
+  final int autoLockTimeoutMinutes;
+  final bool autostartOnBoot;
+  final bool minimizeToTray;
+  final String language; // 'en', 'it', 'fr', 'pl', 'es', 'ar', or 'system'
+
+  static const Set<String> supportedLanguageCodes = {
+    'en',
+    'it',
+    'fr',
+    'pl',
+    'es',
+    'ar',
+  };
 
   /// Resolves the configured language to a [Locale], or `null` for system default.
   /// Scalable to any standard language or region tag (e.g. 'en', 'it', 'es', 'zh_CN').
@@ -98,33 +134,6 @@ class AppSettings {
     };
   }
 
-  factory AppSettings.fromJson(Map<String, dynamic> json) {
-    ThemeMode mode = ThemeMode.system;
-    final themeStr = json['theme_mode'] as String?;
-    if (themeStr == 'dark') {
-      mode = ThemeMode.dark;
-    } else if (themeStr == 'light') {
-      mode = ThemeMode.light;
-    }
-
-    return AppSettings(
-      themeMode: mode,
-      showHiddenFiles: json['show_hidden_files'] as bool? ?? false,
-      confirmDelete: json['confirm_delete'] as bool? ?? true,
-      customDownloadPath: json['custom_download_path'] as String?,
-      maxConcurrentTransfers:
-          json['max_concurrent_transfers'] as int? ?? 4,
-      dualPaneEnabled: json['dual_pane_enabled'] as bool? ?? true,
-      appLockEnabled: json['app_lock_enabled'] as bool? ?? false,
-      useBiometrics: json['use_biometrics'] as bool? ?? true,
-      autoLockTimeoutMinutes:
-          json['auto_lock_timeout_minutes'] as int? ?? 0,
-      autostartOnBoot: json['autostart_on_boot'] as bool? ?? false,
-      minimizeToTray: json['minimize_to_tray'] as bool? ?? true,
-      language: json['language'] as String? ?? 'en',
-    );
-  }
-
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -159,4 +168,3 @@ class AppSettings {
         language,
       );
 }
-

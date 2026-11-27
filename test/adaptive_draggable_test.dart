@@ -77,7 +77,6 @@ void main() {
 
       final gesture = await tester.startGesture(
         targetCenter,
-        kind: PointerDeviceKind.touch,
       );
 
       // Wait for touchDelay

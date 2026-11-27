@@ -20,11 +20,11 @@ final settingsStorageProvider = Provider<FlutterSecureStorage>((ref) {
 
 /// Riverpod 3 Notifier managing application settings and persistence.
 class SettingsNotifier extends Notifier<AppSettings> {
+
+  SettingsNotifier([this._initialSettings]);
   static const String settingsStorageKey = 'unifycloud_settings_v1';
   final AppSettings? _initialSettings;
   bool _hasLocalChanges = false;
-
-  SettingsNotifier([this._initialSettings]);
 
   FlutterSecureStorage get _storage => ref.read(settingsStorageProvider);
 
@@ -39,6 +39,10 @@ class SettingsNotifier extends Notifier<AppSettings> {
       if (rawJson != null && rawJson.trim().isNotEmpty) {
         final decoded = jsonDecode(rawJson) as Map<String, dynamic>;
         loaded = AppSettings.fromJson(decoded);
+        if (loaded.language != 'system' &&
+            !AppSettings.supportedLanguageCodes.contains(loaded.language)) {
+          loaded = loaded.copyWith(language: 'system');
+        }
       }
     } catch (_) {
       // Fallback to default state on parse error
@@ -62,7 +66,7 @@ class SettingsNotifier extends Notifier<AppSettings> {
     if (_initialSettings != null) {
       return _initialSettings;
     }
-    scheduleMicrotask(() => _loadFromStorage());
+    scheduleMicrotask(_loadFromStorage);
     return const AppSettings();
   }
 
@@ -72,7 +76,12 @@ class SettingsNotifier extends Notifier<AppSettings> {
       final rawJson = await _storage.read(key: settingsStorageKey);
       if (!_hasLocalChanges && rawJson != null && rawJson.trim().isNotEmpty) {
         final decoded = jsonDecode(rawJson) as Map<String, dynamic>;
-        state = AppSettings.fromJson(decoded);
+        var loaded = AppSettings.fromJson(decoded);
+        if (loaded.language != 'system' &&
+            !AppSettings.supportedLanguageCodes.contains(loaded.language)) {
+          loaded = loaded.copyWith(language: 'system');
+        }
+        state = loaded;
       }
     } catch (_) {
       // Fallback to current state on parse error
@@ -163,7 +172,7 @@ class SettingsNotifier extends Notifier<AppSettings> {
     await _persist(state.copyWith(minimizeToTray: enabled));
   }
 
-  /// Changes the application language ('en', 'it', 'system').
+  /// Changes the application language ('en', 'it', 'fr', 'pl', 'es', 'ar', 'system').
   Future<void> setLanguage(String lang) async {
     await _persist(state.copyWith(language: lang));
   }
@@ -173,4 +182,3 @@ class SettingsNotifier extends Notifier<AppSettings> {
     await _persist(const AppSettings());
   }
 }
-

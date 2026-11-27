@@ -58,9 +58,7 @@ class TransferNotifierMock extends Notifier<TransferState>
       isMove: isMove,
       status: TransferStatus.running,
       totalBytes: 1024,
-      bytes: 0,
       speed: 100,
-      percentage: 0,
       startTime: DateTime.now(),
     );
   }
@@ -71,8 +69,8 @@ class TransferNotifierMock extends Notifier<TransferState>
 
 class CloudAccountsNotifierMock extends Notifier<CloudAccountsState>
     implements CloudAccountsNotifier {
-  final CloudAccountsState _state;
   CloudAccountsNotifierMock(this._state);
+  final CloudAccountsState _state;
 
   @override
   CloudAccountsState build() => _state;
@@ -83,10 +81,10 @@ class CloudAccountsNotifierMock extends Notifier<CloudAccountsState>
 
 class FakePaneNotifier extends Notifier<FileExplorerState>
     implements FileExplorerNotifier {
-  final FileExplorerState _initial;
-  final List<Map<String, dynamic>> directTransfers = [];
 
   FakePaneNotifier(this._initial);
+  final FileExplorerState _initial;
+  final List<Map<String, dynamic>> directTransfers = [];
 
   @override
   FileExplorerState build() => _initial;
@@ -249,8 +247,8 @@ void main() {
 
       // Expect both pane views to be rendered
       expect(find.byType(FileExplorerPaneView), findsNWidgets(2));
-      expect(find.text('Sinistra: '), findsOneWidget);
-      expect(find.text('Destra: '), findsOneWidget);
+      expect(find.text('Left: '), findsOneWidget);
+      expect(find.text('Right: '), findsOneWidget);
 
       // Expect items from both panes
       expect(find.text('photo.jpg'), findsOneWidget);
@@ -258,8 +256,8 @@ void main() {
 
       // Expect Commander action bar at the bottom
       expect(find.byType(CommanderActionBar), findsOneWidget);
-      expect(find.text('Copia a destra ->'), findsOneWidget);
-      expect(find.text('<- Copia a sinistra'), findsOneWidget);
+      expect(find.text('Copy to right ->'), findsOneWidget);
+      expect(find.text('<- Copy to left'), findsOneWidget);
     });
 
     testWidgets('Renders single pane on narrow screens (< 900px)', (tester) async {
@@ -332,7 +330,6 @@ void main() {
         const FileExplorerState(
           currentRemote: 'OneDrive',
           currentPath: 'BackupDest',
-          items: [],
         ),
       );
 
@@ -365,8 +362,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Tap 'Copia a destra' button in CommanderActionBar
-      final copyBtn = find.text('Copia a destra (1)');
+      // Tap 'Copy right' button in CommanderActionBar
+      final copyBtn = find.text('Copy right (1) ->');
       expect(copyBtn, findsOneWidget);
 
       await tester.tap(copyBtn);
@@ -398,7 +395,6 @@ void main() {
       final leftNotifier = FakePaneNotifier(
         const FileExplorerState(
           currentRemote: 'GoogleDrive',
-          currentPath: '',
           items: [item1],
         ),
       );
@@ -528,4 +524,3 @@ void main() {
     });
   });
 }
-

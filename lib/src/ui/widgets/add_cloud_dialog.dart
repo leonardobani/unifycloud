@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/l10n_extension.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../services/oauth_service.dart';
 import '../../utils/token_utils.dart';
@@ -11,14 +12,14 @@ import '../theme/app_theme.dart';
 
 /// Modal dialog allowing users to configure and connect a new cloud storage provider.
 class AddCloudDialog extends ConsumerStatefulWidget {
-  final String? initialProvider;
-  final String? initialTargetRemote;
 
   const AddCloudDialog({
     super.key,
     this.initialProvider,
     this.initialTargetRemote,
   });
+  final String? initialProvider;
+  final String? initialTargetRemote;
 
   @override
   ConsumerState<AddCloudDialog> createState() => _AddCloudDialogState();
@@ -53,6 +54,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
   bool _obscureCryptSalt = true;
 
   bool _isAuthenticating = false;
+  bool _isAuthError = false;
   String? _statusMessage;
   String? _authUrl;
   bool _browserOpened = false;
@@ -60,15 +62,15 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
   String? _discoveredDriveId;
   String? _discoveredDriveType;
 
-  final List<Map<String, String>> _availableProviders = const [
-    {'type': 'drive', 'name': 'Google Drive', 'subtitle': 'OAuth2 cloud storage'},
-    {'type': 'dropbox', 'name': 'Dropbox', 'subtitle': 'File sync and share'},
-    {'type': 'onedrive', 'name': 'Microsoft OneDrive', 'subtitle': 'Personal and business storage'},
-    {'type': 'webdav', 'name': 'Nextcloud / WebDAV', 'subtitle': 'Self-hosted or corporate cloud'},
-    {'type': 'sftp', 'name': 'SSH / SFTP', 'subtitle': 'Secure remote server'},
-    {'type': 's3', 'name': 'Amazon S3 / MinIO', 'subtitle': 'Object storage bucket'},
-    {'type': 'local', 'name': 'Disco Locale', 'subtitle': 'Cartella locale di sistema'},
-    {'type': 'crypt', 'name': 'Crittografia E2E (Crypt)', 'subtitle': 'Crittografa file e nomi con AES-256 su qualsiasi cloud'},
+  List<Map<String, String>> _getAvailableProviders(AppLocalizations l10n) => [
+    {'type': 'drive', 'name': 'Google Drive', 'subtitle': l10n.providerSubtitleDrive},
+    {'type': 'dropbox', 'name': 'Dropbox', 'subtitle': l10n.providerSubtitleDropbox},
+    {'type': 'onedrive', 'name': 'Microsoft OneDrive', 'subtitle': l10n.providerSubtitleOneDrive},
+    {'type': 'webdav', 'name': 'Nextcloud / WebDAV', 'subtitle': l10n.providerSubtitleWebdav},
+    {'type': 'sftp', 'name': 'SSH / SFTP', 'subtitle': l10n.providerSubtitleSftp},
+    {'type': 's3', 'name': 'Amazon S3 / MinIO', 'subtitle': l10n.providerSubtitleS3},
+    {'type': 'local', 'name': l10n.providerLocalName, 'subtitle': l10n.providerSubtitleLocal},
+    {'type': 'crypt', 'name': l10n.providerCryptName, 'subtitle': l10n.providerSubtitleCrypt},
   ];
 
   @override
@@ -78,7 +80,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
       _selectedProvider = widget.initialProvider!;
     }
     if (widget.initialTargetRemote != null) {
-      _cryptTargetRemote = widget.initialTargetRemote!;
+      _cryptTargetRemote = widget.initialTargetRemote;
     }
     _updateDefaultName(_selectedProvider);
   }
@@ -113,32 +115,25 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
     switch (type) {
       case 'drive':
         _nameController.text = 'GoogleDrive';
-        break;
       case 'dropbox':
         _nameController.text = 'Dropbox';
-        break;
       case 'onedrive':
         _nameController.text = 'OneDrive';
-        break;
       case 'webdav':
         _nameController.text = 'Nextcloud';
-        break;
       case 'sftp':
         _nameController.text = 'ServerSFTP';
-        break;
       case 's3':
         _nameController.text = 'BucketS3';
-        break;
       case 'local':
-        _nameController.text = 'DiscoLocale';
-        break;
+        _nameController.text = 'LocalDisk';
       case 'crypt':
-        _nameController.text = 'VaultCifrato';
-        break;
+        _nameController.text = 'EncryptedVault';
     }
   }
 
   Future<void> _startOAuthFlow() async {
+    final l10n = context.l10n;
     final String effectiveClientId;
     final String? effectiveClientSecret;
 
@@ -148,10 +143,8 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
 
       if (ucId == null || ucId.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Nessun Client ID UnifyCloud disponibile per questo provider. Usa Rclone o un Client ID personale.',
-            ),
+          SnackBar(
+            content: Text(l10n.noUnifyCloudClientId),
           ),
         );
         return;
@@ -165,10 +158,8 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
 
       if (rcloneId == null || rcloneId.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Nessun Client ID di Rclone disponibile per questo provider. Usa un Client ID personale.',
-            ),
+          SnackBar(
+            content: Text(l10n.noRcloneClientId),
           ),
         );
         return;
@@ -183,10 +174,8 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
 
       if (effectiveClientId.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Inserisci il Client ID per avviare il login OAuth2',
-            ),
+          SnackBar(
+            content: Text(l10n.enterClientIdForOauth),
           ),
         );
         return;
@@ -195,9 +184,10 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
 
     setState(() {
       _isAuthenticating = true;
+      _isAuthError = false;
       _authUrl = null;
       _browserOpened = false;
-      _statusMessage = 'Avvio del server locale per l\'accesso...';
+      _statusMessage = l10n.oauthStartingLocalServer;
     });
 
     try {
@@ -206,17 +196,17 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
         providerType: _selectedProvider,
         clientId: effectiveClientId,
         clientSecret: effectiveClientSecret,
+        l10n: l10n,
         onAuthUrlReady: (authUrl, opened) {
           if (mounted) {
             setState(() {
               _authUrl = authUrl.toString();
               _browserOpened = opened;
+              _isAuthError = false;
               if (opened) {
-                _statusMessage =
-                    'Browser aperto. In attesa di autorizzazione...';
+                _statusMessage = l10n.oauthBrowserOpened;
               } else {
-                _statusMessage =
-                    'Apertura automatica non supportata. Apri o copia il link sottostante nel tuo browser:';
+                _statusMessage = l10n.oauthBrowserNotSupported;
               }
             });
           }
@@ -233,14 +223,16 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
           }
           _tokenController.text =
               TokenUtils.normalizeTokenJson(jsonEncode(tokens));
-          _statusMessage = 'Autenticazione completata con successo!';
+          _isAuthError = false;
+          _statusMessage = l10n.oauthCompletedSuccess;
           _authUrl = null;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _statusMessage = 'Errore OAuth: $e';
+          _isAuthError = true;
+          _statusMessage = l10n.oauthErrorPrefix(e.toString());
         });
       }
     } finally {
@@ -255,6 +247,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
   Future<void> _saveRemote() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final l10n = context.l10n;
     final remoteName = _nameController.text.trim();
     final options = <String, String>{};
 
@@ -299,39 +292,34 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
             options['drive_type'] = _discoveredDriveType!;
           }
         }
-        break;
       case 'webdav':
         options['url'] = _hostController.text.trim();
         options['user'] = _userController.text.trim();
         options['pass'] = _passController.text.trim();
         options['vendor'] = 'nextcloud';
-        break;
       case 'sftp':
         options['host'] = _hostController.text.trim();
         options['user'] = _userController.text.trim();
         options['pass'] = _passController.text.trim();
-        break;
       case 's3':
         options['endpoint'] = _hostController.text.trim();
         options['access_key_id'] = _userController.text.trim();
         options['secret_access_key'] = _passController.text.trim();
-        break;
       case 'local':
         options['copy_links'] = 'true';
-        break;
       case 'crypt':
         if (_cryptTargetRemote == null || _cryptTargetRemote!.isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Seleziona il Cloud di destinazione per il Vault'),
+            SnackBar(
+              content: Text(l10n.selectVaultDestination),
             ),
           );
           return;
         }
         if (_cryptPasswordController.text.isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('La password di cifratura è obbligatoria'),
+            SnackBar(
+              content: Text(l10n.vaultPasswordRequired),
             ),
           );
           return;
@@ -339,8 +327,8 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
         if (_cryptPasswordController.text !=
             _cryptConfirmPasswordController.text) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Le password inserite non coincidono'),
+            SnackBar(
+              content: Text(l10n.vaultPasswordsDoNotMatch),
             ),
           );
           return;
@@ -361,7 +349,6 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
         options['filename_encryption'] = _filenameEncryption;
         options['directory_name_encryption'] =
             _directoryNameEncryption ? 'true' : 'false';
-        break;
     }
 
     setState(() => _isSaving = true);
@@ -378,7 +365,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
       if (mounted) {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore durante l\'aggiunta del remote: $e')),
+          SnackBar(content: Text(l10n.errorAddingRemote(e.toString()))),
         );
       }
     }
@@ -386,6 +373,8 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final availableProviders = _getAvailableProviders(l10n);
     final isOAuth = ['drive', 'dropbox', 'onedrive'].contains(_selectedProvider);
 
     return Dialog(
@@ -407,9 +396,9 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                       size: 28,
                     ),
                     const SizedBox(width: 12),
-                    const Text(
-                      'Collega Nuovo Cloud',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    Text(
+                      l10n.connectNewCloud,
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const Spacer(),
                     IconButton(
@@ -424,15 +413,15 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Seleziona Provider:',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                        Text(
+                          l10n.selectCloudProvider,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
-                          children: _availableProviders.map((p) {
+                          children: availableProviders.map((p) {
                             final isSelected = p['type'] == _selectedProvider;
                             return ChoiceChip(
                               label: Row(
@@ -460,18 +449,18 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                         const Divider(height: 32),
                         TextFormField(
                           controller: _nameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Nome identificativo del Cloud',
-                            helperText: 'Es. GoogleDrive, LavoroDropbox (senza spazi)',
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.label_outline),
+                          decoration: InputDecoration(
+                            labelText: l10n.cloudAccountName,
+                            helperText: l10n.cloudAccountNameHint,
+                            border: const OutlineInputBorder(),
+                            prefixIcon: const Icon(Icons.label_outline),
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Inserisci un nome';
+                              return l10n.enterNameError;
                             }
                             if (value.contains(' ') || value.contains(':')) {
-                              return 'Non sono ammessi spazi o ":"';
+                              return l10n.noSpacesOrColons;
                             }
                             return null;
                           },
@@ -481,23 +470,23 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                           DropdownButtonFormField<String>(
                             initialValue: _authMethod,
                             isExpanded: true,
-                            decoration: const InputDecoration(
-                              labelText: 'Modalità Client ID (OAuth2)',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.vpn_key_outlined),
+                            decoration: InputDecoration(
+                              labelText: l10n.oauthMode,
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.vpn_key_outlined),
                             ),
-                            items: const [
+                            items: [
                               DropdownMenuItem(
                                 value: 'unifycloud',
-                                child: Text('UnifyCloud (Ufficiale / Consigliato)'),
+                                child: Text(l10n.oauthOfficial),
                               ),
                               DropdownMenuItem(
                                 value: 'rclone',
-                                child: Text('Rclone (Sconsigliato - Quota condivisa)'),
+                                child: Text(l10n.oauthRclone),
                               ),
                               DropdownMenuItem(
                                 value: 'custom',
-                                child: Text('Client ID Personale (Avanzato)'),
+                                child: Text(l10n.oauthCustom),
                               ),
                             ],
                             onChanged: (val) {
@@ -533,16 +522,16 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
-                                          'Credenziali Ufficiali UnifyCloud',
-                                          style: TextStyle(
+                                        Text(
+                                          l10n.officialOauthTitle,
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 13,
                                           ),
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          'Accesso rapido verificato con credenziali dedicate per UnifyCloud. Clicca su "Avvia Accesso nel Browser" per autenticarti senza configurazioni manuali.',
+                                          l10n.officialOauthActionDesc,
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -578,16 +567,16 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
-                                          'Client ID Pubblico di Rclone (Sconsigliato)',
-                                          style: TextStyle(
+                                        Text(
+                                          l10n.rcloneOauthTitle,
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 13,
                                           ),
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          'Usa le chiavi pubbliche storiche condivise con tutti gli utenti di Rclone. Potrebbero verificarsi rallentamenti o blocchi aziendali dovuti alle quote condivise.',
+                                          l10n.rcloneOauthWarningDesc,
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -616,7 +605,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
-                                      'Crea i tuoi ID in autonomia: consulta docs/oauth_setup_guide.md per la guida passo-passo.',
+                                      l10n.customOauthGuideInfo,
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -630,10 +619,10 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               controller: _clientIdController,
                               decoration: InputDecoration(
                                 labelText: _selectedProvider == 'drive'
-                                    ? 'Client ID Personale Google'
-                                    : 'Client ID Personale (OAuth2)',
+                                    ? l10n.customGoogleClientIdLabel
+                                    : l10n.customOauthClientIdLabel,
                                 hintText: _selectedProvider == 'drive'
-                                    ? 'Es. xxxxx.apps.googleusercontent.com'
+                                    ? l10n.customGoogleClientIdHint
                                     : null,
                                 border: const OutlineInputBorder(),
                                 prefixIcon: const Icon(Icons.key_outlined),
@@ -641,7 +630,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               validator: (v) {
                                 if (_authMethod == 'custom' &&
                                     (v == null || v.trim().isEmpty)) {
-                                  return 'Inserisci il tuo Client ID';
+                                  return l10n.enterYourClientIdError;
                                 }
                                 return null;
                               },
@@ -649,10 +638,10 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             const SizedBox(height: 12),
                             TextFormField(
                               controller: _clientSecretController,
-                              decoration: const InputDecoration(
-                                labelText: 'Client Secret (Opzionale)',
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.lock_outline),
+                              decoration: InputDecoration(
+                                labelText: l10n.customClientSecretOptional,
+                                border: const OutlineInputBorder(),
+                                prefixIcon: const Icon(Icons.lock_outline),
                               ),
                               obscureText: true,
                             ),
@@ -669,8 +658,8 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                 : const Icon(Icons.open_in_browser),
                             label: Text(
                               _isAuthenticating
-                                  ? 'Autenticazione in corso...'
-                                  : 'Avvia Accesso nel Browser (OAuth2)',
+                                  ? l10n.authenticating
+                                  : l10n.startBrowserLogin,
                             ),
                           ),
                           if (_statusMessage != null) ...[
@@ -679,7 +668,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               _statusMessage!,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: _statusMessage!.startsWith('Errore')
+                                color: _isAuthError
                                     ? Colors.red
                                     : (_browserOpened
                                         ? Colors.green
@@ -720,8 +709,8 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                       Expanded(
                                         child: Text(
                                           _browserOpened
-                                              ? 'Browser avviato (oppure copia il link qui sotto)'
-                                              : 'Copia il link per completare l\'accesso nel tuo browser',
+                                              ? l10n.browserLaunchedOrCopy
+                                              : l10n.copyLinkToCompleteLogin,
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 12,
@@ -753,17 +742,18 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                                 ClipboardData(text: _authUrl!));
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
-                                              const SnackBar(
+                                              SnackBar(
                                                 content: Text(
-                                                    'Link copiato negli appunti! Incollalo nel tuo browser.'),
-                                                duration: Duration(seconds: 3),
+                                                  l10n.copyLinkAndPasteHint,
+                                                ),
+                                                duration: const Duration(seconds: 3),
                                               ),
                                             );
                                           },
                                           icon:
                                               const Icon(Icons.copy, size: 16),
-                                          label: const Text('Copia Link',
-                                              style: TextStyle(fontSize: 12)),
+                                          label: Text(l10n.copyShareLink,
+                                              style: const TextStyle(fontSize: 12)),
                                           style: FilledButton.styleFrom(
                                             visualDensity:
                                                 VisualDensity.compact,
@@ -782,8 +772,8 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                         },
                                         icon: const Icon(Icons.open_in_browser,
                                             size: 16),
-                                        label: const Text('Riapri',
-                                            style: TextStyle(fontSize: 12)),
+                                        label: Text(l10n.reopenAuth,
+                                            style: const TextStyle(fontSize: 12)),
                                         style: OutlinedButton.styleFrom(
                                           visualDensity: VisualDensity.compact,
                                         ),
@@ -798,10 +788,10 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                           TextFormField(
                             controller: _tokenController,
                             maxLines: 2,
-                            decoration: const InputDecoration(
-                              labelText: 'Token JSON (generato o incollato)',
+                            decoration: InputDecoration(
+                              labelText: l10n.tokenJsonLabel,
                               hintText: '{"access_token": "..."}',
-                              border: OutlineInputBorder(),
+                              border: const OutlineInputBorder(),
                             ),
                           ),
                         ] else if (_selectedProvider == 'webdav' ||
@@ -811,19 +801,25 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             controller: _hostController,
                             decoration: InputDecoration(
                               labelText: _selectedProvider == 'webdav'
-                                  ? 'URL WebDAV / Nextcloud'
-                                  : (_selectedProvider == 's3' ? 'Endpoint S3' : 'Host / Server SFTP'),
+                                  ? l10n.webdavUrlLabel
+                                  : (_selectedProvider == 's3'
+                                      ? l10n.s3EndpointLabel
+                                      : l10n.sftpHostLabel),
                               border: const OutlineInputBorder(),
                               prefixIcon: const Icon(Icons.dns_outlined),
                             ),
                             validator: (v) =>
-                                (v == null || v.trim().isEmpty) ? 'Campo obbligatorio' : null,
+                                (v == null || v.trim().isEmpty)
+                                    ? l10n.requiredFieldError
+                                    : null,
                           ),
                           const SizedBox(height: 12),
                           TextFormField(
                             controller: _userController,
                             decoration: InputDecoration(
-                              labelText: _selectedProvider == 's3' ? 'Access Key ID' : 'Username',
+                              labelText: _selectedProvider == 's3'
+                                  ? l10n.s3AccessKeyId
+                                  : l10n.usernameLabel,
                               border: const OutlineInputBorder(),
                               prefixIcon: const Icon(Icons.person_outline),
                             ),
@@ -832,24 +828,26 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                           TextFormField(
                             controller: _passController,
                             decoration: InputDecoration(
-                              labelText: _selectedProvider == 's3' ? 'Secret Access Key' : 'Password',
+                              labelText: _selectedProvider == 's3'
+                                  ? l10n.s3SecretAccessKey
+                                  : l10n.passwordLabel,
                               border: const OutlineInputBorder(),
                               prefixIcon: const Icon(Icons.lock_outline),
                             ),
                             obscureText: true,
                           ),
                         ] else if (_selectedProvider == 'local') ...[
-                          const Card(
+                          Card(
                             child: Padding(
-                              padding: EdgeInsets.all(12.0),
+                              padding: const EdgeInsets.all(12.0),
                               child: Row(
                                 children: [
-                                  Icon(Icons.info_outline, color: Colors.blue),
-                                  SizedBox(width: 12),
+                                  const Icon(Icons.info_outline, color: Colors.blue),
+                                  const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
-                                      'Il provider locale consente di sfogliare ed effettuare copie verso/dal filesystem del dispositivo.',
-                                      style: TextStyle(fontSize: 13),
+                                      l10n.localProviderInfo,
+                                      style: const TextStyle(fontSize: 13),
                                     ),
                                   ),
                                 ],
@@ -866,23 +864,23 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                 color: const Color(0xFF00BFA5).withValues(alpha: 0.3),
                               ),
                             ),
-                            child: const Row(
+                            child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.shield_outlined, color: Color(0xFF00BFA5), size: 22),
-                                SizedBox(width: 10),
+                                const Icon(Icons.shield_outlined, color: Color(0xFF00BFA5), size: 22),
+                                const SizedBox(width: 10),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Crittografia End-to-End Client-Side (AES-256)',
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                        l10n.e2eEncryptionTitle,
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                                       ),
-                                      SizedBox(height: 4),
+                                      const SizedBox(height: 4),
                                       Text(
-                                        'I file e i loro nomi vengono crittografati sul tuo dispositivo prima di essere inviati al cloud di destinazione. Nemmeno il provider del cloud potrà leggerli.',
-                                        style: TextStyle(fontSize: 12),
+                                        l10n.e2eEncryptionDesc,
+                                        style: const TextStyle(fontSize: 12),
                                       ),
                                     ],
                                   ),
@@ -904,14 +902,14 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
                                   ),
-                                  child: const Row(
+                                  child: Row(
                                     children: [
-                                      Icon(Icons.warning_amber_rounded, color: Colors.amber),
-                                      SizedBox(width: 10),
+                                      const Icon(Icons.warning_amber_rounded, color: Colors.amber),
+                                      const SizedBox(width: 10),
                                       Expanded(
                                         child: Text(
-                                          'Nessun cloud di destinazione disponibile. Collega prima un altro cloud (es. Google Drive, OneDrive, o Disco Locale) su cui creare il Vault cifrato.',
-                                          style: TextStyle(fontSize: 12),
+                                          l10n.noTargetCloudForVault,
+                                          style: const TextStyle(fontSize: 12),
                                         ),
                                       ),
                                     ],
@@ -927,11 +925,11 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                               return DropdownButtonFormField<String>(
                                 initialValue: _cryptTargetRemote,
                                 isExpanded: true,
-                                decoration: const InputDecoration(
-                                  labelText: 'Cloud di destinazione *',
-                                  helperText: 'Il cloud dove verranno archiviati i file cifrati',
-                                  border: OutlineInputBorder(),
-                                  prefixIcon: Icon(Icons.cloud_outlined),
+                                decoration: InputDecoration(
+                                  labelText: l10n.vaultTargetCloudLabel,
+                                  helperText: l10n.vaultTargetCloudHelper,
+                                  border: const OutlineInputBorder(),
+                                  prefixIcon: const Icon(Icons.cloud_outlined),
                                 ),
                                 items: availableRemotes.map((r) {
                                   return DropdownMenuItem<String>(
@@ -960,12 +958,12 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                           const SizedBox(height: 12),
                           TextFormField(
                             controller: _cryptTargetPathController,
-                            decoration: const InputDecoration(
-                              labelText: 'Percorso o Cartella di destinazione',
-                              hintText: 'es. vault o secret_data',
-                              helperText: 'Cartella sul cloud remoto in cui salvare i file cifrati (opzionale)',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.folder_outlined),
+                            decoration: InputDecoration(
+                              labelText: l10n.vaultTargetPathLabel,
+                              hintText: l10n.vaultTargetPathHint,
+                              helperText: l10n.vaultTargetPathHelper,
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.folder_outlined),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -973,8 +971,8 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             controller: _cryptPasswordController,
                             obscureText: _obscureCryptPassword,
                             decoration: InputDecoration(
-                              labelText: 'Password di Cifratura (Password Principale) *',
-                              helperText: 'Conservala con cura: senza password non sarà possibile recuperare i file',
+                              labelText: l10n.vaultMasterPasswordLabel,
+                              helperText: l10n.vaultMasterPasswordHelper,
                               border: const OutlineInputBorder(),
                               prefixIcon: const Icon(Icons.lock_rounded),
                               suffixIcon: IconButton(
@@ -990,7 +988,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             ),
                             validator: (v) {
                               if (_selectedProvider == 'crypt' && (v == null || v.isEmpty)) {
-                                return 'Inserisci la password di cifratura';
+                                return l10n.vaultEnterPasswordError;
                               }
                               return null;
                             },
@@ -1000,7 +998,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             controller: _cryptConfirmPasswordController,
                             obscureText: _obscureCryptConfirmPassword,
                             decoration: InputDecoration(
-                              labelText: 'Conferma Password *',
+                              labelText: l10n.vaultConfirmPasswordRequired,
                               border: const OutlineInputBorder(),
                               prefixIcon: const Icon(Icons.lock_outline_rounded),
                               suffixIcon: IconButton(
@@ -1017,10 +1015,10 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             validator: (v) {
                               if (_selectedProvider == 'crypt') {
                                 if (v == null || v.isEmpty) {
-                                  return 'Conferma la password';
+                                  return l10n.vaultConfirmPasswordError;
                                 }
                                 if (v != _cryptPasswordController.text) {
-                                  return 'Le password non coincidono';
+                                  return l10n.vaultPasswordsDoNotMatch;
                                 }
                               }
                               return null;
@@ -1031,8 +1029,8 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                             controller: _cryptSaltController,
                             obscureText: _obscureCryptSalt,
                             decoration: InputDecoration(
-                              labelText: 'Salt / Password Secondaria (Opzionale)',
-                              helperText: 'Aggiunge ulteriore sicurezza contro attacchi brute-force',
+                              labelText: l10n.vaultSaltOptionalLabel,
+                              helperText: l10n.vaultSaltHelper,
                               border: const OutlineInputBorder(),
                               prefixIcon: const Icon(Icons.key_outlined),
                               suffixIcon: IconButton(
@@ -1051,23 +1049,23 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                           DropdownButtonFormField<String>(
                             initialValue: _filenameEncryption,
                             isExpanded: true,
-                            decoration: const InputDecoration(
-                              labelText: 'Cifratura dei Nomi File',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.drive_file_rename_outline),
+                            decoration: InputDecoration(
+                              labelText: l10n.fileNameEncryption,
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.drive_file_rename_outline),
                             ),
-                            items: const [
+                            items: [
                               DropdownMenuItem(
                                 value: 'standard',
-                                child: Text('Standard (Nomi file completamente cifrati - Consigliato)'),
+                                child: Text(l10n.encryptStandard),
                               ),
                               DropdownMenuItem(
                                 value: 'obfuscate',
-                                child: Text('Offuscamento semplice (Conserva le estensioni)'),
+                                child: Text(l10n.encryptObscure),
                               ),
                               DropdownMenuItem(
                                 value: 'off',
-                                child: Text('Disattivata (Nomi visibili in chiaro)'),
+                                child: Text(l10n.encryptOff),
                               ),
                             ],
                             onChanged: (v) {
@@ -1081,8 +1079,8 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                           const SizedBox(height: 12),
                           SwitchListTile(
                             contentPadding: EdgeInsets.zero,
-                            title: const Text('Cifra anche i nomi delle cartelle'),
-                            subtitle: const Text('Nasconde completamente la struttura delle directory sul cloud'),
+                            title: Text(l10n.encryptFolderNames),
+                            subtitle: Text(l10n.encryptFolderNamesDesc),
                             value: _directoryNameEncryption,
                             onChanged: _filenameEncryption == 'off'
                                 ? null
@@ -1103,7 +1101,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Annulla'),
+                      child: Text(l10n.cancel),
                     ),
                     const SizedBox(width: 12),
                     FilledButton(
@@ -1117,7 +1115,7 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text('Connetti Cloud'),
+                          : Text(l10n.connectCloud),
                     ),
                   ],
                 ),

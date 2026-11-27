@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/l10n_extension.dart';
 import '../../providers/file_explorer_provider.dart';
 import '../widgets/commander_action_bar.dart';
 import '../widgets/file_explorer_pane_view.dart';
@@ -14,6 +15,7 @@ class FileExplorerScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final isDualPaneActive = ref.watch(dualPaneActiveProvider);
 
     return LayoutBuilder(
@@ -33,7 +35,7 @@ class FileExplorerScreen extends ConsumerWidget {
                         child: FileExplorerPaneView(
                           provider: fileExplorerProvider,
                           oppositeProvider: secondaryFileExplorerProvider,
-                          paneTitle: 'Sinistra',
+                          paneTitle: l10n.paneLeft,
                           isDualPane: true,
                           showDualPaneToggle: isWideScreen,
                         ),
@@ -44,9 +46,8 @@ class FileExplorerScreen extends ConsumerWidget {
                         child: FileExplorerPaneView(
                           provider: secondaryFileExplorerProvider,
                           oppositeProvider: fileExplorerProvider,
-                          paneTitle: 'Destra',
+                          paneTitle: l10n.paneRight,
                           isDualPane: true,
-                          showDualPaneToggle: false,
                         ),
                       ),
                     ],
@@ -67,7 +68,6 @@ class FileExplorerScreen extends ConsumerWidget {
           body: FileExplorerPaneView(
             provider: fileExplorerProvider,
             oppositeProvider: secondaryFileExplorerProvider,
-            isDualPane: false,
             showDualPaneToggle: isWideScreen,
           ),
         );

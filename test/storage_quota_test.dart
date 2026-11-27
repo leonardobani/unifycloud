@@ -7,9 +7,9 @@ import 'package:unifycloud/src/providers/cloud_accounts_provider.dart';
 import 'package:unifycloud/src/ui/screens/home_screen.dart';
 
 class MockCloudAccountsNotifier extends CloudAccountsNotifier {
-  final CloudAccountsState initialState;
 
   MockCloudAccountsNotifier(this.initialState);
+  final CloudAccountsState initialState;
 
   @override
   CloudAccountsState build() => initialState;
@@ -43,7 +43,6 @@ void main() {
       // Free and total provided, used missing (-1)
       const q2 = StorageQuota(
         total: 100 * 1024 * 1024 * 1024,
-        used: -1,
         free: 60 * 1024 * 1024 * 1024,
       );
       expect(q2.hasData, isTrue);
@@ -126,8 +125,7 @@ void main() {
         free: 300 * 1024 * 1024 * 1024, // 300 GB
       );
 
-      final state = const CloudAccountsState(
-        isLoading: false,
+      const state = CloudAccountsState(
         remotes: [
           CloudRemote(name: 'GoogleDrive', type: 'drive', quota: gDriveQuota),
           CloudRemote(name: 'DiscoLocale', type: 'local', quota: localQuota),
@@ -173,4 +171,3 @@ void main() {
     });
   });
 }
-

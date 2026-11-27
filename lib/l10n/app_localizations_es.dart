@@ -342,7 +342,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get aboutUnifyCloud => 'Acerca de UnifyCloud';
 
   @override
-  String get appVersion => 'Versión de la app: 1.0.0';
+  String get appVersion => 'Versión de la app: 1.0.1';
 
   @override
   String get developerInfo => 'Desarrollador: Leonardo Bani (@leonardobani)';
@@ -559,37 +559,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get langFrench => 'Français';
 
   @override
-  String get langGerman => 'Deutsch';
-
-  @override
-  String get langPortuguese => 'Português';
-
-  @override
-  String get langRussian => 'Русский';
-
-  @override
-  String get langChinese => '简体中文';
-
-  @override
-  String get langJapanese => '日本語';
-
-  @override
-  String get langKorean => '한국어';
-
-  @override
   String get langArabic => 'العربية';
 
   @override
-  String get langHindi => 'हिन्दी';
-
-  @override
-  String get langDutch => 'Nederlands';
-
-  @override
   String get langPolish => 'Polski';
-
-  @override
-  String get langTurkish => 'Türkçe';
 
   @override
   String get selectLanguage => 'Seleccionar idioma';
@@ -1309,7 +1282,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String activeTransfersCount(int count) {
-    return '$count transferencias activas';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transferencias activas',
+      one: '1 transferencia activa',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1407,43 +1386,683 @@ class AppLocalizationsEs extends AppLocalizations {
   String get errorGeneric => 'Se produjo un error durante la operación.';
 
   @override
-  String get desktopAndSystem => 'Desktop & System';
+  String get desktopAndSystem => 'Escritorio y sistema';
 
   @override
   String get desktopAndSystemSubtitle =>
-      'Startup behavior, background execution, and system tray';
+      'Inicio automático, ejecución en segundo plano y bandeja del sistema';
 
   @override
-  String get autostartOnBoot => 'Start on system boot';
+  String get autostartOnBoot => 'Iniciar al arrancar el sistema';
 
   @override
   String get autostartOnBootSubtitle =>
-      'Automatically launch UnifyCloud in the background on login';
+      'Iniciar automáticamente UnifyCloud en segundo plano al iniciar sesión';
 
   @override
-  String get minimizeToTray => 'Minimize to system tray';
+  String get minimizeToTray => 'Minimizar a la bandeja del sistema';
 
   @override
   String get minimizeToTraySubtitle =>
-      'Keep UnifyCloud running in the background when the window is closed';
+      'Mantener UnifyCloud ejecutándose en segundo plano al cerrar la ventana';
 
   @override
-  String get trayStatusIdle => 'Idle (No active transfers)';
+  String get trayStatusIdle => 'Inactivo (sin transferencias activas)';
 
   @override
   String trayStatusActive(int count, String speed) {
-    return '$count active transfers ($speed)';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transferencias activas ($speed)',
+      one: '1 transferencia activa ($speed)',
+    );
+    return '$_temp0';
   }
 
   @override
-  String get trayShowWindow => 'Show UnifyCloud';
+  String get trayShowWindow => 'Mostrar UnifyCloud';
 
   @override
-  String get trayHideWindow => 'Hide to system tray';
+  String get trayHideWindow => 'Ocultar en la bandeja';
 
   @override
-  String get trayQuit => 'Quit UnifyCloud';
+  String get trayQuit => 'Salir de UnifyCloud';
 
   @override
-  String get trayTooltip => 'UnifyCloud - Cloud Storage Manager';
+  String get trayTooltip => 'UnifyCloud - Gestor de almacenamiento en la nube';
+
+  @override
+  String trayStatusLine(String status) {
+    return 'Estado: $status';
+  }
+
+  @override
+  String get bgNotificationInitialTitle => 'Transferencias de UnifyCloud';
+
+  @override
+  String get bgNotificationInitialContent =>
+      'Gestionando transferencias en segundo plano...';
+
+  @override
+  String bgNotificationProgressContent(String speed, int percentage) {
+    return '$speed • $percentage% completado';
+  }
+
+  @override
+  String get bgNotificationIdleContent =>
+      'Se han completado todas las transferencias.';
+
+  @override
+  String get pinTitleConfirm => 'Confirmar código PIN';
+
+  @override
+  String get pinTitleEnterCurrent => 'Introducir PIN actual';
+
+  @override
+  String get pinTitleNew => 'Nuevo código PIN';
+
+  @override
+  String get pinTitleConfirmNew => 'Confirmar nuevo PIN';
+
+  @override
+  String get pinStepSetupNew =>
+      'Crea un código numérico de 6 dígitos para proteger la aplicación.';
+
+  @override
+  String get pinStepSetupConfirm =>
+      'Vuelve a introducir el código PIN para confirmarlo.';
+
+  @override
+  String pinTooManyAttempts(int seconds) {
+    return 'Demasiados intentos fallidos. Inténtalo de nuevo en $seconds s.';
+  }
+
+  @override
+  String pinVerificationError(String error) {
+    return 'Error durante la verificación: $error';
+  }
+
+  @override
+  String get biometricAuthReason => 'Autentícate para acceder a UnifyCloud';
+
+  @override
+  String syncRulesCount(int count) {
+    return 'Reglas de sincronización ($count)';
+  }
+
+  @override
+  String get noSyncRulesEmptyDesc =>
+      'Configura una regla para ejecutar copias de seguridad automáticas periódicamente o bajo demanda con el botón «Sincronizar ahora».';
+
+  @override
+  String get neverSynced => 'Nunca sincronizado';
+
+  @override
+  String get lastSyncNow => 'Última sincr.: ahora mismo';
+
+  @override
+  String lastSyncMinutesAgo(int minutes) {
+    return 'Última sincr.: hace $minutes min';
+  }
+
+  @override
+  String lastSyncHoursAgo(int hours) {
+    return 'Última sincr.: hace $hours h';
+  }
+
+  @override
+  String lastSyncDate(String date) {
+    return 'Última sincr.: $date';
+  }
+
+  @override
+  String localFolderNotFound(String path) {
+    return 'Carpeta local no encontrada: $path';
+  }
+
+  @override
+  String get selectDestinationCloudError => 'Selecciona una nube de destino';
+
+  @override
+  String get remoteDestinationPathHint => 'Backup/Fotos o /';
+
+  @override
+  String get enterDestinationPathError => 'Introduce una ruta de destino';
+
+  @override
+  String get activateRuleManualOnlyDesc =>
+      'Si está desactivada, la regla solo podrá iniciarse manualmente.';
+
+  @override
+  String get presetPhotosDcim => 'Fotos (DCIM)';
+
+  @override
+  String get presetPictures => 'Imágenes';
+
+  @override
+  String get presetDocuments => 'Documentos';
+
+  @override
+  String get presetDownloads => 'Descargas';
+
+  @override
+  String defaultBackupRuleName(String name) {
+    return 'Respaldo $name';
+  }
+
+  @override
+  String defaultSyncRuleName(String name) {
+    return 'Sincronización $name';
+  }
+
+  @override
+  String get folderFallbackName => 'Carpeta';
+
+  @override
+  String get providerLocalName => 'Disco local';
+
+  @override
+  String get providerCryptName => 'Cifrado E2E (Crypt)';
+
+  @override
+  String get providerSubtitleDrive => 'Almacenamiento en la nube OAuth2';
+
+  @override
+  String get providerSubtitleDropbox =>
+      'Sincronización y compartición de archivos';
+
+  @override
+  String get providerSubtitleOneDrive =>
+      'Almacenamiento personal y empresarial';
+
+  @override
+  String get providerSubtitleWebdav => 'Nube autoalojada o corporativa';
+
+  @override
+  String get providerSubtitleSftp => 'Servidor remoto seguro';
+
+  @override
+  String get providerSubtitleS3 => 'Bucket de almacenamiento de objetos';
+
+  @override
+  String get providerSubtitleLocal => 'Carpeta local del sistema';
+
+  @override
+  String get providerSubtitleCrypt =>
+      'Cifra archivos y nombres con AES-256 en cualquier nube';
+
+  @override
+  String get noUnifyCloudClientId =>
+      'No hay Client ID de UnifyCloud disponible para este proveedor. Usa Rclone o un Client ID personal.';
+
+  @override
+  String get noRcloneClientId =>
+      'No hay Client ID de Rclone disponible para este proveedor. Usa un Client ID personal.';
+
+  @override
+  String get enterClientIdForOauth =>
+      'Introduce el Client ID para iniciar sesión con OAuth2';
+
+  @override
+  String get oauthStartingLocalServer =>
+      'Iniciando servidor local de inicio de sesión...';
+
+  @override
+  String get oauthBrowserOpened =>
+      'Navegador abierto. Esperando autorización...';
+
+  @override
+  String get oauthBrowserNotSupported =>
+      'Apertura automática no compatible. Abre o copia el enlace siguiente en tu navegador:';
+
+  @override
+  String get oauthCompletedSuccess => '¡Autenticación completada con éxito!';
+
+  @override
+  String oauthErrorPrefix(String error) {
+    return 'Error OAuth: $error';
+  }
+
+  @override
+  String get officialOauthActionDesc =>
+      'Inicio de sesión rápido y verificado con credenciales dedicadas de UnifyCloud. Haz clic en «Iniciar sesión en el navegador» sin configuración manual.';
+
+  @override
+  String get rcloneOauthTitle => 'Client ID público de Rclone (No recomendado)';
+
+  @override
+  String get rcloneOauthWarningDesc =>
+      'Usa las claves públicas compartidas por todos los usuarios de Rclone. Pueden producirse ralentizaciones o bloqueos por cuotas compartidas.';
+
+  @override
+  String get customOauthGuideInfo =>
+      'Crea tus propios ID de forma independiente: consulta docs/oauth_setup_guide.md para ver la guía paso a paso.';
+
+  @override
+  String get customGoogleClientIdLabel => 'Client ID personal de Google';
+
+  @override
+  String get customOauthClientIdLabel => 'Client ID personal (OAuth2)';
+
+  @override
+  String get customGoogleClientIdHint => 'Ej. xxxxx.apps.googleusercontent.com';
+
+  @override
+  String get enterYourClientIdError => 'Introduce tu Client ID';
+
+  @override
+  String get customClientSecretOptional => 'Client Secret (Opcional)';
+
+  @override
+  String get authenticating => 'Autenticando...';
+
+  @override
+  String get startBrowserLogin => 'Iniciar sesión en el navegador (OAuth2)';
+
+  @override
+  String get browserLaunchedOrCopy =>
+      'Navegador iniciado (o copia el enlace abajo)';
+
+  @override
+  String get copyLinkToCompleteLogin =>
+      'Copia el enlace para completar el acceso en tu navegador';
+
+  @override
+  String get copyLinkAndPasteHint =>
+      '¡Enlace copiado al portapapeles! Pégalo en tu navegador.';
+
+  @override
+  String get tokenJsonLabel => 'Token JSON (generado o pegado)';
+
+  @override
+  String get webdavUrlLabel => 'URL WebDAV / Nextcloud';
+
+  @override
+  String get s3EndpointLabel => 'Endpoint S3';
+
+  @override
+  String get sftpHostLabel => 'Host / Servidor SFTP';
+
+  @override
+  String get requiredFieldError => 'Campo obligatorio';
+
+  @override
+  String get s3AccessKeyId => 'Access Key ID';
+
+  @override
+  String get usernameLabel => 'Usuario';
+
+  @override
+  String get s3SecretAccessKey => 'Secret Access Key';
+
+  @override
+  String get passwordLabel => 'Contraseña';
+
+  @override
+  String get localProviderInfo =>
+      'El proveedor local te permite explorar y copiar archivos hacia o desde el sistema de archivos del dispositivo.';
+
+  @override
+  String get e2eEncryptionTitle =>
+      'Cifrado de extremo a extremo en el cliente (AES-256)';
+
+  @override
+  String get e2eEncryptionDesc =>
+      'Los archivos y sus nombres se cifran en tu dispositivo antes de enviarse a la nube de destino. Ni siquiera el proveedor podrá leerlos.';
+
+  @override
+  String get noTargetCloudForVault =>
+      'No hay nube de destino disponible. Conecta primero otra nube (ej. Google Drive, OneDrive o Disco local) para crear el baúl cifrado.';
+
+  @override
+  String get vaultTargetCloudLabel => 'Nube de destino *';
+
+  @override
+  String get vaultTargetCloudHelper =>
+      'La nube donde se almacenarán los archivos cifrados';
+
+  @override
+  String get vaultTargetPathLabel => 'Ruta o carpeta de destino';
+
+  @override
+  String get vaultTargetPathHint => 'ej. baul o datos_secretos';
+
+  @override
+  String get vaultTargetPathHelper =>
+      'Carpeta en la nube remota donde guardar los archivos cifrados (opcional)';
+
+  @override
+  String get vaultMasterPasswordLabel =>
+      'Contraseña de cifrado (Contraseña principal) *';
+
+  @override
+  String get vaultMasterPasswordHelper =>
+      'Guárdala bien: sin esta contraseña no será posible recuperar los archivos';
+
+  @override
+  String get vaultEnterPasswordError => 'Introduce la contraseña de cifrado';
+
+  @override
+  String get vaultConfirmPasswordRequired => 'Confirmar contraseña *';
+
+  @override
+  String get vaultConfirmPasswordError => 'Confirma la contraseña';
+
+  @override
+  String get vaultSaltOptionalLabel =>
+      'Salt / Contraseña secundaria (Opcional)';
+
+  @override
+  String get vaultSaltHelper =>
+      'Añade seguridad adicional frente a ataques de fuerza bruta';
+
+  @override
+  String oauthPortOccupied(int port) {
+    return 'El puerto $port ya está ocupado por otro proceso. Cierra las sesiones abiertas de Rclone o del navegador e inténtalo de nuevo.';
+  }
+
+  @override
+  String get oauthHtmlSuccessTitle => 'UnifyCloud - Autenticado';
+
+  @override
+  String get oauthHtmlSuccessHeading => '¡Autenticación correcta!';
+
+  @override
+  String get oauthHtmlSuccessBody =>
+      'Puedes cerrar esta pestaña y volver a la aplicación UnifyCloud.';
+
+  @override
+  String get oauthHtmlErrorTitle => 'UnifyCloud - Error';
+
+  @override
+  String get oauthHtmlErrorHeading => 'Error de autenticación';
+
+  @override
+  String get oauthInvalidState => 'Parámetro state OAuth no válido.';
+
+  @override
+  String get oauthInvalidCode => 'Código de autorización no válido.';
+
+  @override
+  String get folderDownloadUnsupported =>
+      'La descarga directa de carpetas no está soportada. Selecciona archivos individuales.';
+
+  @override
+  String downloadingSingleItem(String name) {
+    return 'Iniciando descarga de \"$name\"...';
+  }
+
+  @override
+  String downloadingMultipleItems(int count) {
+    return 'Iniciando descarga de $count archivos...';
+  }
+
+  @override
+  String filesAddedToDownloadQueue(int count) {
+    return '$count archivos añadidos a la cola de descarga.';
+  }
+
+  @override
+  String filesAddedToDownloadQueueWithSkipped(int count, int dirs) {
+    return '$count archivos añadidos a la cola de descarga ($dirs carpetas excluidas).';
+  }
+
+  @override
+  String get deleteSingleFolderTitle => '¿Eliminar carpeta?';
+
+  @override
+  String get deleteSingleFileTitle => '¿Eliminar archivo?';
+
+  @override
+  String deleteSingleItemPrompt(String name) {
+    return '¿Estás seguro de que deseas eliminar definitivamente \"$name\"?';
+  }
+
+  @override
+  String get itemDeletedSuccess => 'Elemento eliminado';
+
+  @override
+  String get sortDateAsc => 'Fecha (Más antiguo primero)';
+
+  @override
+  String get sortByTooltip => 'Ordenar por';
+
+  @override
+  String filesAddedToUploadQueue(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count archivos añadidos a la cola de subida',
+      one: '1 archivo añadido a la cola de subida',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String folderAddedToUploadQueue(int count) {
+    return 'Carpeta añadida a la subida ($count archivos en cola)';
+  }
+
+  @override
+  String dragDropInProgress(String action, int count, String src, String dst) {
+    return '$action de $count elementos de [$src] a [$dst] en curso...';
+  }
+
+  @override
+  String get copySelected => 'Copiar seleccionados';
+
+  @override
+  String get cutSelected => 'Cortar seleccionados';
+
+  @override
+  String get searchFilesHint => 'Buscar archivos o carpetas...';
+
+  @override
+  String get e2eActiveTooltip =>
+      'Cifrado de extremo a extremo activo (AES-256)\nArchivos y carpetas cifrados en el cliente';
+
+  @override
+  String get disableDualPaneTooltip => 'Desactivar doble panel';
+
+  @override
+  String get enableDualPaneTooltip => 'Activar doble panel (Commander)';
+
+  @override
+  String dropToCopyTo(String remote) {
+    return 'Suelta para copiar en [$remote]';
+  }
+
+  @override
+  String get destinationFallback => 'destino';
+
+  @override
+  String clipboardBannerSingle(String action, String name, String remote) {
+    return '$action: \"$name\" de [$remote]';
+  }
+
+  @override
+  String clipboardBannerMultiple(String action, int count, String remote) {
+    return '$action: $count elementos de [$remote]';
+  }
+
+  @override
+  String transferStartedSingle(String name) {
+    return 'Transferencia iniciada para \"$name\"';
+  }
+
+  @override
+  String transfersStartedCount(int count) {
+    return '$count transferencias iniciadas';
+  }
+
+  @override
+  String get noCloudSelectedTitle => 'Ninguna nube seleccionada';
+
+  @override
+  String get noCloudSelectedSubtitle =>
+      'Selecciona una nube del menú superior.';
+
+  @override
+  String loadingFilesFromRemote(String remote) {
+    return 'Cargando archivos de $remote...';
+  }
+
+  @override
+  String loadingFolder(String folder) {
+    return 'Cargando $folder...';
+  }
+
+  @override
+  String get readingDirectory => 'Leyendo directorio...';
+
+  @override
+  String downloadStartedSavedTo(String path) {
+    return 'Descarga iniciada: guardando en $path';
+  }
+
+  @override
+  String get noCloudSelected => 'Ninguna nube seleccionada.';
+
+  @override
+  String get noLinkReturnedByProvider =>
+      'El proveedor no devolvió ningún enlace.';
+
+  @override
+  String get publicLinksNotSupported =>
+      'Este proveedor de nube no admite la creación de enlaces públicos.';
+
+  @override
+  String errorCreatingShareLink(String error) {
+    return 'Error al crear el enlace: $error';
+  }
+
+  @override
+  String get newNameLabel => 'Nuevo nombre';
+
+  @override
+  String itemDetailsSizeWithBytes(String size, int bytes) {
+    return 'Tamaño: $size ($bytes bytes)';
+  }
+
+  @override
+  String get shareLinkAccessFile =>
+      'Cualquier persona con este enlace podrá acceder a este archivo:';
+
+  @override
+  String get shareLinkAccessFolder =>
+      'Cualquier persona con este enlace podrá acceder a esta carpeta:';
+
+  @override
+  String get invalidUrlOrBrowser =>
+      'URL no válida o no se puede abrir el navegador.';
+
+  @override
+  String noAppToOpenFile(String name) {
+    return 'No hay ninguna aplicación instalada para abrir \"$name\".';
+  }
+
+  @override
+  String get permissionDeniedOpenFile =>
+      'Permiso denegado para abrir el archivo con la aplicación del sistema.';
+
+  @override
+  String get noDefaultAppFound =>
+      'No se encontró ninguna aplicación predeterminada para abrir este archivo.';
+
+  @override
+  String unableToOpenFile(String error) {
+    return 'No se pudo abrir el archivo: $error';
+  }
+
+  @override
+  String downloadingForExternalOpen(String name) {
+    return 'Descargando \"$name\" para abrir externamente...';
+  }
+
+  @override
+  String errorOpeningFile(String error) {
+    return 'Error al abrir el archivo: $error';
+  }
+
+  @override
+  String get selectFilesToUpload =>
+      'Selecciona los archivos para subir a la nube';
+
+  @override
+  String get selectFolderToUpload =>
+      'Selecciona la carpeta para subir a la nube';
+
+  @override
+  String get copyRightCompact => 'Copiar ->';
+
+  @override
+  String copyRightCountCompact(int count) {
+    return 'Copiar ($count) ->';
+  }
+
+  @override
+  String get moveRightCompact => 'Mover ->';
+
+  @override
+  String moveRightCountCompact(int count) {
+    return 'Mover ($count) ->';
+  }
+
+  @override
+  String get copyLeftCompact => '<- Copiar';
+
+  @override
+  String copyLeftCountCompact(int count) {
+    return '<- Copiar ($count)';
+  }
+
+  @override
+  String get moveLeftCompact => '<- Mover';
+
+  @override
+  String moveLeftCountCompact(int count) {
+    return '<- Mover ($count)';
+  }
+
+  @override
+  String get clear => 'Limpiar';
+
+  @override
+  String get noRecentTransfers => 'No hay transferencias recientes';
+
+  @override
+  String get recentTransfersSubtitle =>
+      'Las descargas, subidas y copias en la nube aparecerán aquí.';
+
+  @override
+  String completedWithProgress(String progress) {
+    return 'Completado • $progress';
+  }
+
+  @override
+  String transferFailedError(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get transferFailedFallback => 'Error en la transferencia';
+
+  @override
+  String get cancelledByUser => 'Cancelado por el usuario';
+
+  @override
+  String get localLocation => 'Local';
+
+  @override
+  String get moveToBadge => 'Mover a';
+
+  @override
+  String get copyToBadge => 'Copiar a';
+
+  @override
+  String get copiedExclamation => '¡Copiado!';
+
+  @override
+  String get running => 'En curso';
 }

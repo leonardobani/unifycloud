@@ -12,8 +12,8 @@ import 'package:unifycloud/src/ui/widgets/transfer_panel.dart';
 
 class TransferNotifierMock extends Notifier<TransferState>
     implements TransferNotifier {
-  final TransferState _initial;
   TransferNotifierMock(this._initial);
+  final TransferState _initial;
 
   @override
   TransferState build() => _initial;
@@ -24,8 +24,8 @@ class TransferNotifierMock extends Notifier<TransferState>
 
 class ClipboardNotifierMock extends Notifier<ClipboardState>
     implements ClipboardNotifier {
-  final ClipboardState _initial;
   ClipboardNotifierMock(this._initial);
+  final ClipboardState _initial;
 
   @override
   ClipboardState build() => _initial;
@@ -36,8 +36,8 @@ class ClipboardNotifierMock extends Notifier<ClipboardState>
 
 class CloudAccountsNotifierMock extends Notifier<CloudAccountsState>
     implements CloudAccountsNotifier {
-  final CloudAccountsState _initial;
   CloudAccountsNotifierMock(this._initial);
+  final CloudAccountsState _initial;
 
   @override
   CloudAccountsState build() => _initial;
@@ -48,8 +48,8 @@ class CloudAccountsNotifierMock extends Notifier<CloudAccountsState>
 
 class FileExplorerNotifierMock extends Notifier<FileExplorerState>
     implements FileExplorerNotifier {
-  final FileExplorerState _initial;
   FileExplorerNotifierMock(this._initial);
+  final FileExplorerState _initial;
 
   @override
   FileExplorerState build() => _initial;
@@ -67,7 +67,7 @@ void main() {
           overrides: [
             transferProvider.overrideWith(
               () => TransferNotifierMock(
-                const TransferState(transfers: []),
+                const TransferState(),
               ),
             ),
           ],
@@ -79,13 +79,13 @@ void main() {
         ),
       );
 
-      expect(find.textContaining('trasferimento'), findsNothing);
+      expect(find.textContaining('transfer'), findsNothing);
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
 
     testWidgets('TransferFloatingBar renders active transfers, speed and progress',
         (tester) async {
-      final job = TransferJob(
+      const job = TransferJob(
         id: 'job_42',
         srcRemote: 'GoogleDrive',
         srcPath: 'Documents/presentation.pdf',
@@ -104,7 +104,7 @@ void main() {
           overrides: [
             transferProvider.overrideWith(
               () => TransferNotifierMock(
-                TransferState(transfers: [job]),
+                const TransferState(transfers: [job]),
               ),
             ),
           ],
@@ -116,7 +116,7 @@ void main() {
         ),
       );
 
-      expect(find.text('1 trasferimento attivo'), findsOneWidget);
+      expect(find.text('1 active transfer'), findsOneWidget);
       expect(find.text('1.0 MB/s'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.byType(LinearProgressIndicator), findsOneWidget);
@@ -124,7 +124,7 @@ void main() {
 
     testWidgets('TransferSheet lists active, completed and failed transfers',
         (tester) async {
-      final runningJob = TransferJob(
+      const runningJob = TransferJob(
         id: 'job_1',
         srcRemote: 'Drive',
         srcPath: 'video.mp4',
@@ -138,7 +138,7 @@ void main() {
         eta: 25,
       );
 
-      final completedJob = TransferJob(
+      const completedJob = TransferJob(
         id: 'job_2',
         srcRemote: '',
         srcPath: '/Local/photo.jpg',
@@ -148,7 +148,6 @@ void main() {
         bytes: 1048576,
         totalBytes: 1048576,
         percentage: 100,
-        speed: 0,
       );
 
       await tester.pumpWidget(
@@ -156,7 +155,7 @@ void main() {
           overrides: [
             transferProvider.overrideWith(
               () => TransferNotifierMock(
-                TransferState(transfers: [runningJob, completedJob]),
+                const TransferState(transfers: [runningJob, completedJob]),
               ),
             ),
           ],
@@ -168,10 +167,10 @@ void main() {
         ),
       );
 
-      expect(find.text('Coda Trasferimenti (2)'), findsOneWidget);
+      expect(find.text('Transfer Queue (2)'), findsOneWidget);
       expect(find.text('video.mp4'), findsOneWidget);
       expect(find.text('photo.jpg'), findsOneWidget);
-      expect(find.text('Pulisci'), findsOneWidget);
+      expect(find.text('Clear'), findsOneWidget);
       expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
       expect(find.byIcon(Icons.cancel_outlined), findsOneWidget);
     });
@@ -191,7 +190,6 @@ void main() {
             cloudAccountsProvider.overrideWith(
               () => CloudAccountsNotifierMock(
                 const CloudAccountsState(
-                  isLoading: false,
                   remotes: [
                     CloudRemote(name: 'GoogleDrive', type: 'drive'),
                     CloudRemote(name: 'WorkDropbox', type: 'dropbox'),
@@ -204,7 +202,6 @@ void main() {
                 const FileExplorerState(
                   currentRemote: 'WorkDropbox',
                   currentPath: 'Projects',
-                  items: [],
                 ),
               ),
             ),
@@ -213,13 +210,12 @@ void main() {
                 const ClipboardState(
                   item: clipboardItem,
                   sourceRemote: 'GoogleDrive',
-                  isCut: false,
                 ),
               ),
             ),
             transferProvider.overrideWith(
               () => TransferNotifierMock(
-                const TransferState(transfers: []),
+                const TransferState(),
               ),
             ),
           ],
@@ -233,12 +229,11 @@ void main() {
       expect(find.byIcon(Icons.upload_file_outlined), findsOneWidget);
 
       // Verify Cloud-to-Cloud Clipboard Banner
-      expect(find.text('Incolla qui'), findsOneWidget);
+      expect(find.text('Paste here'), findsOneWidget);
       expect(
-        find.textContaining('Copia: "budget_2026.xlsx" da [GoogleDrive]'),
+        find.textContaining('Copy: "budget_2026.xlsx" from [GoogleDrive]'),
         findsOneWidget,
       );
     });
   });
 }
-

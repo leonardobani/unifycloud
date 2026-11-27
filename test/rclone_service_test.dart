@@ -117,14 +117,13 @@ host = ffi.example.com
         srcPath: srcFile.path,
         dstRemote: '',
         dstPath: dstFile.path,
-        isMove: false,
       );
 
       expect(job.id, startsWith('job_'));
       expect(job.status, isA<TransferStatus>());
 
       // Give worker a moment to complete
-      await Future.delayed(const Duration(milliseconds: 150));
+      await Future<void>.delayed(const Duration(milliseconds: 150));
 
       final progress = await service.getTransferProgress(job.id);
       expect(progress, isNotNull);
@@ -146,7 +145,6 @@ host = ffi.example.com
         srcPath: srcFile.path,
         dstRemote: '',
         dstPath: dstFile.path,
-        isMove: false,
       );
 
       final success = await service.cancelTransfer(job.id);
@@ -169,7 +167,7 @@ host = ffi.example.com
       expect(quota.free, greaterThan(0));
       expect(quota.hasData, isTrue);
 
-      final rootItems = await service.listDirectory(remote: 'DiscoLocaleTest', path: '');
+      final rootItems = await service.listDirectory(remote: 'DiscoLocaleTest');
       expect(rootItems.isNotEmpty, isTrue);
       final rootNames = rootItems.map((i) => i.name).toList();
       expect(
@@ -207,7 +205,7 @@ host = ffi.example.com
           predicate((e) =>
               e is Exception &&
               (e.toString().contains("doesn't support") ||
-                  e.toString().contains("failed"))),
+                  e.toString().contains('failed'))),
         ),
       );
     });

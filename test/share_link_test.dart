@@ -34,8 +34,8 @@ class MockShareRcloneService extends RcloneService {
 
 class FakeFileExplorerNotifier extends Notifier<FileExplorerState>
     implements FileExplorerNotifier {
-  final FileExplorerState _initial;
   FakeFileExplorerNotifier(this._initial);
+  final FileExplorerState _initial;
 
   @override
   FileExplorerState build() => _initial;
@@ -46,8 +46,8 @@ class FakeFileExplorerNotifier extends Notifier<FileExplorerState>
 
 class FakeCloudAccountsNotifier extends Notifier<CloudAccountsState>
     implements CloudAccountsNotifier {
-  final CloudAccountsState _initial;
   FakeCloudAccountsNotifier(this._initial);
+  final CloudAccountsState _initial;
 
   @override
   CloudAccountsState build() => _initial;
@@ -58,14 +58,14 @@ class FakeCloudAccountsNotifier extends Notifier<CloudAccountsState>
 
 void main() {
   group('ShareLinkDialog Widget Tests', () {
-    final testFile = CloudItem(
+    const testFile = CloudItem(
       path: 'documents/presentation.pdf',
       name: 'presentation.pdf',
       size: 2048,
       isDir: false,
     );
 
-    final testFolder = CloudItem(
+    const testFolder = CloudItem(
       path: 'shared_photos',
       name: 'shared_photos',
       size: 0,
@@ -74,7 +74,7 @@ void main() {
 
     testWidgets('renders file information, link, and buttons correctly', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: ShareLinkDialog(
               item: testFile,
@@ -84,19 +84,19 @@ void main() {
         ),
       );
 
-      expect(find.text('Link Condivisibile'), findsOneWidget);
+      expect(find.text('Shareable Link'), findsOneWidget);
       expect(find.text('presentation.pdf'), findsOneWidget);
-      expect(find.text('Chiunque abbia questo link potrà accedere a questo file:'), findsOneWidget);
+      expect(find.text('Anyone with this link will be able to access this file:'), findsOneWidget);
       expect(find.text('https://drive.google.com/file/d/abc123xyz'), findsOneWidget);
-      expect(find.text('Chiudi'), findsOneWidget);
-      expect(find.text('Apri'), findsOneWidget);
-      expect(find.text('Copia Link'), findsOneWidget);
+      expect(find.text('Close'), findsOneWidget);
+      expect(find.text('Open'), findsOneWidget);
+      expect(find.text('Copy Link'), findsOneWidget);
       expect(find.byIcon(Icons.insert_drive_file_rounded), findsOneWidget);
     });
 
     testWidgets('renders folder information correctly', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: ShareLinkDialog(
               item: testFolder,
@@ -106,14 +106,14 @@ void main() {
         ),
       );
 
-      expect(find.text('Link Condivisibile'), findsOneWidget);
+      expect(find.text('Shareable Link'), findsOneWidget);
       expect(find.text('shared_photos'), findsOneWidget);
-      expect(find.text('Chiunque abbia questo link potrà accedere a questa cartella:'), findsOneWidget);
+      expect(find.text('Anyone with this link will be able to access this folder:'), findsOneWidget);
       expect(find.text('https://onedrive.live.com/?id=folder123'), findsOneWidget);
       expect(find.byIcon(Icons.folder_rounded), findsOneWidget);
     });
 
-    testWidgets('tapping "Copia Link" copies link to clipboard, shows SnackBar and closes dialog', (tester) async {
+    testWidgets('tapping "Copy Link" copies link to clipboard, shows SnackBar and closes dialog', (tester) async {
       final List<MethodCall> clipboardCalls = [];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         SystemChannels.platform,
@@ -145,7 +145,7 @@ void main() {
 
       expect(find.byType(ShareLinkDialog), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(FilledButton, 'Copia Link'));
+      await tester.tap(find.widgetWithText(FilledButton, 'Copy Link'));
       await tester.pumpAndSettle();
 
       expect(find.byType(ShareLinkDialog), findsNothing);
@@ -153,10 +153,10 @@ void main() {
       final copyCall = clipboardCalls.firstWhere((c) => c.method == 'Clipboard.setData');
       expect((copyCall.arguments as Map)['text'], equals('https://dropbox.com/s/sample_link'));
 
-      expect(find.text('Link copiato negli appunti!'), findsOneWidget);
+      expect(find.text('Link copied to clipboard!'), findsOneWidget);
     });
 
-    testWidgets('tapping "Chiudi" closes dialog without modifying clipboard', (tester) async {
+    testWidgets('tapping "Close" closes dialog without modifying clipboard', (tester) async {
       final List<MethodCall> clipboardCalls = [];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         SystemChannels.platform,
@@ -188,7 +188,7 @@ void main() {
 
       expect(find.byType(ShareLinkDialog), findsOneWidget);
 
-      await tester.tap(find.text('Chiudi'));
+      await tester.tap(find.text('Close'));
       await tester.pumpAndSettle();
 
       expect(find.byType(ShareLinkDialog), findsNothing);
@@ -197,22 +197,21 @@ void main() {
   });
 
   group('FileContextMenu Share Link Tests', () {
-    final testFile = CloudItem(
+    const testFile = CloudItem(
       path: 'contracts/document.pdf',
       name: 'document.pdf',
       size: 4096,
       isDir: false,
     );
 
-    testWidgets('shows "Crea link condivisibile" in right-click context menu and handles success', (tester) async {
+    testWidgets('shows "Create shareable link" in right-click context menu and handles success', (tester) async {
       final mockRclone = MockShareRcloneService();
       mockRclone.mockLinkToReturn = 'https://drive.google.com/file/d/test-doc-123';
 
-      final fileExplorerState = FileExplorerState(
+      const fileExplorerState = FileExplorerState(
         currentRemote: 'gdrive_work',
         currentPath: 'contracts',
         items: [testFile],
-        isLoading: false,
       );
 
       await tester.pumpWidget(
@@ -221,11 +220,11 @@ void main() {
             rcloneServiceProvider.overrideWithValue(mockRclone),
             fileExplorerProvider.overrideWith(() => FakeFileExplorerNotifier(fileExplorerState)),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             home: Scaffold(
               body: FileContextMenuRegion(
                 item: testFile,
-                child: const Text('Right click target'),
+                child: Text('Right click target'),
               ),
             ),
           ),
@@ -236,10 +235,10 @@ void main() {
       await tester.tap(find.text('Right click target'), buttons: kSecondaryButton);
       await tester.pumpAndSettle();
 
-      expect(find.text('Crea link condivisibile'), findsOneWidget);
+      expect(find.text('Create shareable link'), findsOneWidget);
 
       // Tap the share link menu option
-      await tester.tap(find.text('Crea link condivisibile'));
+      await tester.tap(find.text('Create shareable link'));
       await tester.pumpAndSettle();
 
       // Verify RcloneService was called with expected parameters
@@ -255,11 +254,9 @@ void main() {
       final mockRclone = MockShareRcloneService();
       mockRclone.errorToThrow = Exception("local doesn't support public links");
 
-      final fileExplorerState = FileExplorerState(
+      const fileExplorerState = FileExplorerState(
         currentRemote: 'local_disk',
-        currentPath: '',
         items: [testFile],
-        isLoading: false,
       );
 
       await tester.pumpWidget(
@@ -268,11 +265,11 @@ void main() {
             rcloneServiceProvider.overrideWithValue(mockRclone),
             fileExplorerProvider.overrideWith(() => FakeFileExplorerNotifier(fileExplorerState)),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             home: Scaffold(
               body: FileContextMenuRegion(
                 item: testFile,
-                child: const Text('Right click target'),
+                child: Text('Right click target'),
               ),
             ),
           ),
@@ -282,34 +279,32 @@ void main() {
       await tester.tap(find.text('Right click target'), buttons: kSecondaryButton);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Crea link condivisibile'));
+      await tester.tap(find.text('Create shareable link'));
       await tester.pumpAndSettle();
 
       expect(find.byType(ShareLinkDialog), findsNothing);
-      expect(find.text('Questo provider cloud non supporta la creazione di link pubblici.'), findsOneWidget);
+      expect(find.text('This cloud provider does not support creating public links.'), findsOneWidget);
     });
   });
 
   group('FileExplorerScreen 3-Dots Menu Share Link Tests', () {
-    final testFile = CloudItem(
+    const testFile = CloudItem(
       path: 'notes.txt',
       name: 'notes.txt',
       size: 512,
       isDir: false,
     );
 
-    testWidgets('3-dots menu contains "Crea link condivisibile" and creates link', (tester) async {
+    testWidgets('3-dots menu contains "Create shareable link" and creates link', (tester) async {
       final mockRclone = MockShareRcloneService();
       mockRclone.mockLinkToReturn = 'https://onedrive.live.com/redir?resid=notes-file';
 
-      final fileExplorerState = FileExplorerState(
+      const fileExplorerState = FileExplorerState(
         currentRemote: 'my_onedrive',
-        currentPath: '',
         items: [testFile],
-        isLoading: false,
       );
 
-      final cloudAccountsState = const CloudAccountsState(
+      const cloudAccountsState = CloudAccountsState(
         remotes: [
           CloudRemote(name: 'my_onedrive', type: 'onedrive'),
         ],
@@ -331,15 +326,15 @@ void main() {
       await tester.pumpAndSettle();
 
       // Find the 3-dots popup menu button for notes.txt
-      final moreButton = find.byTooltip('Opzioni per notes.txt');
+      final moreButton = find.byTooltip('Options for notes.txt');
       expect(moreButton, findsOneWidget);
 
       await tester.tap(moreButton);
       await tester.pumpAndSettle();
 
-      expect(find.text('Crea link condivisibile'), findsOneWidget);
+      expect(find.text('Create shareable link'), findsOneWidget);
 
-      await tester.tap(find.text('Crea link condivisibile'));
+      await tester.tap(find.text('Create shareable link'));
       await tester.pumpAndSettle();
 
       expect(mockRclone.lastRemote, equals('my_onedrive'));
@@ -350,4 +345,3 @@ void main() {
     });
   });
 }
-

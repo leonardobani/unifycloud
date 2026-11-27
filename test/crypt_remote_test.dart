@@ -96,28 +96,28 @@ void main() {
       await tester.pumpAndSettle();
 
       // Find Crypt ChoiceChip and tap it
-      final cryptChip = find.text('Crittografia E2E (Crypt)');
+      final cryptChip = find.text('E2E Encryption (Crypt)');
       expect(cryptChip, findsOneWidget);
       await tester.tap(cryptChip);
       await tester.pumpAndSettle();
 
-      // Check default name is VaultCifrato
-      expect(find.widgetWithText(TextFormField, 'VaultCifrato'), findsOneWidget);
+      // Check default name is EncryptedVault
+      expect(find.widgetWithText(TextFormField, 'EncryptedVault'), findsOneWidget);
 
       // Verify E2E AES-256 security banner
       expect(
-        find.text('Crittografia End-to-End Client-Side (AES-256)'),
+        find.text('Client-Side End-to-End Encryption (AES-256)'),
         findsOneWidget,
       );
 
       // Verify fields for crypt configuration
-      expect(find.text('Cloud di destinazione *'), findsOneWidget);
-      expect(find.text('Percorso o Cartella di destinazione'), findsOneWidget);
-      expect(find.text('Password di Cifratura (Password Principale) *'), findsOneWidget);
-      expect(find.text('Conferma Password *'), findsOneWidget);
-      expect(find.text('Salt / Password Secondaria (Opzionale)'), findsOneWidget);
-      expect(find.text('Cifratura dei Nomi File'), findsOneWidget);
-      expect(find.text('Cifra anche i nomi delle cartelle'), findsOneWidget);
+      expect(find.text('Destination Cloud *'), findsOneWidget);
+      expect(find.text('Destination Path or Folder'), findsOneWidget);
+      expect(find.text('Encryption Password (Master Password) *'), findsOneWidget);
+      expect(find.text('Confirm Password *'), findsOneWidget);
+      expect(find.text('Salt / Secondary Password (Optional)'), findsOneWidget);
+      expect(find.text('File Name Encryption'), findsOneWidget);
+      expect(find.text('Also encrypt folder names'), findsOneWidget);
     });
 
     testWidgets('AddCloudDialog with initialProvider: crypt initializes correctly',
@@ -135,7 +135,7 @@ void main() {
 
       // Should directly show crypt banner
       expect(
-        find.text('Crittografia End-to-End Client-Side (AES-256)'),
+        find.text('Client-Side End-to-End Encryption (AES-256)'),
         findsOneWidget,
       );
 
@@ -156,26 +156,26 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Tap Connetti Cloud without entering password
-      final connectBtn = find.text('Connetti Cloud');
+      // Tap Connect Cloud without entering password
+      final connectBtn = find.text('Connect Cloud');
       await tester.tap(connectBtn);
       await tester.pumpAndSettle();
 
       // Expect password validation error
-      expect(find.text('Inserisci la password di cifratura'), findsOneWidget);
+      expect(find.text('Enter the encryption password'), findsOneWidget);
     });
   });
 }
 
 class _MockCloudAccountsNotifier extends Notifier<CloudAccountsState>
     implements CloudAccountsNotifier {
-  final List<CloudRemote> _mockRemotes;
 
   _MockCloudAccountsNotifier(this._mockRemotes);
+  final List<CloudRemote> _mockRemotes;
 
   @override
   CloudAccountsState build() {
-    return CloudAccountsState(remotes: _mockRemotes, isLoading: false);
+    return CloudAccountsState(remotes: _mockRemotes);
   }
 
   @override

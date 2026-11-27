@@ -22,6 +22,11 @@ final appLockServiceProvider = Provider<AppLockService>((ref) {
 
 /// Service managing biometric authentication via [LocalAuthentication] and hashed PIN storage.
 class AppLockService {
+
+  AppLockService({
+    required this.storage,
+    LocalAuthentication? localAuth,
+  }) : _localAuth = localAuth ?? LocalAuthentication();
   static const String pinStorageKey = 'unifycloud_app_pin_v1';
   static const String _hashPrefix = 'pbkdf2_sha256';
   static const int _pbkdf2Iterations = 100000;
@@ -32,11 +37,6 @@ class AppLockService {
   final LocalAuthentication _localAuth;
 
   FlutterSecureStorage get _storage => storage;
-
-  AppLockService({
-    required this.storage,
-    LocalAuthentication? localAuth,
-  }) : _localAuth = localAuth ?? LocalAuthentication();
 
   static Uint8List _pbkdf2HmacSha256(
     String pin,
@@ -51,7 +51,7 @@ class AppLockService {
     for (var block = 1; block <= blockCount; block++) {
       final blockBytes = Uint8List(salt.length + 4)
         ..setAll(0, salt)
-        ..buffer.asByteData().setUint32(salt.length, block, Endian.big);
+        ..buffer.asByteData().setUint32(salt.length, block);
 
       var u = Uint8List.fromList(hmac.convert(blockBytes).bytes);
       final t = Uint8List.fromList(u);
@@ -106,7 +106,7 @@ class AppLockService {
 
   /// Prompts the user with the native biometric dialog (fingerprint, face unlock).
   Future<bool> authenticateWithBiometrics({
-    String reason = 'Autenticati per sbloccare UnifyCloud',
+    String reason = 'Authenticate to access UnifyCloud',
   }) async {
     try {
       final canCheck = await canCheckBiometrics();
@@ -138,7 +138,7 @@ class AppLockService {
   Future<void> savePin(String pin) async {
     final cleanPin = pin.trim();
     if (!RegExp(r'^\d{6}$').hasMatch(cleanPin)) {
-      throw ArgumentError('Il PIN deve essere esattamente di 6 cifre numeriche');
+      throw ArgumentError('PIN must be exactly 6 digits');
     }
     await _storage.write(key: pinStorageKey, value: _hashPin(cleanPin));
   }
@@ -152,7 +152,7 @@ class AppLockService {
       final saved = await _storage.read(key: pinStorageKey);
       if (saved == null || saved.isEmpty) return false;
 
-      final parts = saved.split('\$');
+      final parts = saved.split(r'$');
       if (parts.length == 4 && parts[0] == _hashPrefix) {
         final iterations = int.tryParse(parts[1]);
         if (iterations == null || iterations <= 0) return false;

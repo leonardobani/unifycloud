@@ -22,29 +22,19 @@ enum FileSortMode {
 
 /// A segment in the breadcrumbs navigation trail.
 class BreadcrumbItem {
-  final String label;
-  final String path;
-  final bool isRoot;
 
   const BreadcrumbItem({
     required this.label,
     required this.path,
     this.isRoot = false,
   });
+  final String label;
+  final String path;
+  final bool isRoot;
 }
 
 /// State of the active file explorer.
 class FileExplorerState {
-  final String? currentRemote;
-  final String currentPath;
-  final List<CloudItem> items;
-  final bool isLoading;
-  final String? error;
-  final FileViewMode viewMode;
-  final FileSortMode sortMode;
-  final String searchQuery;
-  final bool showHiddenFiles;
-  final Set<String> selectedPaths;
 
   const FileExplorerState({
     this.currentRemote,
@@ -58,6 +48,16 @@ class FileExplorerState {
     this.showHiddenFiles = false,
     this.selectedPaths = const {},
   });
+  final String? currentRemote;
+  final String currentPath;
+  final List<CloudItem> items;
+  final bool isLoading;
+  final String? error;
+  final FileViewMode viewMode;
+  final FileSortMode sortMode;
+  final String searchQuery;
+  final bool showHiddenFiles;
+  final Set<String> selectedPaths;
 
   FileExplorerState copyWith({
     String? currentRemote,
@@ -190,7 +190,6 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
       currentPath: path,
       items: const [],
       isLoading: true,
-      error: null,
       searchQuery: '',
       selectedPaths: const {},
     );
@@ -203,7 +202,6 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
       currentPath: path,
       items: const [],
       isLoading: true,
-      error: null,
       searchQuery: '',
       selectedPaths: const {},
     );
@@ -223,7 +221,7 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
     final remote = state.currentRemote;
     if (remote == null) return;
 
-    state = state.copyWith(isLoading: true, error: null, selectedPaths: const {});
+    state = state.copyWith(isLoading: true, selectedPaths: const {});
     try {
       final items = await _rcloneService.listDirectory(
         remote: remote,

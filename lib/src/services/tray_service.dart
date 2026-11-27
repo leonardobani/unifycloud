@@ -8,25 +8,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tray_manager/legacy.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../../l10n/l10n_extension.dart';
 import '../providers/settings_provider.dart';
 
 /// Riverpod provider for [TrayService].
 final trayServiceProvider = Provider<TrayService>((ref) {
   final service = TrayService(ref);
-  ref.onDispose(() {
-    service.dispose();
-  });
+  ref.listen<String>(
+    settingsProvider.select((s) => s.language),
+    (previous, next) {
+      service.updateTransferStatus(
+        activeTransfers: service.activeTransfers,
+        formattedSpeed: service.formattedSpeed,
+      );
+    },
+  );
+  ref.onDispose(service.dispose);
   return service;
 });
 
 /// Service managing system tray panel indicator and window behavior on desktop platforms.
 class TrayService with TrayListener, WindowListener {
-  final Ref _ref;
-  final TrayManager? _customTrayManager;
-  final WindowManager? _customWindowManager;
-  bool _isInitialized = false;
-  int _activeTransfers = 0;
-  String _formattedSpeed = '';
 
   TrayService(
     this._ref, [
@@ -34,6 +36,12 @@ class TrayService with TrayListener, WindowListener {
     WindowManager? windowManager,
   ])  : _customTrayManager = trayManager,
         _customWindowManager = windowManager;
+  final Ref _ref;
+  final TrayManager? _customTrayManager;
+  final WindowManager? _customWindowManager;
+  bool _isInitialized = false;
+  int _activeTransfers = 0;
+  String _formattedSpeed = '';
 
   TrayManager get _trayManager => _customTrayManager ?? trayManager;
   WindowManager get _windowManager =>
@@ -52,6 +60,9 @@ class TrayService with TrayListener, WindowListener {
   int get activeTransfers => _activeTransfers;
   String get formattedSpeed => _formattedSpeed;
 
+  AppLocalizations get _l10n =>
+      resolveAppLocalizations(_ref.read(settingsProvider).locale);
+
   /// Initializes the system tray icon, window listeners, and context menu.
   Future<void> initialize({bool startHidden = false}) async {
     if (!isSupported) return;
@@ -67,7 +78,7 @@ class TrayService with TrayListener, WindowListener {
       // Setup Tray Icon & Tooltip
       const iconPath = 'assets/icons/tray_icon.png';
       await _trayManager.setIcon(iconPath);
-      await _trayManager.setToolTip('UnifyCloud');
+      await _trayManager.setToolTip(_l10n.trayTooltip);
 
       _isInitialized = true;
       await updateTrayMenu();
@@ -93,9 +104,10 @@ class TrayService with TrayListener, WindowListener {
     if (!_isInitialized || !isSupported) return;
 
     try {
+      final l10n = _l10n;
       final tooltip = activeTransfers > 0
-          ? 'UnifyCloud: $activeTransfers ${_activeTransfers == 1 ? 'trasferimento attivo' : 'trasferimenti attivi'} ($_formattedSpeed)'
-          : 'UnifyCloud';
+          ? '${l10n.appTitle}: ${l10n.trayStatusActive(activeTransfers, _formattedSpeed)}'
+          : l10n.trayTooltip;
       await _trayManager.setToolTip(tooltip);
       await updateTrayMenu();
     } catch (e) {
@@ -108,30 +120,31 @@ class TrayService with TrayListener, WindowListener {
     if (!_isInitialized || !isSupported) return;
 
     try {
+      final l10n = _l10n;
       final statusLabel = _activeTransfers > 0
-          ? '$_activeTransfers ${_activeTransfers == 1 ? 'trasferimento attivo' : 'trasferimenti attivi'} ($_formattedSpeed)'
-          : 'Inattivo (Nessun trasferimento)';
+          ? l10n.trayStatusActive(_activeTransfers, _formattedSpeed)
+          : l10n.trayStatusIdle;
 
       final menu = Menu(
         items: [
           MenuItem(
             key: 'show_window',
-            label: 'Mostra UnifyCloud',
+            label: l10n.trayShowWindow,
           ),
           MenuItem(
             key: 'hide_window',
-            label: 'Riduci nel vassoio',
+            label: l10n.trayHideWindow,
           ),
           MenuItem.separator(),
           MenuItem(
             key: 'status',
-            label: 'Stato: $statusLabel',
+            label: l10n.trayStatusLine(statusLabel),
             disabled: true,
           ),
           MenuItem.separator(),
           MenuItem(
             key: 'exit_app',
-            label: 'Esci da UnifyCloud',
+            label: l10n.trayQuit,
           ),
         ],
       );
@@ -168,13 +181,10 @@ class TrayService with TrayListener, WindowListener {
       case 'show_window':
         await _windowManager.show();
         await _windowManager.focus();
-        break;
       case 'hide_window':
         await _windowManager.hide();
-        break;
       case 'exit_app':
         await quitApp();
-        break;
     }
   }
 

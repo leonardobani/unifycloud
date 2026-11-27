@@ -33,10 +33,10 @@ void main() {
       await tester.pumpWidget(createTestApp(initialRules: []));
       await tester.pumpAndSettle();
 
-      expect(find.text('Sincronizzazione & Backup'), findsOneWidget);
-      expect(find.text('Nessuna Regola Configurata'), findsOneWidget);
-      expect(find.text('Crea Nuova Regola'), findsOneWidget);
-      expect(find.text('Nuova Regola'), findsOneWidget); // FAB
+      expect(find.text('Sync & Backup'), findsOneWidget);
+      expect(find.text('No rules configured'), findsOneWidget);
+      expect(find.text('Create New Rule'), findsOneWidget);
+      expect(find.text('New Rule'), findsOneWidget); // FAB
     });
 
     testWidgets('Renders configured sync rules list with cards and details', (tester) async {
@@ -46,9 +46,6 @@ void main() {
         localPath: '/storage/emulated/0/DCIM',
         remote: 'gdrive',
         remotePath: 'Backup/Foto',
-        mode: SyncMode.copy,
-        frequency: SyncFrequency.hourly,
-        isEnabled: true,
         lastStatus: SyncStatus.completed,
       );
 
@@ -58,18 +55,18 @@ void main() {
       expect(find.text('Backup Foto DCIM'), findsOneWidget);
       expect(find.text('/storage/emulated/0/DCIM'), findsOneWidget);
       expect(find.text('gdrive:Backup/Foto'), findsOneWidget);
-      expect(find.text('Ogni ora'), findsOneWidget);
-      expect(find.text('Backup Incrementale'), findsOneWidget);
-      expect(find.text('Completato'), findsOneWidget);
-      expect(find.text('Sincronizza ora'), findsOneWidget);
-      expect(find.text('Sincronizza Tutte'), findsOneWidget);
+      expect(find.text('Every hour'), findsOneWidget);
+      expect(find.text('Incremental Backup'), findsOneWidget);
+      expect(find.text('Completed'), findsOneWidget);
+      expect(find.text('Sync now'), findsOneWidget);
+      expect(find.text('Sync All'), findsOneWidget);
     });
 
-    testWidgets('Tapping "Nuova Regola" opens SyncRuleDialog with form fields', (tester) async {
+    testWidgets('Tapping "New Rule" opens SyncRuleDialog with form fields', (tester) async {
       await tester.binding.setSurfaceSize(const Size(800, 1000));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      final fakeRemote = CloudRemote(
+      const fakeRemote = CloudRemote(
         name: 'gdrive',
         type: 'drive',
       );
@@ -81,20 +78,20 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap FAB to open dialog
-      await tester.tap(find.text('Nuova Regola'));
+      await tester.tap(find.text('New Rule'));
       await tester.pumpAndSettle();
 
       expect(find.byType(SyncRuleDialog), findsOneWidget);
-      expect(find.text('Nuova Regola di Sincronizzazione'), findsOneWidget);
-      expect(find.text('Cartella Locale Sorgente'), findsOneWidget);
-      expect(find.text('Cloud di Destinazione'), findsOneWidget);
-      expect(find.text('Cartella di Destinazione sul Cloud'), findsOneWidget);
-      expect(find.text('Modalità Operativa'), findsOneWidget);
-      expect(find.text('Frequenza Pianificata'), findsOneWidget);
-      expect(find.text('Salva Regola'), findsOneWidget);
+      expect(find.text('New Synchronization Rule'), findsOneWidget);
+      expect(find.text('Local Source Folder'), findsOneWidget);
+      expect(find.text('Destination Cloud'), findsOneWidget);
+      expect(find.text('Remote Destination Path'), findsOneWidget);
+      expect(find.text('Sync Mode'), findsOneWidget);
+      expect(find.text('Execution Frequency'), findsOneWidget);
+      expect(find.text('Save Rule'), findsOneWidget);
 
       // Close dialog
-      await tester.tap(find.text('Annulla'));
+      await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
       expect(find.byType(SyncRuleDialog), findsNothing);
     });
@@ -106,7 +103,6 @@ void main() {
         localPath: '/tmp/test',
         remote: 'onedrive',
         remotePath: 'Test',
-        isEnabled: true,
       );
 
       await tester.pumpWidget(createTestApp(initialRules: [rule]));
@@ -125,9 +121,9 @@ void main() {
 }
 
 class _FakeCloudAccountsNotifier extends CloudAccountsNotifier {
-  final List<CloudRemote> _remotes;
 
   _FakeCloudAccountsNotifier(this._remotes);
+  final List<CloudRemote> _remotes;
 
   @override
   CloudAccountsState build() {

@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/l10n_extension.dart';
+
 /// Riverpod provider for [AppBackgroundService].
 final appBackgroundServiceProvider = Provider<AppBackgroundService>((ref) {
   return AppBackgroundService();
@@ -22,6 +24,10 @@ void onStart(ServiceInstance service) {
     final activeCount = event['activeCount'] as int? ?? 0;
     final formattedSpeed = event['formattedSpeed'] as String? ?? '0 B/s';
     final percentage = event['averagePercentage'] as int? ?? 0;
+    final langCode = event['locale'] as String?;
+    final l10n = resolveAppLocalizations(
+      langCode != null && langCode.isNotEmpty ? Locale(langCode) : null,
+    );
 
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService() == false) {
@@ -29,18 +35,22 @@ void onStart(ServiceInstance service) {
       }
 
       await service.setForegroundNotificationInfo(
-        title: 'UnifyCloud: $activeCount trasferiment${activeCount == 1 ? 'o attivo' : 'i attivi'}',
-        content: '$formattedSpeed • $percentage% completato',
+        title: '${l10n.appTitle}: ${l10n.activeTransfersCount(activeCount)}',
+        content: l10n.bgNotificationProgressContent(formattedSpeed, percentage),
       );
     }
   });
 
   // When transfers complete or queue is idle, release foreground notification
   service.on('setIdle').listen((event) async {
+    final langCode = event?['locale'] as String?;
+    final l10n = resolveAppLocalizations(
+      langCode != null && langCode.isNotEmpty ? Locale(langCode) : null,
+    );
     if (service is AndroidServiceInstance) {
       await service.setForegroundNotificationInfo(
-        title: 'UnifyCloud',
-        content: 'Tutti i trasferimenti sono stati completati.',
+        title: l10n.appTitle,
+        content: l10n.bgNotificationIdleContent,
       );
       await service.setAsBackgroundService();
     }
@@ -62,11 +72,11 @@ Future<bool> onIosBackground(ServiceInstance service) async {
 /// Service that coordinates background file transfer tasks across mobile platforms
 /// and gracefully no-ops on desktop environments.
 class AppBackgroundService {
-  final FlutterBackgroundService _service;
-  bool _isInitialized = false;
 
   AppBackgroundService([FlutterBackgroundService? service])
       : _service = service ?? FlutterBackgroundService();
+  final FlutterBackgroundService _service;
+  bool _isInitialized = false;
 
   /// Whether the service has been initialized.
   bool get isInitialized => _isInitialized;
@@ -78,13 +88,14 @@ class AppBackgroundService {
   }
 
   /// Initializes the background service with notification channel and foreground parameters.
-  Future<bool> initialize() async {
+  Future<bool> initialize({Locale? locale}) async {
     if (!isSupported) {
       _isInitialized = true;
       return true;
     }
 
     try {
+      final l10n = resolveAppLocalizations(locale);
       final configured = await _service.configure(
         androidConfiguration: AndroidConfiguration(
           onStart: onStart,
@@ -92,8 +103,8 @@ class AppBackgroundService {
           isForegroundMode: true,
           autoStartOnBoot: false,
           notificationChannelId: 'unifycloud_transfers',
-          initialNotificationTitle: 'UnifyCloud Trasferimenti',
-          initialNotificationContent: 'Gestione trasferimenti in background...',
+          initialNotificationTitle: l10n.bgNotificationInitialTitle,
+          initialNotificationContent: l10n.bgNotificationInitialContent,
           foregroundServiceNotificationId: 9876,
           foregroundServiceTypes: [AndroidForegroundType.dataSync],
         ),
@@ -118,6 +129,7 @@ class AppBackgroundService {
     required double totalSpeed,
     required int averagePercentage,
     required String formattedSpeed,
+    Locale? locale,
   }) async {
     if (!isSupported) return;
 
@@ -132,6 +144,7 @@ class AppBackgroundService {
         'totalSpeed': totalSpeed,
         'averagePercentage': averagePercentage,
         'formattedSpeed': formattedSpeed,
+        if (locale != null) 'locale': locale.languageCode,
       });
     } catch (e) {
       debugPrint('[AppBackgroundService] Error notifying progress: $e');
@@ -139,13 +152,15 @@ class AppBackgroundService {
   }
 
   /// Notifies the background service that all active transfers have finished.
-  Future<void> notifyTransfersIdle() async {
+  Future<void> notifyTransfersIdle({Locale? locale}) async {
     if (!isSupported) return;
 
     try {
       final running = await _service.isRunning();
       if (running) {
-        _service.invoke('setIdle');
+        _service.invoke('setIdle', {
+          if (locale != null) 'locale': locale.languageCode,
+        });
       }
     } catch (e) {
       debugPrint('[AppBackgroundService] Error notifying idle: $e');

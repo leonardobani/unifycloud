@@ -1,16 +1,24 @@
 import 'dart:convert';
 
 /// Represents storage usage and quota information for a cloud remote or local drive.
-class StorageQuota {
-  final int total; // in bytes, -1 if unknown
-  final int used; // in bytes, -1 if unknown
-  final int free; // in bytes, -1 if unknown
+class StorageQuota { // in bytes, -1 if unknown
 
   const StorageQuota({
     this.total = -1,
     this.used = -1,
     this.free = -1,
   });
+
+  factory StorageQuota.fromJson(Map<String, dynamic> json) {
+    return StorageQuota(
+      total: (json['total'] as num?)?.toInt() ?? -1,
+      used: (json['used'] as num?)?.toInt() ?? -1,
+      free: (json['free'] as num?)?.toInt() ?? -1,
+    );
+  }
+  final int total; // in bytes, -1 if unknown
+  final int used; // in bytes, -1 if unknown
+  final int free;
 
   bool get hasData => total > 0 || used > 0 || free > 0;
 
@@ -52,14 +60,6 @@ class StorageQuota {
     return '${d.toStringAsFixed(1)} ${suffixes[i]}';
   }
 
-  factory StorageQuota.fromJson(Map<String, dynamic> json) {
-    return StorageQuota(
-      total: (json['total'] as num?)?.toInt() ?? -1,
-      used: (json['used'] as num?)?.toInt() ?? -1,
-      free: (json['free'] as num?)?.toInt() ?? -1,
-    );
-  }
-
   Map<String, dynamic> toJson() => {
     'total': total,
     'used': used,
@@ -72,11 +72,6 @@ class StorageQuota {
 
 /// Represents a configured cloud remote provider.
 class CloudRemote {
-  final String name;
-  final String type;
-  final String? description;
-  final String? remote;
-  final StorageQuota? quota;
 
   const CloudRemote({
     required this.name,
@@ -85,6 +80,23 @@ class CloudRemote {
     this.remote,
     this.quota,
   });
+
+  factory CloudRemote.fromJson(Map<String, dynamic> json) {
+    return CloudRemote(
+      name: json['name'] as String? ?? '',
+      type: json['type'] as String? ?? '',
+      description: json['description'] as String?,
+      remote: json['remote'] as String?,
+      quota: json['quota'] != null
+          ? StorageQuota.fromJson(json['quota'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+  final String name;
+  final String type;
+  final String? description;
+  final String? remote;
+  final StorageQuota? quota;
 
   bool get isCrypt => type.toLowerCase() == 'crypt';
 
@@ -104,18 +116,6 @@ class CloudRemote {
     );
   }
 
-  factory CloudRemote.fromJson(Map<String, dynamic> json) {
-    return CloudRemote(
-      name: json['name'] as String? ?? '',
-      type: json['type'] as String? ?? '',
-      description: json['description'] as String?,
-      remote: json['remote'] as String?,
-      quota: json['quota'] != null
-          ? StorageQuota.fromJson(json['quota'] as Map<String, dynamic>)
-          : null,
-    );
-  }
-
   Map<String, dynamic> toJson() => {
     'name': name,
     'type': type,
@@ -132,13 +132,6 @@ class CloudRemote {
 
 /// Represents an item (file or directory) in a cloud remote or local filesystem.
 class CloudItem {
-  final String name;
-  final String path;
-  final bool isDir;
-  final int size;
-  final DateTime? modTime;
-  final String? mimeType;
-  final String? id;
 
   const CloudItem({
     required this.name,
@@ -167,6 +160,13 @@ class CloudItem {
       id: json['id'] as String?,
     );
   }
+  final String name;
+  final String path;
+  final bool isDir;
+  final int size;
+  final DateTime? modTime;
+  final String? mimeType;
+  final String? id;
 
   Map<String, dynamic> toJson() => {
     'name': name,
@@ -184,9 +184,6 @@ class CloudItem {
 
 /// Wrapper for standard response from Rclone Go wrapper.
 class RcloneResponse<T> {
-  final bool success;
-  final String? error;
-  final T? data;
 
   const RcloneResponse({
     required this.success,
@@ -209,5 +206,7 @@ class RcloneResponse<T> {
       data: success && rawData != null ? fromJsonData(rawData) : null,
     );
   }
+  final bool success;
+  final String? error;
+  final T? data;
 }
-

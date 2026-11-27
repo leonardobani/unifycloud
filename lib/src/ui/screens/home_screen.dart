@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../l10n/l10n_extension.dart';
 import '../../models/cloud_models.dart';
 import '../../models/sync_rule_model.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/file_explorer_provider.dart';
 import '../../providers/sync_provider.dart';
-import '../../../l10n/l10n_extension.dart';
 import '../theme/app_theme.dart';
 import '../widgets/add_cloud_dialog.dart';
 import '../widgets/expandable_error_box.dart';
@@ -174,7 +174,6 @@ class HomeScreen extends ConsumerWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(6),
                         child: LinearProgressIndicator(
-                          value: null,
                           minHeight: 8,
                           backgroundColor: colorScheme.surfaceContainerHighest,
                           valueColor: const AlwaysStoppedAnimation(AppTheme.primaryColor),
@@ -263,7 +262,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 FilledButton.icon(
                   onPressed: () {
-                    showDialog(
+                    showDialog<void>(
                       context: context,
                       builder: (ctx) => const AddCloudDialog(),
                     );
@@ -316,7 +315,7 @@ class HomeScreen extends ConsumerWidget {
                       const SizedBox(height: 20),
                       FilledButton.icon(
                         onPressed: () {
-                          showDialog(
+                          showDialog<void>(
                             context: context,
                             builder: (ctx) => const AddCloudDialog(),
                           );
@@ -394,7 +393,6 @@ class HomeScreen extends ConsumerWidget {
                                                   border: Border.all(
                                                     color: const Color(0xFF00BFA5)
                                                         .withValues(alpha: 0.5),
-                                                    width: 1,
                                                   ),
                                                 ),
                                                 child: const Row(
@@ -441,7 +439,7 @@ class HomeScreen extends ConsumerWidget {
                                     icon: const Icon(Icons.more_vert, size: 20),
                                     onSelected: (action) async {
                                       if (action == 'create_vault') {
-                                        showDialog(
+                                        await showDialog<void>(
                                           context: context,
                                           builder: (ctx) => AddCloudDialog(
                                             initialProvider: 'crypt',
@@ -472,7 +470,7 @@ class HomeScreen extends ConsumerWidget {
                                           ),
                                         );
                                         if (confirm == true) {
-                                          ref
+                                          await ref
                                               .read(cloudAccountsProvider.notifier)
                                               .deleteRemote(remote.name);
                                         }

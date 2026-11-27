@@ -25,41 +25,23 @@ class SettingsScreen extends ConsumerWidget {
   static const String liberapayUrl = 'https://liberapay.com/leonardobani/';
   static const String paypalUrl = 'https://paypal.me/leonardobani';
 
-  /// Returns a human-friendly display label for any language code or 'system'.
+  /// Returns a human-friendly display label for any supported language code or 'system'.
   static String getLanguageDisplayName(String code, AppLocalizations l10n) {
     switch (code) {
       case 'en':
         return l10n.langEnglish;
       case 'it':
         return l10n.langItalian;
+      case 'fr':
+        return l10n.langFrench;
+      case 'pl':
+        return l10n.langPolish;
+      case 'es':
+        return l10n.langSpanish;
+      case 'ar':
+        return l10n.langArabic;
       case 'system':
         return l10n.langSystem;
-      case 'de':
-        return 'Deutsch';
-      case 'es':
-        return 'Español';
-      case 'fr':
-        return 'Français';
-      case 'pt':
-        return 'Português';
-      case 'ru':
-        return 'Русский';
-      case 'zh':
-        return '中文';
-      case 'ja':
-        return '日本語';
-      case 'ko':
-        return '한국어';
-      case 'ar':
-        return 'العربية';
-      case 'hi':
-        return 'हिन्दी';
-      case 'nl':
-        return 'Nederlands';
-      case 'pl':
-        return 'Polski';
-      case 'tr':
-        return 'Türkçe';
       default:
         return code.toUpperCase();
     }
@@ -239,7 +221,7 @@ class SettingsScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             LayoutBuilder(
               builder: (context, constraints) {
-                final supported = AppLocalizations.supportedLocales;
+                const supported = AppLocalizations.supportedLocales;
                 // If 2 or fewer languages (+ system = 3 segments), SegmentedButton fits nicely.
                 // For 3+ languages (scaling up to 10-20+ languages), use DropdownButtonFormField to avoid RenderFlex overflow.
                 if (supported.length <= 2) {
@@ -267,10 +249,8 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                       ],
                       selected: {
-                        supported.any((l) => l.languageCode == settings.language) ||
-                                settings.language == 'system'
-                            ? settings.language
-                            : 'system',
+                        if (supported.any((l) => l.languageCode == settings.language) ||
+                                settings.language == 'system') settings.language else 'system',
                       },
                       onSelectionChanged: (newSelection) {
                         if (newSelection.isNotEmpty) {
@@ -652,7 +632,7 @@ class SettingsScreen extends ConsumerWidget {
 
   /// Interactive dialog with support and donation links.
   void _showSupportDialog(BuildContext context, AppLocalizations l10n) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Row(
@@ -855,7 +835,7 @@ class SettingsScreen extends ConsumerWidget {
                   barrierDismissible: false,
                   builder: (ctx) => PinSetupDialog(
                     mode: PinDialogMode.verify,
-                    onVerifyOldPin: (pin) => appLockService.verifyPin(pin),
+                    onVerifyOldPin: appLockService.verifyPin,
                   ),
                 );
 
@@ -890,8 +870,8 @@ class SettingsScreen extends ConsumerWidget {
                   barrierDismissible: false,
                   builder: (ctx) => PinSetupDialog(
                     mode: PinDialogMode.change,
-                    onVerifyOldPin: (pin) => appLockService.verifyPin(pin),
-                    onSaveNewPin: (pin) => appLockService.savePin(pin),
+                    onVerifyOldPin: appLockService.verifyPin,
+                    onSaveNewPin: appLockService.savePin,
                   ),
                 );
 

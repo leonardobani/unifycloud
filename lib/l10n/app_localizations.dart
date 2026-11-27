@@ -6,20 +6,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_ar.dart';
-import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
 import 'app_localizations_fr.dart';
-import 'app_localizations_hi.dart';
 import 'app_localizations_it.dart';
-import 'app_localizations_ja.dart';
-import 'app_localizations_ko.dart';
-import 'app_localizations_nl.dart';
 import 'app_localizations_pl.dart';
-import 'app_localizations_pt.dart';
-import 'app_localizations_ru.dart';
-import 'app_localizations_tr.dart';
-import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -108,20 +99,11 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
-    Locale('de'),
     Locale('en'),
     Locale('es'),
     Locale('fr'),
-    Locale('hi'),
     Locale('it'),
-    Locale('ja'),
-    Locale('ko'),
-    Locale('nl'),
     Locale('pl'),
-    Locale('pt'),
-    Locale('ru'),
-    Locale('tr'),
-    Locale('zh'),
   ];
 
   /// Application title
@@ -130,319 +112,319 @@ abstract class AppLocalizations {
   /// **'UnifyCloud'**
   String get appTitle;
 
-  /// No description provided for @home.
+  /// Localized message for home.
   ///
   /// In en, this message translates to:
   /// **'Home'**
   String get home;
 
-  /// No description provided for @explorer.
+  /// Localized message for explorer.
   ///
   /// In en, this message translates to:
   /// **'Explorer'**
   String get explorer;
 
-  /// No description provided for @sync.
+  /// Localized message for sync.
   ///
   /// In en, this message translates to:
   /// **'Sync'**
   String get sync;
 
-  /// No description provided for @settings.
+  /// Localized message for settings.
   ///
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
 
-  /// No description provided for @cancel.
+  /// Localized message for cancel.
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
 
-  /// No description provided for @confirm.
+  /// Localized message for confirm.
   ///
   /// In en, this message translates to:
   /// **'Confirm'**
   String get confirm;
 
-  /// No description provided for @delete.
+  /// Localized message for delete.
   ///
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
 
-  /// No description provided for @save.
+  /// Localized message for save.
   ///
   /// In en, this message translates to:
   /// **'Save'**
   String get save;
 
-  /// No description provided for @close.
+  /// Localized message for close.
   ///
   /// In en, this message translates to:
   /// **'Close'**
   String get close;
 
-  /// No description provided for @edit.
+  /// Localized message for edit.
   ///
   /// In en, this message translates to:
   /// **'Edit'**
   String get edit;
 
-  /// No description provided for @create.
+  /// Localized message for create.
   ///
   /// In en, this message translates to:
   /// **'Create'**
   String get create;
 
-  /// No description provided for @retry.
+  /// Localized message for retry.
   ///
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
 
-  /// No description provided for @copy.
+  /// Localized message for copy.
   ///
   /// In en, this message translates to:
   /// **'Copy'**
   String get copy;
 
-  /// No description provided for @move.
+  /// Localized message for move.
   ///
   /// In en, this message translates to:
   /// **'Move'**
   String get move;
 
-  /// No description provided for @rename.
+  /// Localized message for rename.
   ///
   /// In en, this message translates to:
   /// **'Rename'**
   String get rename;
 
-  /// No description provided for @download.
+  /// Localized message for download.
   ///
   /// In en, this message translates to:
   /// **'Download'**
   String get download;
 
-  /// No description provided for @upload.
+  /// Localized message for upload.
   ///
   /// In en, this message translates to:
   /// **'Upload'**
   String get upload;
 
-  /// No description provided for @share.
+  /// Localized message for share.
   ///
   /// In en, this message translates to:
   /// **'Share'**
   String get share;
 
-  /// No description provided for @details.
+  /// Localized message for details.
   ///
   /// In en, this message translates to:
   /// **'Details'**
   String get details;
 
-  /// No description provided for @search.
+  /// Localized message for search.
   ///
   /// In en, this message translates to:
   /// **'Search'**
   String get search;
 
-  /// No description provided for @change.
+  /// Localized message for change.
   ///
   /// In en, this message translates to:
   /// **'Change'**
   String get change;
 
-  /// No description provided for @reset.
+  /// Localized message for reset.
   ///
   /// In en, this message translates to:
   /// **'Reset'**
   String get reset;
 
-  /// No description provided for @done.
+  /// Localized message for done.
   ///
   /// In en, this message translates to:
   /// **'Done'**
   String get done;
 
-  /// No description provided for @loading.
+  /// Localized message for loading.
   ///
   /// In en, this message translates to:
   /// **'Loading...'**
   String get loading;
 
-  /// No description provided for @success.
+  /// Localized message for success.
   ///
   /// In en, this message translates to:
   /// **'Operation completed'**
   String get success;
 
-  /// No description provided for @error.
+  /// Localized message for error.
   ///
   /// In en, this message translates to:
   /// **'Error'**
   String get error;
 
-  /// No description provided for @settingsTitle.
+  /// Localized message for settings title.
   ///
   /// In en, this message translates to:
   /// **'Settings'**
   String get settingsTitle;
 
-  /// No description provided for @resetDefaultsTooltip.
+  /// Localized message for reset defaults tooltip.
   ///
   /// In en, this message translates to:
   /// **'Restore Default Settings'**
   String get resetDefaultsTooltip;
 
-  /// No description provided for @resetDialogTitle.
+  /// Localized message for reset dialog title.
   ///
   /// In en, this message translates to:
   /// **'Reset Settings'**
   String get resetDialogTitle;
 
-  /// No description provided for @resetDialogContent.
+  /// Localized message for reset dialog content.
   ///
   /// In en, this message translates to:
   /// **'Do you want to reset all preferences (theme, language, folders, display) to factory defaults?'**
   String get resetDialogContent;
 
-  /// No description provided for @resetSuccessSnackbar.
+  /// Localized message for reset success snackbar.
   ///
   /// In en, this message translates to:
   /// **'Settings restored to default values'**
   String get resetSuccessSnackbar;
 
-  /// No description provided for @appearanceAndTheme.
+  /// Localized message for appearance and theme.
   ///
   /// In en, this message translates to:
   /// **'Appearance & Theme'**
   String get appearanceAndTheme;
 
-  /// No description provided for @chooseVisualThemeSubtitle.
+  /// Localized message for choose visual theme subtitle.
   ///
   /// In en, this message translates to:
   /// **'Choose visual theme for UnifyCloud interface:'**
   String get chooseVisualThemeSubtitle;
 
-  /// No description provided for @themeSystem.
+  /// Localized message for theme system.
   ///
   /// In en, this message translates to:
   /// **'System'**
   String get themeSystem;
 
-  /// No description provided for @themeLight.
+  /// Localized message for theme light.
   ///
   /// In en, this message translates to:
   /// **'Light'**
   String get themeLight;
 
-  /// No description provided for @themeDark.
+  /// Localized message for theme dark.
   ///
   /// In en, this message translates to:
   /// **'Dark'**
   String get themeDark;
 
-  /// No description provided for @language.
+  /// Localized message for language.
   ///
   /// In en, this message translates to:
   /// **'Language'**
   String get language;
 
-  /// No description provided for @languageSubtitle.
+  /// Localized message for language subtitle.
   ///
   /// In en, this message translates to:
   /// **'Select application interface language'**
   String get languageSubtitle;
 
-  /// No description provided for @langEnglish.
+  /// Localized message for lang english.
   ///
   /// In en, this message translates to:
   /// **'English'**
   String get langEnglish;
 
-  /// No description provided for @langItalian.
+  /// Localized message for lang italian.
   ///
   /// In en, this message translates to:
   /// **'Italiano'**
   String get langItalian;
 
-  /// No description provided for @langSystem.
+  /// Localized message for lang system.
   ///
   /// In en, this message translates to:
   /// **'System Default'**
   String get langSystem;
 
-  /// No description provided for @filesAndExploration.
+  /// Localized message for files and exploration.
   ///
   /// In en, this message translates to:
   /// **'Files & Exploration'**
   String get filesAndExploration;
 
-  /// No description provided for @showHiddenFiles.
+  /// Localized message for show hidden files.
   ///
   /// In en, this message translates to:
   /// **'Show hidden files'**
   String get showHiddenFiles;
 
-  /// No description provided for @showHiddenFilesSubtitle.
+  /// Localized message for show hidden files subtitle.
   ///
   /// In en, this message translates to:
   /// **'Display files and folders starting with a dot'**
   String get showHiddenFilesSubtitle;
 
-  /// No description provided for @confirmBeforeDelete.
+  /// Localized message for confirm before delete.
   ///
   /// In en, this message translates to:
   /// **'Confirm before deleting'**
   String get confirmBeforeDelete;
 
-  /// No description provided for @confirmBeforeDeleteSubtitle.
+  /// Localized message for confirm before delete subtitle.
   ///
   /// In en, this message translates to:
   /// **'Ask for confirmation before permanently deleting files'**
   String get confirmBeforeDeleteSubtitle;
 
-  /// No description provided for @defaultDownloadFolder.
+  /// Localized message for default download folder.
   ///
   /// In en, this message translates to:
   /// **'Default Download Folder'**
   String get defaultDownloadFolder;
 
-  /// No description provided for @defaultDownloadFolderSystem.
+  /// Localized message for default download folder system.
   ///
   /// In en, this message translates to:
   /// **'System default download directory'**
   String get defaultDownloadFolderSystem;
 
-  /// No description provided for @restoreDefaultPath.
+  /// Localized message for restore default path.
   ///
   /// In en, this message translates to:
   /// **'Restore default path'**
   String get restoreDefaultPath;
 
-  /// No description provided for @customDownloadFolderDialogPrompt.
+  /// Localized message for custom download folder dialog prompt.
   ///
   /// In en, this message translates to:
   /// **'Select a folder using the system picker or enter the desired path manually:'**
   String get customDownloadFolderDialogPrompt;
 
-  /// No description provided for @folderPath.
+  /// Localized message for folder path.
   ///
   /// In en, this message translates to:
   /// **'Folder path'**
   String get folderPath;
 
-  /// No description provided for @folderPathHint.
+  /// Localized message for folder path hint.
   ///
   /// In en, this message translates to:
   /// **'e.g. /home/user/Downloads'**
   String get folderPathHint;
 
-  /// No description provided for @browseWithSystemPicker.
+  /// Localized message for browse with system picker.
   ///
   /// In en, this message translates to:
   /// **'Browse with system picker'**
@@ -454,67 +436,67 @@ abstract class AppLocalizations {
   /// **'Unable to open system picker: {error}'**
   String errorOpenPicker(String error);
 
-  /// No description provided for @restoreDefault.
+  /// Localized message for restore default.
   ///
   /// In en, this message translates to:
   /// **'Restore default'**
   String get restoreDefault;
 
-  /// No description provided for @maxConcurrentTransfers.
+  /// Localized message for max concurrent transfers.
   ///
   /// In en, this message translates to:
   /// **'Concurrent Transfers'**
   String get maxConcurrentTransfers;
 
-  /// No description provided for @maxConcurrentTransfersSubtitle.
+  /// Localized message for max concurrent transfers subtitle.
   ///
   /// In en, this message translates to:
   /// **'Maximum number of simultaneous active file transfers'**
   String get maxConcurrentTransfersSubtitle;
 
-  /// No description provided for @dualPaneMode.
+  /// Localized message for dual pane mode.
   ///
   /// In en, this message translates to:
   /// **'Dual-Pane Commander Mode'**
   String get dualPaneMode;
 
-  /// No description provided for @dualPaneModeSubtitle.
+  /// Localized message for dual pane mode subtitle.
   ///
   /// In en, this message translates to:
   /// **'Show two side-by-side panes on wide screens and tablets'**
   String get dualPaneModeSubtitle;
 
-  /// No description provided for @communityAndSupport.
+  /// Localized message for community and support.
   ///
   /// In en, this message translates to:
   /// **'Community & Support'**
   String get communityAndSupport;
 
-  /// No description provided for @openSourceDescription.
+  /// Localized message for open source description.
   ///
   /// In en, this message translates to:
   /// **'UnifyCloud is free and open-source software built to unify your cloud data without trackers or proprietary intermediaries.'**
   String get openSourceDescription;
 
-  /// No description provided for @supportDeveloper.
+  /// Localized message for support developer.
   ///
   /// In en, this message translates to:
   /// **'Support the Developer'**
   String get supportDeveloper;
 
-  /// No description provided for @supportDeveloperSubtitle.
+  /// Localized message for support developer subtitle.
   ///
   /// In en, this message translates to:
   /// **'Buy a coffee to support independent development'**
   String get supportDeveloperSubtitle;
 
-  /// No description provided for @viewSourceOnGitLab.
+  /// Localized message for view source on git lab.
   ///
   /// In en, this message translates to:
   /// **'View Code on GitLab'**
   String get viewSourceOnGitLab;
 
-  /// No description provided for @viewSourceOnGitLabSubtitle.
+  /// Localized message for view source on git lab subtitle.
   ///
   /// In en, this message translates to:
   /// **'Official repository, bug reports, and contributions'**
@@ -526,2123 +508,3071 @@ abstract class AppLocalizations {
   /// **'Unable to open browser. Repository: {url}'**
   String errorOpenBrowser(String url);
 
-  /// No description provided for @supportDialogTitle.
+  /// Localized message for support dialog title.
   ///
   /// In en, this message translates to:
   /// **'Support UnifyCloud'**
   String get supportDialogTitle;
 
-  /// No description provided for @supportDialogDescription1.
+  /// Localized message for support dialog description1.
   ///
   /// In en, this message translates to:
   /// **'UnifyCloud is a free and open-source project designed to give you full control over your cloud files.'**
   String get supportDialogDescription1;
 
-  /// No description provided for @supportDialogDescription2.
+  /// Localized message for support dialog description2.
   ///
   /// In en, this message translates to:
   /// **'If you find this application helpful, consider buying a coffee or donating to support continuous development and new features!'**
   String get supportDialogDescription2;
 
-  /// No description provided for @supportKofiTitle.
+  /// Localized message for support kofi title.
   ///
   /// In en, this message translates to:
   /// **'Buy a coffee on Ko-fi'**
   String get supportKofiTitle;
 
-  /// No description provided for @supportLiberapayTitle.
+  /// Localized message for support liberapay title.
   ///
   /// In en, this message translates to:
   /// **'Donate on Liberapay'**
   String get supportLiberapayTitle;
 
-  /// No description provided for @supportPaypalTitle.
+  /// Localized message for support paypal title.
   ///
   /// In en, this message translates to:
   /// **'Donate via PayPal'**
   String get supportPaypalTitle;
 
-  /// No description provided for @securityAndEncryption.
+  /// Localized message for security and encryption.
   ///
   /// In en, this message translates to:
   /// **'Security & Encryption'**
   String get securityAndEncryption;
 
-  /// No description provided for @securityArchitectureDescription.
+  /// Localized message for security architecture description.
   ///
   /// In en, this message translates to:
   /// **'UnifyCloud employs a Zero-Plaintext architecture. All OAuth tokens and credentials are securely protected in the system Keychain/Keystore and injected exclusively into Go engine RAM memory.'**
   String get securityArchitectureDescription;
 
-  /// No description provided for @appLock.
+  /// Localized message for app lock.
   ///
   /// In en, this message translates to:
   /// **'App Lock (PIN / Biometrics)'**
   String get appLock;
 
-  /// No description provided for @appLockSubtitle.
+  /// Localized message for app lock subtitle.
   ///
   /// In en, this message translates to:
   /// **'Require PIN or fingerprint to access'**
   String get appLockSubtitle;
 
-  /// No description provided for @appLockActiveSubtitle.
+  /// Localized message for app lock active subtitle.
   ///
   /// In en, this message translates to:
   /// **'Active at startup and after inactivity'**
   String get appLockActiveSubtitle;
 
-  /// No description provided for @appLockEnabledSnackbar.
+  /// Localized message for app lock enabled snackbar.
   ///
   /// In en, this message translates to:
   /// **'App Lock enabled successfully'**
   String get appLockEnabledSnackbar;
 
-  /// No description provided for @appLockDisabledSnackbar.
+  /// Localized message for app lock disabled snackbar.
   ///
   /// In en, this message translates to:
   /// **'App Lock disabled'**
   String get appLockDisabledSnackbar;
 
-  /// No description provided for @changePin.
+  /// Localized message for change pin.
   ///
   /// In en, this message translates to:
   /// **'Change PIN'**
   String get changePin;
 
-  /// No description provided for @changePinSubtitle.
+  /// Localized message for change pin subtitle.
   ///
   /// In en, this message translates to:
   /// **'Set a new 6-digit security PIN'**
   String get changePinSubtitle;
 
-  /// No description provided for @pinChangedSnackbar.
+  /// Localized message for pin changed snackbar.
   ///
   /// In en, this message translates to:
   /// **'Security PIN updated successfully'**
   String get pinChangedSnackbar;
 
-  /// No description provided for @biometricAuth.
+  /// Localized message for biometric auth.
   ///
   /// In en, this message translates to:
   /// **'Biometric Authentication'**
   String get biometricAuth;
 
-  /// No description provided for @biometricAuthSubtitle.
+  /// Localized message for biometric auth subtitle.
   ///
   /// In en, this message translates to:
   /// **'Use fingerprint or biometric sensor if available'**
   String get biometricAuthSubtitle;
 
-  /// No description provided for @biometricNotAvailable.
+  /// Localized message for biometric not available.
   ///
   /// In en, this message translates to:
   /// **'Not available or not configured on this device'**
   String get biometricNotAvailable;
 
-  /// No description provided for @autoLock.
+  /// Localized message for auto lock.
   ///
   /// In en, this message translates to:
   /// **'Auto Lock'**
   String get autoLock;
 
-  /// No description provided for @autoLockSubtitle.
+  /// Localized message for auto lock subtitle.
   ///
   /// In en, this message translates to:
   /// **'Background inactivity timeout before locking'**
   String get autoLockSubtitle;
 
-  /// No description provided for @lockImmediately.
+  /// Localized message for lock immediately.
   ///
   /// In en, this message translates to:
   /// **'Immediately'**
   String get lockImmediately;
 
-  /// No description provided for @lockAfter1Minute.
+  /// Localized message for lock after1 minute.
   ///
   /// In en, this message translates to:
   /// **'After 1 minute'**
   String get lockAfter1Minute;
 
-  /// No description provided for @lockAfter5Minutes.
+  /// Localized message for lock after5 minutes.
   ///
   /// In en, this message translates to:
   /// **'After 5 minutes'**
   String get lockAfter5Minutes;
 
-  /// No description provided for @lockAfter15Minutes.
+  /// Localized message for lock after15 minutes.
   ///
   /// In en, this message translates to:
   /// **'After 15 minutes'**
   String get lockAfter15Minutes;
 
-  /// No description provided for @lockAfter30Minutes.
+  /// Localized message for lock after30 minutes.
   ///
   /// In en, this message translates to:
   /// **'After 30 minutes'**
   String get lockAfter30Minutes;
 
-  /// No description provided for @syncCloudAccounts.
+  /// Localized message for sync cloud accounts.
   ///
   /// In en, this message translates to:
   /// **'Sync Cloud Accounts'**
   String get syncCloudAccounts;
 
-  /// No description provided for @syncCloudAccountsSubtitle.
+  /// Localized message for sync cloud accounts subtitle.
   ///
   /// In en, this message translates to:
   /// **'Reload configurations from secure storage'**
   String get syncCloudAccountsSubtitle;
 
-  /// No description provided for @syncCloudAccountsSuccess.
+  /// Localized message for sync cloud accounts success.
   ///
   /// In en, this message translates to:
   /// **'Cloud accounts reloaded successfully'**
   String get syncCloudAccountsSuccess;
 
-  /// No description provided for @clearAllCredentials.
+  /// Localized message for clear all credentials.
   ///
   /// In en, this message translates to:
   /// **'Clear All Credentials'**
   String get clearAllCredentials;
 
-  /// No description provided for @clearAllCredentialsSubtitle.
+  /// Localized message for clear all credentials subtitle.
   ///
   /// In en, this message translates to:
   /// **'Removes encrypted configuration and disconnects all clouds'**
   String get clearAllCredentialsSubtitle;
 
-  /// No description provided for @clearCredentialsDialogTitle.
+  /// Localized message for clear credentials dialog title.
   ///
   /// In en, this message translates to:
   /// **'Warning: Reset Credentials'**
   String get clearCredentialsDialogTitle;
 
-  /// No description provided for @clearCredentialsDialogContent.
+  /// Localized message for clear credentials dialog content.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to delete all saved credentials? You will need to reconnect your cloud accounts.'**
   String get clearCredentialsDialogContent;
 
-  /// No description provided for @clearCredentialsSuccess.
+  /// Localized message for clear credentials success.
   ///
   /// In en, this message translates to:
   /// **'Credentials deleted successfully'**
   String get clearCredentialsSuccess;
 
-  /// No description provided for @aboutUnifyCloud.
+  /// Localized message for about unify cloud.
   ///
   /// In en, this message translates to:
   /// **'About UnifyCloud'**
   String get aboutUnifyCloud;
 
-  /// No description provided for @appVersion.
+  /// Localized message for app version.
   ///
   /// In en, this message translates to:
-  /// **'App Version: 1.0.0'**
+  /// **'App Version: 1.0.1'**
   String get appVersion;
 
-  /// No description provided for @developerInfo.
+  /// Localized message for developer info.
   ///
   /// In en, this message translates to:
   /// **'Developer: Leonardo Bani (@leonardobani)'**
   String get developerInfo;
 
-  /// No description provided for @engineInfo.
+  /// Localized message for engine info.
   ///
   /// In en, this message translates to:
   /// **'Engine: Rclone Core CGO (Go v1.22+ / C FFI)'**
   String get engineInfo;
 
-  /// No description provided for @frameworkInfo.
+  /// Localized message for framework info.
   ///
   /// In en, this message translates to:
   /// **'Framework: Flutter (Material 3 Responsive)'**
   String get frameworkInfo;
 
-  /// No description provided for @licenseInfo.
+  /// Localized message for license info.
   ///
   /// In en, this message translates to:
   /// **'License: GNU General Public License v3.0 (GPL-3.0)'**
   String get licenseInfo;
 
-  /// No description provided for @copyrightInfo.
+  /// Localized message for copyright info.
   ///
   /// In en, this message translates to:
   /// **'Copyright: © 2026 Leonardo Bani'**
   String get copyrightInfo;
 
-  /// No description provided for @storageOverview.
+  /// Localized message for storage overview.
   ///
   /// In en, this message translates to:
   /// **'Storage Overview'**
   String get storageOverview;
 
-  /// No description provided for @connectedClouds.
+  /// Localized message for connected clouds.
   ///
   /// In en, this message translates to:
   /// **'Connected Clouds'**
   String get connectedClouds;
 
-  /// No description provided for @noCloudsConfigured.
+  /// Localized message for no clouds configured.
   ///
   /// In en, this message translates to:
   /// **'No cloud accounts configured'**
   String get noCloudsConfigured;
 
-  /// No description provided for @noCloudsDescription.
+  /// Localized message for no clouds description.
   ///
   /// In en, this message translates to:
   /// **'Connect your first cloud storage account to start managing and syncing files.'**
   String get noCloudsDescription;
 
-  /// No description provided for @addCloud.
+  /// Localized message for add cloud.
   ///
   /// In en, this message translates to:
   /// **'Add Cloud'**
   String get addCloud;
 
-  /// No description provided for @used.
+  /// Localized message for used.
   ///
   /// In en, this message translates to:
   /// **'used'**
   String get used;
 
-  /// No description provided for @free.
+  /// Localized message for free.
   ///
   /// In en, this message translates to:
   /// **'free'**
   String get free;
 
-  /// No description provided for @total.
+  /// Localized message for total.
   ///
   /// In en, this message translates to:
   /// **'total'**
   String get total;
 
-  /// No description provided for @manageAccounts.
+  /// Localized message for manage accounts.
   ///
   /// In en, this message translates to:
   /// **'Manage Accounts'**
   String get manageAccounts;
 
-  /// No description provided for @viewFiles.
+  /// Localized message for view files.
   ///
   /// In en, this message translates to:
   /// **'View Files'**
   String get viewFiles;
 
-  /// No description provided for @createVaultHere.
+  /// Localized message for create vault here.
   ///
   /// In en, this message translates to:
   /// **'Create Encrypted Vault here...'**
   String get createVaultHere;
 
-  /// No description provided for @disconnectAccount.
+  /// Localized message for disconnect account.
   ///
   /// In en, this message translates to:
   /// **'Disconnect account'**
   String get disconnectAccount;
 
-  /// No description provided for @disconnectConfirmTitle.
+  /// Localized message for disconnect confirm title.
   ///
   /// In en, this message translates to:
   /// **'Disconnect account?'**
   String get disconnectConfirmTitle;
 
-  /// No description provided for @disconnectConfirmContent.
+  /// Localized message for disconnect confirm content.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to disconnect this account? Remote files will remain intact.'**
   String get disconnectConfirmContent;
 
-  /// No description provided for @allFiles.
+  /// Localized message for all files.
   ///
   /// In en, this message translates to:
   /// **'All Files'**
   String get allFiles;
 
-  /// No description provided for @emptyFolder.
+  /// Localized message for empty folder.
   ///
   /// In en, this message translates to:
   /// **'This folder is empty'**
   String get emptyFolder;
 
-  /// No description provided for @emptyFolderSubtitle.
+  /// Localized message for empty folder subtitle.
   ///
   /// In en, this message translates to:
   /// **'Upload files or create a subfolder to get started.'**
   String get emptyFolderSubtitle;
 
-  /// No description provided for @uploadFile.
+  /// Localized message for upload file.
   ///
   /// In en, this message translates to:
   /// **'Upload file'**
   String get uploadFile;
 
-  /// No description provided for @uploadFolder.
+  /// Localized message for upload folder.
   ///
   /// In en, this message translates to:
   /// **'Upload entire folder'**
   String get uploadFolder;
 
-  /// No description provided for @newFolder.
+  /// Localized message for new folder.
   ///
   /// In en, this message translates to:
   /// **'New Folder'**
   String get newFolder;
 
-  /// No description provided for @newFolderPrompt.
+  /// Localized message for new folder prompt.
   ///
   /// In en, this message translates to:
   /// **'Enter the name for the new folder:'**
   String get newFolderPrompt;
 
-  /// No description provided for @folderNameHint.
+  /// Localized message for folder name hint.
   ///
   /// In en, this message translates to:
   /// **'Folder name'**
   String get folderNameHint;
 
-  /// No description provided for @selectAll.
+  /// Localized message for select all.
   ///
   /// In en, this message translates to:
   /// **'Select all'**
   String get selectAll;
 
-  /// No description provided for @clearSelection.
+  /// Localized message for clear selection.
   ///
   /// In en, this message translates to:
   /// **'Clear selection'**
   String get clearSelection;
 
-  /// No description provided for @deleteSelected.
+  /// Localized message for delete selected.
   ///
   /// In en, this message translates to:
   /// **'Delete selected'**
   String get deleteSelected;
 
-  /// No description provided for @deleteSelectedPrompt.
+  /// Localized message for delete selected prompt.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to delete the selected items?'**
   String get deleteSelectedPrompt;
 
-  /// No description provided for @deleteItemPrompt.
+  /// Localized message for delete item prompt.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to delete this item?'**
   String get deleteItemPrompt;
 
-  /// No description provided for @shareLink.
+  /// Localized message for share link.
   ///
   /// In en, this message translates to:
   /// **'Share Link'**
   String get shareLink;
 
-  /// No description provided for @createShareLink.
+  /// Localized message for create share link.
   ///
   /// In en, this message translates to:
   /// **'Create shareable link'**
   String get createShareLink;
 
-  /// No description provided for @copyShareLink.
+  /// Localized message for copy share link.
   ///
   /// In en, this message translates to:
   /// **'Copy Link'**
   String get copyShareLink;
 
-  /// No description provided for @copiedToClipboard.
+  /// Localized message for copied to clipboard.
   ///
   /// In en, this message translates to:
   /// **'Copied to clipboard'**
   String get copiedToClipboard;
 
-  /// No description provided for @transfers.
+  /// Localized message for transfers.
   ///
   /// In en, this message translates to:
   /// **'Transfers'**
   String get transfers;
 
-  /// No description provided for @activeTransfers.
+  /// Localized message for active transfers.
   ///
   /// In en, this message translates to:
   /// **'Active Transfers'**
   String get activeTransfers;
 
-  /// No description provided for @completed.
+  /// Localized message for completed.
   ///
   /// In en, this message translates to:
   /// **'Completed'**
   String get completed;
 
-  /// No description provided for @failed.
+  /// Localized message for failed.
   ///
   /// In en, this message translates to:
   /// **'Failed'**
   String get failed;
 
-  /// No description provided for @queued.
+  /// Localized message for queued.
   ///
   /// In en, this message translates to:
   /// **'Queued'**
   String get queued;
 
-  /// No description provided for @cancelTransfer.
+  /// Localized message for cancel transfer.
   ///
   /// In en, this message translates to:
   /// **'Cancel transfer'**
   String get cancelTransfer;
 
-  /// No description provided for @clearCompleted.
+  /// Localized message for clear completed.
   ///
   /// In en, this message translates to:
   /// **'Clear completed'**
   String get clearCompleted;
 
-  /// No description provided for @syncRulesTitle.
+  /// Localized message for sync rules title.
   ///
   /// In en, this message translates to:
   /// **'Backup & Sync Rules'**
   String get syncRulesTitle;
 
-  /// No description provided for @newRule.
+  /// Localized message for new rule.
   ///
   /// In en, this message translates to:
   /// **'New Rule'**
   String get newRule;
 
-  /// No description provided for @noSyncRules.
+  /// Localized message for no sync rules.
   ///
   /// In en, this message translates to:
   /// **'No synchronization rules configured'**
   String get noSyncRules;
 
-  /// No description provided for @noSyncRulesSubtitle.
+  /// Localized message for no sync rules subtitle.
   ///
   /// In en, this message translates to:
   /// **'Create an automated rule to sync local folders with your cloud storage.'**
   String get noSyncRulesSubtitle;
 
-  /// No description provided for @ruleName.
+  /// Localized message for rule name.
   ///
   /// In en, this message translates to:
   /// **'Rule Name'**
   String get ruleName;
 
-  /// No description provided for @sourcePath.
+  /// Localized message for source path.
   ///
   /// In en, this message translates to:
   /// **'Source Folder'**
   String get sourcePath;
 
-  /// No description provided for @destinationCloud.
+  /// Localized message for destination cloud.
   ///
   /// In en, this message translates to:
   /// **'Destination Cloud'**
   String get destinationCloud;
 
-  /// No description provided for @destinationPath.
+  /// Localized message for destination path.
   ///
   /// In en, this message translates to:
   /// **'Remote Path'**
   String get destinationPath;
 
-  /// No description provided for @direction.
+  /// Localized message for direction.
   ///
   /// In en, this message translates to:
   /// **'Direction'**
   String get direction;
 
-  /// No description provided for @frequency.
+  /// Localized message for frequency.
   ///
   /// In en, this message translates to:
   /// **'Frequency'**
   String get frequency;
 
-  /// No description provided for @runNow.
+  /// Localized message for run now.
   ///
   /// In en, this message translates to:
   /// **'Run Now'**
   String get runNow;
 
-  /// No description provided for @syncInProgress.
+  /// Localized message for sync in progress.
   ///
   /// In en, this message translates to:
   /// **'Synchronization in progress...'**
   String get syncInProgress;
 
-  /// No description provided for @syncSuccess.
+  /// Localized message for sync success.
   ///
   /// In en, this message translates to:
   /// **'Synchronization completed'**
   String get syncSuccess;
 
-  /// No description provided for @syncFailed.
+  /// Localized message for sync failed.
   ///
   /// In en, this message translates to:
   /// **'Synchronization failed'**
   String get syncFailed;
 
-  /// No description provided for @addCloudDialogTitle.
+  /// Localized message for add cloud dialog title.
   ///
   /// In en, this message translates to:
   /// **'Connect New Cloud'**
   String get addCloudDialogTitle;
 
-  /// No description provided for @selectProvider.
+  /// Localized message for select provider.
   ///
   /// In en, this message translates to:
   /// **'Select Cloud Provider'**
   String get selectProvider;
 
-  /// No description provided for @accountNameLabel.
+  /// Localized message for account name label.
   ///
   /// In en, this message translates to:
   /// **'Account Name / Alias'**
   String get accountNameLabel;
 
-  /// No description provided for @connectButton.
+  /// Localized message for connect button.
   ///
   /// In en, this message translates to:
   /// **'Connect Account'**
   String get connectButton;
 
-  /// No description provided for @vaultTitle.
+  /// Localized message for vault title.
   ///
   /// In en, this message translates to:
   /// **'E2E Encryption (Crypt)'**
   String get vaultTitle;
 
-  /// No description provided for @vaultPassword.
+  /// Localized message for vault password.
   ///
   /// In en, this message translates to:
   /// **'Vault Password'**
   String get vaultPassword;
 
-  /// No description provided for @vaultConfirmPassword.
+  /// Localized message for vault confirm password.
   ///
   /// In en, this message translates to:
   /// **'Confirm Password'**
   String get vaultConfirmPassword;
 
-  /// No description provided for @vaultSalt.
+  /// Localized message for vault salt.
   ///
   /// In en, this message translates to:
   /// **'Salt / Secondary Password (Optional)'**
   String get vaultSalt;
 
-  /// No description provided for @encryptFileNames.
+  /// Localized message for encrypt file names.
   ///
   /// In en, this message translates to:
   /// **'Encrypt file names'**
   String get encryptFileNames;
 
-  /// No description provided for @encryptDirNames.
+  /// Localized message for encrypt dir names.
   ///
   /// In en, this message translates to:
   /// **'Encrypt directory names'**
   String get encryptDirNames;
 
-  /// No description provided for @langSpanish.
+  /// Localized message for lang spanish.
   ///
   /// In en, this message translates to:
   /// **'Español'**
   String get langSpanish;
 
-  /// No description provided for @langFrench.
+  /// Localized message for lang french.
   ///
   /// In en, this message translates to:
   /// **'Français'**
   String get langFrench;
 
-  /// No description provided for @langGerman.
-  ///
-  /// In en, this message translates to:
-  /// **'Deutsch'**
-  String get langGerman;
-
-  /// No description provided for @langPortuguese.
-  ///
-  /// In en, this message translates to:
-  /// **'Português'**
-  String get langPortuguese;
-
-  /// No description provided for @langRussian.
-  ///
-  /// In en, this message translates to:
-  /// **'Русский'**
-  String get langRussian;
-
-  /// No description provided for @langChinese.
-  ///
-  /// In en, this message translates to:
-  /// **'简体中文'**
-  String get langChinese;
-
-  /// No description provided for @langJapanese.
-  ///
-  /// In en, this message translates to:
-  /// **'日本語'**
-  String get langJapanese;
-
-  /// No description provided for @langKorean.
-  ///
-  /// In en, this message translates to:
-  /// **'한국어'**
-  String get langKorean;
-
-  /// No description provided for @langArabic.
+  /// Localized message for lang arabic.
   ///
   /// In en, this message translates to:
   /// **'العربية'**
   String get langArabic;
 
-  /// No description provided for @langHindi.
-  ///
-  /// In en, this message translates to:
-  /// **'हिन्दी'**
-  String get langHindi;
-
-  /// No description provided for @langDutch.
-  ///
-  /// In en, this message translates to:
-  /// **'Nederlands'**
-  String get langDutch;
-
-  /// No description provided for @langPolish.
+  /// Localized message for lang polish.
   ///
   /// In en, this message translates to:
   /// **'Polski'**
   String get langPolish;
 
-  /// No description provided for @langTurkish.
-  ///
-  /// In en, this message translates to:
-  /// **'Türkçe'**
-  String get langTurkish;
-
-  /// No description provided for @selectLanguage.
+  /// Localized message for select language.
   ///
   /// In en, this message translates to:
   /// **'Select Language'**
   String get selectLanguage;
 
-  /// No description provided for @searchLanguageHint.
+  /// Localized message for search language hint.
   ///
   /// In en, this message translates to:
   /// **'Search language or country...'**
   String get searchLanguageHint;
 
-  /// No description provided for @currentLanguage.
+  /// Localized message for current language.
   ///
   /// In en, this message translates to:
   /// **'Current Language'**
   String get currentLanguage;
 
-  /// No description provided for @systemDefaultWithLocale.
+  /// Localized message for system default with locale.
   ///
   /// In en, this message translates to:
   /// **'System Default ({locale})'**
   String systemDefaultWithLocale(String locale);
 
-  /// No description provided for @refreshCloudsTooltip.
+  /// Localized message for refresh clouds tooltip.
   ///
   /// In en, this message translates to:
   /// **'Refresh cloud configurations'**
   String get refreshCloudsTooltip;
 
-  /// No description provided for @storageOverviewAggregated.
+  /// Localized message for storage overview aggregated.
   ///
   /// In en, this message translates to:
   /// **'Aggregated Storage Overview'**
   String get storageOverviewAggregated;
 
-  /// No description provided for @ramEncryptionActive.
+  /// Localized message for ram encryption active.
   ///
   /// In en, this message translates to:
   /// **'RAM Encryption Active'**
   String get ramEncryptionActive;
 
-  /// No description provided for @connectedAccountsCount.
+  /// Localized message for connected accounts count.
   ///
   /// In en, this message translates to:
   /// **'Connected Cloud Accounts: {count}'**
   String connectedAccountsCount(int count);
 
-  /// No description provided for @noCloudsConfiguredHint.
+  /// Localized message for no clouds configured hint.
   ///
   /// In en, this message translates to:
   /// **'No cloud accounts configured. Tap \"+ Connect New Cloud\" below.'**
   String get noCloudsConfiguredHint;
 
-  /// No description provided for @percentUsed.
+  /// Localized message for percent used.
   ///
   /// In en, this message translates to:
   /// **'{percent}% used'**
   String percentUsed(String percent);
 
-  /// No description provided for @availableSpace.
+  /// Localized message for available space.
   ///
   /// In en, this message translates to:
   /// **'{space} available'**
   String availableSpace(String space);
 
-  /// No description provided for @calculatingQuota.
+  /// Localized message for calculating quota.
   ///
   /// In en, this message translates to:
   /// **'Calculating storage quotas or unlimited space...'**
   String get calculatingQuota;
 
-  /// No description provided for @syncAndBackup.
+  /// Localized message for sync and backup.
   ///
   /// In en, this message translates to:
   /// **'Sync & Backup'**
   String get syncAndBackup;
 
-  /// No description provided for @noRulesConfigured.
+  /// Localized message for no rules configured.
   ///
   /// In en, this message translates to:
   /// **'No rules configured'**
   String get noRulesConfigured;
 
-  /// No description provided for @activeRulesCount.
+  /// Localized message for active rules count.
   ///
   /// In en, this message translates to:
   /// **'{active}/{total} active rules'**
   String activeRulesCount(int active, int total);
 
-  /// No description provided for @manage.
+  /// Localized message for manage.
   ///
   /// In en, this message translates to:
   /// **'Manage'**
   String get manage;
 
-  /// No description provided for @connectedCloudsCount.
+  /// Localized message for connected clouds count.
   ///
   /// In en, this message translates to:
   /// **'Connected Clouds ({count})'**
   String connectedCloudsCount(int count);
 
-  /// No description provided for @connectNewCloud.
+  /// Localized message for connect new cloud.
   ///
   /// In en, this message translates to:
   /// **'Connect New Cloud'**
   String get connectNewCloud;
 
-  /// No description provided for @noCloudProvidersConnected.
+  /// Localized message for no cloud providers connected.
   ///
   /// In en, this message translates to:
   /// **'No Cloud Providers Connected'**
   String get noCloudProvidersConnected;
 
-  /// No description provided for @connectCloudDescription.
+  /// Localized message for connect cloud description.
   ///
   /// In en, this message translates to:
   /// **'Connect Google Drive, Dropbox, OneDrive, SFTP or WebDAV to start syncing and exploring your files.'**
   String get connectCloudDescription;
 
-  /// No description provided for @addFirstCloud.
+  /// Localized message for add first cloud.
   ///
   /// In en, this message translates to:
   /// **'Add First Cloud'**
   String get addFirstCloud;
 
-  /// No description provided for @vaultOnRemote.
+  /// Localized message for vault on remote.
   ///
   /// In en, this message translates to:
   /// **'VAULT ON {remote}'**
   String vaultOnRemote(String remote);
 
-  /// No description provided for @disconnectCloudTitle.
+  /// Localized message for disconnect cloud title.
   ///
   /// In en, this message translates to:
   /// **'Disconnect Cloud'**
   String get disconnectCloudTitle;
 
-  /// No description provided for @disconnectCloudPrompt.
+  /// Localized message for disconnect cloud prompt.
   ///
   /// In en, this message translates to:
   /// **'Do you want to disconnect \"{name}\"? Credentials will be removed from encrypted storage.'**
   String disconnectCloudPrompt(String name);
 
-  /// No description provided for @disconnect.
+  /// Localized message for disconnect.
   ///
   /// In en, this message translates to:
   /// **'Disconnect'**
   String get disconnect;
 
-  /// No description provided for @freeSpace.
+  /// Localized message for free space.
   ///
   /// In en, this message translates to:
   /// **'{space} free'**
   String freeSpace(String space);
 
-  /// No description provided for @storage.
+  /// Localized message for storage.
   ///
   /// In en, this message translates to:
   /// **'Storage'**
   String get storage;
 
-  /// No description provided for @available.
+  /// Localized message for available.
   ///
   /// In en, this message translates to:
   /// **'Available'**
   String get available;
 
-  /// No description provided for @exploreFiles.
+  /// Localized message for explore files.
   ///
   /// In en, this message translates to:
   /// **'Explore Files'**
   String get exploreFiles;
 
-  /// No description provided for @paneLeft.
+  /// Localized message for pane left.
   ///
   /// In en, this message translates to:
   /// **'Left'**
   String get paneLeft;
 
-  /// No description provided for @paneRight.
+  /// Localized message for pane right.
   ///
   /// In en, this message translates to:
   /// **'Right'**
   String get paneRight;
 
-  /// No description provided for @folderName.
+  /// Localized message for folder name.
   ///
   /// In en, this message translates to:
   /// **'Folder name'**
   String get folderName;
 
-  /// No description provided for @errorCreatingFolder.
+  /// Localized message for error creating folder.
   ///
   /// In en, this message translates to:
   /// **'Error creating folder: {error}'**
   String errorCreatingFolder(String error);
 
-  /// No description provided for @moveAction.
+  /// Localized message for move action.
   ///
   /// In en, this message translates to:
   /// **'Move'**
   String get moveAction;
 
-  /// No description provided for @copyAction.
+  /// Localized message for copy action.
   ///
   /// In en, this message translates to:
   /// **'Copy'**
   String get copyAction;
 
-  /// No description provided for @transferBatchStarted.
+  /// Localized message for transfer batch started.
   ///
   /// In en, this message translates to:
   /// **'{action} of {count} items to [{remote}] started...'**
   String transferBatchStarted(String action, int count, String remote);
 
-  /// No description provided for @errorTransferring.
+  /// Localized message for error transferring.
   ///
   /// In en, this message translates to:
   /// **'Error during transfer: {error}'**
   String errorTransferring(String error);
 
-  /// No description provided for @itemCopiedToClipboard.
+  /// Localized message for item copied to clipboard.
   ///
   /// In en, this message translates to:
   /// **'\"{name}\" copied to clipboard'**
   String itemCopiedToClipboard(String name);
 
-  /// No description provided for @itemsCopiedToClipboard.
+  /// Localized message for items copied to clipboard.
   ///
   /// In en, this message translates to:
   /// **'{count} items copied to clipboard'**
   String itemsCopiedToClipboard(int count);
 
-  /// No description provided for @itemCutToClipboard.
+  /// Localized message for item cut to clipboard.
   ///
   /// In en, this message translates to:
   /// **'\"{name}\" cut (ready to move)'**
   String itemCutToClipboard(String name);
 
-  /// No description provided for @itemsCutToClipboard.
+  /// Localized message for items cut to clipboard.
   ///
   /// In en, this message translates to:
   /// **'{count} items cut (ready to move)'**
   String itemsCutToClipboard(int count);
 
-  /// No description provided for @noFilesSelectedForDownload.
+  /// Localized message for no files selected for download.
   ///
   /// In en, this message translates to:
   /// **'No files selected for download.'**
   String get noFilesSelectedForDownload;
 
-  /// No description provided for @downloadingItems.
+  /// Localized message for downloading items.
   ///
   /// In en, this message translates to:
   /// **'Downloading {count} items...'**
   String downloadingItems(int count);
 
-  /// No description provided for @itemsDownloadedSuccess.
+  /// Localized message for items downloaded success.
   ///
   /// In en, this message translates to:
   /// **'{count} items downloaded to \"{path}\"'**
   String itemsDownloadedSuccess(int count, String path);
 
-  /// No description provided for @errorStartingDownload.
+  /// Localized message for error starting download.
   ///
   /// In en, this message translates to:
   /// **'Error starting download: {error}'**
   String errorStartingDownload(String error);
 
-  /// No description provided for @deleteItemsConfirmTitle.
+  /// Localized message for delete items confirm title.
   ///
   /// In en, this message translates to:
   /// **'Delete {count} selected items?'**
   String deleteItemsConfirmTitle(int count);
 
-  /// No description provided for @deleteItemsConfirmPrompt.
+  /// Localized message for delete items confirm prompt.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to permanently delete {count} selected items from the cloud?'**
   String deleteItemsConfirmPrompt(int count);
 
-  /// No description provided for @itemsDeletedSuccess.
+  /// Localized message for items deleted success.
   ///
   /// In en, this message translates to:
   /// **'{count} items deleted'**
   String itemsDeletedSuccess(int count);
 
-  /// No description provided for @errorDeleting.
+  /// Localized message for error deleting.
   ///
   /// In en, this message translates to:
   /// **'Error during deletion: {error}'**
   String errorDeleting(String error);
 
-  /// No description provided for @uploadCompletedSuccess.
+  /// Localized message for upload completed success.
   ///
   /// In en, this message translates to:
   /// **'Upload completed successfully'**
   String get uploadCompletedSuccess;
 
-  /// No description provided for @errorUploading.
+  /// Localized message for error uploading.
   ///
   /// In en, this message translates to:
   /// **'Error during upload: {error}'**
   String errorUploading(String error);
 
-  /// No description provided for @folderUploadCompletedSuccess.
+  /// Localized message for folder upload completed success.
   ///
   /// In en, this message translates to:
   /// **'Folder upload completed successfully'**
   String get folderUploadCompletedSuccess;
 
-  /// No description provided for @errorFolderUploading.
+  /// Localized message for error folder uploading.
   ///
   /// In en, this message translates to:
   /// **'Error uploading folder: {error}'**
   String errorFolderUploading(String error);
 
-  /// No description provided for @filesAlreadyInDirectory.
+  /// Localized message for files already in directory.
   ///
   /// In en, this message translates to:
   /// **'Files are already in this folder.'**
   String get filesAlreadyInDirectory;
 
-  /// No description provided for @dragDropTransferStarted.
+  /// Localized message for drag drop transfer started.
   ///
   /// In en, this message translates to:
   /// **'{action} of {count} items to [{remote}] started...'**
   String dragDropTransferStarted(String action, int count, String remote);
 
-  /// No description provided for @errorDragDrop.
+  /// Localized message for error drag drop.
   ///
   /// In en, this message translates to:
   /// **'Error during drag-and-drop transfer: {error}'**
   String errorDragDrop(String error);
 
-  /// No description provided for @closeSelection.
+  /// Localized message for close selection.
   ///
   /// In en, this message translates to:
   /// **'Close selection'**
   String get closeSelection;
 
-  /// No description provided for @itemsSelectedCount.
+  /// Localized message for items selected count.
   ///
   /// In en, this message translates to:
   /// **'{count} selected'**
   String itemsSelectedCount(int count);
 
-  /// No description provided for @deselectAll.
+  /// Localized message for deselect all.
   ///
   /// In en, this message translates to:
   /// **'Deselect all'**
   String get deselectAll;
 
-  /// No description provided for @copyToRemote.
+  /// Localized message for copy to remote.
   ///
   /// In en, this message translates to:
   /// **'Copy to {remote}'**
   String copyToRemote(String remote);
 
-  /// No description provided for @moveToRemote.
+  /// Localized message for move to remote.
   ///
   /// In en, this message translates to:
   /// **'Move to {remote}'**
   String moveToRemote(String remote);
 
-  /// No description provided for @moreActions.
+  /// Localized message for more actions.
   ///
   /// In en, this message translates to:
   /// **'More actions'**
   String get moreActions;
 
-  /// No description provided for @downloadSelected.
+  /// Localized message for download selected.
   ///
   /// In en, this message translates to:
   /// **'Download selected'**
   String get downloadSelected;
 
-  /// No description provided for @copyToClipboard.
+  /// Localized message for copy to clipboard.
   ///
   /// In en, this message translates to:
   /// **'Copy to clipboard'**
   String get copyToClipboard;
 
-  /// No description provided for @cutToClipboard.
+  /// Localized message for cut to clipboard.
   ///
   /// In en, this message translates to:
   /// **'Cut to clipboard'**
   String get cutToClipboard;
 
-  /// No description provided for @selectCloud.
+  /// Localized message for select cloud.
   ///
   /// In en, this message translates to:
   /// **'Select Cloud'**
   String get selectCloud;
 
-  /// No description provided for @closeSearch.
+  /// Localized message for close search.
   ///
   /// In en, this message translates to:
   /// **'Close search'**
   String get closeSearch;
 
-  /// No description provided for @uploadFromDevice.
+  /// Localized message for upload from device.
   ///
   /// In en, this message translates to:
   /// **'Upload from device'**
   String get uploadFromDevice;
 
-  /// No description provided for @moreOptions.
+  /// Localized message for more options.
   ///
   /// In en, this message translates to:
   /// **'More options'**
   String get moreOptions;
 
-  /// No description provided for @viewGrid.
+  /// Localized message for view grid.
   ///
   /// In en, this message translates to:
   /// **'Grid view'**
   String get viewGrid;
 
-  /// No description provided for @viewList.
+  /// Localized message for view list.
   ///
   /// In en, this message translates to:
   /// **'List view'**
   String get viewList;
 
-  /// No description provided for @multiSelection.
+  /// Localized message for multi selection.
   ///
   /// In en, this message translates to:
   /// **'Multiple selection'**
   String get multiSelection;
 
-  /// No description provided for @sortNameAsc.
+  /// Localized message for sort name asc.
   ///
   /// In en, this message translates to:
   /// **'Name (A-Z)'**
   String get sortNameAsc;
 
-  /// No description provided for @sortNameDesc.
+  /// Localized message for sort name desc.
   ///
   /// In en, this message translates to:
   /// **'Name (Z-A)'**
   String get sortNameDesc;
 
-  /// No description provided for @sortSizeDesc.
+  /// Localized message for sort size desc.
   ///
   /// In en, this message translates to:
   /// **'Size (Large -> Small)'**
   String get sortSizeDesc;
 
-  /// No description provided for @sortSizeAsc.
+  /// Localized message for sort size asc.
   ///
   /// In en, this message translates to:
   /// **'Size (Small -> Large)'**
   String get sortSizeAsc;
 
-  /// No description provided for @sortDateDesc.
+  /// Localized message for sort date desc.
   ///
   /// In en, this message translates to:
   /// **'Date (Newest first)'**
   String get sortDateDesc;
 
-  /// No description provided for @disableDualPane.
+  /// Localized message for disable dual pane.
   ///
   /// In en, this message translates to:
   /// **'Disable Commander (Single Pane)'**
   String get disableDualPane;
 
-  /// No description provided for @enableDualPane.
+  /// Localized message for enable dual pane.
   ///
   /// In en, this message translates to:
   /// **'Enable Commander (Dual Pane)'**
   String get enableDualPane;
 
-  /// No description provided for @itemsInClipboard.
+  /// Localized message for items in clipboard.
   ///
   /// In en, this message translates to:
   /// **'{count} items in clipboard'**
   String itemsInClipboard(int count);
 
-  /// No description provided for @pasteHere.
+  /// Localized message for paste here.
   ///
   /// In en, this message translates to:
   /// **'Paste here'**
   String get pasteHere;
 
-  /// No description provided for @noResults.
+  /// Localized message for no results.
   ///
   /// In en, this message translates to:
   /// **'No results'**
   String get noResults;
 
-  /// No description provided for @noMatchingResults.
+  /// Localized message for no matching results.
   ///
   /// In en, this message translates to:
   /// **'No files or folders match \"{query}\"'**
   String noMatchingResults(String query);
 
-  /// No description provided for @selectACloud.
+  /// Localized message for select acloud.
   ///
   /// In en, this message translates to:
   /// **'Select a Cloud'**
   String get selectACloud;
 
-  /// No description provided for @selectCloudDescription.
+  /// Localized message for select cloud description.
   ///
   /// In en, this message translates to:
   /// **'Select a cloud provider from the menu above to view and explore your remote files.'**
   String get selectCloudDescription;
 
-  /// No description provided for @optionsForItem.
+  /// Localized message for options for item.
   ///
   /// In en, this message translates to:
   /// **'Options for {name}'**
   String optionsForItem(String name);
 
-  /// No description provided for @select.
+  /// Localized message for select.
   ///
   /// In en, this message translates to:
   /// **'Select'**
   String get select;
 
-  /// No description provided for @openWithSystemApp.
+  /// Localized message for open with system app.
   ///
   /// In en, this message translates to:
   /// **'Open with system app'**
   String get openWithSystemApp;
 
-  /// No description provided for @downloadToLocal.
+  /// Localized message for download to local.
   ///
   /// In en, this message translates to:
   /// **'Download to local'**
   String get downloadToLocal;
 
-  /// No description provided for @cut.
+  /// Localized message for cut.
   ///
   /// In en, this message translates to:
   /// **'Cut (Move)'**
   String get cut;
 
-  /// No description provided for @copyPath.
+  /// Localized message for copy path.
   ///
   /// In en, this message translates to:
   /// **'Copy path'**
   String get copyPath;
 
-  /// No description provided for @info.
+  /// Localized message for info.
   ///
   /// In en, this message translates to:
   /// **'Information'**
   String get info;
 
-  /// No description provided for @generatingShareLink.
+  /// Localized message for generating share link.
   ///
   /// In en, this message translates to:
   /// **'Generating share link for \"{name}\"...'**
   String generatingShareLink(String name);
 
-  /// No description provided for @errorPublicLink.
+  /// Localized message for error public link.
   ///
   /// In en, this message translates to:
   /// **'Public link error: {error}'**
   String errorPublicLink(String error);
 
-  /// No description provided for @noLinkGenerated.
+  /// Localized message for no link generated.
   ///
   /// In en, this message translates to:
   /// **'No link generated by provider.'**
   String get noLinkGenerated;
 
-  /// No description provided for @errorDownloading.
+  /// Localized message for error downloading.
   ///
   /// In en, this message translates to:
   /// **'Error downloading: {error}'**
   String errorDownloading(String error);
 
-  /// No description provided for @renameFolderTitle.
+  /// Localized message for rename folder title.
   ///
   /// In en, this message translates to:
   /// **'Rename folder'**
   String get renameFolderTitle;
 
-  /// No description provided for @renameFileTitle.
+  /// Localized message for rename file title.
   ///
   /// In en, this message translates to:
   /// **'Rename file'**
   String get renameFileTitle;
 
-  /// No description provided for @errorRenaming.
+  /// Localized message for error renaming.
   ///
   /// In en, this message translates to:
   /// **'Error renaming: {error}'**
   String errorRenaming(String error);
 
-  /// No description provided for @pathCopiedToClipboard.
+  /// Localized message for path copied to clipboard.
   ///
   /// In en, this message translates to:
   /// **'Path copied to clipboard'**
   String get pathCopiedToClipboard;
 
-  /// No description provided for @itemDetailsPath.
+  /// Localized message for item details path.
   ///
   /// In en, this message translates to:
   /// **'Path: {path}'**
   String itemDetailsPath(String path);
 
-  /// No description provided for @itemDetailsType.
+  /// Localized message for item details type.
   ///
   /// In en, this message translates to:
   /// **'Type: {type}'**
   String itemDetailsType(String type);
 
-  /// No description provided for @itemDetailsSize.
+  /// Localized message for item details size.
   ///
   /// In en, this message translates to:
   /// **'Size: {size}'**
   String itemDetailsSize(String size);
 
-  /// No description provided for @itemDetailsModified.
+  /// Localized message for item details modified.
   ///
   /// In en, this message translates to:
   /// **'Modified date: {date}'**
   String itemDetailsModified(String date);
 
-  /// No description provided for @folder.
+  /// Localized message for folder.
   ///
   /// In en, this message translates to:
   /// **'Folder'**
   String get folder;
 
-  /// No description provided for @file.
+  /// Localized message for file.
   ///
   /// In en, this message translates to:
   /// **'File'**
   String get file;
 
-  /// No description provided for @selectCloudFirstLeft.
+  /// Localized message for select cloud first left.
   ///
   /// In en, this message translates to:
   /// **'Select a cloud in the left pane first.'**
   String get selectCloudFirstLeft;
 
-  /// No description provided for @selectCloudFirstRight.
+  /// Localized message for select cloud first right.
   ///
   /// In en, this message translates to:
   /// **'Select a cloud in the right pane first.'**
   String get selectCloudFirstRight;
 
-  /// No description provided for @selectDestinationCloudLeft.
+  /// Localized message for select destination cloud left.
   ///
   /// In en, this message translates to:
   /// **'Select a destination cloud in the left pane first.'**
   String get selectDestinationCloudLeft;
 
-  /// No description provided for @selectDestinationCloudRight.
+  /// Localized message for select destination cloud right.
   ///
   /// In en, this message translates to:
   /// **'Select a destination cloud in the right pane first.'**
   String get selectDestinationCloudRight;
 
-  /// No description provided for @noFilesToTransfer.
+  /// Localized message for no files to transfer.
   ///
   /// In en, this message translates to:
   /// **'No files present or selected to transfer.'**
   String get noFilesToTransfer;
 
-  /// No description provided for @transferStarted.
+  /// Localized message for transfer started.
   ///
   /// In en, this message translates to:
   /// **'{action} of {count} items from [{src}] to [{dst}] started...'**
   String transferStarted(String action, int count, String src, String dst);
 
-  /// No description provided for @swapPanesTooltip.
+  /// Localized message for swap panes tooltip.
   ///
   /// In en, this message translates to:
   /// **'Swap panes (<->)'**
   String get swapPanesTooltip;
 
-  /// No description provided for @refreshBothPanesTooltip.
+  /// Localized message for refresh both panes tooltip.
   ///
   /// In en, this message translates to:
   /// **'Refresh both panes'**
   String get refreshBothPanesTooltip;
 
-  /// No description provided for @copyRight.
+  /// Localized message for copy right.
   ///
   /// In en, this message translates to:
   /// **'Copy to right ->'**
   String get copyRight;
 
-  /// No description provided for @moveRight.
+  /// Localized message for move right.
   ///
   /// In en, this message translates to:
   /// **'Move to right ->'**
   String get moveRight;
 
-  /// No description provided for @copyLeft.
+  /// Localized message for copy left.
   ///
   /// In en, this message translates to:
   /// **'<- Copy to left'**
   String get copyLeft;
 
-  /// No description provided for @moveLeft.
+  /// Localized message for move left.
   ///
   /// In en, this message translates to:
   /// **'<- Move to left'**
   String get moveLeft;
 
-  /// No description provided for @copyRightWithCount.
+  /// Localized message for copy right with count.
   ///
   /// In en, this message translates to:
   /// **'Copy right ({count}) ->'**
   String copyRightWithCount(int count);
 
-  /// No description provided for @moveRightWithCount.
+  /// Localized message for move right with count.
   ///
   /// In en, this message translates to:
   /// **'Move right ({count}) ->'**
   String moveRightWithCount(int count);
 
-  /// No description provided for @copyLeftWithCount.
+  /// Localized message for copy left with count.
   ///
   /// In en, this message translates to:
   /// **'<- Copy left ({count})'**
   String copyLeftWithCount(int count);
 
-  /// No description provided for @moveLeftWithCount.
+  /// Localized message for move left with count.
   ///
   /// In en, this message translates to:
   /// **'<- Move left ({count})'**
   String moveLeftWithCount(int count);
 
-  /// No description provided for @deleteRuleTitle.
+  /// Localized message for delete rule title.
   ///
   /// In en, this message translates to:
   /// **'Delete Rule'**
   String get deleteRuleTitle;
 
-  /// No description provided for @deleteRulePrompt.
+  /// Localized message for delete rule prompt.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to delete sync rule \"{name}\"? Files on your device and in the cloud will not be deleted.'**
   String deleteRulePrompt(String name);
 
-  /// No description provided for @syncAll.
+  /// Localized message for sync all.
   ///
   /// In en, this message translates to:
   /// **'Sync All'**
   String get syncAll;
 
-  /// No description provided for @newRuleTooltip.
+  /// Localized message for new rule tooltip.
   ///
   /// In en, this message translates to:
   /// **'New rule'**
   String get newRuleTooltip;
 
-  /// No description provided for @backupBannerTitle.
+  /// Localized message for backup banner title.
   ///
   /// In en, this message translates to:
   /// **'Continuous Backup & Cloud Sync'**
   String get backupBannerTitle;
 
-  /// No description provided for @backupBannerSubtitle.
+  /// Localized message for backup banner subtitle.
   ///
   /// In en, this message translates to:
   /// **'Configure scheduled synchronizations between local folders and cloud remotes.'**
   String get backupBannerSubtitle;
 
-  /// No description provided for @noActiveRules.
+  /// Localized message for no active rules.
   ///
   /// In en, this message translates to:
   /// **'No Active Rules'**
   String get noActiveRules;
 
-  /// No description provided for @noActiveRulesSubtitle.
+  /// Localized message for no active rules subtitle.
   ///
   /// In en, this message translates to:
   /// **'Create your first rule to run automatic backups from your phone to Google Drive, Dropbox, SFTP or any other cloud.'**
   String get noActiveRulesSubtitle;
 
-  /// No description provided for @createNewRule.
+  /// Localized message for create new rule.
   ///
   /// In en, this message translates to:
   /// **'Create New Rule'**
   String get createNewRule;
 
-  /// No description provided for @ruleOptionsTooltip.
+  /// Localized message for rule options tooltip.
   ///
   /// In en, this message translates to:
   /// **'Rule options'**
   String get ruleOptionsTooltip;
 
-  /// No description provided for @syncNow.
+  /// Localized message for sync now.
   ///
   /// In en, this message translates to:
   /// **'Sync now'**
   String get syncNow;
 
-  /// No description provided for @statusWaiting.
+  /// Localized message for status waiting.
   ///
   /// In en, this message translates to:
   /// **'Pending'**
   String get statusWaiting;
 
-  /// No description provided for @statusInProgress.
+  /// Localized message for status in progress.
   ///
   /// In en, this message translates to:
   /// **'In progress...'**
   String get statusInProgress;
 
-  /// No description provided for @statusCompleted.
+  /// Localized message for status completed.
   ///
   /// In en, this message translates to:
   /// **'Completed'**
   String get statusCompleted;
 
-  /// No description provided for @statusFailed.
+  /// Localized message for status failed.
   ///
   /// In en, this message translates to:
   /// **'Failed'**
   String get statusFailed;
 
-  /// No description provided for @editRuleTitle.
+  /// Localized message for edit rule title.
   ///
   /// In en, this message translates to:
   /// **'Edit Backup Rule'**
   String get editRuleTitle;
 
-  /// No description provided for @newRuleTitle.
+  /// Localized message for new rule title.
   ///
   /// In en, this message translates to:
   /// **'New Synchronization Rule'**
   String get newRuleTitle;
 
-  /// No description provided for @ruleDialogSubtitle.
+  /// Localized message for rule dialog subtitle.
   ///
   /// In en, this message translates to:
   /// **'Configure automatic backup between a local folder and the cloud.'**
   String get ruleDialogSubtitle;
 
-  /// No description provided for @ruleNameOptional.
+  /// Localized message for rule name optional.
   ///
   /// In en, this message translates to:
   /// **'Rule Name (optional)'**
   String get ruleNameOptional;
 
-  /// No description provided for @ruleNameHint.
+  /// Localized message for rule name hint.
   ///
   /// In en, this message translates to:
   /// **'e.g. DCIM Photo Backup or Work Documents'**
   String get ruleNameHint;
 
-  /// No description provided for @sourceLocalFolder.
+  /// Localized message for source local folder.
   ///
   /// In en, this message translates to:
   /// **'Local Source Folder'**
   String get sourceLocalFolder;
 
-  /// No description provided for @sourceLocalFolderHint.
+  /// Localized message for source local folder hint.
   ///
   /// In en, this message translates to:
   /// **'/storage/emulated/0/DCIM or /home/user/Pictures'**
   String get sourceLocalFolderHint;
 
-  /// No description provided for @browseFolders.
+  /// Localized message for browse folders.
   ///
   /// In en, this message translates to:
   /// **'Browse folders'**
   String get browseFolders;
 
-  /// No description provided for @selectLocalFolderError.
+  /// Localized message for select local folder error.
   ///
   /// In en, this message translates to:
   /// **'Please enter or select a local folder'**
   String get selectLocalFolderError;
 
-  /// No description provided for @noCloudsConfiguredSync.
+  /// Localized message for no clouds configured sync.
   ///
   /// In en, this message translates to:
   /// **'No cloud configured. Configure a cloud account from Home before continuing.'**
   String get noCloudsConfiguredSync;
 
-  /// No description provided for @remoteDestinationPath.
+  /// Localized message for remote destination path.
   ///
   /// In en, this message translates to:
   /// **'Remote Destination Path'**
   String get remoteDestinationPath;
 
-  /// No description provided for @syncMode.
+  /// Localized message for sync mode.
   ///
   /// In en, this message translates to:
   /// **'Sync Mode'**
   String get syncMode;
 
-  /// No description provided for @syncModeCopy.
+  /// Localized message for sync mode copy.
   ///
   /// In en, this message translates to:
   /// **'Incremental Backup'**
   String get syncModeCopy;
 
-  /// No description provided for @syncModeCopyDesc.
+  /// Localized message for sync mode copy desc.
   ///
   /// In en, this message translates to:
   /// **'Uploads new and modified files, preserving existing cloud files.'**
   String get syncModeCopyDesc;
 
-  /// No description provided for @syncModeSync.
+  /// Localized message for sync mode sync.
   ///
   /// In en, this message translates to:
   /// **'Mirror Synchronization'**
   String get syncModeSync;
 
-  /// No description provided for @syncModeSyncDesc.
+  /// Localized message for sync mode sync desc.
   ///
   /// In en, this message translates to:
   /// **'Makes the remote destination identical to the local folder (deletions locally are deleted on cloud).'**
   String get syncModeSyncDesc;
 
-  /// No description provided for @syncFrequency.
+  /// Localized message for sync frequency.
   ///
   /// In en, this message translates to:
   /// **'Execution Frequency'**
   String get syncFrequency;
 
-  /// No description provided for @freqManual.
+  /// Localized message for freq manual.
   ///
   /// In en, this message translates to:
   /// **'Manual (on demand only)'**
   String get freqManual;
 
-  /// No description provided for @freq15Min.
+  /// Localized message for freq15 min.
   ///
   /// In en, this message translates to:
   /// **'Every 15 minutes'**
   String get freq15Min;
 
-  /// No description provided for @freq30Min.
+  /// Localized message for freq30 min.
   ///
   /// In en, this message translates to:
   /// **'Every 30 minutes'**
   String get freq30Min;
 
-  /// No description provided for @freqHourly.
+  /// Localized message for freq hourly.
   ///
   /// In en, this message translates to:
   /// **'Every hour'**
   String get freqHourly;
 
-  /// No description provided for @freq6Hours.
+  /// Localized message for freq6 hours.
   ///
   /// In en, this message translates to:
   /// **'Every 6 hours'**
   String get freq6Hours;
 
-  /// No description provided for @freq12Hours.
+  /// Localized message for freq12 hours.
   ///
   /// In en, this message translates to:
   /// **'Every 12 hours'**
   String get freq12Hours;
 
-  /// No description provided for @freqDaily.
+  /// Localized message for freq daily.
   ///
   /// In en, this message translates to:
   /// **'Every day (24 hours)'**
   String get freqDaily;
 
-  /// No description provided for @activateRuleImmediately.
+  /// Localized message for activate rule immediately.
   ///
   /// In en, this message translates to:
   /// **'Activate rule immediately'**
   String get activateRuleImmediately;
 
-  /// No description provided for @activateRuleImmediatelyDesc.
+  /// Localized message for activate rule immediately desc.
   ///
   /// In en, this message translates to:
   /// **'Sync will run in background according to the specified interval'**
   String get activateRuleImmediatelyDesc;
 
-  /// No description provided for @updateRule.
+  /// Localized message for update rule.
   ///
   /// In en, this message translates to:
   /// **'Update'**
   String get updateRule;
 
-  /// No description provided for @saveRule.
+  /// Localized message for save rule.
   ///
   /// In en, this message translates to:
   /// **'Save Rule'**
   String get saveRule;
 
-  /// No description provided for @selectCloudProvider.
+  /// Localized message for select cloud provider.
   ///
   /// In en, this message translates to:
   /// **'Select Cloud Provider:'**
   String get selectCloudProvider;
 
-  /// No description provided for @cloudAccountName.
+  /// Localized message for cloud account name.
   ///
   /// In en, this message translates to:
   /// **'Cloud Account Name'**
   String get cloudAccountName;
 
-  /// No description provided for @cloudAccountNameHint.
+  /// Localized message for cloud account name hint.
   ///
   /// In en, this message translates to:
   /// **'e.g. GoogleDrive, WorkDropbox (no spaces)'**
   String get cloudAccountNameHint;
 
-  /// No description provided for @enterNameError.
+  /// Localized message for enter name error.
   ///
   /// In en, this message translates to:
   /// **'Please enter a name'**
   String get enterNameError;
 
-  /// No description provided for @noSpacesOrColons.
+  /// Localized message for no spaces or colons.
   ///
   /// In en, this message translates to:
   /// **'Spaces and \":\" are not allowed'**
   String get noSpacesOrColons;
 
-  /// No description provided for @oauthMode.
+  /// Localized message for oauth mode.
   ///
   /// In en, this message translates to:
   /// **'Client ID Mode (OAuth2)'**
   String get oauthMode;
 
-  /// No description provided for @oauthOfficial.
+  /// Localized message for oauth official.
   ///
   /// In en, this message translates to:
   /// **'UnifyCloud (Official / Recommended)'**
   String get oauthOfficial;
 
-  /// No description provided for @oauthRclone.
+  /// Localized message for oauth rclone.
   ///
   /// In en, this message translates to:
   /// **'Rclone (Not recommended - Shared quota)'**
   String get oauthRclone;
 
-  /// No description provided for @oauthCustom.
+  /// Localized message for oauth custom.
   ///
   /// In en, this message translates to:
   /// **'Personal Client ID (Advanced)'**
   String get oauthCustom;
 
-  /// No description provided for @officialOauthTitle.
+  /// Localized message for official oauth title.
   ///
   /// In en, this message translates to:
   /// **'Official UnifyCloud Credentials'**
   String get officialOauthTitle;
 
-  /// No description provided for @officialOauthDesc.
+  /// Localized message for official oauth desc.
   ///
   /// In en, this message translates to:
   /// **'Pre-configured credentials to connect immediately with dedicated quota and maximum speed.'**
   String get officialOauthDesc;
 
-  /// No description provided for @rcloneOauthDesc.
+  /// Localized message for rclone oauth desc.
   ///
   /// In en, this message translates to:
   /// **'Shared open-source Rclone keys. May encounter rate-limits or temporary Google 403 errors.'**
   String get rcloneOauthDesc;
 
-  /// No description provided for @customClientId.
+  /// Localized message for custom client id.
   ///
   /// In en, this message translates to:
   /// **'Client ID'**
   String get customClientId;
 
-  /// No description provided for @customClientSecret.
+  /// Localized message for custom client secret.
   ///
   /// In en, this message translates to:
   /// **'Client Secret'**
   String get customClientSecret;
 
-  /// No description provided for @selectVaultDestination.
+  /// Localized message for select vault destination.
   ///
   /// In en, this message translates to:
   /// **'Select destination cloud for Vault'**
   String get selectVaultDestination;
 
-  /// No description provided for @vaultPasswordRequired.
+  /// Localized message for vault password required.
   ///
   /// In en, this message translates to:
   /// **'Vault encryption password is required'**
   String get vaultPasswordRequired;
 
-  /// No description provided for @vaultPasswordsDoNotMatch.
+  /// Localized message for vault passwords do not match.
   ///
   /// In en, this message translates to:
   /// **'Passwords do not match'**
   String get vaultPasswordsDoNotMatch;
 
-  /// No description provided for @errorAddingRemote.
+  /// Localized message for error adding remote.
   ///
   /// In en, this message translates to:
   /// **'Error adding remote: {error}'**
   String errorAddingRemote(String error);
 
-  /// No description provided for @fileNameEncryption.
+  /// Localized message for file name encryption.
   ///
   /// In en, this message translates to:
   /// **'File Name Encryption'**
   String get fileNameEncryption;
 
-  /// No description provided for @encryptStandard.
+  /// Localized message for encrypt standard.
   ///
   /// In en, this message translates to:
   /// **'Standard (Fully encrypted file names - Recommended)'**
   String get encryptStandard;
 
-  /// No description provided for @encryptObscure.
+  /// Localized message for encrypt obscure.
   ///
   /// In en, this message translates to:
   /// **'Simple Obfuscation (Preserves extensions)'**
   String get encryptObscure;
 
-  /// No description provided for @encryptOff.
+  /// Localized message for encrypt off.
   ///
   /// In en, this message translates to:
   /// **'Disabled (Visible file names)'**
   String get encryptOff;
 
-  /// No description provided for @encryptFolderNames.
+  /// Localized message for encrypt folder names.
   ///
   /// In en, this message translates to:
   /// **'Also encrypt folder names'**
   String get encryptFolderNames;
 
-  /// No description provided for @encryptFolderNamesDesc.
+  /// Localized message for encrypt folder names desc.
   ///
   /// In en, this message translates to:
   /// **'Completely conceals directory structure on the cloud'**
   String get encryptFolderNamesDesc;
 
-  /// No description provided for @connectCloud.
+  /// Localized message for connect cloud.
   ///
   /// In en, this message translates to:
   /// **'Connect Cloud'**
   String get connectCloud;
 
-  /// No description provided for @reopenAuth.
+  /// Localized message for reopen auth.
   ///
   /// In en, this message translates to:
   /// **'Reopen'**
   String get reopenAuth;
 
-  /// No description provided for @linkCopiedToClipboard.
+  /// Localized message for link copied to clipboard.
   ///
   /// In en, this message translates to:
   /// **'Link copied to clipboard!'**
   String get linkCopiedToClipboard;
 
-  /// No description provided for @errorOpenBrowserGeneric.
+  /// Localized message for error open browser generic.
   ///
   /// In en, this message translates to:
   /// **'Unable to open browser: {error}'**
   String errorOpenBrowserGeneric(String error);
 
-  /// No description provided for @shareableLinkTitle.
+  /// Localized message for shareable link title.
   ///
   /// In en, this message translates to:
   /// **'Shareable Link'**
   String get shareableLinkTitle;
 
-  /// No description provided for @shareLinkAccessDescription.
+  /// Localized message for share link access description.
   ///
   /// In en, this message translates to:
   /// **'Anyone with this link will be able to access {item}:'**
   String shareLinkAccessDescription(String item);
 
-  /// No description provided for @open.
+  /// Localized message for open.
   ///
   /// In en, this message translates to:
   /// **'Open'**
   String get open;
 
-  /// No description provided for @activeTransfersCount.
+  /// Localized message for active transfers count.
   ///
   /// In en, this message translates to:
-  /// **'{count} active transfers'**
+  /// **'{count, plural, =1{1 active transfer} other{{count} active transfers}}'**
   String activeTransfersCount(int count);
 
-  /// No description provided for @transfersQueueCount.
+  /// Localized message for transfers queue count.
   ///
   /// In en, this message translates to:
   /// **'Transfer Queue ({count})'**
   String transfersQueueCount(int count);
 
-  /// No description provided for @noTransfersInProgress.
+  /// Localized message for no transfers in progress.
   ///
   /// In en, this message translates to:
   /// **'No transfers in progress'**
   String get noTransfersInProgress;
 
-  /// No description provided for @transfersEmptySubtitle.
+  /// Localized message for transfers empty subtitle.
   ///
   /// In en, this message translates to:
   /// **'All downloaded or uploaded files will appear here'**
   String get transfersEmptySubtitle;
 
-  /// No description provided for @cancelled.
+  /// Localized message for cancelled.
   ///
   /// In en, this message translates to:
   /// **'Cancelled'**
   String get cancelled;
 
-  /// No description provided for @appLockedTitle.
+  /// Localized message for app locked title.
   ///
   /// In en, this message translates to:
   /// **'Application Locked'**
   String get appLockedTitle;
 
-  /// No description provided for @unlockWithBiometrics.
+  /// Localized message for unlock with biometrics.
   ///
   /// In en, this message translates to:
   /// **'Unlock with Biometrics'**
   String get unlockWithBiometrics;
 
-  /// No description provided for @pinMustBe6Digits.
+  /// Localized message for pin must be6 digits.
   ///
   /// In en, this message translates to:
   /// **'PIN must be exactly 6 digits'**
   String get pinMustBe6Digits;
 
-  /// No description provided for @pinIncorrect.
+  /// Localized message for pin incorrect.
   ///
   /// In en, this message translates to:
   /// **'Incorrect PIN. Try again.'**
   String get pinIncorrect;
 
-  /// No description provided for @pinsDoNotMatch.
+  /// Localized message for pins do not match.
   ///
   /// In en, this message translates to:
   /// **'PINs do not match. Try again.'**
   String get pinsDoNotMatch;
 
-  /// No description provided for @pinStepOld.
+  /// Localized message for pin step old.
   ///
   /// In en, this message translates to:
   /// **'Enter your current PIN to continue.'**
   String get pinStepOld;
 
-  /// No description provided for @pinStepNew.
+  /// Localized message for pin step new.
   ///
   /// In en, this message translates to:
   /// **'Enter your new 6-digit security PIN.'**
   String get pinStepNew;
 
-  /// No description provided for @pinStepConfirm.
+  /// Localized message for pin step confirm.
   ///
   /// In en, this message translates to:
   /// **'Re-enter the new PIN to confirm.'**
   String get pinStepConfirm;
 
-  /// No description provided for @pinStepVerify.
+  /// Localized message for pin step verify.
   ///
   /// In en, this message translates to:
   /// **'Enter your PIN to confirm the operation.'**
   String get pinStepVerify;
 
-  /// No description provided for @pinTitleSetup.
+  /// Localized message for pin title setup.
   ///
   /// In en, this message translates to:
   /// **'Setup Security PIN'**
   String get pinTitleSetup;
 
-  /// No description provided for @pinTitleChange.
+  /// Localized message for pin title change.
   ///
   /// In en, this message translates to:
   /// **'Change Security PIN'**
   String get pinTitleChange;
 
-  /// No description provided for @pinTitleVerify.
+  /// Localized message for pin title verify.
   ///
   /// In en, this message translates to:
   /// **'Security Verification'**
   String get pinTitleVerify;
 
-  /// No description provided for @pinContinue.
+  /// Localized message for pin continue.
   ///
   /// In en, this message translates to:
   /// **'Continue'**
   String get pinContinue;
 
-  /// No description provided for @errorDetails.
+  /// Localized message for error details.
   ///
   /// In en, this message translates to:
   /// **'Error Details'**
   String get errorDetails;
 
-  /// No description provided for @errorDetailsCopied.
+  /// Localized message for error details copied.
   ///
   /// In en, this message translates to:
   /// **'Error details copied to clipboard'**
   String get errorDetailsCopied;
 
-  /// No description provided for @collapse.
+  /// Localized message for collapse.
   ///
   /// In en, this message translates to:
   /// **'Collapse'**
   String get collapse;
 
-  /// No description provided for @expand.
+  /// Localized message for expand.
   ///
   /// In en, this message translates to:
   /// **'Expand'**
   String get expand;
 
-  /// No description provided for @copyError.
+  /// Localized message for copy error.
   ///
   /// In en, this message translates to:
   /// **'Copy error'**
   String get copyError;
 
-  /// No description provided for @errorNetwork.
+  /// Localized message for error network.
   ///
   /// In en, this message translates to:
   /// **'No connection or unstable network. Check your internet connection and try again.'**
   String get errorNetwork;
 
-  /// No description provided for @errorDiskSpace.
+  /// Localized message for error disk space.
   ///
   /// In en, this message translates to:
   /// **'Insufficient storage space or disk full. Free up memory to continue.'**
   String get errorDiskSpace;
 
-  /// No description provided for @errorAuthExpired.
+  /// Localized message for error auth expired.
   ///
   /// In en, this message translates to:
   /// **'Session or token expired/revoked. Reconnect your account.'**
   String get errorAuthExpired;
 
-  /// No description provided for @errorNotFound.
+  /// Localized message for error not found.
   ///
   /// In en, this message translates to:
   /// **'Item or folder not found on cloud provider.'**
   String get errorNotFound;
 
-  /// No description provided for @errorPermissionDenied.
+  /// Localized message for error permission denied.
   ///
   /// In en, this message translates to:
   /// **'Permission denied for this operation on cloud.'**
   String get errorPermissionDenied;
 
-  /// No description provided for @errorGeneric.
+  /// Localized message for error generic.
   ///
   /// In en, this message translates to:
   /// **'An error occurred during the operation.'**
   String get errorGeneric;
 
-  /// No description provided for @desktopAndSystem.
+  /// Localized message for desktop and system.
   ///
   /// In en, this message translates to:
   /// **'Desktop & System'**
   String get desktopAndSystem;
 
-  /// No description provided for @desktopAndSystemSubtitle.
+  /// Localized message for desktop and system subtitle.
   ///
   /// In en, this message translates to:
   /// **'Startup behavior, background execution, and system tray'**
   String get desktopAndSystemSubtitle;
 
-  /// No description provided for @autostartOnBoot.
+  /// Localized message for autostart on boot.
   ///
   /// In en, this message translates to:
   /// **'Start on system boot'**
   String get autostartOnBoot;
 
-  /// No description provided for @autostartOnBootSubtitle.
+  /// Localized message for autostart on boot subtitle.
   ///
   /// In en, this message translates to:
   /// **'Automatically launch UnifyCloud in the background on login'**
   String get autostartOnBootSubtitle;
 
-  /// No description provided for @minimizeToTray.
+  /// Localized message for minimize to tray.
   ///
   /// In en, this message translates to:
   /// **'Minimize to system tray'**
   String get minimizeToTray;
 
-  /// No description provided for @minimizeToTraySubtitle.
+  /// Localized message for minimize to tray subtitle.
   ///
   /// In en, this message translates to:
   /// **'Keep UnifyCloud running in the background when the window is closed'**
   String get minimizeToTraySubtitle;
 
-  /// No description provided for @trayStatusIdle.
+  /// Localized message for tray status idle.
   ///
   /// In en, this message translates to:
   /// **'Idle (No active transfers)'**
   String get trayStatusIdle;
 
-  /// No description provided for @trayStatusActive.
+  /// Localized message for tray status active.
   ///
   /// In en, this message translates to:
-  /// **'{count} active transfers ({speed})'**
+  /// **'{count, plural, =1{1 active transfer ({speed})} other{{count} active transfers ({speed})}}'**
   String trayStatusActive(int count, String speed);
 
-  /// No description provided for @trayShowWindow.
+  /// Localized message for tray show window.
   ///
   /// In en, this message translates to:
   /// **'Show UnifyCloud'**
   String get trayShowWindow;
 
-  /// No description provided for @trayHideWindow.
+  /// Localized message for tray hide window.
   ///
   /// In en, this message translates to:
   /// **'Hide to system tray'**
   String get trayHideWindow;
 
-  /// No description provided for @trayQuit.
+  /// Localized message for tray quit.
   ///
   /// In en, this message translates to:
   /// **'Quit UnifyCloud'**
   String get trayQuit;
 
-  /// No description provided for @trayTooltip.
+  /// Localized message for tray tooltip.
   ///
   /// In en, this message translates to:
   /// **'UnifyCloud - Cloud Storage Manager'**
   String get trayTooltip;
+
+  /// Localized message for tray status line.
+  ///
+  /// In en, this message translates to:
+  /// **'Status: {status}'**
+  String trayStatusLine(String status);
+
+  /// Localized message for bg notification initial title.
+  ///
+  /// In en, this message translates to:
+  /// **'UnifyCloud Transfers'**
+  String get bgNotificationInitialTitle;
+
+  /// Localized message for bg notification initial content.
+  ///
+  /// In en, this message translates to:
+  /// **'Managing transfers in background...'**
+  String get bgNotificationInitialContent;
+
+  /// Localized message for bg notification progress content.
+  ///
+  /// In en, this message translates to:
+  /// **'{speed} • {percentage}% completed'**
+  String bgNotificationProgressContent(String speed, int percentage);
+
+  /// Localized message for bg notification idle content.
+  ///
+  /// In en, this message translates to:
+  /// **'All transfers have been completed.'**
+  String get bgNotificationIdleContent;
+
+  /// Localized message for pin title confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm PIN Code'**
+  String get pinTitleConfirm;
+
+  /// Localized message for pin title enter current.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Current PIN'**
+  String get pinTitleEnterCurrent;
+
+  /// Localized message for pin title new.
+  ///
+  /// In en, this message translates to:
+  /// **'New PIN Code'**
+  String get pinTitleNew;
+
+  /// Localized message for pin title confirm new.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New PIN'**
+  String get pinTitleConfirmNew;
+
+  /// Localized message for pin step setup new.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a 6-digit numeric code to protect the app.'**
+  String get pinStepSetupNew;
+
+  /// Localized message for pin step setup confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter the PIN code to confirm it.'**
+  String get pinStepSetupConfirm;
+
+  /// Localized message for pin too many attempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many failed attempts. Try again in {seconds}s.'**
+  String pinTooManyAttempts(int seconds);
+
+  /// Localized message for pin verification error.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification error: {error}'**
+  String pinVerificationError(String error);
+
+  /// Localized message for biometric auth reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to access UnifyCloud'**
+  String get biometricAuthReason;
+
+  /// Localized message for sync rules count.
+  ///
+  /// In en, this message translates to:
+  /// **'Synchronization Rules ({count})'**
+  String syncRulesCount(int count);
+
+  /// Localized message for no sync rules empty desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure a rule to run automatic backups at regular intervals or on demand with the \"Sync now\" button.'**
+  String get noSyncRulesEmptyDesc;
+
+  /// Localized message for never synced.
+  ///
+  /// In en, this message translates to:
+  /// **'Never synced'**
+  String get neverSynced;
+
+  /// Localized message for last sync now.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sync: just now'**
+  String get lastSyncNow;
+
+  /// Localized message for last sync minutes ago.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sync: {minutes} min ago'**
+  String lastSyncMinutesAgo(int minutes);
+
+  /// Localized message for last sync hours ago.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sync: {hours} hr ago'**
+  String lastSyncHoursAgo(int hours);
+
+  /// Localized message for last sync date.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sync: {date}'**
+  String lastSyncDate(String date);
+
+  /// Localized message for local folder not found.
+  ///
+  /// In en, this message translates to:
+  /// **'Local folder not found: {path}'**
+  String localFolderNotFound(String path);
+
+  /// Localized message for select destination cloud error.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a destination cloud'**
+  String get selectDestinationCloudError;
+
+  /// Localized message for remote destination path hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup/Photos or /'**
+  String get remoteDestinationPathHint;
+
+  /// Localized message for enter destination path error.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a destination path'**
+  String get enterDestinationPathError;
+
+  /// Localized message for activate rule manual only desc.
+  ///
+  /// In en, this message translates to:
+  /// **'When disabled, the rule can only be started manually.'**
+  String get activateRuleManualOnlyDesc;
+
+  /// Localized message for preset photos dcim.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos (DCIM)'**
+  String get presetPhotosDcim;
+
+  /// Localized message for preset pictures.
+  ///
+  /// In en, this message translates to:
+  /// **'Pictures'**
+  String get presetPictures;
+
+  /// Localized message for preset documents.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get presetDocuments;
+
+  /// Localized message for preset downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads'**
+  String get presetDownloads;
+
+  /// Localized message for default backup rule name.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup {name}'**
+  String defaultBackupRuleName(String name);
+
+  /// Localized message for default sync rule name.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync {name}'**
+  String defaultSyncRuleName(String name);
+
+  /// Localized message for folder fallback name.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder'**
+  String get folderFallbackName;
+
+  /// Localized message for provider local name.
+  ///
+  /// In en, this message translates to:
+  /// **'Local Disk'**
+  String get providerLocalName;
+
+  /// Localized message for provider crypt name.
+  ///
+  /// In en, this message translates to:
+  /// **'E2E Encryption (Crypt)'**
+  String get providerCryptName;
+
+  /// Localized message for provider subtitle drive.
+  ///
+  /// In en, this message translates to:
+  /// **'OAuth2 cloud storage'**
+  String get providerSubtitleDrive;
+
+  /// Localized message for provider subtitle dropbox.
+  ///
+  /// In en, this message translates to:
+  /// **'File sync and share'**
+  String get providerSubtitleDropbox;
+
+  /// Localized message for provider subtitle one drive.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal and business storage'**
+  String get providerSubtitleOneDrive;
+
+  /// Localized message for provider subtitle webdav.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-hosted or corporate cloud'**
+  String get providerSubtitleWebdav;
+
+  /// Localized message for provider subtitle sftp.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure remote server'**
+  String get providerSubtitleSftp;
+
+  /// Localized message for provider subtitle s3.
+  ///
+  /// In en, this message translates to:
+  /// **'Object storage bucket'**
+  String get providerSubtitleS3;
+
+  /// Localized message for provider subtitle local.
+  ///
+  /// In en, this message translates to:
+  /// **'Local system folder'**
+  String get providerSubtitleLocal;
+
+  /// Localized message for provider subtitle crypt.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypt files and names with AES-256 on any cloud'**
+  String get providerSubtitleCrypt;
+
+  /// Localized message for no unify cloud client id.
+  ///
+  /// In en, this message translates to:
+  /// **'No UnifyCloud Client ID available for this provider. Use Rclone or a personal Client ID.'**
+  String get noUnifyCloudClientId;
+
+  /// Localized message for no rclone client id.
+  ///
+  /// In en, this message translates to:
+  /// **'No Rclone Client ID available for this provider. Use a personal Client ID.'**
+  String get noRcloneClientId;
+
+  /// Localized message for enter client id for oauth.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the Client ID to start OAuth2 login'**
+  String get enterClientIdForOauth;
+
+  /// Localized message for oauth starting local server.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting local login server...'**
+  String get oauthStartingLocalServer;
+
+  /// Localized message for oauth browser opened.
+  ///
+  /// In en, this message translates to:
+  /// **'Browser opened. Waiting for authorization...'**
+  String get oauthBrowserOpened;
+
+  /// Localized message for oauth browser not supported.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic opening not supported. Open or copy the link below in your browser:'**
+  String get oauthBrowserNotSupported;
+
+  /// Localized message for oauth completed success.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication completed successfully!'**
+  String get oauthCompletedSuccess;
+
+  /// Localized message for oauth error prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'OAuth Error: {error}'**
+  String oauthErrorPrefix(String error);
+
+  /// Localized message for official oauth action desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast verified login with dedicated credentials for UnifyCloud. Click \"Start Browser Login\" to authenticate without manual setup.'**
+  String get officialOauthActionDesc;
+
+  /// Localized message for rclone oauth title.
+  ///
+  /// In en, this message translates to:
+  /// **'Rclone Public Client ID (Not Recommended)'**
+  String get rcloneOauthTitle;
+
+  /// Localized message for rclone oauth warning desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses legacy public keys shared across all Rclone users. May experience slowdowns or rate limits due to shared quotas.'**
+  String get rcloneOauthWarningDesc;
+
+  /// Localized message for custom oauth guide info.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your own IDs independently: see docs/oauth_setup_guide.md for a step-by-step guide.'**
+  String get customOauthGuideInfo;
+
+  /// Localized message for custom google client id label.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Google Client ID'**
+  String get customGoogleClientIdLabel;
+
+  /// Localized message for custom oauth client id label.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Client ID (OAuth2)'**
+  String get customOauthClientIdLabel;
+
+  /// Localized message for custom google client id hint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. xxxxx.apps.googleusercontent.com'**
+  String get customGoogleClientIdHint;
+
+  /// Localized message for enter your client id error.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your Client ID'**
+  String get enterYourClientIdError;
+
+  /// Localized message for custom client secret optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Client Secret (Optional)'**
+  String get customClientSecretOptional;
+
+  /// Localized message for authenticating.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticating...'**
+  String get authenticating;
+
+  /// Localized message for start browser login.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Browser Login (OAuth2)'**
+  String get startBrowserLogin;
+
+  /// Localized message for browser launched or copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Browser launched (or copy the link below)'**
+  String get browserLaunchedOrCopy;
+
+  /// Localized message for copy link to complete login.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the link to complete login in your browser'**
+  String get copyLinkToCompleteLogin;
+
+  /// Localized message for copy link and paste hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied to clipboard! Paste it into your browser.'**
+  String get copyLinkAndPasteHint;
+
+  /// Localized message for token json label.
+  ///
+  /// In en, this message translates to:
+  /// **'Token JSON (generated or pasted)'**
+  String get tokenJsonLabel;
+
+  /// Localized message for webdav url label.
+  ///
+  /// In en, this message translates to:
+  /// **'WebDAV / Nextcloud URL'**
+  String get webdavUrlLabel;
+
+  /// Localized message for s3 endpoint label.
+  ///
+  /// In en, this message translates to:
+  /// **'S3 Endpoint'**
+  String get s3EndpointLabel;
+
+  /// Localized message for sftp host label.
+  ///
+  /// In en, this message translates to:
+  /// **'SFTP Host / Server'**
+  String get sftpHostLabel;
+
+  /// Localized message for required field error.
+  ///
+  /// In en, this message translates to:
+  /// **'Required field'**
+  String get requiredFieldError;
+
+  /// Localized message for s3 access key id.
+  ///
+  /// In en, this message translates to:
+  /// **'Access Key ID'**
+  String get s3AccessKeyId;
+
+  /// Localized message for username label.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get usernameLabel;
+
+  /// Localized message for s3 secret access key.
+  ///
+  /// In en, this message translates to:
+  /// **'Secret Access Key'**
+  String get s3SecretAccessKey;
+
+  /// Localized message for password label.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get passwordLabel;
+
+  /// Localized message for local provider info.
+  ///
+  /// In en, this message translates to:
+  /// **'The local provider lets you browse and copy files to/from your device\'s filesystem.'**
+  String get localProviderInfo;
+
+  /// Localized message for e2e encryption title.
+  ///
+  /// In en, this message translates to:
+  /// **'Client-Side End-to-End Encryption (AES-256)'**
+  String get e2eEncryptionTitle;
+
+  /// Localized message for e2e encryption desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Files and their names are encrypted on your device before being uploaded to the destination cloud. Not even the cloud provider can read them.'**
+  String get e2eEncryptionDesc;
+
+  /// Localized message for no target cloud for vault.
+  ///
+  /// In en, this message translates to:
+  /// **'No destination cloud available. Connect another cloud first (e.g. Google Drive, OneDrive, or Local Disk) to create an encrypted Vault on it.'**
+  String get noTargetCloudForVault;
+
+  /// Localized message for vault target cloud label.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination Cloud *'**
+  String get vaultTargetCloudLabel;
+
+  /// Localized message for vault target cloud helper.
+  ///
+  /// In en, this message translates to:
+  /// **'The cloud where encrypted files will be stored'**
+  String get vaultTargetCloudHelper;
+
+  /// Localized message for vault target path label.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination Path or Folder'**
+  String get vaultTargetPathLabel;
+
+  /// Localized message for vault target path hint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. vault or secret_data'**
+  String get vaultTargetPathHint;
+
+  /// Localized message for vault target path helper.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder on the remote cloud where encrypted files will be saved (optional)'**
+  String get vaultTargetPathHelper;
+
+  /// Localized message for vault master password label.
+  ///
+  /// In en, this message translates to:
+  /// **'Encryption Password (Master Password) *'**
+  String get vaultMasterPasswordLabel;
+
+  /// Localized message for vault master password helper.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it safe: without this password files cannot be recovered'**
+  String get vaultMasterPasswordHelper;
+
+  /// Localized message for vault enter password error.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the encryption password'**
+  String get vaultEnterPasswordError;
+
+  /// Localized message for vault confirm password required.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password *'**
+  String get vaultConfirmPasswordRequired;
+
+  /// Localized message for vault confirm password error.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm the password'**
+  String get vaultConfirmPasswordError;
+
+  /// Localized message for vault salt optional label.
+  ///
+  /// In en, this message translates to:
+  /// **'Salt / Secondary Password (Optional)'**
+  String get vaultSaltOptionalLabel;
+
+  /// Localized message for vault salt helper.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds extra protection against brute-force attacks'**
+  String get vaultSaltHelper;
+
+  /// Localized message for oauth port occupied.
+  ///
+  /// In en, this message translates to:
+  /// **'Port {port} is already in use by another process. Close any open Rclone or browser sessions and try again.'**
+  String oauthPortOccupied(int port);
+
+  /// Localized message for oauth html success title.
+  ///
+  /// In en, this message translates to:
+  /// **'UnifyCloud - Authenticated'**
+  String get oauthHtmlSuccessTitle;
+
+  /// Localized message for oauth html success heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication successful!'**
+  String get oauthHtmlSuccessHeading;
+
+  /// Localized message for oauth html success body.
+  ///
+  /// In en, this message translates to:
+  /// **'You can close this tab and return to the UnifyCloud application.'**
+  String get oauthHtmlSuccessBody;
+
+  /// Localized message for oauth html error title.
+  ///
+  /// In en, this message translates to:
+  /// **'UnifyCloud - Error'**
+  String get oauthHtmlErrorTitle;
+
+  /// Localized message for oauth html error heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication error'**
+  String get oauthHtmlErrorHeading;
+
+  /// Localized message for oauth invalid state.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid OAuth state parameter.'**
+  String get oauthInvalidState;
+
+  /// Localized message for oauth invalid code.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid authorization code.'**
+  String get oauthInvalidCode;
+
+  /// Localized message for folder download unsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct folder download is not supported. Select individual files.'**
+  String get folderDownloadUnsupported;
+
+  /// Localized message for downloading single item.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting download for \"{name}\"...'**
+  String downloadingSingleItem(String name);
+
+  /// Localized message for downloading multiple items.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting download for {count} files...'**
+  String downloadingMultipleItems(int count);
+
+  /// Localized message for files added to download queue.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} files added to download queue.'**
+  String filesAddedToDownloadQueue(int count);
+
+  /// Localized message for files added to download queue with skipped.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} files added to download queue ({dirs} folders excluded).'**
+  String filesAddedToDownloadQueueWithSkipped(int count, int dirs);
+
+  /// Localized message for delete single folder title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete folder?'**
+  String get deleteSingleFolderTitle;
+
+  /// Localized message for delete single file title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete file?'**
+  String get deleteSingleFileTitle;
+
+  /// Localized message for delete single item prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to permanently delete \"{name}\"?'**
+  String deleteSingleItemPrompt(String name);
+
+  /// Localized message for item deleted success.
+  ///
+  /// In en, this message translates to:
+  /// **'Item deleted'**
+  String get itemDeletedSuccess;
+
+  /// Localized message for sort date asc.
+  ///
+  /// In en, this message translates to:
+  /// **'Date (Oldest first)'**
+  String get sortDateAsc;
+
+  /// Localized message for sort by tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get sortByTooltip;
+
+  /// Localized message for files added to upload queue.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 file added to upload queue} other{{count} files added to upload queue}}'**
+  String filesAddedToUploadQueue(int count);
+
+  /// Localized message for folder added to upload queue.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder added to upload ({count} files queued)'**
+  String folderAddedToUploadQueue(int count);
+
+  /// Localized message for drag drop in progress.
+  ///
+  /// In en, this message translates to:
+  /// **'{action} of {count} items from [{src}] to [{dst}] in progress...'**
+  String dragDropInProgress(String action, int count, String src, String dst);
+
+  /// Localized message for copy selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy selected'**
+  String get copySelected;
+
+  /// Localized message for cut selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Cut selected'**
+  String get cutSelected;
+
+  /// Localized message for search files hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search files or folders...'**
+  String get searchFilesHint;
+
+  /// Localized message for e2e active tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'End-to-End Encryption active (AES-256)\nFiles and folders encrypted client-side'**
+  String get e2eActiveTooltip;
+
+  /// Localized message for disable dual pane tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable dual pane'**
+  String get disableDualPaneTooltip;
+
+  /// Localized message for enable dual pane tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable dual pane (Commander)'**
+  String get enableDualPaneTooltip;
+
+  /// Localized message for drop to copy to.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop to copy to [{remote}]'**
+  String dropToCopyTo(String remote);
+
+  /// Localized message for destination fallback.
+  ///
+  /// In en, this message translates to:
+  /// **'destination'**
+  String get destinationFallback;
+
+  /// Localized message for clipboard banner single.
+  ///
+  /// In en, this message translates to:
+  /// **'{action}: \"{name}\" from [{remote}]'**
+  String clipboardBannerSingle(String action, String name, String remote);
+
+  /// Localized message for clipboard banner multiple.
+  ///
+  /// In en, this message translates to:
+  /// **'{action}: {count} items from [{remote}]'**
+  String clipboardBannerMultiple(String action, int count, String remote);
+
+  /// Localized message for transfer started single.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer started for \"{name}\"'**
+  String transferStartedSingle(String name);
+
+  /// Localized message for transfers started count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} transfers started'**
+  String transfersStartedCount(int count);
+
+  /// Localized message for no cloud selected title.
+  ///
+  /// In en, this message translates to:
+  /// **'No Cloud Selected'**
+  String get noCloudSelectedTitle;
+
+  /// Localized message for no cloud selected subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a cloud from the menu above.'**
+  String get noCloudSelectedSubtitle;
+
+  /// Localized message for loading files from remote.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading files from {remote}...'**
+  String loadingFilesFromRemote(String remote);
+
+  /// Localized message for loading folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading {folder}...'**
+  String loadingFolder(String folder);
+
+  /// Localized message for reading directory.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading directory...'**
+  String get readingDirectory;
+
+  /// Localized message for download started saved to.
+  ///
+  /// In en, this message translates to:
+  /// **'Download started: saving to {path}'**
+  String downloadStartedSavedTo(String path);
+
+  /// Localized message for no cloud selected.
+  ///
+  /// In en, this message translates to:
+  /// **'No cloud selected.'**
+  String get noCloudSelected;
+
+  /// Localized message for no link returned by provider.
+  ///
+  /// In en, this message translates to:
+  /// **'No link returned by provider.'**
+  String get noLinkReturnedByProvider;
+
+  /// Localized message for public links not supported.
+  ///
+  /// In en, this message translates to:
+  /// **'This cloud provider does not support creating public links.'**
+  String get publicLinksNotSupported;
+
+  /// Localized message for error creating share link.
+  ///
+  /// In en, this message translates to:
+  /// **'Error creating link: {error}'**
+  String errorCreatingShareLink(String error);
+
+  /// Localized message for new name label.
+  ///
+  /// In en, this message translates to:
+  /// **'New name'**
+  String get newNameLabel;
+
+  /// Localized message for item details size with bytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Size: {size} ({bytes} bytes)'**
+  String itemDetailsSizeWithBytes(String size, int bytes);
+
+  /// Localized message for share link access file.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone with this link will be able to access this file:'**
+  String get shareLinkAccessFile;
+
+  /// Localized message for share link access folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone with this link will be able to access this folder:'**
+  String get shareLinkAccessFolder;
+
+  /// Localized message for invalid url or browser.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid URL or unable to open browser.'**
+  String get invalidUrlOrBrowser;
+
+  /// Localized message for no app to open file.
+  ///
+  /// In en, this message translates to:
+  /// **'No application installed to open \"{name}\".'**
+  String noAppToOpenFile(String name);
+
+  /// Localized message for permission denied open file.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission denied to open file with system app.'**
+  String get permissionDeniedOpenFile;
+
+  /// Localized message for no default app found.
+  ///
+  /// In en, this message translates to:
+  /// **'No default application found to open this file.'**
+  String get noDefaultAppFound;
+
+  /// Localized message for unable to open file.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open file: {error}'**
+  String unableToOpenFile(String error);
+
+  /// Localized message for downloading for external open.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading \"{name}\" to open externally...'**
+  String downloadingForExternalOpen(String name);
+
+  /// Localized message for error opening file.
+  ///
+  /// In en, this message translates to:
+  /// **'Error opening file: {error}'**
+  String errorOpeningFile(String error);
+
+  /// Localized message for select files to upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Select files to upload to Cloud'**
+  String get selectFilesToUpload;
+
+  /// Localized message for select folder to upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Select folder to upload to Cloud'**
+  String get selectFolderToUpload;
+
+  /// Localized message for copy right compact.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy ->'**
+  String get copyRightCompact;
+
+  /// Localized message for copy right count compact.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy ({count}) ->'**
+  String copyRightCountCompact(int count);
+
+  /// Localized message for move right compact.
+  ///
+  /// In en, this message translates to:
+  /// **'Move ->'**
+  String get moveRightCompact;
+
+  /// Localized message for move right count compact.
+  ///
+  /// In en, this message translates to:
+  /// **'Move ({count}) ->'**
+  String moveRightCountCompact(int count);
+
+  /// Localized message for copy left compact.
+  ///
+  /// In en, this message translates to:
+  /// **'<- Copy'**
+  String get copyLeftCompact;
+
+  /// Localized message for copy left count compact.
+  ///
+  /// In en, this message translates to:
+  /// **'<- Copy ({count})'**
+  String copyLeftCountCompact(int count);
+
+  /// Localized message for move left compact.
+  ///
+  /// In en, this message translates to:
+  /// **'<- Move'**
+  String get moveLeftCompact;
+
+  /// Localized message for move left count compact.
+  ///
+  /// In en, this message translates to:
+  /// **'<- Move ({count})'**
+  String moveLeftCountCompact(int count);
+
+  /// Localized message for clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// Localized message for no recent transfers.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent transfers'**
+  String get noRecentTransfers;
+
+  /// Localized message for recent transfers subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads, uploads, and cloud copies will appear here.'**
+  String get recentTransfersSubtitle;
+
+  /// Localized message for completed with progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed • {progress}'**
+  String completedWithProgress(String progress);
+
+  /// Localized message for transfer failed error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String transferFailedError(String error);
+
+  /// Localized message for transfer failed fallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer failed'**
+  String get transferFailedFallback;
+
+  /// Localized message for cancelled by user.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by user'**
+  String get cancelledByUser;
+
+  /// Localized message for local location.
+  ///
+  /// In en, this message translates to:
+  /// **'Local'**
+  String get localLocation;
+
+  /// Localized message for move to badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to'**
+  String get moveToBadge;
+
+  /// Localized message for copy to badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy to'**
+  String get copyToBadge;
+
+  /// Localized message for copied exclamation.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied!'**
+  String get copiedExclamation;
+
+  /// Localized message for running.
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get running;
 }
 
 class _AppLocalizationsDelegate
@@ -2657,20 +3587,11 @@ class _AppLocalizationsDelegate
   @override
   bool isSupported(Locale locale) => <String>[
     'ar',
-    'de',
     'en',
     'es',
     'fr',
-    'hi',
     'it',
-    'ja',
-    'ko',
-    'nl',
     'pl',
-    'pt',
-    'ru',
-    'tr',
-    'zh',
   ].contains(locale.languageCode);
 
   @override
@@ -2682,34 +3603,16 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'ar':
       return AppLocalizationsAr();
-    case 'de':
-      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
     case 'fr':
       return AppLocalizationsFr();
-    case 'hi':
-      return AppLocalizationsHi();
     case 'it':
       return AppLocalizationsIt();
-    case 'ja':
-      return AppLocalizationsJa();
-    case 'ko':
-      return AppLocalizationsKo();
-    case 'nl':
-      return AppLocalizationsNl();
     case 'pl':
       return AppLocalizationsPl();
-    case 'pt':
-      return AppLocalizationsPt();
-    case 'ru':
-      return AppLocalizationsRu();
-    case 'tr':
-      return AppLocalizationsTr();
-    case 'zh':
-      return AppLocalizationsZh();
   }
 
   throw FlutterError(

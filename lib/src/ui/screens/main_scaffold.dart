@@ -8,12 +8,12 @@ import '../widgets/transfer_panel.dart';
 /// - Desktop (> 768px): NavigationRail (side rail)
 /// - Mobile (<= 768px): NavigationBar (bottom bar)
 class MainScaffold extends StatelessWidget {
-  final StatefulNavigationShell navigationShell;
 
   const MainScaffold({
     super.key,
     required this.navigationShell,
   });
+  final StatefulNavigationShell navigationShell;
 
   void _onDestinationSelected(int index) {
     navigationShell.goBranch(

@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/l10n_extension.dart';
 import '../../models/sync_rule_model.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/sync_provider.dart';
@@ -11,12 +12,12 @@ import '../theme/app_theme.dart';
 
 /// Dialog allowing users to create or edit an automated or manual sync rule.
 class SyncRuleDialog extends ConsumerStatefulWidget {
-  final SyncRule? existingRule;
 
   const SyncRuleDialog({
     super.key,
     this.existingRule,
   });
+  final SyncRule? existingRule;
 
   @override
   ConsumerState<SyncRuleDialog> createState() => _SyncRuleDialogState();
@@ -58,7 +59,7 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
     super.dispose();
   }
 
-  Future<void> _pickLocalDirectory() async {
+  Future<void> _pickLocalDirectory(AppLocalizations l10n) async {
     final selected = await FilePicker.getDirectoryPath();
     if (selected != null && selected.isNotEmpty) {
       setState(() {
@@ -66,51 +67,53 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
         if (_nameController.text.trim().isEmpty) {
           final dirName = selected.split(Platform.pathSeparator).lastWhere(
                 (p) => p.isNotEmpty,
-                orElse: () => 'Cartella',
+                orElse: () => l10n.folderFallbackName,
               );
-          _nameController.text = 'Backup $dirName';
+          _nameController.text = l10n.defaultBackupRuleName(dirName);
           _remotePathController.text = 'Backup/$dirName';
         }
       });
     }
   }
 
-  void _applyLocalPreset(String path, String label) {
+  void _applyLocalPreset(String path, String label, AppLocalizations l10n) {
     setState(() {
       _localPathController.text = path;
       if (_nameController.text.trim().isEmpty) {
-        _nameController.text = 'Backup $label';
+        _nameController.text = l10n.defaultBackupRuleName(label);
         _remotePathController.text = 'Backup/$label';
       }
     });
   }
 
-  List<Map<String, String>> _getSystemPresets() {
+  List<Map<String, String>> _getSystemPresets(AppLocalizations l10n) {
     final home = Platform.environment['HOME'] ?? '';
     final presets = <Map<String, String>>[];
 
     if (Platform.isAndroid) {
-      presets.add({'label': 'Foto (DCIM)', 'path': '/storage/emulated/0/DCIM'});
+      presets.add({'label': l10n.presetPhotosDcim, 'path': '/storage/emulated/0/DCIM'});
       presets.add({
-        'label': 'Documenti',
+        'label': l10n.presetDocuments,
         'path': '/storage/emulated/0/Documents',
       });
-      presets.add({'label': 'Download', 'path': '/storage/emulated/0/Download'});
+      presets.add({'label': l10n.presetDownloads, 'path': '/storage/emulated/0/Download'});
     } else {
       if (home.isNotEmpty) {
-        presets.add({'label': 'Immagini', 'path': '$home/Pictures'});
-        presets.add({'label': 'Documenti', 'path': '$home/Documents'});
-        presets.add({'label': 'Download', 'path': '$home/Downloads'});
+        presets.add({'label': l10n.presetPictures, 'path': '$home/Pictures'});
+        presets.add({'label': l10n.presetDocuments, 'path': '$home/Documents'});
+        presets.add({'label': l10n.presetDownloads, 'path': '$home/Downloads'});
       }
     }
     return presets;
   }
 
-  Future<void> _save() async {
+  Future<void> _save(AppLocalizations l10n) async {
     if (!_formKey.currentState!.validate()) return;
 
     final name = _nameController.text.trim().isEmpty
-        ? 'Sincronizzazione ${_localPathController.text.split(Platform.pathSeparator).last}'
+        ? l10n.defaultSyncRuleName(
+            _localPathController.text.split(Platform.pathSeparator).last,
+          )
         : _nameController.text.trim();
 
     final rule = SyncRule(
@@ -142,11 +145,12 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final cloudState = ref.watch(cloudAccountsProvider);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final isEditing = widget.existingRule != null;
-    final presets = _getSystemPresets();
+    final presets = _getSystemPresets(l10n);
 
     // Select initial remote if null and remotes exist
     if (_selectedRemote == null && cloudState.remotes.isNotEmpty) {
@@ -182,14 +186,14 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                         children: [
                           Text(
                             isEditing
-                                ? 'Modifica Regola di Backup'
-                                : 'Nuova Regola di Sincronizzazione',
+                                ? l10n.editRuleTitle
+                                : l10n.newRuleTitle,
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
-                            'Configura backup automatico tra una cartella locale e il cloud.',
+                            l10n.ruleDialogSubtitle,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: isDark ? Colors.grey[400] : Colors.grey[600],
                             ),
@@ -209,35 +213,35 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                 Expanded(
                   child: ListView(
                     children: [
-                      // Nome Regola
+                      // Rule Name
                       TextFormField(
                         controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Nome Regola (opzionale)',
-                          hintText: 'Es. Backup Foto DCIM o Documenti Lavoro',
-                          prefixIcon: Icon(Icons.bookmark_border),
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: l10n.ruleNameOptional,
+                          hintText: l10n.ruleNameHint,
+                          prefixIcon: const Icon(Icons.bookmark_border),
+                          border: const OutlineInputBorder(),
                         ),
                       ),
                       const SizedBox(height: 16),
 
-                      // Cartella Locale
+                      // Local Folder
                       TextFormField(
                         controller: _localPathController,
                         decoration: InputDecoration(
-                          labelText: 'Cartella Locale Sorgente',
-                          hintText: '/home/utente/Pictures o /storage/emulated/0/DCIM',
+                          labelText: l10n.sourceLocalFolder,
+                          hintText: l10n.sourceLocalFolderHint,
                           prefixIcon: const Icon(Icons.folder),
                           suffixIcon: IconButton(
                             icon: const Icon(Icons.folder_open),
-                            tooltip: 'Sfoglia cartelle',
-                            onPressed: _pickLocalDirectory,
+                            tooltip: l10n.browseFolders,
+                            onPressed: () => _pickLocalDirectory(l10n),
                           ),
                           border: const OutlineInputBorder(),
                         ),
                         validator: (v) {
                           if (v == null || v.trim().isEmpty) {
-                            return 'Inserisci o seleziona una cartella locale';
+                            return l10n.selectLocalFolderError;
                           }
                           return null;
                         },
@@ -251,7 +255,8 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                             return ActionChip(
                               avatar: const Icon(Icons.add, size: 14),
                               label: Text(p['label']!, style: const TextStyle(fontSize: 12)),
-                              onPressed: () => _applyLocalPreset(p['path']!, p['label']!),
+                              onPressed: () =>
+                                  _applyLocalPreset(p['path']!, p['label']!, l10n),
                             );
                           }).toList(),
                         ),
@@ -273,7 +278,7 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Nessun cloud configurato. Configura un account cloud dalla Home prima di continuare.',
+                                  l10n.noCloudsConfiguredSync,
                                   style: TextStyle(
                                     color: theme.colorScheme.onErrorContainer,
                                     fontSize: 13,
@@ -286,10 +291,10 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                       else
                         DropdownButtonFormField<String>(
                           initialValue: _selectedRemote,
-                          decoration: const InputDecoration(
-                            labelText: 'Cloud di Destinazione',
-                            prefixIcon: Icon(Icons.cloud_queue),
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: l10n.destinationCloud,
+                            prefixIcon: const Icon(Icons.cloud_queue),
+                            border: const OutlineInputBorder(),
                           ),
                           items: cloudState.remotes.map((remote) {
                             return DropdownMenuItem<String>(
@@ -323,50 +328,50 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                           },
                           validator: (v) {
                             if (v == null || v.isEmpty) {
-                              return 'Seleziona un cloud di destinazione';
+                              return l10n.selectDestinationCloudError;
                             }
                             return null;
                           },
                         ),
                       const SizedBox(height: 16),
 
-                      // Percorso Cartella Cloud
+                      // Cloud Destination Folder Path
                       TextFormField(
                         controller: _remotePathController,
-                        decoration: const InputDecoration(
-                          labelText: 'Cartella di Destinazione sul Cloud',
-                          hintText: 'Backup/Foto o /',
-                          prefixIcon: Icon(Icons.cloud_upload_outlined),
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: l10n.remoteDestinationPath,
+                          hintText: l10n.remoteDestinationPathHint,
+                          prefixIcon: const Icon(Icons.cloud_upload_outlined),
+                          border: const OutlineInputBorder(),
                         ),
                         validator: (v) {
                           if (v == null || v.trim().isEmpty) {
-                            return 'Inserisci un percorso di destinazione';
+                            return l10n.enterDestinationPathError;
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 18),
 
-                      // Modalità (SegmentedButton)
+                      // Mode (SegmentedButton)
                       Text(
-                        'Modalità Operativa',
+                        l10n.syncMode,
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 6),
                       SegmentedButton<SyncMode>(
-                        segments: const [
+                        segments: [
                           ButtonSegment<SyncMode>(
                             value: SyncMode.copy,
-                            label: Text('Backup Incrementale'),
-                            icon: Icon(Icons.backup_outlined),
+                            label: Text(l10n.syncModeCopy),
+                            icon: const Icon(Icons.backup_outlined),
                           ),
                           ButtonSegment<SyncMode>(
                             value: SyncMode.sync,
-                            label: Text('Sincronizzazione Mirror'),
-                            icon: Icon(Icons.sync),
+                            label: Text(l10n.syncModeSync),
+                            icon: const Icon(Icons.sync),
                           ),
                         ],
                         selected: {_selectedMode},
@@ -376,7 +381,7 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        _selectedMode.description,
+                        _selectedMode.localizedDescription(l10n),
                         style: TextStyle(
                           fontSize: 12,
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -384,18 +389,18 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                       ),
                       const SizedBox(height: 18),
 
-                      // Frequenza
+                      // Frequency
                       DropdownButtonFormField<SyncFrequency>(
                         initialValue: _selectedFrequency,
-                        decoration: const InputDecoration(
-                          labelText: 'Frequenza Pianificata',
-                          prefixIcon: Icon(Icons.schedule),
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: l10n.syncFrequency,
+                          prefixIcon: const Icon(Icons.schedule),
+                          border: const OutlineInputBorder(),
                         ),
                         items: SyncFrequency.values.map((freq) {
                           return DropdownMenuItem<SyncFrequency>(
                             value: freq,
-                            child: Text(freq.label),
+                            child: Text(freq.localizedLabel(l10n)),
                           );
                         }).toList(),
                         onChanged: (val) {
@@ -406,13 +411,13 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                       ),
                       const SizedBox(height: 12),
 
-                      // Switch Abilita
+                      // Enable Switch
                       SwitchListTile(
                         contentPadding: EdgeInsets.zero,
-                        title: const Text('Attiva regola immediatamente'),
-                        subtitle: const Text(
-                          'Se disattivata, la regola potrà essere avviata solo manualmente.',
-                          style: TextStyle(fontSize: 12),
+                        title: Text(l10n.activateRuleImmediately),
+                        subtitle: Text(
+                          l10n.activateRuleManualOnlyDesc,
+                          style: const TextStyle(fontSize: 12),
                         ),
                         value: _isEnabled,
                         onChanged: (v) => setState(() => _isEnabled = v),
@@ -428,13 +433,14 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Annulla'),
+                      child: Text(l10n.cancel),
                     ),
                     const SizedBox(width: 8),
                     FilledButton.icon(
                       icon: const Icon(Icons.check),
-                      label: Text(isEditing ? 'Aggiorna' : 'Salva Regola'),
-                      onPressed: cloudState.remotes.isEmpty ? null : _save,
+                      label: Text(isEditing ? l10n.updateRule : l10n.saveRule),
+                      onPressed:
+                          cloudState.remotes.isEmpty ? null : () => _save(l10n),
                     ),
                   ],
                 ),

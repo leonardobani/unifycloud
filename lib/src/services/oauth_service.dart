@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:ui' show Locale;
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
+import '../../l10n/l10n_extension.dart';
 import '../utils/url_utils.dart';
 
 /// Riverpod provider for [OAuthService].
@@ -16,13 +18,6 @@ final oauthServiceProvider = Provider<OAuthService>((ref) {
 
 /// Definition of OAuth configuration for a supported cloud provider.
 class OAuthProviderConfig {
-  final String providerType;
-  final String authorizationEndpoint;
-  final String tokenEndpoint;
-  final String defaultClientId;
-  final String? defaultClientSecret;
-  final List<String> scopes;
-  final String defaultRedirectUri;
 
   const OAuthProviderConfig({
     required this.providerType,
@@ -33,13 +28,20 @@ class OAuthProviderConfig {
     required this.scopes,
     this.defaultRedirectUri = 'http://localhost:53682/',
   });
+  final String providerType;
+  final String authorizationEndpoint;
+  final String tokenEndpoint;
+  final String defaultClientId;
+  final String? defaultClientSecret;
+  final List<String> scopes;
+  final String defaultRedirectUri;
 }
 
 /// Service that handles OAuth2 authorization flows for Cloud Storage providers.
 class OAuthService {
-  final http.Client _httpClient;
 
   OAuthService([http.Client? httpClient]) : _httpClient = httpClient ?? http.Client();
+  final http.Client _httpClient;
 
   /// Official port registered with OAuth providers (OneDrive, Dropbox, Google Drive) by Rclone.
   static const int rcloneOAuthPort = 53682;
@@ -80,7 +82,6 @@ class OAuthService {
       tokenEndpoint: 'https://api.dropboxapi.com/oauth2/token',
       defaultClientId: rcloneDropboxClientId,
       defaultClientSecret: rcloneDropboxClientSecret,
-      defaultRedirectUri: rcloneRedirectLocalhost,
       scopes: [],
     ),
     'onedrive': OAuthProviderConfig(
@@ -91,7 +92,6 @@ class OAuthService {
           'https://login.microsoftonline.com/common/oauth2/v2.0/token',
       defaultClientId: rcloneOneDriveClientId,
       defaultClientSecret: rcloneOneDriveClientSecret,
-      defaultRedirectUri: rcloneRedirectLocalhost,
       scopes: [
         'Files.Read',
         'Files.ReadWrite',
@@ -228,7 +228,9 @@ class OAuthService {
     String? clientSecret,
     void Function(Uri authUrl, bool browserOpened)? onAuthUrlReady,
     Duration timeout = const Duration(minutes: 3),
+    AppLocalizations? l10n,
   }) async {
+    final strings = l10n ?? resolveAppLocalizations(const Locale('en'));
     final config = supportedProviders[providerType];
     if (config == null) {
       throw UnsupportedError('Unsupported OAuth provider: $providerType');
@@ -242,10 +244,7 @@ class OAuthService {
       server = await HttpServer.bind(InternetAddress.loopbackIPv4, rcloneOAuthPort);
     } catch (e) {
       if (clientId == config.defaultClientId) {
-        throw Exception(
-          'La porta $rcloneOAuthPort è già occupata da un altro processo. '
-          'Chiudi eventuali sessioni Rclone o browser aperte e riprova.',
-        );
+        throw Exception(strings.oauthPortOccupied(rcloneOAuthPort));
       }
       server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     }
@@ -253,8 +252,8 @@ class OAuthService {
     final redirectUri = server.port == rcloneOAuthPort
         ? config.defaultRedirectUri
         : 'http://localhost:${server.port}/';
-    final state = _generateRandomToken(32);
-    final codeVerifier = _generateRandomToken(32);
+    final state = _generateRandomToken();
+    final codeVerifier = _generateRandomToken();
     final codeChallenge = _computeCodeChallenge(codeVerifier);
 
     final authUrl = buildAuthUrl(
@@ -299,13 +298,16 @@ class OAuthService {
 
       request.response.headers.contentType = ContentType.html;
       if (code != null && state.isNotEmpty && returnedState == state) {
+        final safeTitle = const HtmlEscape().convert(strings.oauthHtmlSuccessTitle);
+        final safeHeading = const HtmlEscape().convert(strings.oauthHtmlSuccessHeading);
+        final safeBody = const HtmlEscape().convert(strings.oauthHtmlSuccessBody);
         request.response.write('''
 <!DOCTYPE html>
 <html>
-<head><title>UnifyCloud - Autenticato</title></head>
+<head><meta charset="utf-8"><title>$safeTitle</title></head>
 <body style="font-family: sans-serif; text-align: center; padding: 50px;">
-  <h2>Autenticazione riuscita! &#x2705;</h2>
-  <p>Puoi chiudere questa scheda e tornare all'applicazione <strong>UnifyCloud</strong>.</p>
+  <h2>$safeHeading &#x2705;</h2>
+  <p>$safeBody</p>
 </body>
 </html>
 ''');
@@ -317,16 +319,18 @@ class OAuthService {
         final rawErrMsg = errorDesc ??
             error ??
             (returnedState != state
-                ? 'Parametro state OAuth non valido.'
-                : 'Codice di autorizzazione non valido.');
+                ? strings.oauthInvalidState
+                : strings.oauthInvalidCode);
         final safeErrMsg = const HtmlEscape().convert(rawErrMsg);
+        final safeErrTitle = const HtmlEscape().convert(strings.oauthHtmlErrorTitle);
+        final safeErrHeading = const HtmlEscape().convert(strings.oauthHtmlErrorHeading);
         request.response.statusCode = HttpStatus.badRequest;
         request.response.write('''
 <!DOCTYPE html>
 <html>
-<head><title>UnifyCloud - Errore</title></head>
+<head><meta charset="utf-8"><title>$safeErrTitle</title></head>
 <body style="font-family: sans-serif; text-align: center; padding: 50px;">
-  <h2>Errore di autenticazione &#x274C;</h2>
+  <h2>$safeErrHeading &#x274C;</h2>
   <p>$safeErrMsg</p>
 </body>
 </html>
@@ -468,4 +472,3 @@ class OAuthService {
     return data;
   }
 }
-

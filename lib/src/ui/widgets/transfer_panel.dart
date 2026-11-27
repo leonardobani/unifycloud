@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/l10n_extension.dart';
 import '../../models/transfer_models.dart';
 import '../../providers/transfer_provider.dart';
 import '../theme/app_theme.dart';
@@ -12,6 +13,7 @@ class TransferFloatingBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final transferState = ref.watch(transferProvider);
     final activeCount = transferState.activeCount;
 
@@ -31,7 +33,7 @@ class TransferFloatingBar extends ConsumerWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            showModalBottomSheet(
+            showModalBottomSheet<void>(
               context: context,
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
@@ -66,7 +68,7 @@ class TransferFloatingBar extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '$activeCount ${activeCount == 1 ? 'trasferimento attivo' : 'trasferimenti attivi'}',
+                            l10n.activeTransfersCount(activeCount),
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 13,
@@ -118,6 +120,7 @@ class TransferSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final state = ref.watch(transferProvider);
     final transfers = state.transfers;
     final colorScheme = Theme.of(context).colorScheme;
@@ -152,7 +155,7 @@ class TransferSheet extends ConsumerWidget {
                     color: AppTheme.primaryColor, size: 24),
                 const SizedBox(width: 10),
                 Text(
-                  'Coda Trasferimenti (${transfers.length})',
+                  l10n.transfersQueueCount(transfers.length),
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -165,7 +168,7 @@ class TransferSheet extends ConsumerWidget {
                       ref.read(transferProvider.notifier).clearCompleted();
                     },
                     icon: const Icon(Icons.clear_all, size: 18),
-                    label: const Text('Pulisci'),
+                    label: Text(l10n.clear),
                     style: TextButton.styleFrom(
                       visualDensity: VisualDensity.compact,
                     ),
@@ -192,14 +195,14 @@ class TransferSheet extends ConsumerWidget {
                           color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                         ),
                         const SizedBox(height: 16),
-                        const Text(
-                          'Nessun trasferimento recente',
-                          style: TextStyle(
+                        Text(
+                          l10n.noRecentTransfers,
+                          style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'I download, gli upload e le copie cloud appariranno qui.',
+                          l10n.recentTransfersSubtitle,
                           style: TextStyle(
                             fontSize: 13,
                             color: colorScheme.onSurfaceVariant,
@@ -225,12 +228,13 @@ class TransferSheet extends ConsumerWidget {
 }
 
 class _TransferCard extends ConsumerWidget {
-  final TransferJob job;
 
   const _TransferCard({required this.job});
+  final TransferJob job;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     return Card(
       elevation: 2,
       child: Padding(
@@ -256,11 +260,11 @@ class _TransferCard extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 3),
-                      _buildRouteBadges(context),
+                      _buildRouteBadges(context, l10n),
                     ],
                   ),
                 ),
-                _buildStatusWidget(context, ref),
+                _buildStatusWidget(context, ref, l10n),
               ],
             ),
 
@@ -301,7 +305,7 @@ class _TransferCard extends ConsumerWidget {
             ] else if (job.status == TransferStatus.completed) ...[
               const SizedBox(height: 6),
               Text(
-                'Completato • ${job.formattedProgress}',
+                l10n.completedWithProgress(job.formattedProgress),
                 style: const TextStyle(fontSize: 11, color: Colors.green),
               ),
             ] else if (job.status == TransferStatus.failed) ...[
@@ -310,8 +314,10 @@ class _TransferCard extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      job.friendlyErrorMessage ??
-                          'Errore: ${job.error ?? "Trasferimento fallito"}',
+                      job.localizedErrorMessage(l10n) ??
+                          l10n.transferFailedError(
+                            job.error ?? l10n.transferFailedFallback,
+                          ),
                       style: const TextStyle(fontSize: 11, color: Colors.red),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -323,7 +329,7 @@ class _TransferCard extends ConsumerWidget {
                         ref.read(transferProvider.notifier).retryTransfer(job.id);
                       },
                       icon: const Icon(Icons.refresh_rounded, size: 14),
-                      label: const Text('Riprova', style: TextStyle(fontSize: 11)),
+                      label: Text(l10n.retry, style: const TextStyle(fontSize: 11)),
                       style: TextButton.styleFrom(
                         visualDensity: VisualDensity.compact,
                         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -333,9 +339,9 @@ class _TransferCard extends ConsumerWidget {
               ),
             ] else if (job.status == TransferStatus.cancelled) ...[
               const SizedBox(height: 6),
-              const Text(
-                'Annullato dall\'utente',
-                style: TextStyle(fontSize: 11, color: Colors.orange),
+              Text(
+                l10n.cancelledByUser,
+                style: const TextStyle(fontSize: 11, color: Colors.orange),
               ),
             ],
           ],
@@ -344,11 +350,11 @@ class _TransferCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildRouteBadges(BuildContext context) {
+  Widget _buildRouteBadges(BuildContext context, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
-    final src = job.srcRemote.isEmpty ? 'Locale' : job.srcRemote;
-    final dst = job.dstRemote.isEmpty ? 'Locale' : job.dstRemote;
-    final action = job.isMove ? 'Sposta in' : 'Copia in';
+    final src = job.srcRemote.isEmpty ? l10n.localLocation : job.srcRemote;
+    final dst = job.dstRemote.isEmpty ? l10n.localLocation : job.dstRemote;
+    final action = job.isMove ? l10n.moveToBadge : l10n.copyToBadge;
 
     return Row(
       children: [
@@ -396,11 +402,15 @@ class _TransferCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusWidget(BuildContext context, WidgetRef ref) {
+  Widget _buildStatusWidget(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
     if (job.isActive) {
       return IconButton(
         icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 22),
-        tooltip: 'Annulla trasferimento',
+        tooltip: l10n.cancelTransfer,
         onPressed: () {
           ref.read(transferProvider.notifier).cancelTransfer(job.id);
         },

@@ -7,7 +7,7 @@ import 'package:unifycloud/src/services/rclone_service.dart';
 void main() {
   group('Fase 6: Transfer Models & Logic Tests', () {
     test('TransferJob helper properties format speed, progress and ETA correctly', () {
-      final job = TransferJob(
+      const job = TransferJob(
         id: 'job_123',
         srcRemote: 'Drive',
         srcPath: 'Projects/Design/logo.png',
@@ -86,7 +86,6 @@ void main() {
         srcPath: srcFile.absolute.path,
         dstRemote: '',
         dstPath: dstPath,
-        isMove: false,
       );
 
       expect(job.id, isNotEmpty);

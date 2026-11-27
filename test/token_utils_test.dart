@@ -75,8 +75,7 @@ type = local
 
       final errorType = CloudErrorType.fromError(errorMsg);
       expect(errorType, equals(CloudErrorType.authExpired));
-      expect(errorType.userFriendlyMessage, contains('Riconnetti'));
+      expect(errorType.userFriendlyMessage, contains('Reconnect'));
     });
   });
 }
-

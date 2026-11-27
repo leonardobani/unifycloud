@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'cloud_error.dart';
 
 enum TransferStatus {
@@ -23,38 +24,38 @@ enum TransferStatus {
     }
   }
 
+  String localizedLabel(AppLocalizations l10n) {
+    switch (this) {
+      case TransferStatus.queued:
+        return l10n.queued;
+      case TransferStatus.running:
+        return l10n.running;
+      case TransferStatus.completed:
+        return l10n.completed;
+      case TransferStatus.failed:
+        return l10n.failed;
+      case TransferStatus.cancelled:
+        return l10n.cancelled;
+    }
+  }
+
   String get label {
     switch (this) {
       case TransferStatus.queued:
-        return 'In coda';
+        return 'Queued';
       case TransferStatus.running:
-        return 'In corso';
+        return 'Running';
       case TransferStatus.completed:
-        return 'Completato';
+        return 'Completed';
       case TransferStatus.failed:
-        return 'Fallito';
+        return 'Failed';
       case TransferStatus.cancelled:
-        return 'Annullato';
+        return 'Cancelled';
     }
   }
 }
 
 class TransferJob {
-  final String id;
-  final String srcRemote;
-  final String srcPath;
-  final String dstRemote;
-  final String dstPath;
-  final bool isMove;
-  final TransferStatus status;
-  final int bytes;
-  final int totalBytes;
-  final int percentage;
-  final double speed;
-  final int eta;
-  final String? error;
-  final DateTime? startTime;
-  final DateTime? endTime;
 
   const TransferJob({
     required this.id,
@@ -104,6 +105,21 @@ class TransferJob {
       endTime: parseDate(json['end_time']),
     );
   }
+  final String id;
+  final String srcRemote;
+  final String srcPath;
+  final String dstRemote;
+  final String dstPath;
+  final bool isMove;
+  final TransferStatus status;
+  final int bytes;
+  final int totalBytes;
+  final int percentage;
+  final double speed;
+  final int eta;
+  final String? error;
+  final DateTime? startTime;
+  final DateTime? endTime;
 
   Map<String, dynamic> toJson() {
     return {
@@ -217,8 +233,11 @@ class TransferJob {
       status == TransferStatus.failed &&
       (errorType == CloudErrorType.network || errorType == CloudErrorType.generic);
 
-  /// User-friendly error message in Italian.
+  /// Localized user-friendly error message.
+  String? localizedErrorMessage(AppLocalizations l10n) =>
+      error != null ? errorType?.localizedMessage(l10n) : null;
+
+  /// User-friendly error message in English when no localization context is available.
   String? get friendlyErrorMessage =>
       error != null ? errorType?.userFriendlyMessage : null;
 }
-

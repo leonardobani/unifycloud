@@ -94,24 +94,24 @@ void main() {
 
       // Verify Google Drive is selected and dropdown is present with UnifyCloud default
       expect(find.text('Google Drive'), findsWidgets);
-      expect(find.text('Modalità Client ID (OAuth2)'), findsOneWidget);
+      expect(find.text('Client ID Mode (OAuth2)'), findsOneWidget);
       expect(
-        find.text('UnifyCloud (Ufficiale / Consigliato)'),
+        find.text('UnifyCloud (Official / Recommended)'),
         findsOneWidget,
       );
 
       // Verify official UnifyCloud badge is shown and custom fields are hidden
       expect(
-        find.text('Credenziali Ufficiali UnifyCloud'),
+        find.text('Official UnifyCloud Credentials'),
         findsOneWidget,
       );
       expect(
         find.text(
-          'Accesso rapido verificato con credenziali dedicate per UnifyCloud. Clicca su "Avvia Accesso nel Browser" per autenticarti senza configurazioni manuali.',
+          'Fast verified login with dedicated credentials for UnifyCloud. Click "Start Browser Login" to authenticate without manual setup.',
         ),
         findsOneWidget,
       );
-      expect(find.text('Client ID Personale Google'), findsNothing);
+      expect(find.text('Personal Google Client ID'), findsNothing);
     });
 
     testWidgets(
@@ -124,54 +124,54 @@ void main() {
       await tester.pumpAndSettle();
 
       // 1. Switch to Rclone mode
-      await tester.tap(find.text('UnifyCloud (Ufficiale / Consigliato)'));
+      await tester.tap(find.text('UnifyCloud (Official / Recommended)'));
       await tester.pumpAndSettle();
 
       final rcloneOption =
-          find.text('Rclone (Sconsigliato - Quota condivisa)').last;
+          find.text('Rclone (Not recommended - Shared quota)').last;
       await tester.tap(rcloneOption);
       await tester.pumpAndSettle();
 
       // Verify Rclone warning banner is visible
       expect(
-        find.text('Client ID Pubblico di Rclone (Sconsigliato)'),
+        find.text('Rclone Public Client ID (Not Recommended)'),
         findsOneWidget,
       );
-      expect(find.text('Client ID Personale Google'), findsNothing);
+      expect(find.text('Personal Google Client ID'), findsNothing);
 
       // 2. Switch to Custom / Personal Client ID mode
-      await tester.tap(find.text('Rclone (Sconsigliato - Quota condivisa)').first);
+      await tester.tap(find.text('Rclone (Not recommended - Shared quota)').first);
       await tester.pumpAndSettle();
 
       final customOption =
-          find.text('Client ID Personale (Avanzato)').last;
+          find.text('Personal Client ID (Advanced)').last;
       await tester.tap(customOption);
       await tester.pumpAndSettle();
 
       // Verify custom inputs and guide notification are visible
       expect(
         find.text(
-          'Crea i tuoi ID in autonomia: consulta docs/oauth_setup_guide.md per la guida passo-passo.',
+          'Create your own IDs independently: see docs/oauth_setup_guide.md for a step-by-step guide.',
         ),
         findsOneWidget,
       );
-      expect(find.text('Client ID Personale Google'), findsOneWidget);
-      expect(find.text('Client Secret (Opzionale)'), findsOneWidget);
+      expect(find.text('Personal Google Client ID'), findsOneWidget);
+      expect(find.text('Client Secret (Optional)'), findsOneWidget);
 
       // 3. Switch back to UnifyCloud
-      await tester.tap(find.text('Client ID Personale (Avanzato)').first);
+      await tester.tap(find.text('Personal Client ID (Advanced)').first);
       await tester.pumpAndSettle();
 
       final unifyCloudOption =
-          find.text('UnifyCloud (Ufficiale / Consigliato)').last;
+          find.text('UnifyCloud (Official / Recommended)').last;
       await tester.tap(unifyCloudOption);
       await tester.pumpAndSettle();
 
       expect(
-        find.text('Credenziali Ufficiali UnifyCloud'),
+        find.text('Official UnifyCloud Credentials'),
         findsOneWidget,
       );
-      expect(find.text('Client ID Personale Google'), findsNothing);
+      expect(find.text('Personal Google Client ID'), findsNothing);
     });
 
     testWidgets('Selecting Microsoft OneDrive shows UnifyCloud credentials badge',
@@ -187,9 +187,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify OneDrive is selected and UnifyCloud official mode is default
-      expect(find.text('UnifyCloud (Ufficiale / Consigliato)'), findsOneWidget);
+      expect(find.text('UnifyCloud (Official / Recommended)'), findsOneWidget);
       expect(
-        find.text('Credenziali Ufficiali UnifyCloud'),
+        find.text('Official UnifyCloud Credentials'),
         findsOneWidget,
       );
     });

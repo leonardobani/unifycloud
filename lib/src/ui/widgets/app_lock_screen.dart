@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/l10n_extension.dart';
 import '../../providers/app_lock_provider.dart';
 import '../../providers/settings_provider.dart';
 
@@ -23,7 +24,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
   @override
   void initState() {
     super.initState();
-    scheduleMicrotask(() => _triggerAutoBiometrics());
+    scheduleMicrotask(_triggerAutoBiometrics);
   }
 
   @override
@@ -40,7 +41,9 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
     final lockState = ref.read(appLockProvider);
 
     if (settings.useBiometrics && lockState.canCheckBiometrics) {
-      ref.read(appLockProvider.notifier).authenticateWithBiometrics();
+      ref.read(appLockProvider.notifier).authenticateWithBiometrics(
+            reason: context.l10n.biometricAuthReason,
+          );
     }
   }
 
@@ -59,9 +62,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
 
   void _onBackspacePressed() {
     if (_enteredDigits.isNotEmpty) {
-      setState(() {
-        _enteredDigits.removeLast();
-      });
+      setState(_enteredDigits.removeLast);
     }
   }
 
@@ -71,18 +72,18 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
     final success = await notifier.verifyPin(pin);
 
     if (!success && mounted) {
-      setState(() {
-        _enteredDigits.clear();
-      });
+      setState(_enteredDigits.clear);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final lockState = ref.watch(appLockProvider);
     final settings = ref.watch(settingsProvider);
+    final errorMsg = lockState.localizedErrorMessage(l10n);
 
     return PopScope(
       canPop: false, // Prevent dismissing lock screen via back button
@@ -128,9 +129,9 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      const Text(
-                        'UnifyCloud',
-                        style: TextStyle(
+                      Text(
+                        l10n.appTitle,
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           letterSpacing: -0.5,
@@ -138,7 +139,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Applicazione bloccata',
+                        l10n.appLockedTitle,
                         style: TextStyle(
                           fontSize: 14,
                           color: colorScheme.onSurfaceVariant,
@@ -174,10 +175,10 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
 
                       // Error message (if any)
                       AnimatedOpacity(
-                        opacity: lockState.errorMessage != null ? 1.0 : 0.0,
+                        opacity: errorMsg != null ? 1.0 : 0.0,
                         duration: const Duration(milliseconds: 200),
                         child: Text(
-                          lockState.errorMessage ?? '',
+                          errorMsg ?? '',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 13,
@@ -202,12 +203,14 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
                           onPressed: () {
                             ref
                                 .read(appLockProvider.notifier)
-                                .authenticateWithBiometrics();
+                                .authenticateWithBiometrics(
+                                  reason: l10n.biometricAuthReason,
+                                );
                           },
                           icon: const Icon(Icons.fingerprint_rounded, size: 24),
-                          label: const Text(
-                            'Sblocca con Biometria',
-                            style: TextStyle(fontSize: 14),
+                          label: Text(
+                            l10n.unlockWithBiometrics,
+                            style: const TextStyle(fontSize: 14),
                           ),
                         ),
                     ],
@@ -227,7 +230,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
   }) {
     return Column(
       children: [
-        for (var row in [
+        for (final row in [
           ['1', '2', '3'],
           ['4', '5', '6'],
           ['7', '8', '9'],
@@ -315,4 +318,3 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
     );
   }
 }
-

@@ -35,7 +35,7 @@ void main() {
         remotePath: 'Backup/Foto',
       );
 
-      final now = DateTime(2026, 9, 19, 12, 0);
+      final now = DateTime(2026, 9, 19, 12);
       final updated = rule.copyWith(
         name: 'Backup Immagini Aggiornato',
         mode: SyncMode.sync,
@@ -67,11 +67,8 @@ void main() {
         remotePath: 'Lavoro/Doc',
         mode: SyncMode.sync,
         frequency: SyncFrequency.hours6,
-        isEnabled: true,
         lastSyncTime: now,
         lastStatus: SyncStatus.completed,
-        lastError: null,
-        activeJobId: null,
       );
 
       final json = rule.toJson();
@@ -96,7 +93,7 @@ void main() {
     });
 
     test('isDue calculation logic handles intervals correctly', () {
-      final baseTime = DateTime(2026, 9, 19, 12, 0);
+      final baseTime = DateTime(2026, 9, 19, 12);
 
       // Rule never synced before -> isDue is true
       const newRule = SyncRule(
@@ -105,7 +102,6 @@ void main() {
         localPath: '/path',
         remote: 'remote',
         remotePath: 'path',
-        frequency: SyncFrequency.hourly,
       );
       expect(newRule.isDue(baseTime), isTrue);
 
@@ -135,14 +131,13 @@ void main() {
     });
 
     test('Enum labels and descriptions are user friendly', () {
-      expect(SyncMode.copy.label, equals('Backup Incrementale'));
-      expect(SyncMode.sync.label, equals('Sincronizzazione Mirror'));
+      expect(SyncMode.copy.label, equals('Incremental Backup'));
+      expect(SyncMode.sync.label, equals('Mirror Synchronization'));
       expect(SyncFrequency.manual.duration, isNull);
       expect(SyncFrequency.minutes15.duration, equals(const Duration(minutes: 15)));
       expect(SyncFrequency.hourly.duration, equals(const Duration(hours: 1)));
       expect(SyncFrequency.daily.duration, equals(const Duration(hours: 24)));
-      expect(SyncStatus.inProgress.label, equals('In corso...'));
+      expect(SyncStatus.inProgress.label, equals('In progress...'));
     });
   });
 }
-

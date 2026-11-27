@@ -81,7 +81,7 @@ void main() {
           reason: 'Failed for error message: $error',
         );
         expect(classified.canRetry, isTrue);
-        expect(classified.userFriendlyMessage, contains('Connessione assente'));
+        expect(classified.userFriendlyMessage, contains('No connection'));
       }
     });
 
@@ -102,7 +102,7 @@ void main() {
           reason: 'Failed for error message: $error',
         );
         expect(classified.canRetry, isFalse);
-        expect(classified.userFriendlyMessage, contains('insufficiente'));
+        expect(classified.userFriendlyMessage, contains('Insufficient storage'));
       }
     });
 
@@ -122,7 +122,7 @@ void main() {
           reason: 'Failed for error message: $error',
         );
         expect(classified.canRetry, isFalse);
-        expect(classified.userFriendlyMessage, contains('Riconnetti'));
+        expect(classified.userFriendlyMessage, contains('Reconnect'));
       }
     });
 
@@ -144,7 +144,7 @@ void main() {
 
   group('TransferJob Error Getters', () {
     test('TransferJob exposes correct error classification and retry hints', () {
-      final networkJob = TransferJob(
+      const networkJob = TransferJob(
         id: 'job_net',
         srcRemote: 'gdrive',
         srcPath: 'docs/test.pdf',
@@ -156,9 +156,9 @@ void main() {
 
       expect(networkJob.errorType, equals(CloudErrorType.network));
       expect(networkJob.canRetry, isTrue);
-      expect(networkJob.friendlyErrorMessage, contains('Connessione assente'));
+      expect(networkJob.friendlyErrorMessage, contains('No connection'));
 
-      final quotaJob = TransferJob(
+      const quotaJob = TransferJob(
         id: 'job_disk',
         srcRemote: 'gdrive',
         srcPath: 'movies/video.mkv',
@@ -170,9 +170,9 @@ void main() {
 
       expect(quotaJob.errorType, equals(CloudErrorType.diskSpace));
       expect(quotaJob.canRetry, isFalse);
-      expect(quotaJob.friendlyErrorMessage, contains('insufficiente'));
+      expect(quotaJob.friendlyErrorMessage, contains('Insufficient storage'));
 
-      final authJob = TransferJob(
+      const authJob = TransferJob(
         id: 'job_auth',
         srcRemote: 'onedrive',
         srcPath: 'sheet.xlsx',
@@ -184,7 +184,7 @@ void main() {
 
       expect(authJob.errorType, equals(CloudErrorType.authExpired));
       expect(authJob.canRetry, isFalse);
-      expect(authJob.friendlyErrorMessage, contains('Riconnetti'));
+      expect(authJob.friendlyErrorMessage, contains('Reconnect'));
     });
   });
 

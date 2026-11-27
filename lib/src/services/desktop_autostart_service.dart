@@ -11,13 +11,13 @@ final desktopAutostartServiceProvider =
 
 /// Service managing FreeDesktop (XDG Autostart) on Linux desktop systems.
 class DesktopAutostartService {
-  final String? customAutostartDirPath;
-  final String? customExecutablePath;
 
   DesktopAutostartService({
     this.customAutostartDirPath,
     this.customExecutablePath,
   });
+  final String? customAutostartDirPath;
+  final String? customExecutablePath;
 
   /// Whether autostart configuration is supported on current platform.
   bool get isSupported {
