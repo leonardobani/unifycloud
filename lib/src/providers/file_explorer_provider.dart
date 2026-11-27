@@ -45,8 +45,10 @@ class FileExplorerState {
     this.viewMode = FileViewMode.list,
     this.sortMode = FileSortMode.nameAsc,
     this.searchQuery = '',
+    this.isSearching = false,
     this.showHiddenFiles = false,
     this.selectedPaths = const {},
+    this.selectionModeActive = false,
   });
   final String? currentRemote;
   final String currentPath;
@@ -56,8 +58,10 @@ class FileExplorerState {
   final FileViewMode viewMode;
   final FileSortMode sortMode;
   final String searchQuery;
+  final bool isSearching;
   final bool showHiddenFiles;
   final Set<String> selectedPaths;
+  final bool selectionModeActive;
 
   FileExplorerState copyWith({
     String? currentRemote,
@@ -68,8 +72,10 @@ class FileExplorerState {
     FileViewMode? viewMode,
     FileSortMode? sortMode,
     String? searchQuery,
+    bool? isSearching,
     bool? showHiddenFiles,
     Set<String>? selectedPaths,
+    bool? selectionModeActive,
   }) {
     return FileExplorerState(
       currentRemote: currentRemote ?? this.currentRemote,
@@ -80,13 +86,15 @@ class FileExplorerState {
       viewMode: viewMode ?? this.viewMode,
       sortMode: sortMode ?? this.sortMode,
       searchQuery: searchQuery ?? this.searchQuery,
+      isSearching: isSearching ?? this.isSearching,
       showHiddenFiles: showHiddenFiles ?? this.showHiddenFiles,
       selectedPaths: selectedPaths ?? this.selectedPaths,
+      selectionModeActive: selectionModeActive ?? this.selectionModeActive,
     );
   }
 
   /// Whether multi-selection mode is currently active.
-  bool get isSelectionMode => selectedPaths.isNotEmpty;
+  bool get isSelectionMode => selectionModeActive || selectedPaths.isNotEmpty;
 
   /// Number of currently selected items.
   int get selectedCount => selectedPaths.length;
@@ -191,7 +199,9 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
       items: const [],
       isLoading: true,
       searchQuery: '',
+      isSearching: false,
       selectedPaths: const {},
+      selectionModeActive: false,
     );
     await refresh();
   }
@@ -203,7 +213,9 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
       items: const [],
       isLoading: true,
       searchQuery: '',
+      isSearching: false,
       selectedPaths: const {},
+      selectionModeActive: false,
     );
     await refresh();
   }
@@ -221,7 +233,11 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
     final remote = state.currentRemote;
     if (remote == null) return;
 
-    state = state.copyWith(isLoading: true, selectedPaths: const {});
+    state = state.copyWith(
+      isLoading: true,
+      selectedPaths: const {},
+      selectionModeActive: false,
+    );
     try {
       final items = await _rcloneService.listDirectory(
         remote: remote,
@@ -248,6 +264,22 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
     state = state.copyWith(searchQuery: query);
   }
 
+  /// Opens or closes the live search bar; closing also clears the search query.
+  void setSearching(bool isSearching) {
+    state = state.copyWith(
+      isSearching: isSearching,
+      searchQuery: isSearching ? state.searchQuery : '',
+    );
+  }
+
+  /// Enters multi-selection mode starting with zero selected items.
+  void enterSelectionMode() {
+    state = state.copyWith(
+      selectionModeActive: true,
+      selectedPaths: const {},
+    );
+  }
+
   /// Toggles selection state of an item at [path].
   void toggleSelection(String path) {
     final current = Set<String>.from(state.selectedPaths);
@@ -262,13 +294,19 @@ class FileExplorerNotifier extends Notifier<FileExplorerState> {
   /// Selects all visible items currently shown in the explorer.
   void selectAll() {
     final allPaths = state.displayItems.map((item) => item.path).toSet();
-    state = state.copyWith(selectedPaths: allPaths);
+    state = state.copyWith(
+      selectionModeActive: allPaths.isNotEmpty || state.selectionModeActive,
+      selectedPaths: allPaths,
+    );
   }
 
-  /// Clears the current multi-selection.
+  /// Clears the current multi-selection and exits selection mode.
   void clearSelection() {
-    if (state.selectedPaths.isEmpty) return;
-    state = state.copyWith(selectedPaths: const {});
+    if (state.selectedPaths.isEmpty && !state.selectionModeActive) return;
+    state = state.copyWith(
+      selectionModeActive: false,
+      selectedPaths: const {},
+    );
   }
 
   /// Deletes all currently selected items in batch.

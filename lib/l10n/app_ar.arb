@@ -577,5 +577,15 @@
   "moveToBadge": "نقل إلى",
   "copyToBadge": "نسخ إلى",
   "copiedExclamation": "تم النسخ!",
-  "running": "جارٍ التنفيذ"
+  "running": "جارٍ التنفيذ",
+  "uploadChooseTypePrompt": "اختر ما تريد رفعه:",
+  "longPressActionTitle": "إجراء الضغط المطوّل",
+  "longPressActionSelect": "تحديد",
+  "longPressActionSelectDesc": "الضغط المطوّل على عنصر يبدّل التحديد المتعدد.",
+  "longPressActionMove": "نقل (سحب)",
+  "longPressActionMoveDesc": "الضغط المطوّل على عنصر يتيح سحبه إلى مجلد أو إلى اللوحة المقابلة لنقله.",
+  "longPressActionMenu": "قائمة الإجراءات",
+  "longPressActionMenuDesc": "الضغط المطوّل على عنصر يفتح قائمة إجراءاته (فتح، تنزيل، إعادة تسمية، حذف).",
+  "longPressActionCut": "قص",
+  "longPressActionCutDesc": "الضغط المطوّل على عنصر يقصّه إلى الحافظة لنقله عبر اللصق في مكان آخر."
 }

@@ -37,6 +37,7 @@ void main() {
       expect(settings.autostartOnBoot, isFalse);
       expect(settings.minimizeToTray, isTrue);
       expect(settings.language, equals('en'));
+      expect(settings.longPressAction, equals(LongPressAction.select));
     });
 
     test('copyWith updates specified fields correctly', () {
@@ -50,6 +51,7 @@ void main() {
         autostartOnBoot: true,
         minimizeToTray: false,
         language: 'it',
+        longPressAction: LongPressAction.contextMenu,
       );
 
       expect(updated.themeMode, equals(ThemeMode.dark));
@@ -60,6 +62,7 @@ void main() {
       expect(updated.autostartOnBoot, isTrue);
       expect(updated.minimizeToTray, isFalse);
       expect(updated.language, equals('it'));
+      expect(updated.longPressAction, equals(LongPressAction.contextMenu));
     });
 
     test('toJson and fromJson serialize and deserialize accurately', () {
@@ -71,6 +74,7 @@ void main() {
         maxConcurrentTransfers: 2,
         autostartOnBoot: true,
         minimizeToTray: false,
+        longPressAction: LongPressAction.move,
       );
 
       final json = settings.toJson();
@@ -81,9 +85,13 @@ void main() {
       expect(json['max_concurrent_transfers'], equals(2));
       expect(json['autostart_on_boot'], isTrue);
       expect(json['minimize_to_tray'], isFalse);
+      expect(json['long_press_action'], equals('move'));
 
       final restored = AppSettings.fromJson(json);
       expect(restored, equals(settings));
+
+      final fallback = AppSettings.fromJson(const {'long_press_action': 'unknown'});
+      expect(fallback.longPressAction, equals(LongPressAction.select));
     });
 
     test('locale getter dynamically resolves arbitrary language tags (scalable to 10-20 languages)', () {
@@ -149,12 +157,16 @@ void main() {
       await notifier.setMinimizeToTray(false);
       expect(container.read(settingsProvider).minimizeToTray, isFalse);
 
+      await notifier.setLongPressAction(LongPressAction.cut);
+      expect(container.read(settingsProvider).longPressAction, equals(LongPressAction.cut));
+
       await notifier.resetToDefaults();
       expect(container.read(settingsProvider).themeMode, equals(ThemeMode.system));
       expect(container.read(settingsProvider).showHiddenFiles, isFalse);
       expect(container.read(settingsProvider).customDownloadPath, isNull);
       expect(container.read(settingsProvider).autostartOnBoot, isFalse);
       expect(container.read(settingsProvider).minimizeToTray, isTrue);
+      expect(container.read(settingsProvider).longPressAction, equals(LongPressAction.select));
     });
 
     test('loadPersistedSettings normalizes removed minor language codes to system',
@@ -213,6 +225,8 @@ void main() {
       expect(find.text('File & Esplorazione'), findsOneWidget);
       expect(find.text('Mostra elementi nascosti'), findsOneWidget);
       expect(find.text('Conferma prima di eliminare'), findsOneWidget);
+      expect(find.text('Azione pressione prolungata'), findsOneWidget);
+      expect(find.byKey(const ValueKey('settings_long_press_dropdown')), findsOneWidget);
       expect(find.text('Cartella Download Predefinita'), findsOneWidget);
 
       // Verify Desktop & Sistema section on Linux

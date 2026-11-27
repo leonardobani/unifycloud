@@ -2037,4 +2037,38 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get running => 'جارٍ التنفيذ';
+
+  @override
+  String get uploadChooseTypePrompt => 'اختر ما تريد رفعه:';
+
+  @override
+  String get longPressActionTitle => 'إجراء الضغط المطوّل';
+
+  @override
+  String get longPressActionSelect => 'تحديد';
+
+  @override
+  String get longPressActionSelectDesc =>
+      'الضغط المطوّل على عنصر يبدّل التحديد المتعدد.';
+
+  @override
+  String get longPressActionMove => 'نقل (سحب)';
+
+  @override
+  String get longPressActionMoveDesc =>
+      'الضغط المطوّل على عنصر يتيح سحبه إلى مجلد أو إلى اللوحة المقابلة لنقله.';
+
+  @override
+  String get longPressActionMenu => 'قائمة الإجراءات';
+
+  @override
+  String get longPressActionMenuDesc =>
+      'الضغط المطوّل على عنصر يفتح قائمة إجراءاته (فتح، تنزيل، إعادة تسمية، حذف).';
+
+  @override
+  String get longPressActionCut => 'قص';
+
+  @override
+  String get longPressActionCutDesc =>
+      'الضغط المطوّل على عنصر يقصّه إلى الحافظة لنقله عبر اللصق في مكان آخر.';
 }

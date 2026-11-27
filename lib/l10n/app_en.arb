@@ -2851,5 +2851,45 @@
   "running": "Running",
   "@running": {
     "description": "Localized message for running."
+  },
+  "uploadChooseTypePrompt": "Choose what you would like to upload:",
+  "@uploadChooseTypePrompt": {
+    "description": "Prompt shown in the upload dialog asking whether to upload a file or folder."
+  },
+  "longPressActionTitle": "Long press action",
+  "@longPressActionTitle": {
+    "description": "Title for configuring what long-pressing an item in Explorer does."
+  },
+  "longPressActionSelect": "Select",
+  "@longPressActionSelect": {
+    "description": "Long press option to toggle item multi-selection."
+  },
+  "longPressActionSelectDesc": "Long-pressing an item toggles multi-selection.",
+  "@longPressActionSelectDesc": {
+    "description": "Description for the select long press action."
+  },
+  "longPressActionMove": "Move (Drag)",
+  "@longPressActionMove": {
+    "description": "Long press option to drag and move an item."
+  },
+  "longPressActionMoveDesc": "Long-pressing an item lets you drag it into a folder or opposite pane to move it.",
+  "@longPressActionMoveDesc": {
+    "description": "Description for the move long press action."
+  },
+  "longPressActionMenu": "Actions menu",
+  "@longPressActionMenu": {
+    "description": "Long press option to open the item context menu."
+  },
+  "longPressActionMenuDesc": "Long-pressing an item opens its actions menu (open, download, rename, delete).",
+  "@longPressActionMenuDesc": {
+    "description": "Description for the context menu long press action."
+  },
+  "longPressActionCut": "Cut",
+  "@longPressActionCut": {
+    "description": "Long press option to cut the item to the clipboard."
+  },
+  "longPressActionCutDesc": "Long-pressing an item cuts it to the clipboard so you can paste-move it elsewhere.",
+  "@longPressActionCutDesc": {
+    "description": "Description for the cut long press action."
   }
 }

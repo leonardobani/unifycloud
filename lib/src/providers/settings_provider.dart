@@ -177,6 +177,11 @@ class SettingsNotifier extends Notifier<AppSettings> {
     await _persist(state.copyWith(language: lang));
   }
 
+  /// Updates the action performed when long-pressing an item in Explorer.
+  Future<void> setLongPressAction(LongPressAction action) async {
+    await _persist(state.copyWith(longPressAction: action));
+  }
+
   /// Resets all settings to their default values.
   Future<void> resetToDefaults() async {
     await _persist(const AppSettings());

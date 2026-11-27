@@ -131,5 +131,43 @@ void main() {
       await gesture.up();
       await tester.pumpAndSettle();
     });
+
+    testWidgets('touchDragEnabled=false disables touch drag so onLongPress fires',
+        (tester) async {
+      bool dragStarted = false;
+      bool longPressed = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: AdaptiveDraggable<String>(
+                data: 'test_item',
+                touchDelay: const Duration(milliseconds: 200),
+                touchDragEnabled: false,
+                onDragStarted: () {
+                  dragStarted = true;
+                },
+                feedback: const Material(
+                  child: Text('Dragging test_item'),
+                ),
+                child: GestureDetector(
+                  onLongPress: () {
+                    longPressed = true;
+                  },
+                  child: const Text('Touch Long Press'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.longPress(find.text('Touch Long Press'));
+      await tester.pumpAndSettle();
+
+      expect(dragStarted, isFalse);
+      expect(longPressed, isTrue);
+    });
   });
 }

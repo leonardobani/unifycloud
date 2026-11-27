@@ -2047,4 +2047,38 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get running => 'W trakcie';
+
+  @override
+  String get uploadChooseTypePrompt => 'Wybierz, co chcesz przesłać:';
+
+  @override
+  String get longPressActionTitle => 'Akcja długiego naciśnięcia';
+
+  @override
+  String get longPressActionSelect => 'Zaznacz';
+
+  @override
+  String get longPressActionSelectDesc =>
+      'Długie naciśnięcie elementu przełącza zaznaczenie wielokrotne.';
+
+  @override
+  String get longPressActionMove => 'Przenieś (Przeciągnij)';
+
+  @override
+  String get longPressActionMoveDesc =>
+      'Długie naciśnięcie elementu pozwala przeciągnąć go do folderu lub drugiego panelu, aby go przenieść.';
+
+  @override
+  String get longPressActionMenu => 'Menu akcji';
+
+  @override
+  String get longPressActionMenuDesc =>
+      'Długie naciśnięcie elementu otwiera menu akcji (otwórz, pobierz, zmień nazwę, usuń).';
+
+  @override
+  String get longPressActionCut => 'Wytnij';
+
+  @override
+  String get longPressActionCutDesc =>
+      'Długie naciśnięcie elementu wycina go do schowka, aby wkleić i przenieść go w inne miejsce.';
 }

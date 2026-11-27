@@ -94,6 +94,14 @@ class InteractiveFileExplorerNotifier extends Notifier<FileExplorerState>
   FileExplorerState build() => _initialState;
 
   @override
+  void enterSelectionMode() {
+    state = state.copyWith(
+      selectionModeActive: true,
+      selectedPaths: const {},
+    );
+  }
+
+  @override
   void toggleSelection(String path) {
     final current = Set<String>.from(state.selectedPaths);
     if (current.contains(path)) {
@@ -107,12 +115,18 @@ class InteractiveFileExplorerNotifier extends Notifier<FileExplorerState>
   @override
   void selectAll() {
     final allPaths = state.displayItems.map((e) => e.path).toSet();
-    state = state.copyWith(selectedPaths: allPaths);
+    state = state.copyWith(
+      selectionModeActive: allPaths.isNotEmpty || state.selectionModeActive,
+      selectedPaths: allPaths,
+    );
   }
 
   @override
   void clearSelection() {
-    state = state.copyWith(selectedPaths: const {});
+    state = state.copyWith(
+      selectionModeActive: false,
+      selectedPaths: const {},
+    );
   }
 
   @override
@@ -291,7 +305,7 @@ void main() {
       expect(find.byIcon(Icons.delete_outline), findsOneWidget);
 
       // Normal mode action buttons should NOT be in the AppBar
-      expect(find.byIcon(Icons.upload_file_outlined), findsNothing);
+      expect(find.byIcon(Icons.upload_rounded), findsNothing);
 
       // Check Checkbox is rendered on list items
       expect(find.byType(Checkbox), findsNWidgets(3));
@@ -333,7 +347,7 @@ void main() {
 
       // Should return to normal AppBar
       expect(find.text('2 selected'), findsNothing);
-      expect(find.byIcon(Icons.upload_file_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.upload_rounded), findsOneWidget);
     });
 
     testWidgets('Tapping Select All selects all items and updates icon to deselect', (tester) async {
@@ -378,7 +392,49 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('3 selected'), findsNothing);
-      expect(find.byIcon(Icons.upload_file_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.upload_rounded), findsOneWidget);
+    });
+
+    testWidgets('Tapping Select button enters selection mode starting from 0 items',
+        (tester) async {
+      final notifier = InteractiveFileExplorerNotifier(
+        const FileExplorerState(
+          currentRemote: 'MyDrive',
+          currentPath: 'Photos',
+          items: [item1, item2, folder],
+        ),
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            cloudAccountsProvider.overrideWith(
+              () => CloudAccountsNotifierMock(
+                const CloudAccountsState(
+                  remotes: [CloudRemote(name: 'MyDrive', type: 'drive')],
+                ),
+              ),
+            ),
+            fileExplorerProvider.overrideWith(() => notifier),
+          ],
+          child: const MaterialApp(
+            home: FileExplorerScreen(),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.checklist_rounded), findsOneWidget);
+      await tester.tap(find.byIcon(Icons.checklist_rounded));
+      await tester.pumpAndSettle();
+
+      // Starts from 0 selected, not all
+      expect(find.text('0 selected'), findsOneWidget);
+      expect(find.byType(Checkbox), findsNWidgets(3));
+
+      // Tapping an item selects it
+      await tester.tap(find.text('photo.jpg'));
+      await tester.pumpAndSettle();
+      expect(find.text('1 selected'), findsOneWidget);
     });
 
     testWidgets('Tapping an item in selection mode toggles selection', (tester) async {

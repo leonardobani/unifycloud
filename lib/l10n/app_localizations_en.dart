@@ -2039,4 +2039,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get running => 'Running';
+
+  @override
+  String get uploadChooseTypePrompt => 'Choose what you would like to upload:';
+
+  @override
+  String get longPressActionTitle => 'Long press action';
+
+  @override
+  String get longPressActionSelect => 'Select';
+
+  @override
+  String get longPressActionSelectDesc =>
+      'Long-pressing an item toggles multi-selection.';
+
+  @override
+  String get longPressActionMove => 'Move (Drag)';
+
+  @override
+  String get longPressActionMoveDesc =>
+      'Long-pressing an item lets you drag it into a folder or opposite pane to move it.';
+
+  @override
+  String get longPressActionMenu => 'Actions menu';
+
+  @override
+  String get longPressActionMenuDesc =>
+      'Long-pressing an item opens its actions menu (open, download, rename, delete).';
+
+  @override
+  String get longPressActionCut => 'Cut';
+
+  @override
+  String get longPressActionCutDesc =>
+      'Long-pressing an item cuts it to the clipboard so you can paste-move it elsewhere.';
 }

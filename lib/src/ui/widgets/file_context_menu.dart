@@ -4,8 +4,10 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../l10n/l10n_extension.dart';
 import '../../models/cloud_models.dart';
+import '../../models/settings_models.dart';
 import '../../providers/clipboard_provider.dart';
 import '../../providers/file_explorer_provider.dart';
+import '../../providers/settings_provider.dart';
 import '../../providers/transfer_provider.dart';
 import '../../services/file_opener_service.dart';
 import '../../services/rclone_service.dart';
@@ -473,15 +475,42 @@ class FileContextMenuRegion extends ConsumerWidget {
     );
   }
 
+  void _handleLongPress(
+    BuildContext context,
+    WidgetRef ref,
+    LongPressAction action,
+    Offset globalPosition,
+  ) {
+    switch (action) {
+      case LongPressAction.select:
+        ref.read(_provider.notifier).toggleSelection(item.path);
+      case LongPressAction.move:
+        // Touch drag-and-drop is handled by AdaptiveDraggable when enabled.
+        break;
+      case LongPressAction.contextMenu:
+        _showContextMenu(context, ref, globalPosition);
+      case LongPressAction.cut:
+        final currentRemote = ref.read(_provider).currentRemote ?? '';
+        if (currentRemote.isEmpty) return;
+        ref.read(clipboardProvider.notifier).cut(item, currentRemote);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.itemCutToClipboard(item.name))),
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final longPressAction =
+        ref.watch(settingsProvider.select((s) => s.longPressAction));
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onSecondaryTapDown: (details) {
         _showContextMenu(context, ref, details.globalPosition);
       },
-      onLongPress: () {
-        ref.read(_provider.notifier).toggleSelection(item.path);
+      onLongPressStart: (details) {
+        _handleLongPress(context, ref, longPressAction, details.globalPosition);
       },
       child: child,
     );

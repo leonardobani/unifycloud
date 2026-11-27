@@ -296,8 +296,8 @@ void main() {
     });
   });
 
-  group('FileExplorerScreen Upload Menu Widget Tests', () {
-    testWidgets('Renders upload PopupMenuButton with "Carica file" and "Carica intera cartella"',
+  group('FileExplorerScreen Upload Popup Widget Tests', () {
+    testWidgets('Renders upload button and opens popup asking File or Folder',
         (tester) async {
       await tester.binding.setSurfaceSize(const Size(800, 1200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -330,19 +330,27 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Find the upload PopupMenuButton
+      // Find the unified upload IconButton
       final uploadButton = find.byTooltip('Upload from device');
       expect(uploadButton, findsOneWidget);
+      expect(find.byIcon(Icons.upload_rounded), findsOneWidget);
 
-      // Tap on the upload button to open menu
+      // Tap on the upload button to open popup dialog
       await tester.tap(uploadButton);
       await tester.pumpAndSettle();
 
-      // Verify menu items are displayed
+      // Verify AlertDialog popup asks whether to upload file or folder
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.text('Choose what you would like to upload:'), findsOneWidget);
       expect(find.text('Upload file'), findsOneWidget);
       expect(find.text('Upload entire folder'), findsOneWidget);
-      expect(find.byIcon(Icons.upload_file_outlined), findsNWidgets(2));
+      expect(find.byIcon(Icons.upload_file_outlined), findsOneWidget);
       expect(find.byIcon(Icons.drive_folder_upload_outlined), findsOneWidget);
+
+      // Dismiss via Cancel
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsNothing);
     });
   });
 }

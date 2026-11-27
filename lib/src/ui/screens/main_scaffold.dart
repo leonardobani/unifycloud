@@ -40,10 +40,11 @@ class MainScaffold extends StatelessWidget {
                   extended: constraints.maxWidth > 1000,
                   leading: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Icon(
-                      Icons.cloud_sync,
-                      size: 32,
-                      color: Theme.of(context).colorScheme.primary,
+                    child: Image.asset(
+                      'assets/icons/unifycloudLogo.png',
+                      width: 32,
+                      height: 32,
+                      fit: BoxFit.contain,
                     ),
                   ),
                   destinations: [

@@ -577,5 +577,15 @@
   "moveToBadge": "Mover a",
   "copyToBadge": "Copiar a",
   "copiedExclamation": "¡Copiado!",
-  "running": "En curso"
+  "running": "En curso",
+  "uploadChooseTypePrompt": "Elige qué quieres subir:",
+  "longPressActionTitle": "Acción de pulsación larga",
+  "longPressActionSelect": "Seleccionar",
+  "longPressActionSelectDesc": "Mantener pulsado un elemento activa la selección múltiple.",
+  "longPressActionMove": "Mover (Arrastrar)",
+  "longPressActionMoveDesc": "Mantener pulsado un elemento permite arrastrarlo a una carpeta u otro panel para moverlo.",
+  "longPressActionMenu": "Menú de acciones",
+  "longPressActionMenuDesc": "Mantener pulsado un elemento abre su menú de acciones (abrir, descargar, renombrar, eliminar).",
+  "longPressActionCut": "Cortar",
+  "longPressActionCutDesc": "Mantener pulsado un elemento lo corta al portapapeles para moverlo pegándolo en otro lugar."
 }

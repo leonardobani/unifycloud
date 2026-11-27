@@ -13,6 +13,37 @@ import '../widgets/file_explorer_pane_view.dart';
 class FileExplorerScreen extends ConsumerWidget {
   const FileExplorerScreen({super.key});
 
+  void _handleBackNavigation(WidgetRef ref, {required bool isDualPane}) {
+    final primaryState = ref.read(fileExplorerProvider);
+    final primaryNotifier = ref.read(fileExplorerProvider.notifier);
+
+    if (primaryState.isSelectionMode) {
+      primaryNotifier.clearSelection();
+      return;
+    }
+    if (primaryState.isSearching) {
+      primaryNotifier.setSearching(false);
+      return;
+    }
+
+    if (isDualPane) {
+      final secondaryState = ref.read(secondaryFileExplorerProvider);
+      final secondaryNotifier = ref.read(secondaryFileExplorerProvider.notifier);
+      if (secondaryState.isSelectionMode) {
+        secondaryNotifier.clearSelection();
+        return;
+      }
+      if (secondaryState.isSearching) {
+        secondaryNotifier.setSearching(false);
+        return;
+      }
+    }
+
+    if (primaryState.currentPath.isNotEmpty) {
+      primaryNotifier.navigateUp();
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
@@ -23,53 +54,57 @@ class FileExplorerScreen extends ConsumerWidget {
         final isWideScreen = constraints.maxWidth >= 900;
         final showDualPane = isWideScreen && isDualPaneActive;
 
-        if (showDualPane) {
-          return Scaffold(
-            body: Column(
-              children: [
-                Expanded(
-                  child: Row(
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) return;
+            _handleBackNavigation(ref, isDualPane: showDualPane);
+          },
+          child: showDualPane
+              ? Scaffold(
+                  body: Column(
                     children: [
-                      // Left Pane
                       Expanded(
-                        child: FileExplorerPaneView(
-                          provider: fileExplorerProvider,
-                          oppositeProvider: secondaryFileExplorerProvider,
-                          paneTitle: l10n.paneLeft,
-                          isDualPane: true,
-                          showDualPaneToggle: isWideScreen,
+                        child: Row(
+                          children: [
+                            // Left Pane
+                            Expanded(
+                              child: FileExplorerPaneView(
+                                provider: fileExplorerProvider,
+                                oppositeProvider: secondaryFileExplorerProvider,
+                                paneTitle: l10n.paneLeft,
+                                isDualPane: true,
+                                showDualPaneToggle: isWideScreen,
+                              ),
+                            ),
+                            const VerticalDivider(width: 1, thickness: 1),
+                            // Right Pane
+                            Expanded(
+                              child: FileExplorerPaneView(
+                                provider: secondaryFileExplorerProvider,
+                                oppositeProvider: fileExplorerProvider,
+                                paneTitle: l10n.paneRight,
+                                isDualPane: true,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const VerticalDivider(width: 1, thickness: 1),
-                      // Right Pane
-                      Expanded(
-                        child: FileExplorerPaneView(
-                          provider: secondaryFileExplorerProvider,
-                          oppositeProvider: fileExplorerProvider,
-                          paneTitle: l10n.paneRight,
-                          isDualPane: true,
-                        ),
+                      // Bottom Commander Bar
+                      CommanderActionBar(
+                        leftProvider: fileExplorerProvider,
+                        rightProvider: secondaryFileExplorerProvider,
                       ),
                     ],
                   ),
+                )
+              : Scaffold(
+                  body: FileExplorerPaneView(
+                    provider: fileExplorerProvider,
+                    oppositeProvider: secondaryFileExplorerProvider,
+                    showDualPaneToggle: isWideScreen,
+                  ),
                 ),
-                // Bottom Commander Bar
-                CommanderActionBar(
-                  leftProvider: fileExplorerProvider,
-                  rightProvider: secondaryFileExplorerProvider,
-                ),
-              ],
-            ),
-          );
-        }
-
-        // Single Pane Mode
-        return Scaffold(
-          body: FileExplorerPaneView(
-            provider: fileExplorerProvider,
-            oppositeProvider: secondaryFileExplorerProvider,
-            showDualPaneToggle: isWideScreen,
-          ),
         );
       },
     );
