@@ -587,5 +587,13 @@
   "longPressActionMenu": "Menú de acciones",
   "longPressActionMenuDesc": "Mantener pulsado un elemento abre su menú de acciones (abrir, descargar, renombrar, eliminar).",
   "longPressActionCut": "Cortar",
-  "longPressActionCutDesc": "Mantener pulsado un elemento lo corta al portapapeles para moverlo pegándolo en otro lugar."
+  "longPressActionCutDesc": "Mantener pulsado un elemento lo corta al portapapeles para moverlo pegándolo en otro lugar.",
+  "pinnedFavorites": "Fijados",
+  "noPinnedFavoritesHint": "Fija archivos o carpetas desde el Explorador para tenerlos aquí.",
+  "pinToHome": "Fijar en Inicio",
+  "unpinFromHome": "Quitar de Inicio",
+  "pinnedToHomeFeedback": "\"{name}\" fijado en Inicio",
+  "unpinnedFromHomeFeedback": "\"{name}\" quitado de Inicio",
+  "openContainingFolder": "Abrir carpeta en el Explorador",
+  "remoteNotConnected": "La nube \"{remote}\" ya no está conectada"
 }

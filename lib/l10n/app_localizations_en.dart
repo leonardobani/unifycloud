@@ -2073,4 +2073,35 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get longPressActionCutDesc =>
       'Long-pressing an item cuts it to the clipboard so you can paste-move it elsewhere.';
+
+  @override
+  String get pinnedFavorites => 'Pinned';
+
+  @override
+  String get noPinnedFavoritesHint =>
+      'Pin files or folders from Explorer to keep them here.';
+
+  @override
+  String get pinToHome => 'Pin to Home';
+
+  @override
+  String get unpinFromHome => 'Unpin from Home';
+
+  @override
+  String pinnedToHomeFeedback(String name) {
+    return 'Pinned \"$name\" to Home';
+  }
+
+  @override
+  String unpinnedFromHomeFeedback(String name) {
+    return 'Removed \"$name\" from Home';
+  }
+
+  @override
+  String get openContainingFolder => 'Open folder in Explorer';
+
+  @override
+  String remoteNotConnected(String remote) {
+    return 'Cloud \"$remote\" is no longer connected';
+  }
 }

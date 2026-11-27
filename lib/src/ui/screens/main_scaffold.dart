@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../widgets/transfer_panel.dart';
+import '../widgets/unify_cloud_logo.dart';
 
 /// Root scaffold providing an adaptive responsive layout:
 /// - Desktop (> 768px): NavigationRail (side rail)
@@ -38,14 +39,9 @@ class MainScaffold extends StatelessWidget {
                   selectedIndex: navigationShell.currentIndex,
                   onDestinationSelected: _onDestinationSelected,
                   extended: constraints.maxWidth > 1000,
-                  leading: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Image.asset(
-                      'assets/icons/unifycloudLogo.png',
-                      width: 32,
-                      height: 32,
-                      fit: BoxFit.contain,
-                    ),
+                  leading: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20.0),
+                    child: UnifyCloudLogo(size: 32),
                   ),
                   destinations: [
                     NavigationRailDestination(

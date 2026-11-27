@@ -2094,4 +2094,35 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get longPressActionCutDesc =>
       'Tenendo premuto un elemento lo si taglia negli appunti per spostarlo incollandolo altrove.';
+
+  @override
+  String get pinnedFavorites => 'Preferiti';
+
+  @override
+  String get noPinnedFavoritesHint =>
+      'Fissa file o cartelle da Explorer per averli qui.';
+
+  @override
+  String get pinToHome => 'Fissa sulla Home';
+
+  @override
+  String get unpinFromHome => 'Rimuovi dalla Home';
+
+  @override
+  String pinnedToHomeFeedback(String name) {
+    return '\"$name\" fissato sulla Home';
+  }
+
+  @override
+  String unpinnedFromHomeFeedback(String name) {
+    return '\"$name\" rimosso dalla Home';
+  }
+
+  @override
+  String get openContainingFolder => 'Apri cartella in Explorer';
+
+  @override
+  String remoteNotConnected(String remote) {
+    return 'Il cloud \"$remote\" non è più collegato';
+  }
 }

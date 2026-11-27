@@ -15,6 +15,7 @@ import '../../services/rclone_service.dart';
 import '../../services/secure_config_service.dart';
 import '../../utils/url_utils.dart';
 import '../widgets/pin_setup_dialog.dart';
+import '../widgets/unify_cloud_logo.dart';
 
 /// Comprehensive settings, appearance, and developer support screen for UnifyCloud.
 class SettingsScreen extends ConsumerWidget {
@@ -1077,7 +1078,7 @@ class SettingsScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.info_outline, color: Colors.blue),
+                const UnifyCloudLogo(size: 32),
                 const SizedBox(width: 12),
                 Text(
                   l10n.aboutUnifyCloud,

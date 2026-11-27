@@ -587,5 +587,13 @@
   "longPressActionMenu": "قائمة الإجراءات",
   "longPressActionMenuDesc": "الضغط المطوّل على عنصر يفتح قائمة إجراءاته (فتح، تنزيل، إعادة تسمية، حذف).",
   "longPressActionCut": "قص",
-  "longPressActionCutDesc": "الضغط المطوّل على عنصر يقصّه إلى الحافظة لنقله عبر اللصق في مكان آخر."
+  "longPressActionCutDesc": "الضغط المطوّل على عنصر يقصّه إلى الحافظة لنقله عبر اللصق في مكان آخر.",
+  "pinnedFavorites": "المفضلة",
+  "noPinnedFavoritesHint": "ثبّت الملفات أو المجلدات من المستكشف لإبقائها هنا.",
+  "pinToHome": "تثبيت في الرئيسية",
+  "unpinFromHome": "إزالة من الرئيسية",
+  "pinnedToHomeFeedback": "تم تثبيت \"{name}\" في الرئيسية",
+  "unpinnedFromHomeFeedback": "تمت إزالة \"{name}\" من الرئيسية",
+  "openContainingFolder": "فتح المجلد في المستكشف",
+  "remoteNotConnected": "السحابة \"{remote}\" لم تعد متصلة"
 }

@@ -587,5 +587,13 @@
   "longPressActionMenu": "Menu azioni",
   "longPressActionMenuDesc": "Tenendo premuto un elemento si apre il menu delle azioni (apri, scarica, rinomina, elimina).",
   "longPressActionCut": "Taglia",
-  "longPressActionCutDesc": "Tenendo premuto un elemento lo si taglia negli appunti per spostarlo incollandolo altrove."
+  "longPressActionCutDesc": "Tenendo premuto un elemento lo si taglia negli appunti per spostarlo incollandolo altrove.",
+  "pinnedFavorites": "Preferiti",
+  "noPinnedFavoritesHint": "Fissa file o cartelle da Explorer per averli qui.",
+  "pinToHome": "Fissa sulla Home",
+  "unpinFromHome": "Rimuovi dalla Home",
+  "pinnedToHomeFeedback": "\"{name}\" fissato sulla Home",
+  "unpinnedFromHomeFeedback": "\"{name}\" rimosso dalla Home",
+  "openContainingFolder": "Apri cartella in Explorer",
+  "remoteNotConnected": "Il cloud \"{remote}\" non è più collegato"
 }

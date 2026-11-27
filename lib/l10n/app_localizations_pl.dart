@@ -2081,4 +2081,35 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get longPressActionCutDesc =>
       'Długie naciśnięcie elementu wycina go do schowka, aby wkleić i przenieść go w inne miejsce.';
+
+  @override
+  String get pinnedFavorites => 'Przypięte';
+
+  @override
+  String get noPinnedFavoritesHint =>
+      'Przypnij pliki lub foldery w Eksploratorze, aby mieć je tutaj.';
+
+  @override
+  String get pinToHome => 'Przypnij na stronie głównej';
+
+  @override
+  String get unpinFromHome => 'Odepnij ze strony głównej';
+
+  @override
+  String pinnedToHomeFeedback(String name) {
+    return 'Przypięto \"$name\" do strony głównej';
+  }
+
+  @override
+  String unpinnedFromHomeFeedback(String name) {
+    return 'Usunięto \"$name\" ze strony głównej';
+  }
+
+  @override
+  String get openContainingFolder => 'Otwórz folder w Eksploratorze';
+
+  @override
+  String remoteNotConnected(String remote) {
+    return 'Chmura \"$remote\" nie jest już połączona';
+  }
 }

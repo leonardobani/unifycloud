@@ -3633,6 +3633,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Long-pressing an item cuts it to the clipboard so you can paste-move it elsewhere.'**
   String get longPressActionCutDesc;
+
+  /// Header for the pinned files and folders card on the Home screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get pinnedFavorites;
+
+  /// Minimal hint shown in the pinned card on Home when no items are pinned yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin files or folders from Explorer to keep them here.'**
+  String get noPinnedFavoritesHint;
+
+  /// Explorer action to pin a file or folder to the Home screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin to Home'**
+  String get pinToHome;
+
+  /// Action to remove a pinned file or folder from the Home screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin from Home'**
+  String get unpinFromHome;
+
+  /// Snackbar feedback after pinning an item to Home.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned \"{name}\" to Home'**
+  String pinnedToHomeFeedback(String name);
+
+  /// Snackbar feedback after removing a pinned item from Home.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed \"{name}\" from Home'**
+  String unpinnedFromHomeFeedback(String name);
+
+  /// Action to open a pinned file's parent folder in Explorer.
+  ///
+  /// In en, this message translates to:
+  /// **'Open folder in Explorer'**
+  String get openContainingFolder;
+
+  /// Error shown when tapping a pinned item whose remote is no longer configured.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud \"{remote}\" is no longer connected'**
+  String remoteNotConnected(String remote);
 }
 
 class _AppLocalizationsDelegate

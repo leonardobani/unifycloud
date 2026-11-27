@@ -2110,4 +2110,35 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get longPressActionCutDesc =>
       'Un appui long sur un élément le coupe dans le presse-papiers pour le déplacer ailleurs.';
+
+  @override
+  String get pinnedFavorites => 'Favoris';
+
+  @override
+  String get noPinnedFavoritesHint =>
+      'Épinglez des fichiers ou dossiers depuis l\'Explorateur pour les garder ici.';
+
+  @override
+  String get pinToHome => 'Épingler à l\'accueil';
+
+  @override
+  String get unpinFromHome => 'Retirer de l\'accueil';
+
+  @override
+  String pinnedToHomeFeedback(String name) {
+    return '\"$name\" épinglé à l\'accueil';
+  }
+
+  @override
+  String unpinnedFromHomeFeedback(String name) {
+    return '\"$name\" retiré de l\'accueil';
+  }
+
+  @override
+  String get openContainingFolder => 'Ouvrir le dossier dans l\'Explorateur';
+
+  @override
+  String remoteNotConnected(String remote) {
+    return 'Le cloud \"$remote\" n\'est plus connecté';
+  }
 }

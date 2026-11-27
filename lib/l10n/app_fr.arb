@@ -587,5 +587,13 @@
   "longPressActionMenu": "Menu d'actions",
   "longPressActionMenuDesc": "Un appui long sur un élément ouvre son menu d'actions (ouvrir, télécharger, renommer, supprimer).",
   "longPressActionCut": "Couper",
-  "longPressActionCutDesc": "Un appui long sur un élément le coupe dans le presse-papiers pour le déplacer ailleurs."
+  "longPressActionCutDesc": "Un appui long sur un élément le coupe dans le presse-papiers pour le déplacer ailleurs.",
+  "pinnedFavorites": "Favoris",
+  "noPinnedFavoritesHint": "Épinglez des fichiers ou dossiers depuis l'Explorateur pour les garder ici.",
+  "pinToHome": "Épingler à l'accueil",
+  "unpinFromHome": "Retirer de l'accueil",
+  "pinnedToHomeFeedback": "\"{name}\" épinglé à l'accueil",
+  "unpinnedFromHomeFeedback": "\"{name}\" retiré de l'accueil",
+  "openContainingFolder": "Ouvrir le dossier dans l'Explorateur",
+  "remoteNotConnected": "Le cloud \"{remote}\" n'est plus connecté"
 }

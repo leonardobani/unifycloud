@@ -6,6 +6,7 @@ import '../../../l10n/l10n_extension.dart';
 import '../../models/cloud_models.dart';
 import '../../models/settings_models.dart';
 import '../../providers/clipboard_provider.dart';
+import '../../providers/favorites_provider.dart';
 import '../../providers/file_explorer_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../providers/transfer_provider.dart';
@@ -48,6 +49,15 @@ class FileContextMenuRegion extends ConsumerWidget {
     final overlay = Overlay.of(context).context.findRenderObject() as RenderBox?;
     if (overlay == null) return;
 
+    final explorerState = ref.read(_provider);
+    final currentRemoteForMenu = explorerState.currentRemote ?? '';
+    final isPinned = currentRemoteForMenu.isNotEmpty &&
+        ref.read(favoritesProvider.notifier).isPinned(
+              currentRemoteForMenu,
+              item.path,
+              currentPath: explorerState.currentPath,
+            );
+
     final oppositeState = oppositeProvider != null ? ref.read(oppositeProvider!) : null;
     final hasOppositeRemote = oppositeState?.currentRemote != null &&
         oppositeState!.currentRemote!.trim().isNotEmpty;
@@ -88,6 +98,18 @@ class FileContextMenuRegion extends ConsumerWidget {
             ),
           ),
         ],
+        if (currentRemoteForMenu.isNotEmpty)
+          PopupMenuItem(
+            value: 'toggle_favorite',
+            child: ListTile(
+              leading: Icon(
+                isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+              ),
+              title: Text(isPinned ? l10n.unpinFromHome : l10n.pinToHome),
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
         PopupMenuItem(
           value: 'share_link',
           child: ListTile(
@@ -195,6 +217,23 @@ class FileContextMenuRegion extends ConsumerWidget {
         _handleDirectTransfer(context, ref, isMove: true);
       case 'download':
         _handleDownload(context, ref, currentRemote);
+      case 'toggle_favorite':
+        final pinned = await ref.read(favoritesProvider.notifier).toggleFavorite(
+              remote: currentRemote,
+              item: item,
+              currentPath: ref.read(_provider).currentPath,
+            );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                pinned
+                    ? l10n.pinnedToHomeFeedback(item.name)
+                    : l10n.unpinnedFromHomeFeedback(item.name),
+              ),
+            ),
+          );
+        }
       case 'share_link':
         _handleShareLink(context, ref, currentRemote);
       case 'copy':

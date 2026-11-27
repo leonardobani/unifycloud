@@ -3,12 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:unifycloud/l10n/l10n_extension.dart';
 import 'package:unifycloud/src/models/cloud_models.dart';
+import 'package:unifycloud/src/models/favorite_item.dart';
 import 'package:unifycloud/src/providers/cloud_accounts_provider.dart';
+import 'package:unifycloud/src/providers/favorites_provider.dart';
 import 'package:unifycloud/src/providers/file_explorer_provider.dart';
 import 'package:unifycloud/src/ui/screens/file_explorer_screen.dart';
 import 'package:unifycloud/src/ui/screens/home_screen.dart';
 import 'package:unifycloud/src/ui/widgets/breadcrumbs_bar.dart';
 import 'package:unifycloud/src/ui/widgets/file_type_icon.dart';
+import 'package:unifycloud/src/ui/widgets/unify_cloud_logo.dart';
 
 void main() {
   group('Fase 5: UI Component Tests', () {
@@ -77,6 +80,7 @@ void main() {
                 ),
               ),
             ),
+            favoritesProvider.overrideWith(() => FavoritesNotifier(const [])),
           ],
           child: const MaterialApp(
             locale: Locale('it'),
@@ -89,6 +93,7 @@ void main() {
 
       expect(find.text('UnifyCloud'), findsOneWidget);
       expect(find.byIcon(Icons.cloud_sync), findsNothing);
+      expect(find.byType(UnifyCloudLogo), findsOneWidget);
       expect(
         find.byWidgetPredicate(
           (w) =>
@@ -100,10 +105,76 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Panoramica Storage Aggregato'), findsOneWidget);
+      expect(find.text('Cifratura RAM Attiva'), findsNothing);
+      expect(find.text('Sincronizzazione & Backup'), findsNothing);
+      expect(find.text('Preferiti'), findsOneWidget);
+      expect(
+        find.text('Fissa file o cartelle da Explorer per averli qui.'),
+        findsOneWidget,
+      );
       expect(find.text('Cloud Collegati (2)'), findsOneWidget);
       expect(find.text('MyDrive'), findsOneWidget);
       expect(find.text('WorkDropbox'), findsOneWidget);
       expect(find.text('Collega Nuovo Cloud'), findsOneWidget);
+    });
+
+    testWidgets('HomeScreen renders pinned favorites slim card above connected clouds', (tester) async {
+      final pinned = [
+        FavoriteItem(
+          remote: 'MyDrive',
+          path: 'Docs/budget.pdf',
+          name: 'budget.pdf',
+          isDir: false,
+          size: 1024,
+          pinnedAt: DateTime(2026, 11, 27),
+        ),
+        FavoriteItem(
+          remote: 'WorkDropbox',
+          path: 'Projects',
+          name: 'Projects',
+          isDir: true,
+          pinnedAt: DateTime(2026, 11, 27),
+        ),
+      ];
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            cloudAccountsProvider.overrideWith(
+              () => CloudAccountsNotifierMock(
+                const CloudAccountsState(
+                  remotes: [
+                    CloudRemote(name: 'MyDrive', type: 'drive'),
+                    CloudRemote(name: 'WorkDropbox', type: 'dropbox'),
+                  ],
+                ),
+              ),
+            ),
+            favoritesProvider.overrideWith(() => FavoritesNotifier(pinned)),
+          ],
+          child: const MaterialApp(
+            locale: Locale('it'),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: appLocalizationsDelegates,
+            home: HomeScreen(),
+          ),
+        ),
+      );
+
+      expect(find.text('Preferiti'), findsOneWidget);
+      expect(find.text('budget.pdf'), findsOneWidget);
+      expect(find.text('Projects'), findsOneWidget);
+
+      final favTop = tester.getTopLeft(find.text('Preferiti')).dy;
+      final cloudsTop = tester.getTopLeft(find.text('Cloud Collegati (2)')).dy;
+      expect(favTop, lessThan(cloudsTop));
+
+      // Unpin one item directly from Home
+      await tester.tap(find.byTooltip('Rimuovi dalla Home').first);
+      await tester.pump();
+
+      expect(find.text('budget.pdf'), findsNothing);
+      expect(find.text('Projects'), findsOneWidget);
     });
 
     testWidgets('FileExplorerScreen renders toolbar and item cards', (tester) async {
@@ -152,6 +223,7 @@ void main() {
 
       // Check popup menu options appear
       expect(find.text('Download to local'), findsOneWidget);
+      expect(find.text('Pin to Home'), findsOneWidget);
       expect(find.text('Copy'), findsOneWidget);
       expect(find.text('Cut (Move)'), findsOneWidget);
       expect(find.text('Rename'), findsOneWidget);

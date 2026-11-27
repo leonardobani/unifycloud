@@ -587,5 +587,13 @@
   "longPressActionMenu": "Menu akcji",
   "longPressActionMenuDesc": "Długie naciśnięcie elementu otwiera menu akcji (otwórz, pobierz, zmień nazwę, usuń).",
   "longPressActionCut": "Wytnij",
-  "longPressActionCutDesc": "Długie naciśnięcie elementu wycina go do schowka, aby wkleić i przenieść go w inne miejsce."
+  "longPressActionCutDesc": "Długie naciśnięcie elementu wycina go do schowka, aby wkleić i przenieść go w inne miejsce.",
+  "pinnedFavorites": "Przypięte",
+  "noPinnedFavoritesHint": "Przypnij pliki lub foldery w Eksploratorze, aby mieć je tutaj.",
+  "pinToHome": "Przypnij na stronie głównej",
+  "unpinFromHome": "Odepnij ze strony głównej",
+  "pinnedToHomeFeedback": "Przypięto \"{name}\" do strony głównej",
+  "unpinnedFromHomeFeedback": "Usunięto \"{name}\" ze strony głównej",
+  "openContainingFolder": "Otwórz folder w Eksploratorze",
+  "remoteNotConnected": "Chmura \"{remote}\" nie jest już połączona"
 }

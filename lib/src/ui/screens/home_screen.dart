@@ -1,16 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:path/path.dart' as p;
 
 import '../../../l10n/l10n_extension.dart';
 import '../../models/cloud_models.dart';
-import '../../models/sync_rule_model.dart';
+import '../../models/favorite_item.dart';
 import '../../providers/cloud_accounts_provider.dart';
+import '../../providers/favorites_provider.dart';
 import '../../providers/file_explorer_provider.dart';
-import '../../providers/sync_provider.dart';
+import '../../services/file_opener_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/add_cloud_dialog.dart';
 import '../widgets/expandable_error_box.dart';
+import '../widgets/file_type_icon.dart';
+import '../widgets/unify_cloud_logo.dart';
 
 /// Home screen showing the aggregated storage overview and list of connected cloud providers.
 class HomeScreen extends ConsumerWidget {
@@ -28,13 +32,8 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            Image.asset(
-              'assets/icons/unifycloudLogo.png',
-              width: 28,
-              height: 28,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(width: 8),
+            const UnifyCloudLogo(size: 30),
+            const SizedBox(width: 10),
             Text(
               l10n.appTitle,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -66,31 +65,18 @@ class HomeScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Wrap(
-                      alignment: WrapAlignment.spaceBetween,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 8,
-                      runSpacing: 8,
+                    Row(
                       children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.pie_chart_outline, color: AppTheme.primaryColor),
-                            const SizedBox(width: 8),
-                            Text(
-                              l10n.storageOverviewAggregated,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                          ],
-                        ),
-                        Chip(
-                          avatar: const Icon(Icons.shield_outlined, size: 16, color: Colors.green),
-                          label: Text(l10n.ramEncryptionActive, style: const TextStyle(fontSize: 12)),
-                          backgroundColor: Colors.green.withValues(alpha: 0.1),
-                          side: BorderSide.none,
-                          visualDensity: VisualDensity.compact,
+                        const Icon(Icons.pie_chart_outline, color: AppTheme.primaryColor),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            l10n.storageOverviewAggregated,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
@@ -196,60 +182,8 @@ class HomeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
 
-            // Sync & Backup Overview Card
-            Builder(
-              builder: (context) {
-                final syncRules = ref.watch(syncProvider);
-                final enabledCount = syncRules.where((r) => r.isEnabled).length;
-                final isSyncing = syncRules.any((r) => r.lastStatus == SyncStatus.inProgress);
-
-                return Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: colorScheme.primaryContainer,
-                          child: Icon(
-                            Icons.sync,
-                            color: colorScheme.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                l10n.syncAndBackup,
-                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                syncRules.isEmpty
-                                    ? l10n.noRulesConfigured
-                                    : '${l10n.activeRulesCount(enabledCount, syncRules.length)}${isSyncing ? ' • ${l10n.syncInProgress}' : ''}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: isDark ? Colors.grey[400] : Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        TextButton.icon(
-                          icon: const Icon(Icons.arrow_forward, size: 16),
-                          label: Text(l10n.manage),
-                          onPressed: () => context.go('/sync'),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+            // Pinned Favorites Slim Card
+            _PinnedFavoritesCard(remotes: state.remotes, isLoadingRemotes: state.isLoading),
             const SizedBox(height: 20),
 
             // Header for Connected Clouds
@@ -361,9 +295,14 @@ class HomeScreen extends ConsumerWidget {
                             children: [
                               Row(
                                 children: [
-                                  CircleAvatar(
-                                    backgroundColor: color.withValues(alpha: 0.15),
-                                    child: Icon(icon, color: color),
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: color.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(icon, color: color, size: 22),
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
@@ -478,6 +417,9 @@ class HomeScreen extends ConsumerWidget {
                                           await ref
                                               .read(cloudAccountsProvider.notifier)
                                               .deleteRemote(remote.name);
+                                          await ref
+                                              .read(favoritesProvider.notifier)
+                                              .removeByRemote(remote.name);
                                         }
                                       }
                                     },
@@ -602,6 +544,185 @@ class HomeScreen extends ConsumerWidget {
                   );
                 },
               ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Slim card displaying pinned favorite files and folders with small icons and text.
+class _PinnedFavoritesCard extends ConsumerWidget {
+  const _PinnedFavoritesCard({
+    required this.remotes,
+    required this.isLoadingRemotes,
+  });
+
+  final List<CloudRemote> remotes;
+  final bool isLoadingRemotes;
+
+  void _openInExplorer(BuildContext context, WidgetRef ref, FavoriteItem fav) {
+    final targetPath = fav.isDir
+        ? fav.path
+        : (() {
+            final dir = p.posix.dirname(fav.path);
+            return (dir == '.' || dir == '/') ? '' : dir;
+          })();
+    ref.read(fileExplorerProvider.notifier).openRemote(fav.remote, path: targetPath);
+    context.go('/explorer');
+  }
+
+  void _handleTap(BuildContext context, WidgetRef ref, FavoriteItem fav) {
+    final l10n = context.l10n;
+    final remoteExists = remotes.any((r) => r.name == fav.remote);
+    if (!isLoadingRemotes && !remoteExists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.remoteNotConnected(fav.remote))),
+      );
+      return;
+    }
+
+    if (fav.isDir) {
+      _openInExplorer(context, ref, fav);
+    } else {
+      ref.read(fileOpenerServiceProvider).openCloudItem(
+            context: context,
+            item: fav.toCloudItem(),
+            remote: fav.remote,
+            currentPath: '',
+          );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final favorites = ref.watch(favoritesProvider);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(
+                  Icons.push_pin_outlined,
+                  size: 16,
+                  color: AppTheme.primaryColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.pinnedFavorites,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            if (favorites.isEmpty)
+              Text(
+                l10n.noPinnedFavoritesHint,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              )
+            else
+              Column(
+                children: [
+                  for (var i = 0; i < favorites.length; i++) ...[
+                    if (i > 0) const Divider(height: 1),
+                    _FavoriteRow(
+                      item: favorites[i],
+                      onTap: () => _handleTap(context, ref, favorites[i]),
+                      onLongPress: () => _openInExplorer(context, ref, favorites[i]),
+                      onUnpin: () {
+                        ref
+                            .read(favoritesProvider.notifier)
+                            .removeFavorite(favorites[i].remote, favorites[i].path);
+                      },
+                    ),
+                  ],
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FavoriteRow extends StatelessWidget {
+  const _FavoriteRow({
+    required this.item,
+    required this.onTap,
+    required this.onLongPress,
+    required this.onUnpin,
+  });
+
+  final FavoriteItem item;
+  final VoidCallback onTap;
+  final VoidCallback onLongPress;
+  final VoidCallback onUnpin;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: onTap,
+      onLongPress: onLongPress,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+        child: Row(
+          children: [
+            FileTypeIcon(
+              fileName: item.name,
+              isDir: item.isDir,
+              size: 18,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                item.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              item.remote,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 11,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(width: 4),
+            IconButton(
+              icon: Icon(
+                Icons.close,
+                size: 15,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              tooltip: l10n.unpinFromHome,
+              visualDensity: VisualDensity.compact,
+              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+              padding: EdgeInsets.zero,
+              onPressed: onUnpin,
+            ),
           ],
         ),
       ),

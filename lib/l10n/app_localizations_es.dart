@@ -2099,4 +2099,35 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get longPressActionCutDesc =>
       'Mantener pulsado un elemento lo corta al portapapeles para moverlo pegándolo en otro lugar.';
+
+  @override
+  String get pinnedFavorites => 'Fijados';
+
+  @override
+  String get noPinnedFavoritesHint =>
+      'Fija archivos o carpetas desde el Explorador para tenerlos aquí.';
+
+  @override
+  String get pinToHome => 'Fijar en Inicio';
+
+  @override
+  String get unpinFromHome => 'Quitar de Inicio';
+
+  @override
+  String pinnedToHomeFeedback(String name) {
+    return '\"$name\" fijado en Inicio';
+  }
+
+  @override
+  String unpinnedFromHomeFeedback(String name) {
+    return '\"$name\" quitado de Inicio';
+  }
+
+  @override
+  String get openContainingFolder => 'Abrir carpeta en el Explorador';
+
+  @override
+  String remoteNotConnected(String remote) {
+    return 'La nube \"$remote\" ya no está conectada';
+  }
 }

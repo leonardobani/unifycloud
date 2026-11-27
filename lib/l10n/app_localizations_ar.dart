@@ -2071,4 +2071,35 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get longPressActionCutDesc =>
       'الضغط المطوّل على عنصر يقصّه إلى الحافظة لنقله عبر اللصق في مكان آخر.';
+
+  @override
+  String get pinnedFavorites => 'المفضلة';
+
+  @override
+  String get noPinnedFavoritesHint =>
+      'ثبّت الملفات أو المجلدات من المستكشف لإبقائها هنا.';
+
+  @override
+  String get pinToHome => 'تثبيت في الرئيسية';
+
+  @override
+  String get unpinFromHome => 'إزالة من الرئيسية';
+
+  @override
+  String pinnedToHomeFeedback(String name) {
+    return 'تم تثبيت \"$name\" في الرئيسية';
+  }
+
+  @override
+  String unpinnedFromHomeFeedback(String name) {
+    return 'تمت إزالة \"$name\" من الرئيسية';
+  }
+
+  @override
+  String get openContainingFolder => 'فتح المجلد في المستكشف';
+
+  @override
+  String remoteNotConnected(String remote) {
+    return 'السحابة \"$remote\" لم تعد متصلة';
+  }
 }

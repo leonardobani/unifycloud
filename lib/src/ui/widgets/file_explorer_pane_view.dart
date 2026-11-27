@@ -10,6 +10,7 @@ import '../../models/pane_drag_data.dart';
 import '../../models/settings_models.dart';
 import '../../providers/clipboard_provider.dart';
 import '../../providers/cloud_accounts_provider.dart';
+import '../../providers/favorites_provider.dart';
 import '../../providers/file_explorer_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../providers/transfer_provider.dart';
@@ -1725,6 +1726,13 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     FileExplorerState state,
   ) {
     final l10n = context.l10n;
+    final currentRemote = state.currentRemote ?? '';
+    final isPinned = currentRemote.isNotEmpty &&
+        ref.read(favoritesProvider.notifier).isPinned(
+              currentRemote,
+              item.path,
+              currentPath: state.currentPath,
+            );
     final oppositeState = widget.oppositeProvider != null
         ? ref.read(widget.oppositeProvider!)
         : null;
@@ -1766,6 +1774,18 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             ),
           ),
         ],
+        if (currentRemote.isNotEmpty)
+          PopupMenuItem(
+            value: 'toggle_favorite',
+            child: ListTile(
+              leading: Icon(
+                isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+              ),
+              title: Text(isPinned ? l10n.unpinFromHome : l10n.pinToHome),
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
         PopupMenuItem(
           value: 'share_link',
           child: ListTile(
@@ -1878,6 +1898,23 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             );
       case 'download':
         _handleBatchDownload(state.copyWith(selectedPaths: {item.path}));
+      case 'toggle_favorite':
+        final pinned = await ref.read(favoritesProvider.notifier).toggleFavorite(
+              remote: currentRemote,
+              item: item,
+              currentPath: state.currentPath,
+            );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                pinned
+                    ? l10n.pinnedToHomeFeedback(item.name)
+                    : l10n.unpinnedFromHomeFeedback(item.name),
+              ),
+            ),
+          );
+        }
       case 'share_link':
         final fullSrcPath = resolveRemoteItemPath(item.path, state.currentPath);
         final messenger = ScaffoldMessenger.of(context);
