@@ -98,15 +98,21 @@ This document covers solutions to common questions, platform-specific edge cases
 
 ---
 
-### 2. Flatpak cannot access external USB drives or secondary hard drives
-- **Cause**: Flatpak sandbox defaults to user home and standard host locations.
+### 2. Flatpak cannot access external USB drives or custom mount points
+- **Cause**: The Flatpak manifest grants access to `home` and `/run/media` by default, while other custom mount points (such as `/media` or `/mnt`) sit outside the sandbox.
 - **Solution**:
-  - Grant filesystem access to external mount points via terminal:
+  - Grant filesystem access to additional mount points via terminal:
     ```bash
-    flatpak override --user --filesystem=/run/media dev.leonardobani.unifycloud
     flatpak override --user --filesystem=/media dev.leonardobani.unifycloud
+    flatpak override --user --filesystem=/mnt dev.leonardobani.unifycloud
     ```
   - Or use the graphical [Flatseal](https://flathub.org/apps/com.github.tchx84.Flatseal) utility to toggle filesystem permissions.
+
+### 3. Closing the desktop window minimizes UnifyCloud instead of quitting
+- **Cause**: **Minimize to System Tray** is enabled by default on Linux, Windows, and macOS so background transfers and scheduled sync jobs are not interrupted when you close the window.
+- **Solution**:
+  - Right-click the UnifyCloud icon in your system tray and select **Quit** to exit completely.
+  - Or disable **Minimize to System Tray** in **Settings ➔ Desktop & System**.
 
 ---
 
@@ -120,6 +126,12 @@ This document covers solutions to common questions, platform-specific edge cases
 ---
 
 ## 💬 Frequently Asked Questions (FAQ)
+
+### What languages does UnifyCloud support?
+UnifyCloud is localized into **6 languages**: **English**, **Italian**, **French**, **Polish**, **Spanish**, and **Arabic**, or it can automatically follow your operating system's language (**System**) in **Settings ➔ Appearance & Theme ➔ Language**.
+
+### How do I change what long-pressing a file does on mobile?
+Go to **Settings ➔ Files & Exploration ➔ Long press action** and choose between **Select** (multi-selection, default), **Move (Drag)** (touch drag-and-drop), **Actions menu** (context menu), or **Cut** (clipboard cut).
 
 ### Is UnifyCloud free and open-source?
 **Yes.** UnifyCloud is licensed under the **GNU General Public License v3.0 (GPL-3.0)**. It is free to use, modify, and distribute.

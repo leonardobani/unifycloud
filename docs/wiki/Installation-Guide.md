@@ -82,12 +82,13 @@ UnifyCloud will appear in your desktop application launcher (GNOME Dash, KDE Kic
 flatpak run dev.leonardobani.unifycloud
 ```
 
-#### Flatpak Security & Portal Permissions:
-The Flatpak manifest (`packaging/flatpak/dev.leonardobani.unifycloud.yml`) includes configured sandbox permissions:
+#### Flatpak Security & Sandbox Permissions:
+The Flatpak manifests (`packaging/flatpak/dev.leonardobani.unifycloud.yml` and the offline Flathub build in `packaging/flatpak/flathub/`) include configured sandbox permissions:
 - `--share=network`: Connects to cloud provider APIs.
-- `--filesystem=host`: Grants access to your local filesystem for browsing and folder sync.
-- `--talk-name=org.freedesktop.secrets`: Connects to your system Keyring (GNOME Keyring / KWallet) to store OAuth tokens encrypted in RAM.
-- `--socket=wayland` and `--socket=fallback-x11`: Native graphics acceleration on both Wayland and X11 display servers.
+- `--share=ipc`, `--socket=wayland`, `--socket=fallback-x11`, and `--device=dri`: Native graphics and GPU acceleration on both Wayland and X11 display servers.
+- `--filesystem=home` and `--filesystem=/run/media`: Grants access to your home directory and removable media for browsing and folder sync.
+- `--talk-name=org.freedesktop.secrets`: Connects to your system Keyring (GNOME Keyring / KWallet) to store OAuth tokens securely.
+- `--talk-name=org.freedesktop.Notifications` and `--talk-name=org.kde.StatusNotifierWatcher`: Desktop notifications and System Tray integration (alongside standard `FileChooser` and `OpenURI` portals).
 
 ---
 
@@ -163,7 +164,21 @@ Due to Apple App Store restrictions on third-party cloud engines and compilation
 
 ---
 
-## 5. 🛠️ Building from Source (Developer Guide)
+## 5. 🖥️ Desktop System Integration (Tray & Autostart)
+
+On **Linux**, **Windows**, and **macOS**, UnifyCloud integrates with your desktop environment:
+
+- **System Tray & Minimize to Tray**:
+  - When **Minimize to System Tray** is enabled in **Settings ➔ Desktop & System** (enabled by default), closing the window hides UnifyCloud to the system tray instead of exiting, allowing active transfers and scheduled sync rules to continue running.
+  - The tray icon tooltip and context menu display live active transfer counts and combined transfer speed, with quick actions to **Show Window**, **Hide Window**, or **Quit**.
+- **Autostart on Boot (Linux)**:
+  - Enable **Autostart on Boot** in **Settings ➔ Desktop & System** to create an XDG autostart entry (`~/.config/autostart/dev.leonardobani.unifycloud.desktop`) that starts UnifyCloud automatically on login.
+- **Hidden Startup Flags**:
+  - Launch UnifyCloud minimized to the tray from a terminal or custom startup script using `--background` or `--minimized`.
+
+---
+
+## 6. 🛠️ Building from Source (Developer Guide)
 
 If you want to contribute, modify code, or compile UnifyCloud from scratch, follow these instructions.
 
@@ -171,11 +186,11 @@ If you want to contribute, modify code, or compile UnifyCloud from scratch, foll
 
 | Tool | Minimum Version | Notes |
 |---|---|---|
-| **Flutter SDK** | `3.13.3+` | Run `flutter doctor` to verify setup |
-| **Go Compiler** | `1.22+` | Required to compile the CGO Rclone core |
+| **Flutter SDK** | `3.50.1+` (Dart `3.14.0+`) | Run `flutter doctor` to verify setup |
+| **Go Compiler** | `1.26+` | Required to compile the CGO Rclone core (`v1.75.1`) |
 | **C/C++ Compiler** | GCC 11+ or Clang 14+ | Host CGO toolchain |
 | **CMake & Ninja** | Latest | Required for Linux/Windows native desktop embedding |
-| **Android NDK** | `r26` to `r28` | Required for cross-compiling Go backend for Android ABIs |
+| **Android NDK & JDK** | NDK `r28` (`28.2.13676358`), JDK `17` | Required for cross-compiling Go backend for Android ABIs |
 | **Xcode** | `15+` | Required for macOS and iOS compilation |
 
 ---
@@ -208,7 +223,7 @@ bash scripts/build_go_android.sh
 # On Windows:
 scripts\build_go_android.bat
 ```
-This automatically compiles `librclone_wrapper.so` for each ABI and outputs them to `android/app/src/main/jniLibs/<abi>/`.
+This automatically compiles `librclone_wrapper.so` for each ABI and outputs them to `android/app/src/main/jniLibs/<abi>/`. You can also pass `--abi <abi>` to build a single ABI or `--check-env` to verify your NDK toolchain. During `flutter build apk`, Gradle's `buildGoAndroid` task also invokes this script automatically (and falls back to debug signing when `android/key.properties` is absent so local release builds work out of the box).
 
 #### C. For Windows Desktop:
 Using MinGW-w64 GCC or MSVC:

@@ -34,8 +34,8 @@ flowchart TD
 ```
 
 1. **Persistent Encryption**: All cloud configurations, OAuth refresh tokens, and passwords are saved using the platform's hardware-backed cryptographic storage via `flutter_secure_storage`.
-2. **In-RAM Injection**: At application launch, the decrypted configuration is transferred across the native Dart FFI boundary directly into a custom `MemoryStorage` structure in the Go engine.
-3. **Zero Plaintext on Disk**: The Go engine never calls `configfile.Save()` to disk. Tokens exist only in volatile RAM while the application is running and are completely wiped when the app closes or a remote is deleted.
+2. **Startup Token Sanitization & In-RAM Injection**: At application launch, `TokenUtils.sanitizeIniConfig()` normalizes any legacy/malformed token formatting and the decrypted configuration is transferred across the native Dart FFI boundary directly into a custom `MemoryStorage` structure in the Go engine.
+3. **Zero Plaintext on Disk**: The Go engine never calls `configfile.Save()` to disk. Tokens exist only in volatile RAM while the application is running and are completely wiped when the app closes, a remote is disconnected, or you trigger **Clear All Credentials** in **Settings ➔ Security**.
 
 ---
 
@@ -53,7 +53,7 @@ UnifyCloud integrates directly with the official security frameworks of each pla
 
 ---
 
-## 🔐 App Lock: PIN & Biometrics
+## 🔐 App Lock: 6-Digit PIN & Biometrics
 
 To protect your cloud accounts from unauthorized physical access when handing your unlocked phone or laptop to someone else, UnifyCloud includes a built-in **App Lock Gate**:
 
@@ -63,36 +63,39 @@ To protect your cloud accounts from unauthorized physical access when handing yo
 |                          [ LOCK ICON ]                      |
 |                                                             |
 |                           UnifyCloud                        |
-|                     Inserisci il PIN di sblocco             |
+|                     Enter your 6-digit PIN                  |
 |                                                             |
-|                          [ * * * * ]                        |
+|                        [ * * * * * * ]                      |
 |                                                             |
 |                        [ 1 ] [ 2 ] [ 3 ]                    |
 |                        [ 4 ] [ 5 ] [ 6 ]                    |
 |                        [ 7 ] [ 8 ] [ 9 ]                    |
 |                        [BIO] [ 0 ] [DEL]                    |
 |                                                             |
-|                   [ Sblocca con Impronta ]                  |
+|                   [ Unlock with Biometrics ]                |
 |                                                             |
 +-------------------------------------------------------------+
 ```
 
 ### Features:
-- **PIN Protection**: Set a 4-to-6 digit numeric PIN.
+- **6-Digit PIN Protection**: Set a 6-digit numeric PIN with desktop keyboard entry support and automatic submission on the 6th digit.
+- **Salted PBKDF2-HMAC-SHA256 Storage**: Your PIN is never stored in plaintext. `AppLockService` derives a cryptographic hash using **PBKDF2-HMAC-SHA256** (`100,000` iterations with a random 16-byte salt) and performs constant-time verification.
 - **Biometric Authentication**: Unlock effortlessly using Fingerprint, Touch ID, or Face Recognition via Android `BiometricPrompt` and Apple `LocalAuthentication`.
-- **Auto-Lock Timeout**: Configure when the application re-locks:
+- **Auto-Lock Timeout**: Configure when the application re-locks after leaving the foreground:
   - **Immediately**: Locks the instant the app is minimized or switched to another app.
-  - **30 seconds**
-  - **1 minute**
-  - **5 minutes**
-- **App Lock Gate**: While locked, all UI routes and data are completely shielded behind a full-screen blurred gate. No drive lists, file names, or cached folders can be viewed until authentication succeeds.
+  - **After 1 minute**
+  - **After 5 minutes**
+  - **After 15 minutes**
+  - **After 30 minutes**
+- **App Lock Gate**: While locked, all UI routes and data are completely shielded behind a full-screen gate (`PopScope` blocks back dismissal). No drive lists, file names, or cached folders can be viewed until authentication succeeds.
 
 ### Setting Up App Lock:
-1. Open **Impostazioni (Settings)** ➔ **Sicurezza (Security)**.
-2. Toggle ON **Blocco Applicazione (App Lock)**.
-3. Enter your desired 4-to-6 digit PIN, then confirm it.
-4. *(Optional)* Toggle ON **Usa Biometria (Use Biometrics)** to allow fingerprint or face unlock.
-5. Choose your preferred **Timeout di blocco automatico (Auto-lock timeout)**.
+1. Open **Settings** ➔ **Security & Encryption**.
+2. Toggle ON **App Lock**.
+3. Enter your desired 6-digit PIN, then confirm it.
+4. *(Optional)* Toggle ON **Biometric Authentication** to allow fingerprint or face unlock.
+5. Choose your preferred **Auto-Lock** timeout.
+6. Use **Change PIN** anytime (requires verifying your current PIN first), or toggle App Lock OFF after verifying your current PIN.
 
 ---
 

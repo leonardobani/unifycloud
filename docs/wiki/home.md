@@ -10,13 +10,16 @@
 |---|---|
 | **Multi-Cloud Aggregation** | Connect Google Drive, Microsoft OneDrive, Dropbox, Nextcloud/WebDAV, SFTP, Amazon S3, and Local Storage simultaneously. |
 | **Real-Time Storage Monitor** | View combined aggregate storage capacity alongside per-drive usage in real time. |
+| **Pinned Favorites on Home** | Pin frequently used files and folders from any remote to the Home screen for instant one-tap opening or folder navigation. |
 | **Direct Cloud-to-Cloud Transfers** | Copy or move files directly between any two clouds (e.g., Google Drive to OneDrive, or Dropbox to SFTP) without intermediate downloads. |
-| **Automated Synchronization** | Configure scheduled incremental backups (`copy`) or 1:1 mirror synchronization (`sync`) between local folders and remote clouds. |
+| **Multi-Selection & Batch Operations** | Select multiple files and folders at once to download, copy, cut, delete, or transfer directly across Dual-Pane panes. |
+| **Automated Synchronization** | Configure scheduled incremental backups (`copy`) or 1:1 mirror synchronization (`sync`) between local folders and remote clouds, with quick folder presets and **Sync All**. |
 | **Zero-Plaintext In-RAM Security** | Sensitive OAuth tokens, passwords, and S3 keys are encrypted in the OS Keystore/Keychain. Credentials are decrypted directly into RAM for the Go engine—never written in plaintext to disk. |
-| **End-to-End Encryption (Crypt)** | Protect your sensitive files with AES-256 client-side encryption (content, file names, directory names) before they ever reach the cloud provider. |
-| **Dual-Pane Commander Mode** | Side-by-side file managers on Desktop, Foldables, and Tablets with smooth drag-and-drop between panes. |
-| **App Lock & Biometrics** | Protect access to your cloud accounts with a 4-to-6 digit PIN or Biometric authentication (Fingerprint / Face ID). |
-| **Background Execution** | Android Foreground Service and background worker tasks prevent transfers or sync jobs from pausing when the app is minimized. |
+| **End-to-End Encryption (Crypt)** | Protect your sensitive files with AES-256 client-side encryption (content, file names, directory names) before they ever reach the cloud provider, with a one-click **Create Vault Here** shortcut. |
+| **Dual-Pane Commander Mode** | Side-by-side file managers on Desktop, Foldables, and Tablets with cross-pane and folder drag-and-drop plus configurable long-press gestures. |
+| **App Lock & Biometrics** | Protect access to your cloud accounts with a 6-digit PIN (salted PBKDF2-HMAC-SHA256) or Biometric authentication (Fingerprint / Face ID). |
+| **Background & Desktop Tray Integration** | Android Foreground Service keeps transfers/sync alive in the background; on Desktop, minimize to the System Tray with live transfer speed status and Linux XDG autostart (`--background`). |
+| **Multi-Language Support** | Localized UI in 6 languages: English, Italian, French, Polish, Spanish, and Arabic (or automatic system locale). |
 
 ---
 
@@ -26,11 +29,11 @@ UnifyCloud combines the high-performance UI rendering of Flutter with the mature
 
 ```mermaid
 flowchart TD
-    subgraph UI["Flutter Frontend (Dart 3)"]
+    subgraph UI["Flutter Frontend (Dart 3.14+ / Flutter 3.50+)"]
         A[Material 3 Responsive UI<br>Desktop, Tablet & Mobile]
-        B[State Management<br>Riverpod 3 Notifiers]
+        B[State Management<br>Riverpod 3 Notifiers & Favorites]
         C[Declarative Routing<br>GoRouter]
-        D[Background Service<br>Android Foreground Notification]
+        D[Background & Desktop Services<br>Foreground Service / System Tray / Autostart]
     end
 
     subgraph FFI["Dart C-FFI Bridge"]
@@ -86,18 +89,17 @@ Explore the detailed guides below to set up, configure, and get the most out of 
 ### 1. [Installation Guide](Installation-Guide)
 Step-by-step instructions for installing and running UnifyCloud on all supported operating systems:
 - **Android**: Installing via F-Droid, APK releases (`arm64-v8a`, `armeabi-v7a`, `x86_64`), ADB, and battery optimization setup.
-- **Linux**: Installing the universal Flatpak (`.flatpak`), native binary bundle, and distribution dependencies.
-- **Windows**: Installing the desktop release bundle, prerequisites, and execution tips.
-- **macOS & iOS**: Running on macOS, Gatekeeper considerations, and compiling the native iOS archive.
-- **Building from Source**: Complete development environment setup (Flutter SDK, Go compiler, Android NDK, C/C++ toolchains).
+- **Linux**: Installing the universal Flatpak / Flathub package, native binary bundle, distribution dependencies, and XDG Autostart / System Tray setup.
+- **Windows & macOS / iOS**: Installing desktop release bundles, System Tray integration, Gatekeeper notes, and iOS builds.
+- **Building from Source**: Complete development environment setup (Flutter 3.50+, Go 1.26+, Android NDK r28, C/C++ toolchains).
 
 ### 2. [Configuring Drives](Configuring-Drives)
 How to connect and configure all supported storage backends:
 - **Google Drive**, **Microsoft OneDrive** (Personal & Business/SharePoint), **Dropbox**.
 - **Nextcloud / WebDAV**, **SSH / SFTP**, **Amazon S3 & S3-compatible** (MinIO, Wasabi, Cloudflare R2, Backblaze B2).
 - **Local Filesystem** (`/storage/emulated/0` on Android, root `/` on Linux/macOS, Windows drive letters).
-- **End-to-End Encrypted (Crypt) Vaults**: Setting up client-side AES-256 encryption on top of any cloud account.
-- Monitoring quota usage, connection testing, editing, and disconnecting remotes.
+- **End-to-End Encrypted (Crypt) Vaults**: Setting up client-side AES-256 encryption on top of any cloud account (including the **Create Vault Here** card shortcut).
+- Refreshing quotas, launching Explorer, and disconnecting remotes.
 
 ### 3. [OAuth 2.0 Setup Guide](OAuth-Setup-Guide)
 Detailed guide on OAuth authentication:
@@ -110,24 +112,23 @@ Detailed guide on OAuth authentication:
 Everything you need to know about automated background folder synchronization:
 - Differences between **Incremental Backup (`copy`)** and **Mirror Synchronization (`sync`)**.
 - Schedule frequencies (Manual, 15m, 30m, 1h, 6h, 12h, Daily).
-- How the background scheduler executes jobs without freezing the UI.
+- Quick system folder presets, **Sync All**, and cancelling active sync jobs.
 - Creating, editing, pausing, and monitoring sync rules.
 - Conflict prevention and safety rules.
 
 ### 5. [File Management & Transfers](File-Management-and-Transfers)
 Mastering the UnifyCloud file explorer:
-- Navigation, breadcrumbs, search, and sorting.
-- **Dual-Pane Commander Mode**: Side-by-side file exploration and cross-pane drag-and-drop.
-- Direct Cloud-to-Cloud copy/move operations.
-- Using the Multi-Cloud Clipboard.
-- The Real-Time Transfer Manager (speeds in MB/s, ETA, cancellation, and retry).
-- Generating public sharing links.
+- Navigation, Disk Chooser (with `AES-256` E2EE badge), breadcrumbs, search, sorting, and protected back navigation.
+- **Pinned Favorites**: Pinning files and folders to the Home screen for instant access.
+- **Multi-Selection & Unified Uploads**: Selecting multiple items for batch actions and uploading individual files or entire folders recursively.
+- **Dual-Pane Commander Mode & Long-Press Customization**: Side-by-side exploration, folder/cross-pane drag-and-drop, and configurable long-press actions (`Select`, `Move`, `Actions menu`, `Cut`).
+- Direct Cloud-to-Cloud copy/move operations, Multi-Cloud Clipboard, Real-Time Transfer Manager, and public share links.
 
 ### 6. [Security & App Lock](Security-and-App-Lock)
 How UnifyCloud protects your privacy and data:
-- Zero-Plaintext In-RAM memory storage model.
+- Zero-Plaintext In-RAM memory storage model and startup token sanitization.
 - OS Keystore / Keychain integration via `flutter_secure_storage`.
-- Setting up PIN protection, Biometric Unlock (Fingerprint / Face ID), and auto-lock timers.
+- Setting up the 6-digit PIN (hashed with salted PBKDF2-HMAC-SHA256), Biometric Unlock (Fingerprint / Face ID), and auto-lock timers (`Immediately` to `30 minutes`).
 - Technical overview of the Rclone Crypt cryptographic layer.
 
 ### 7. [Troubleshooting & FAQ](Troubleshooting-and-FAQ)
@@ -135,8 +136,8 @@ Solutions for common scenarios:
 - Resolving OAuth local server port conflicts (`53682`).
 - Fixing "Unverified App" warnings in Google Cloud.
 - Preventing Android battery managers from terminating background transfers.
-- Resolving Linux Keyring / Secret Service prompts.
-- Frequently Asked Questions.
+- Resolving Linux Keyring / Secret Service prompts, Flatpak permissions, System Tray behavior, and Explorer gestures.
+- Frequently Asked Questions (including supported languages).
 
 ---
 

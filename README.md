@@ -1,21 +1,20 @@
 # UnifyCloud ☁️
 
-**UnifyCloud** is a cross-platform, multi-cloud storage manager and file synchronizer built with **Flutter** and powered by an embedded native **Go (Rclone)** engine via high-performance **Dart FFI**.
+**UnifyCloud** is a free and open-source (GPL-3.0), cross-platform multi-cloud storage manager and file synchronizer built with **Flutter (Material 3)** and powered by an embedded native **Go (Rclone)** engine via high-performance **Dart C-FFI**.
 
-It seamlessly aggregates cloud storage providers (**Google Drive**, **Dropbox**, **Microsoft OneDrive**, **SFTP**, **WebDAV**, **Amazon S3**, and **Local Filesystem**) into a single, responsive, and secure desktop and mobile experience.
+It aggregates **Google Drive**, **Dropbox**, **Microsoft OneDrive**, **Nextcloud / WebDAV**, **SSH / SFTP**, **Amazon S3 (and S3-compatible)**, **Local Filesystem**, and **client-side AES-256 Crypt Vaults** into a single unified desktop and mobile experience.
 
 ---
 
 ## 🌟 Key Features
 
-- **Unified Multi-Cloud Dashboard**: Connect multiple cloud accounts simultaneously and monitor aggregate storage capacity alongside per-drive usage in real time.
-- **Native Embedded Rclone Engine**: Powered by a custom-compiled Go CGO shared library leveraging Rclone's battle-tested synchronization and transfer core.
-- **Zero-Plaintext In-RAM Security**: Sensitive OAuth tokens and cloud passwords are stored encrypted in the OS Keychain / Android Keystore / Linux Secret Service (`flutter_secure_storage`). Configurations are decrypted directly into RAM storage in the Go core—credentials are never written in plaintext to disk.
-- **Direct Cloud-to-Cloud Transfers**: Copy or move files directly between different cloud providers (e.g., Google Drive to OneDrive or Dropbox to SFTP) with automatic background queuing and clipboard support.
-- **Real-Time Transfer Manager**: Track transfer speeds, transferred bytes, and estimated time remaining (ETA) via a bottom sheet and floating progress bar, with support for cancellation and retry.
-- **Background Transfer Execution**: Transfers continue running even when the app is minimized or backgrounded, using Android Foreground Services and native OS background tasks.
-- **True Local Disk Browsing**: Full filesystem exploration (`/storage/emulated/0` on Android, root `/` on Linux/macOS, drive letters on Windows) with disk quota detection.
-- **Flexible OAuth2 Authentication**: Sign in to Google Drive and other services using either official built-in Rclone client credentials or your own custom Client ID and Secret.
+- **Unified Dashboard & Pinned Favorites**: Monitor aggregate and per-drive storage quotas in real time, pin frequently used files or folders to the **Home** screen for one-tap access, and create encrypted vaults directly from any remote card (**Create Vault Here**).
+- **Multi-Cloud File Explorer & Dual-Pane Commander**: Browse local and remote storage with an adaptive compact toolbar, Disk Chooser (with `AES-256` E2EE badge), unified file & folder upload dialog, multi-selection batch operations, customizable long-press gestures, cross-pane/folder drag-and-drop, and protected back navigation.
+- **Direct Cloud-to-Cloud Transfers**: Stream files directly between providers (e.g., Google Drive to OneDrive or Dropbox to SFTP) in memory without temporary local disk copies, backed by a multi-cloud clipboard and real-time Transfer Manager (speed, ETA, queue, cancel, retry).
+- **Automated Folder Synchronization**: Schedule incremental backups (`copy`) or 1:1 mirror syncs (`sync`) between local folders and cloud remotes, complete with quick OS folder presets and **Sync All**.
+- **Zero-Plaintext In-RAM Security, Crypt & App Lock**: Encrypted OS Keystore/Keychain persistence decrypted only into Go RAM, client-side Rclone Crypt AES-256 vaults, and a 6-digit PIN (salted PBKDF2-HMAC-SHA256) + Biometric App Lock gate.
+- **Background Execution & Desktop Tray**: Android Foreground Service keeps transfers and sync alive in the background; desktop builds support minimizing to the **System Tray** (with live transfer speed status), `--background` / `--minimized` flags, and Linux XDG Autostart.
+- **Multi-Language Support**: Available in **6 languages** (English, Italian, French, Polish, Spanish, and Arabic) or automatic system locale.
 
 ---
 
@@ -23,263 +22,86 @@ It seamlessly aggregates cloud storage providers (**Google Drive**, **Dropbox**,
 
 ```mermaid
 flowchart TD
-    subgraph UI["Flutter Frontend (Dart)"]
-        A[Presentation Layer<br>Material 3 / Screens & Widgets]
-        B[State Management<br>Riverpod 3 Notifiers & State]
+    subgraph UI["Flutter Frontend (Dart 3.14+ / Flutter 3.50+)"]
+        A[Presentation Layer<br>Material 3 / Responsive Desktop & Mobile]
+        B[State Management<br>Riverpod 3 Notifiers & Favorites]
         C[Navigation<br>GoRouter Declarative Routes]
-        D[Background Services<br>flutter_background_service]
+        D[Background & Desktop<br>Foreground Service / System Tray / Autostart]
     end
 
     subgraph Bridge["FFI Interop Layer"]
         E[Dart FFI Bindings<br>Generated by ffigen]
-        F[Service Layer<br>RcloneService / OAuthService / TransferProvider]
+        F[Service Layer<br>RcloneService / OAuthService / AppLockService]
         G[Background Isolates<br>Isolate.run for non-blocking I/O]
     end
 
     subgraph Native["Go Core Engine (CGO)"]
         H[librclone_wrapper<br>C-Shared Dynamic Library]
         I[In-Memory Config Storage<br>Zero Plaintext on Disk]
-        J[Transfer Engine<br>Concurrent Jobs / Accounting / Stats]
-        K[Rclone Backends<br>Drive, Dropbox, OneDrive, SFTP, WebDAV, S3, Local]
-    end
-
-    subgraph Remotes["Storage Providers"]
-        L[Google Drive]
-        M[Dropbox]
-        N[Microsoft OneDrive]
-        O[SFTP / WebDAV / S3]
-        P[Local Filesystem<br>Android / Linux / Windows / macOS]
+        J[Transfer & Sync Engine<br>Concurrent Jobs / Stats / ETA]
+        K[Rclone Backends<br>Drive, Dropbox, OneDrive, SFTP, WebDAV, S3, Crypt, Local]
     end
 
     A <--> B
     B <--> C
     B --> F
+    D --> F
     F --> G
     G --> E
-    D --> F
     E <--> H
     H --> I
     H --> J
     J --> K
-    K <--> L
-    K <--> M
-    K <--> N
-    K <--> O
-    K <--> P
 ```
 
-### Core Technologies
-- **Frontend / Framework**: Flutter (Dart 3.13+) with Material 3 design and responsive layouts.
-- **State Management**: [Riverpod 3](https://riverpod.dev) using modern class-based `Notifier` patterns.
-- **Routing**: [GoRouter](https://pub.dev/packages/go_router) with deep linking and history support.
-- **Native Bridge**: `dart:ffi` with automated C header bindings via `ffigen`.
-- **Core Backend**: Embedded [Rclone](https://rclone.org) written in **Go 1.22+**, compiled into native shared libraries (`.so`, `.dll`, `.dylib`, `.a`).
-- **Secure Persistence**: System Keychain / Keystore encryption via `flutter_secure_storage`.
-- **Background Execution**: `flutter_background_service` with foreground notification synchronization.
+- **Frontend**: Flutter `3.50+` (Dart `3.14+`) with `material_ui` (Material 3), `flutter_riverpod` 3, and `go_router`.
+- **Native Bridge & Core**: `dart:ffi` (`ffigen`) calling a Go `1.26+` CGO shared library embedding `rclone` (`v1.75+`).
+- **Platform Services**: `flutter_secure_storage`, `local_auth`, `flutter_background_service`, `tray_manager`, and `window_manager`.
 
 ---
 
-## 📋 Prerequisites
+## 🚀 Build & Installation
 
-Before building or running UnifyCloud, ensure your development machine has:
+Everything you need to install UnifyCloud (Android via F-Droid or APK, Linux via Flatpak/Flathub or native bundle, Windows, macOS, iOS), configure Desktop Tray/Autostart, or build from source is documented in the Wiki:
 
-1. **Flutter SDK**: Version `3.13.3` or later ([Install Flutter](https://docs.flutter.dev/get-started/install)).
-2. **Go Compiler**: Version `1.22` or later ([Install Go](https://go.dev/doc/install)).
-3. **C/C++ Build Toolchain**:
-   - **Linux**: GCC/Clang, CMake, Ninja, `pkg-config`, `libgtk-3-dev`.
-   - **Android**: Android SDK (API 34+), Android NDK (`r28` or later), CMake.
-   - **Windows**: Visual Studio 2022 (with Desktop C++ workload) or MinGW-w64.
-   - **macOS / iOS**: Xcode 15+ and Command Line Tools.
+👉 **[Installation & Build Guide](docs/wiki/Installation-Guide.md)** · ([GitLab Wiki](https://gitlab.com/leonardobani/unifycloud/-/wikis/Installation-Guide))
 
 ---
 
-## 🚀 Build & Installation Guide
+## 📚 Documentation & User Guides
 
-### 1. Linux Desktop
+Full guides, walkthroughs, and configuration details live in [`docs/wiki/`](docs/wiki/) and on the **[GitLab Wiki](https://gitlab.com/leonardobani/unifycloud/-/wikis/home)**—kept there so nothing is duplicated here:
 
-#### Step 1: Compile the Go Shared Library
-```bash
-cd go_backend
-go build -ldflags="-s -w" -buildmode=c-shared -o librclone_wrapper.so main.go
-cd ..
-```
-
-#### Step 2: Run in Debug Mode
-```bash
-flutter run -d linux
-```
-
-#### Step 3: Build Release Bundle
-```bash
-flutter build linux --release
-```
-The executable bundle will be located at:
-```
-build/linux/x64/release/bundle/
-```
+- 🏠 **[Wiki Home](docs/wiki/home.md)** ([GitLab](https://gitlab.com/leonardobani/unifycloud/-/wikis/home)): Overview, capabilities, and system architecture.
+- 📦 **[Installation Guide](docs/wiki/Installation-Guide.md)** ([GitLab](https://gitlab.com/leonardobani/unifycloud/-/wikis/Installation-Guide)): End-user installs, desktop tray/autostart, prerequisites, and building from source.
+- ☁️ **[Configuring Drives](docs/wiki/Configuring-Drives.md)** ([GitLab](https://gitlab.com/leonardobani/unifycloud/-/wikis/Configuring-Drives)): Connecting Google Drive, OneDrive, Dropbox, Nextcloud/WebDAV, SFTP, S3, Local Disk, and Crypt E2EE vaults.
+- 🔑 **[OAuth 2.0 Setup Guide](docs/wiki/OAuth-Setup-Guide.md)** ([GitLab](https://gitlab.com/leonardobani/unifycloud/-/wikis/OAuth-Setup-Guide)): 3-tier auth model, custom Client IDs/Secrets, and `--dart-define` build-time injection.
+- 🔄 **[Setting Up Sync](docs/wiki/Setting-up-Sync.md)** ([GitLab](https://gitlab.com/leonardobani/unifycloud/-/wikis/Setting-up-Sync)): Scheduled incremental backups (`copy`), mirror sync (`sync`), folder presets, and **Sync All**.
+- 📁 **[File Management & Transfers](docs/wiki/File-Management-and-Transfers.md)** ([GitLab](https://gitlab.com/leonardobani/unifycloud/-/wikis/File-Management-and-Transfers)): Pinned favorites, unified file/folder uploads, multi-selection, long-press gestures, Dual-Pane Commander Mode, cloud-to-cloud transfers, and share links.
+- ❓ **[Troubleshooting & FAQ](docs/wiki/Troubleshooting-and-FAQ.md)** ([GitLab](https://gitlab.com/leonardobani/unifycloud/-/wikis/Troubleshooting-and-FAQ)): Port `53682` conflicts, Android battery optimization, Flatpak/Keyring tips, and supported languages.
 
 ---
 
-### 2. Android (Mobile)
+## 🔒 Security
 
-#### Step 1: Set Android SDK and NDK Paths
-Ensure your `android/local.properties` contains your Android SDK location:
-```properties
-sdk.dir=/path/to/android-sdk
-```
-Or configure it globally:
-```bash
-flutter config --android-sdk /path/to/android-sdk
-```
+UnifyCloud keeps all cloud credentials encrypted in your OS Keystore/Keychain and injects them into Go RAM only—never writing plaintext config files to disk—alongside client-side AES-256 Crypt vaults and a salted PBKDF2-HMAC-SHA256 6-digit PIN / Biometric App Lock.
 
-#### Step 2: Cross-Compile Native Go Backend for Android
-Run the automated build script to cross-compile `librclone_wrapper.so` for all supported Android ABIs (`arm64-v8a`, `armeabi-v7a`, `x86_64`):
-
-**On Linux/macOS:**
-```bash
-bash scripts/build_go_android.sh
-```
-
-**On Windows:**
-```cmd
-scripts\build_go_android.bat
-```
-
-The compiled `.so` files will be placed into `android/app/src/main/jniLibs/`.
-
-#### Step 3: Build Release APK
-```bash
-flutter build apk --release
-```
-The output APK is generated at:
-```
-build/app/outputs/flutter-apk/app-release.apk
-```
-
-> [!TIP]
-> To generate smaller, architecture-specific APKs (~50MB instead of universal fat APK):
-> ```bash
-> flutter build apk --release --split-per-abi
-> ```
-
-#### Step 4: Install on Connected Device
-```bash
-adb install -r build/app/outputs/flutter-apk/app-release.apk
-```
-
----
-
-### 3. Windows Desktop
-
-#### Step 1: Compile the Go DLL
-```cmd
-cd go_backend
-go build -ldflags="-s -w" -buildmode=c-shared -o librclone_wrapper.dll main.go
-cd ..
-```
-
-#### Step 2: Run in Debug Mode
-```cmd
-flutter run -d windows
-```
-
-#### Step 3: Build Release Executable
-```cmd
-flutter build windows --release
-```
-The output bundle will be generated under `build\windows\x64\runner\Release\`.
-
----
-
-### 4. macOS & iOS
-
-#### macOS:
-```bash
-cd go_backend
-go build -ldflags="-s -w" -buildmode=c-shared -o librclone_wrapper.dylib main.go
-cd ..
-flutter run -d macos
-```
-
-#### iOS:
-```bash
-bash scripts/build_go_ios.sh
-flutter run -d ios
-```
-
----
-
-## 📚 Official Documentation & GitLab Wiki
-
-Comprehensive documentation is available in the repository at [`docs/wiki/`](docs/wiki/) and published on our **[GitLab Wiki](https://gitlab.com/leonardobani/unifycloud/-/wikis/home)**:
-
-- 📦 **[Installation Guide](docs/wiki/Installation-Guide.md)**: Setup instructions for Android (F-Droid & APK), Linux (Flatpak & bundle), Windows, macOS, and iOS.
-- ☁️ **[Configuring Drives](docs/wiki/Configuring-Drives.md)**: Connecting Google Drive, OneDrive, Dropbox, Nextcloud/WebDAV, SFTP, S3, Local Drive, and Crypt E2EE vaults.
-- 🔑 **[OAuth 2.0 Setup Guide](docs/wiki/OAuth-Setup-Guide.md)**: Step-by-step guide to generating custom Client IDs & Secrets for Google Drive, Microsoft Azure, and Dropbox.
-- 🔄 **[Setting Up Sync](docs/wiki/Setting-up-Sync.md)**: Configuring scheduled background incremental backups (`copy`) and mirror sync (`sync`).
-- 📁 **[File Management & Transfers](docs/wiki/File-Management-and-Transfers.md)**: Dual-pane commander mode, direct cloud-to-cloud transfers, and real-time speed monitoring.
-- 🛡️ **[Security & App Lock](docs/wiki/Security-and-App-Lock.md)**: Zero-plaintext in-RAM security, OS keystores, PIN, Biometrics, and AES-256 encryption.
-- ❓ **[Troubleshooting & FAQ](docs/wiki/Troubleshooting-and-FAQ.md)**: Common resolutions, port conflicts, and edge cases.
-
----
-
-## 📖 Quick User Walkthrough
-
-### Connecting a Cloud Provider
-1. On the **Home** screen, tap **"Collega Nuovo Cloud"** (Add Cloud).
-2. Select your provider:
-   - **Google Drive**: Choose either **Rclone Client ID** (instant one-click OAuth login via local loopback server) or **Client ID Personale** (enter custom Google Cloud Console OAuth credentials).
-   - **Dropbox**: Instant OAuth authorization with built-in or custom client credentials.
-   - **Microsoft OneDrive**: Personal or Business Microsoft account OAuth login.
-   - **SFTP**: Enter host, port, username, and password.
-   - **WebDAV / Nextcloud**: Enter WebDAV server endpoint URL and credentials.
-   - **Amazon S3**: Enter S3 endpoint, Access Key ID, and Secret Access Key.
-   - **Disco Locale**: Opens the device's native filesystem (`/storage/emulated/0` on Android, root `/` on desktop).
-3. Tap **"Salva e Connetti"**. The remote is validated, credentials are encrypted into the system Keychain, and the drive appears in your dashboard.
-
-### File Exploration & Navigation
-- **Breadcrumbs Bar**: Tap any segment in the breadcrumbs trail to jump directly to parent folders.
-- **Sorting & View Modes**: Toggle between List View and Grid View, and sort items by Name, Size, or Date.
-- **Search**: Real-time filtering within the current folder.
-- **Context Menu**: Tap the 3-dots menu on any file or directory to:
-  - **Scarica** (Download): Automatically downloads to the system's standard Downloads folder.
-  - **Copia** (Copy) / **Taglia** (Move): Copies file reference to the multi-cloud clipboard.
-  - **Elimina** (Delete): Confirms and deletes the item.
-  - **Dettagli** (Details): View file size, path, MIME type, and last modification timestamp.
-
-### Multi-Cloud Copy & Paste
-1. Navigate to any file on **Cloud A** (e.g., Google Drive) and select **Copia** or **Taglia**.
-2. A floating clipboard banner appears at the bottom: *"File pronto per la copia: report.pdf"*.
-3. Navigate to any folder on **Cloud B** (e.g., Dropbox or Local Drive).
-4. Tap **"Incolla qui"** (Paste here).
-5. The transfer begins immediately in the background, streaming directly between remotes.
-
-### Monitoring Transfers
-- Active transfers display a floating bar at the bottom with real-time transfer speed (`MB/s`) and percentage.
-- Tap the bar to expand the full **Transfer Manager Sheet** to view queued, completed, and active transfers, or to cancel running jobs.
+👉 Read the full security architecture in **[Security & App Lock](docs/wiki/Security-and-App-Lock.md)** · ([GitLab Wiki](https://gitlab.com/leonardobani/unifycloud/-/wikis/Security-and-App-Lock))
 
 ---
 
 ## 🧪 Testing & Verification
 
-UnifyCloud includes a full unit, widget, and FFI integration test suite.
-
-### Run Static Analysis
 ```bash
+# Static analysis
 dart analyze
-```
 
-### Run All Automated Tests
-```bash
+# Flutter unit and widget tests
 flutter test
-```
 
-### Key Test Coverage:
-- **`test/storage_quota_test.dart`**: Unit tests for `StorageQuota` calculations, byte formatting, JSON serialization, aggregate statistics, and UI progress indicators.
-- **`test/rclone_service_test.dart`**: FFI integration tests verifying dynamic remote creation, in-memory config management, directory listing, CRUD, and quota interrogation.
-- **`test/transfer_test.dart`**: Transfer job models, speed/ETA formatters, and cancellation mechanics.
-- **`test/add_cloud_dialog_test.dart`**: OAuth service credentials, Client ID selection mode, and modal UI rendering.
-- **`test/expandable_error_box_test.dart`**: Interactive error box expansion, smooth scrolling, and clipboard error copying.
+# Go CGO backend tests
+cd go_backend && go test ./...
+```
 
 ---
 
@@ -287,44 +109,30 @@ flutter test
 
 ```
 unifycloud/
-├── android/                   # Android native project and Gradle configuration
-│   ├── app/build.gradle.kts   # Native NDK task hook & signing config
-│   └── src/main/AndroidManifest.xml # Storage, Foreground Service & Internet permissions
-├── go_backend/                # Core Go Rclone CGO implementation
-│   ├── main.go                # Exported CGO functions (C ABI) & memory storage
-│   ├── go.mod / go.sum        # Go dependencies (Rclone core & backends)
-│   └── librclone_wrapper.so   # Built C-shared library for Linux desktop
+├── android/                   # Android Gradle project, NDK buildGoAndroid hook & manifest
+├── assets/icons/              # App logo and desktop system tray icon
+├── docs/wiki/                 # Official GitLab Wiki documentation source
+├── fastlane/metadata/         # F-Droid / Play store metadata & screenshots
+├── go_backend/                # Embedded Go Rclone CGO wrapper & tests
+├── ios/ & macos/ & windows/   # Native platform runners & library integration
 ├── lib/
-│   ├── main.dart              # Application entry point & Riverpod root
+│   ├── main.dart              # Entry point, tray/autostart/background init & Riverpod root
+│   ├── l10n/                  # ARB files & generated localizations (ar, en, es, fr, it, pl)
 │   └── src/
-│       ├── ffi/               # Low-level Dart CGO bindings (generated via ffigen)
-│       ├── models/            # Data models (CloudItem, CloudRemote, StorageQuota, TransferJob)
-│       ├── providers/         # Riverpod 3 notifiers (Accounts, Explorer, Transfers, Clipboard)
-│       ├── router/            # GoRouter declarative navigation
-│       ├── services/          # RcloneService, OAuthService, SecureConfigService, BackgroundService
-│       ├── ui/
-│       │   ├── screens/       # HomeScreen, FileExplorerScreen, SettingsScreen, MainScaffold
-│       │   ├── theme/         # Color palettes, dark theme, provider icons & styling
-│       │   └── widgets/       # AddCloudDialog, BreadcrumbsBar, FileContextMenu, TransferPanel
-│       └── utils/             # Token normalization & helper utilities
-├── linux/                     # Linux CMake configuration with Go library bundling
-├── scripts/                   # Automated cross-compilation scripts
-│   ├── build_go_android.sh    # Android NDK cross-compilation for arm64/arm/x86_64
-│   ├── build_go_android.bat   # Windows batch equivalent for Android
-│   └── build_go_ios.sh        # iOS device and simulator cross-compilation
-├── test/                      # Comprehensive unit, widget, and integration test suite
+│       ├── ffi/               # Generated Dart CGO bindings (ffigen)
+│       ├── models/            # Cloud, Favorite, Settings, SyncRule & Transfer models
+│       ├── providers/         # Riverpod 3 notifiers (Accounts, Explorer, Favorites, Sync, Transfers, AppLock)
+│       ├── router/            # GoRouter declarative routes
+│       ├── services/          # Rclone, OAuth, SecureConfig, AppLock, FileOpener, Tray, Autostart & Background
+│       ├── ui/                # Material 3 theme, screens & widgets
+│       └── utils/             # Token sanitization & URL launch helpers
+├── linux/                     # Linux CMake configuration & Go library bundling
+├── packaging/                 # F-Droid recipe & Flatpak / Flathub manifests
+├── scripts/                   # Cross-compilation & l10n helper scripts
+├── test/                      # Unit, widget, and FFI integration test suite
 ├── ffigen.yaml                # FFI binding generator configuration
-└── pubspec.yaml               # Flutter dependencies and assets configuration
+└── pubspec.yaml               # Flutter dependencies, SDK constraints & l10n config
 ```
-
----
-
-## 🔒 Security Best Practices
-
-- **Zero Plaintext Token Storage**: Credentials are never written to unencrypted INI files or local storage.
-- **Protected Keychain Storage**: Data is encrypted using AES-256 via the platform's native KeyStore/Keychain.
-- **Automatic Token Sanitization**: Malformed token formats and extra escape characters are auto-healed and normalized on startup.
-- **Sandboxed Execution**: FFI invocations are performed in isolated background threads to prevent UI freezes and memory leaks.
 
 ---
 

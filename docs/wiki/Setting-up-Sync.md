@@ -75,57 +75,56 @@ UnifyCloud offers 7 frequency tiers for every rule:
 
 ### Step 3: Configure Rule Details
 
-1. **Nome Regola (Rule Name)**:
-   - Enter a descriptive label (e.g., `Camera Roll to Nextcloud`, `Work Documents to Google Drive`, `Obsidian Vault to Crypt`).
-2. **Cartella Locale di Origine (Local Source Folder)**:
-   - Tap **"Sfoglia cartella (Browse folder)"** to open your native OS directory picker.
-   - Select the directory on your device you wish to back up (e.g., `/storage/emulated/0/DCIM/Camera` on Android, or `/home/user/Documents` on Linux).
-3. **Cloud Remoto di Destinazione (Destination Remote)**:
-   - Select one of your configured cloud accounts from the dropdown menu (e.g., `GoogleDrive`, `MyNextcloud`, `VaultCifrato`).
-4. **Percorso Remoto (Remote Subfolder)**:
+1. **Rule Name (Optional)**:
+   - Enter a descriptive label (e.g., `Camera Roll to Nextcloud`, `Work Documents to Google Drive`, `Obsidian Vault to Crypt`). If left blank when selecting a folder or preset, a default name is generated automatically.
+2. **Source Local Folder**:
+   - Tap the **Browse folders** icon to open your native OS directory picker, or tap one of the **Quick System Folder Presets** (`Photos (DCIM)`, `Documents`, `Downloads` on Android; `Pictures`, `Documents`, `Downloads` on Desktop) to fill the path and default remote destination in one tap.
+3. **Destination Cloud**:
+   - Select one of your configured cloud accounts from the dropdown menu (e.g., `GoogleDrive`, `MyNextcloud`, `EncryptedVault`).
+4. **Remote Destination Path**:
    - Specify the target folder path on the cloud (e.g. `Backups/PhoneCamera` or `Sync/Work`).
    - If the folder does not exist yet on the cloud, the engine will create it automatically.
-5. **Modalità di Sincronizzazione (Sync Mode)**:
-   - Select either **Backup Incrementale (copy)** or **Sincronizzazione Mirror (sync)**.
-6. **Frequenza di Esecuzione (Frequency)**:
-   - Choose how frequently the rule should run (from *Manuale* to *Ogni giorno*).
-7. **Abilita Regola (Enable Rule)**:
-   - Keep checked (ON) to activate immediate scheduling.
+5. **Sync Mode**:
+   - Select either **Incremental Backup (copy)** or **Mirror Sync (sync)**.
+6. **Frequency**:
+   - Choose how frequently the rule should run (from *Manual* to *Daily*).
+7. **Activate Rule Immediately**:
+   - Keep toggled ON to activate immediate scheduling.
 
 ### Step 4: Save & Start
-- Tap **Salva Regola (Save Rule)**.
-- The rule card will immediately appear in your **Sync Rules** dashboard.
+- Tap **Save Rule**.
+- The rule card will immediately appear in your **Sync & Backup** dashboard.
 
 ---
 
 ## 📊 Monitoring Status & Managing Rules
 
-Each sync rule is presented as an interactive dashboard card:
+Each sync rule is presented as an interactive dashboard card, and the top AppBar includes a **Sync All** button to run all configured rules on demand:
 
 ```
 +-------------------------------------------------------------+
 |  Camera Roll to Nextcloud                [SWITCH: ON]   [:] |
-|  Locale: /storage/emulated/0/DCIM/Camera                     |
-|  Cloud:  MyNextcloud:Backups/PhoneCamera                    |
-|  Modo:   Backup Incrementale    Frequenza: Ogni ora          |
+|  Local: /storage/emulated/0/DCIM/Camera                     |
+|  Cloud: MyNextcloud:Backups/PhoneCamera                     |
+|  Mode:  Incremental Backup     Frequency: Every hour        |
 |                                                             |
-|  [STATUS BADGE: Completata]   Ultimo sync: 14:15 - 02/10    |
+|  [STATUS BADGE: Completed]    Last sync: 14:15 - 02/10      |
 |                                                             |
-|  [ Sincronizza Ora ]       [ Modifica ]       [ Elimina ]   |
+|  [ Sync Now ]               [ Edit ]         [ Delete ]     |
 +-------------------------------------------------------------+
 ```
 
 ### Rule Status Indicators:
-- **⚪ Non eseguita (Idle)**: The rule is waiting for its scheduled interval or has not yet been triggered.
-- **🔵 In corso... (In Progress)**: The background engine is actively analyzing files, comparing checksums/timestamps, and transferring modified blocks. An active job ID is assigned.
-- **🟢 Completata (Completed)**: The synchronization finished successfully with zero errors. Displays the exact date and timestamp of the last successful run.
-- **🔴 Errore (Failed)**: An error occurred (e.g., source folder moved, cloud token expired, network disconnected). Tapping the card displays the full expandable error message.
+- **⚪ Waiting (Idle)**: The rule is waiting for its scheduled interval or has not yet been triggered.
+- **🔵 In Progress**: The background engine is actively analyzing files, comparing checksums/timestamps, and transferring modified blocks. An active job ID is assigned, and a **Cancel** button is displayed to abort the run if needed.
+- **🟢 Completed**: The synchronization finished successfully with zero errors. Displays the exact date and timestamp of the last successful run.
+- **🔴 Failed**: An error occurred (e.g., source folder moved, cloud token expired, network disconnected). The card displays the error message directly.
 
 ### Quick Actions:
-- **Sincronizza Ora (Sync Now)**: Triggers immediate on-demand execution without waiting for the scheduled timer.
+- **Sync All**: Runs all configured sync rules from the screen header.
+- **Sync Now / Cancel**: Triggers immediate on-demand execution, or cancels an active sync job.
 - **Enable / Disable Switch**: Pause an automated rule without deleting its configuration.
-- **Modifica (Edit)**: Change local path, destination, frequency, or sync mode.
-- **Elimina (Delete)**: Removes the sync rule. If a transfer is currently active for this rule, UnifyCloud will automatically terminate the running job gracefully before removing the configuration.
+- **Edit / Delete (3-Dots Menu)**: Modify local path, destination, frequency, or sync mode, or remove the rule (gracefully terminating any active job first).
 
 ---
 

@@ -26,9 +26,9 @@ Google Drive integration supports full file browsing, upload, download, streamin
 2. Choose your **Authentication Mode**:
    - **UnifyCloud (Official / Recommended)**: Instant one-click login using verified UnifyCloud credentials.
    - **Rclone (Fallback)**: Historical default keys.
-   - **Personal Client ID (Advanced)**: For power users with their own Google Cloud Console credentials. (See [OAuth Setup Guide](OAuth-Setup-Guide#1-google-drive-setup)).
+   - **Personal Client ID (Advanced)**: For power users with their own Google Cloud Console credentials. (See [OAuth Setup Guide](OAuth-Setup-Guide#1-google-drive-setup-google-cloud-console)).
 3. Tap **Launch Browser Sign-In**.
-4. UnifyCloud spins up an ephemeral local loopback server on port `53682` and opens your default browser.
+4. UnifyCloud spins up an ephemeral local loopback server on port `53682` and opens your default browser (if automatic browser launch is unavailable on your system, a fallback box displays the authorization URL with **Copy Link** and **Reopen Auth** buttons).
 5. Log in with your Google account and grant permissions to access Drive files.
 6. Once authorized, the browser will automatically redirect back to `http://127.0.0.1:53682/` with a success page: *"UnifyCloud - Authentication Successful! You can close this tab."*
 7. UnifyCloud captures the OAuth token and saves the remote.
@@ -44,7 +44,7 @@ Supports personal Microsoft accounts (`@outlook.com`, `@hotmail.com`) as well as
 
 ### Connection Steps:
 1. Select **Microsoft OneDrive**.
-2. Choose between **UnifyCloud Official** or **Personal Client ID** (see [OAuth Setup Guide](OAuth-Setup-Guide#2-microsoft-onedrive-setup)).
+2. Choose between **UnifyCloud Official** or **Personal Client ID** (see [OAuth Setup Guide](OAuth-Setup-Guide#2-microsoft-onedrive-setup-azure-portal-entra-id)).
 3. Tap **Launch Browser Sign-In**.
 4. Authorize the application on the Microsoft login page.
 5. **Intelligent Drive Discovery**: Once authenticated, UnifyCloud queries the Microsoft Graph API (`/v1.0/me/drive`) to automatically identify your `drive_id` and whether the account is `personal` or `business`.
@@ -150,7 +150,7 @@ flowchart LR
 - **Standard Rclone Crypt Compatibility**: The encrypted vault created in UnifyCloud can be opened anywhere using the official standard Rclone CLI (`rclone mount` / `rclone copy`) on any computer using the same password and salt!
 
 ### How to Create an Encrypted Vault:
-1. Tap **+ Add Cloud** and select **Crittografia E2E (Crypt)**.
+1. Tap **+ Add Cloud** and select **E2E Encryption (Crypt)** (or open the **3-dots menu** on any existing cloud card on the Home screen and choose **Create Vault Here** to pre-select that remote).
 2. **Target Remote**: Select which cloud account and folder will host the scrambled data (e.g. `GoogleDrive:SecureVault` or `Dropbox:Backups`).
 3. **Password**: Choose a strong master passphrase.
 4. **Salt (Optional but Recommended)**: Enter a secondary passphrase for key-derivation hardening.
@@ -170,13 +170,13 @@ flowchart LR
 
 On the **Home** dashboard:
 
-- **Storage Meter**: Each card displays used space, total capacity, and a colored utilization bar.
-- **Refresh Quota**: Tap the refresh icon on any card to query updated quota statistics.
-- **Browse Files**: Tap anywhere on a drive card to launch the **File Explorer** for that remote.
-- **Context Options (3-Dots Menu)**:
-  - **Dettagli / Verifica (Verify Connection)**: Interrogates remote health.
-  - **Rinomina (Rename)**: Updates the display name of the remote.
-  - **Disconnetti (Remove / Delete Remote)**:
+- **Aggregated & Per-Drive Storage Meters**: The top **Storage Overview** card displays combined capacity across all connected clouds, while each remote card displays used space, total capacity, and a colored utilization bar.
+- **E2E Badge**: Crypt vaults display an **`E2E`** lock badge and show the underlying target remote beneath their name.
+- **Refresh Quotas**: Tap the **Refresh** button in the top AppBar (or pull down to refresh) to re-query storage quotas and connected remotes.
+- **Explore Files**: Tap **Explore Files** on any drive card to launch the **File Explorer** for that remote.
+- **Card Context Options (3-Dots Menu)**:
+  - **Create Vault Here** *(on non-crypt remotes)*: Opens the Add Cloud dialog pre-configured to create an encrypted Crypt vault hosted on that remote.
+  - **Disconnect**:
     - Safely unbinds the remote from UnifyCloud.
-    - Clears encrypted tokens and configs from the OS Keychain.
+    - Clears its encrypted tokens and config from the OS Keychain and removes any Home-pinned favorites belonging to that remote.
     - **Never deletes files on the actual cloud server.**
