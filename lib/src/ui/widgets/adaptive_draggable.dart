@@ -29,6 +29,7 @@ class AdaptiveDraggable<T extends Object> extends Draggable<T> {
     super.ignoringFeedbackSemantics = true,
     super.ignoringFeedbackPointer = true,
     this.touchDelay = const Duration(milliseconds: 350),
+    this.touchDragEnabled = true,
     super.allowedButtonsFilter,
     super.hitTestBehavior = HitTestBehavior.deferToChild,
     super.rootOverlay = false,
@@ -41,11 +42,16 @@ class AdaptiveDraggable<T extends Object> extends Draggable<T> {
   /// Defaults to 350ms to allow smooth scrolling while still feeling responsive.
   final Duration touchDelay;
 
+  /// Whether touch/stylus pointers can initiate a drag after [touchDelay].
+  /// Mouse click-and-drag remains enabled regardless of this flag.
+  final bool touchDragEnabled;
+
   @override
   MultiDragGestureRecognizer createRecognizer(GestureMultiDragStartCallback onStart) {
     return _AdaptiveMultiDragGestureRecognizer(
       touchDelay: touchDelay,
       hapticFeedbackOnStart: hapticFeedbackOnStart,
+      touchDragEnabled: touchDragEnabled,
       allowedButtonsFilter: allowedButtonsFilter,
     )..onStart = onStart;
   }
@@ -55,12 +61,22 @@ class _AdaptiveMultiDragGestureRecognizer extends MultiDragGestureRecognizer {
   _AdaptiveMultiDragGestureRecognizer({
     required this.touchDelay,
     required this.hapticFeedbackOnStart,
+    required this.touchDragEnabled,
     super.debugOwner,
     super.allowedButtonsFilter,
   });
 
   final Duration touchDelay;
   final bool hapticFeedbackOnStart;
+  final bool touchDragEnabled;
+
+  @override
+  bool isPointerAllowed(PointerDownEvent event) {
+    if (!touchDragEnabled && event.kind != PointerDeviceKind.mouse) {
+      return false;
+    }
+    return super.isPointerAllowed(event);
+  }
 
   @override
   MultiDragPointerState createNewPointerState(PointerDownEvent event) {

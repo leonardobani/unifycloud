@@ -226,7 +226,7 @@ void main() {
       );
 
       // Verify Upload action in AppBar
-      expect(find.byIcon(Icons.upload_file_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.upload_rounded), findsOneWidget);
 
       // Verify Cloud-to-Cloud Clipboard Banner
       expect(find.text('Paste here'), findsOneWidget);

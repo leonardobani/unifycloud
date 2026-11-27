@@ -324,6 +324,32 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
+  String _longPressActionLabel(LongPressAction action, AppLocalizations l10n) {
+    switch (action) {
+      case LongPressAction.select:
+        return l10n.longPressActionSelect;
+      case LongPressAction.move:
+        return l10n.longPressActionMove;
+      case LongPressAction.contextMenu:
+        return l10n.longPressActionMenu;
+      case LongPressAction.cut:
+        return l10n.longPressActionCut;
+    }
+  }
+
+  String _longPressActionDesc(LongPressAction action, AppLocalizations l10n) {
+    switch (action) {
+      case LongPressAction.select:
+        return l10n.longPressActionSelectDesc;
+      case LongPressAction.move:
+        return l10n.longPressActionMoveDesc;
+      case LongPressAction.contextMenu:
+        return l10n.longPressActionMenuDesc;
+      case LongPressAction.cut:
+        return l10n.longPressActionCutDesc;
+    }
+  }
+
   /// File explorer preferences and download directory card.
   Widget _buildFilesCard(
     BuildContext context,
@@ -373,6 +399,31 @@ class SettingsScreen extends ConsumerWidget {
             secondary: const Icon(Icons.splitscreen),
             value: settings.dualPaneEnabled,
             onChanged: (val) => notifier.setDualPaneEnabled(val),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: const Icon(Icons.touch_app_outlined),
+            title: Text(l10n.longPressActionTitle),
+            subtitle: Text(
+              _longPressActionDesc(settings.longPressAction, l10n),
+              style: const TextStyle(fontSize: 12),
+            ),
+            trailing: DropdownButton<LongPressAction>(
+              key: const ValueKey('settings_long_press_dropdown'),
+              value: settings.longPressAction,
+              underline: const SizedBox.shrink(),
+              items: LongPressAction.values.map((action) {
+                return DropdownMenuItem<LongPressAction>(
+                  value: action,
+                  child: Text(_longPressActionLabel(action, l10n)),
+                );
+              }).toList(),
+              onChanged: (val) {
+                if (val != null) {
+                  notifier.setLongPressAction(val);
+                }
+              },
+            ),
           ),
           const Divider(height: 1),
           ListTile(

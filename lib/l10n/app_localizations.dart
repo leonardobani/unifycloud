@@ -3573,6 +3573,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Running'**
   String get running;
+
+  /// Prompt shown in the upload dialog asking whether to upload a file or folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what you would like to upload:'**
+  String get uploadChooseTypePrompt;
+
+  /// Title for configuring what long-pressing an item in Explorer does.
+  ///
+  /// In en, this message translates to:
+  /// **'Long press action'**
+  String get longPressActionTitle;
+
+  /// Long press option to toggle item multi-selection.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get longPressActionSelect;
+
+  /// Description for the select long press action.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-pressing an item toggles multi-selection.'**
+  String get longPressActionSelectDesc;
+
+  /// Long press option to drag and move an item.
+  ///
+  /// In en, this message translates to:
+  /// **'Move (Drag)'**
+  String get longPressActionMove;
+
+  /// Description for the move long press action.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-pressing an item lets you drag it into a folder or opposite pane to move it.'**
+  String get longPressActionMoveDesc;
+
+  /// Long press option to open the item context menu.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions menu'**
+  String get longPressActionMenu;
+
+  /// Description for the context menu long press action.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-pressing an item opens its actions menu (open, download, rename, delete).'**
+  String get longPressActionMenuDesc;
+
+  /// Long press option to cut the item to the clipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Cut'**
+  String get longPressActionCut;
+
+  /// Description for the cut long press action.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-pressing an item cuts it to the clipboard so you can paste-move it elsewhere.'**
+  String get longPressActionCutDesc;
 }
 
 class _AppLocalizationsDelegate

@@ -28,7 +28,12 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            const Icon(Icons.cloud_sync, color: AppTheme.primaryColor),
+            Image.asset(
+              'assets/icons/unifycloudLogo.png',
+              width: 28,
+              height: 28,
+              fit: BoxFit.contain,
+            ),
             const SizedBox(width: 8),
             Text(
               l10n.appTitle,

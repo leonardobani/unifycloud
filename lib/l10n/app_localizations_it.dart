@@ -2060,4 +2060,38 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get running => 'In corso';
+
+  @override
+  String get uploadChooseTypePrompt => 'Scegli cosa vuoi caricare:';
+
+  @override
+  String get longPressActionTitle => 'Azione pressione prolungata';
+
+  @override
+  String get longPressActionSelect => 'Seleziona';
+
+  @override
+  String get longPressActionSelectDesc =>
+      'Tenendo premuto un elemento si attiva o modifica la selezione multipla.';
+
+  @override
+  String get longPressActionMove => 'Sposta (Trascina)';
+
+  @override
+  String get longPressActionMoveDesc =>
+      'Tenendo premuto un elemento puoi trascinarlo in una cartella o nell\'altro pannello per spostarlo.';
+
+  @override
+  String get longPressActionMenu => 'Menu azioni';
+
+  @override
+  String get longPressActionMenuDesc =>
+      'Tenendo premuto un elemento si apre il menu delle azioni (apri, scarica, rinomina, elimina).';
+
+  @override
+  String get longPressActionCut => 'Taglia';
+
+  @override
+  String get longPressActionCutDesc =>
+      'Tenendo premuto un elemento lo si taglia negli appunti per spostarlo incollandolo altrove.';
 }

@@ -88,6 +88,17 @@ void main() {
       );
 
       expect(find.text('UnifyCloud'), findsOneWidget);
+      expect(find.byIcon(Icons.cloud_sync), findsNothing);
+      expect(
+        find.byWidgetPredicate(
+          (w) =>
+              w is Image &&
+              w.image is AssetImage &&
+              (w.image as AssetImage).assetName ==
+                  'assets/icons/unifycloudLogo.png',
+        ),
+        findsOneWidget,
+      );
       expect(find.text('Panoramica Storage Aggregato'), findsOneWidget);
       expect(find.text('Cloud Collegati (2)'), findsOneWidget);
       expect(find.text('MyDrive'), findsOneWidget);

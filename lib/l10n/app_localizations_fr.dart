@@ -2075,4 +2075,39 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get running => 'En cours';
+
+  @override
+  String get uploadChooseTypePrompt =>
+      'Choisissez ce que vous souhaitez téléverser :';
+
+  @override
+  String get longPressActionTitle => 'Action d\'appui long';
+
+  @override
+  String get longPressActionSelect => 'Sélectionner';
+
+  @override
+  String get longPressActionSelectDesc =>
+      'Un appui long sur un élément active la sélection multiple.';
+
+  @override
+  String get longPressActionMove => 'Déplacer (Glisser)';
+
+  @override
+  String get longPressActionMoveDesc =>
+      'Un appui long sur un élément permet de le glisser vers un dossier ou l\'autre panneau pour le déplacer.';
+
+  @override
+  String get longPressActionMenu => 'Menu d\'actions';
+
+  @override
+  String get longPressActionMenuDesc =>
+      'Un appui long sur un élément ouvre son menu d\'actions (ouvrir, télécharger, renommer, supprimer).';
+
+  @override
+  String get longPressActionCut => 'Couper';
+
+  @override
+  String get longPressActionCutDesc =>
+      'Un appui long sur un élément le coupe dans le presse-papiers pour le déplacer ailleurs.';
 }

@@ -2065,4 +2065,38 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get running => 'En curso';
+
+  @override
+  String get uploadChooseTypePrompt => 'Elige qué quieres subir:';
+
+  @override
+  String get longPressActionTitle => 'Acción de pulsación larga';
+
+  @override
+  String get longPressActionSelect => 'Seleccionar';
+
+  @override
+  String get longPressActionSelectDesc =>
+      'Mantener pulsado un elemento activa la selección múltiple.';
+
+  @override
+  String get longPressActionMove => 'Mover (Arrastrar)';
+
+  @override
+  String get longPressActionMoveDesc =>
+      'Mantener pulsado un elemento permite arrastrarlo a una carpeta u otro panel para moverlo.';
+
+  @override
+  String get longPressActionMenu => 'Menú de acciones';
+
+  @override
+  String get longPressActionMenuDesc =>
+      'Mantener pulsado un elemento abre su menú de acciones (abrir, descargar, renombrar, eliminar).';
+
+  @override
+  String get longPressActionCut => 'Cortar';
+
+  @override
+  String get longPressActionCutDesc =>
+      'Mantener pulsado un elemento lo corta al portapapeles para moverlo pegándolo en otro lugar.';
 }

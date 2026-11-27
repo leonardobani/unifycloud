@@ -7,6 +7,7 @@ import '../../../l10n/l10n_extension.dart';
 import '../../models/cloud_error.dart';
 import '../../models/cloud_models.dart';
 import '../../models/pane_drag_data.dart';
+import '../../models/settings_models.dart';
 import '../../providers/clipboard_provider.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/file_explorer_provider.dart';
@@ -47,7 +48,6 @@ class FileExplorerPaneView extends ConsumerStatefulWidget {
 
 class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
   final _searchController = TextEditingController();
-  bool _isSearching = false;
 
   @override
   void dispose() {
@@ -356,6 +356,75 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     }
   }
 
+  Widget _buildUploadButton(FileExplorerState state) {
+    final l10n = context.l10n;
+    return IconButton(
+      icon: const Icon(Icons.upload_rounded, size: 20),
+      tooltip: l10n.uploadFromDevice,
+      visualDensity: widget.isDualPane ? VisualDensity.compact : null,
+      onPressed: state.currentRemote == null
+          ? null
+          : () => _showUploadTypeDialog(state),
+    );
+  }
+
+  Future<void> _showUploadTypeDialog(FileExplorerState state) async {
+    final l10n = context.l10n;
+    final choice = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.upload_rounded),
+            const SizedBox(width: 10),
+            Expanded(child: Text(l10n.uploadFromDevice)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(l10n.uploadChooseTypePrompt),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(Icons.upload_file_outlined),
+              title: Text(l10n.uploadFile),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(
+                  color: Theme.of(ctx).colorScheme.outlineVariant,
+                ),
+              ),
+              onTap: () => Navigator.of(ctx).pop('files'),
+            ),
+            const SizedBox(height: 10),
+            ListTile(
+              leading: const Icon(Icons.drive_folder_upload_outlined),
+              title: Text(l10n.uploadFolder),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(
+                  color: Theme.of(ctx).colorScheme.outlineVariant,
+                ),
+              ),
+              onTap: () => Navigator.of(ctx).pop('folder'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(l10n.cancel),
+          ),
+        ],
+      ),
+    );
+
+    if (choice != null && mounted) {
+      await _handleUploadChoice(choice, state);
+    }
+  }
+
   Future<void> _handleUploadChoice(String choice, FileExplorerState state) async {
     final l10n = context.l10n;
     if (choice == 'files') {
@@ -526,6 +595,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     final l10n = context.l10n;
     final state = ref.watch(widget.provider);
     final remotesState = ref.watch(cloudAccountsProvider);
+    final longPressAction =
+        ref.watch(settingsProvider.select((s) => s.longPressAction));
     final oppositeState = widget.oppositeProvider != null
         ? ref.watch(widget.oppositeProvider!)
         : null;
@@ -535,6 +606,15 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         .where((r) => r.name == state.currentRemote)
         .firstOrNull;
     final isCurrentCrypt = currentRemoteObj?.isCrypt ?? false;
+
+    ref.listen<bool>(
+      widget.provider.select((s) => s.isSearching),
+      (previous, next) {
+        if (!next && _searchController.text.isNotEmpty) {
+          _searchController.clear();
+        }
+      },
+    );
 
     // Auto-select remote if none selected yet
     if (state.currentRemote == null && remotesState.remotes.isNotEmpty) {
@@ -560,182 +640,228 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     final allSelected = state.selectedCount == state.displayItems.length &&
         state.displayItems.isNotEmpty;
 
-    final header = isSelectionMode
-        ? AppBar(
-            titleSpacing: widget.isDualPane ? 8.0 : null,
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              tooltip: l10n.closeSelection,
-              visualDensity: widget.isDualPane ? VisualDensity.compact : null,
-              onPressed: () {
-                ref.read(widget.provider.notifier).clearSelection();
-              },
-            ),
-            title: Text(
-              l10n.itemsSelectedCount(state.selectedCount),
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-              overflow: TextOverflow.ellipsis,
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(allSelected ? Icons.deselect : Icons.select_all, size: 20),
-                tooltip: allSelected ? l10n.deselectAll : l10n.selectAll,
-                visualDensity: widget.isDualPane ? VisualDensity.compact : null,
-                onPressed: () {
-                  if (allSelected) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final buttonExtent = widget.isDualPane ? 40.0 : kMinInteractiveDimension;
+        final expandedActionCount = 6 + (widget.showDualPaneToggle ? 1 : 0);
+        final compactActions =
+            expandedActionCount * buttonExtent > constraints.maxWidth * 0.5;
+
+        final header = isSelectionMode
+            ? AppBar(
+                titleSpacing: widget.isDualPane ? 8.0 : null,
+                leading: IconButton(
+                  icon: const Icon(Icons.close),
+                  tooltip: l10n.closeSelection,
+                  visualDensity: widget.isDualPane ? VisualDensity.compact : null,
+                  onPressed: () {
                     ref.read(widget.provider.notifier).clearSelection();
-                  } else {
-                    ref.read(widget.provider.notifier).selectAll();
-                  }
-                },
-              ),
-              if (hasOppositeRemote) ...[
-                IconButton(
-                  icon: const Icon(Icons.drive_file_move_rtl_outlined, size: 20),
-                  tooltip: l10n.copyToRemote(oppositeState.currentRemote ?? ''),
-                  visualDensity: widget.isDualPane ? VisualDensity.compact : null,
-                  onPressed: () => _handleBatchTransferToOpposite(isMove: false),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.drive_file_move_outlined, size: 20),
-                  tooltip: l10n.moveToRemote(oppositeState.currentRemote ?? ''),
-                  visualDensity: widget.isDualPane ? VisualDensity.compact : null,
-                  onPressed: () => _handleBatchTransferToOpposite(isMove: true),
-                ),
-              ],
-              if (widget.isDualPane) ...[
-                PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert, size: 20),
-                  tooltip: l10n.moreActions,
-                  padding: EdgeInsets.zero,
-                  onSelected: (action) {
-                    switch (action) {
-                      case 'download':
-                        _handleBatchDownload(state);
-                      case 'copy':
-                        _handleBatchCopy(state);
-                      case 'cut':
-                        _handleBatchCut(state);
-                      case 'delete':
-                        _handleBatchDelete(state);
-                    }
                   },
-                  itemBuilder: (ctx) => [
-                    PopupMenuItem(
-                      value: 'download',
-                      child: Row(
-                        children: [
-                          const Icon(Icons.download_outlined, size: 20),
-                          const SizedBox(width: 8),
-                          Text(l10n.downloadSelected),
-                        ],
-                      ),
+                ),
+                title: Text(
+                  l10n.itemsSelectedCount(state.selectedCount),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                actions: [
+                  IconButton(
+                    icon: Icon(allSelected ? Icons.deselect : Icons.select_all, size: 20),
+                    tooltip: allSelected ? l10n.deselectAll : l10n.selectAll,
+                    visualDensity: widget.isDualPane ? VisualDensity.compact : null,
+                    onPressed: () {
+                      if (allSelected) {
+                        ref.read(widget.provider.notifier).clearSelection();
+                      } else {
+                        ref.read(widget.provider.notifier).selectAll();
+                      }
+                    },
+                  ),
+                  if (hasOppositeRemote) ...[
+                    IconButton(
+                      icon: const Icon(Icons.drive_file_move_rtl_outlined, size: 20),
+                      tooltip: l10n.copyToRemote(oppositeState.currentRemote ?? ''),
+                      visualDensity: widget.isDualPane ? VisualDensity.compact : null,
+                      onPressed: () => _handleBatchTransferToOpposite(isMove: false),
                     ),
-                    PopupMenuItem(
-                      value: 'copy',
-                      child: Row(
-                        children: [
-                          const Icon(Icons.copy_rounded, size: 20),
-                          const SizedBox(width: 8),
-                          Text(l10n.copyToClipboard),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 'cut',
-                      child: Row(
-                        children: [
-                          const Icon(Icons.cut_rounded, size: 20),
-                          const SizedBox(width: 8),
-                          Text(l10n.cutToClipboard),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuDivider(),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          const Icon(Icons.delete_outline, size: 20, color: Colors.red),
-                          const SizedBox(width: 8),
-                          Text(
-                            l10n.deleteSelected,
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                        ],
-                      ),
+                    IconButton(
+                      icon: const Icon(Icons.drive_file_move_outlined, size: 20),
+                      tooltip: l10n.moveToRemote(oppositeState.currentRemote ?? ''),
+                      visualDensity: widget.isDualPane ? VisualDensity.compact : null,
+                      onPressed: () => _handleBatchTransferToOpposite(isMove: true),
                     ),
                   ],
-                ),
-              ] else ...[
-                IconButton(
-                  icon: const Icon(Icons.download_outlined, size: 20),
-                  tooltip: l10n.downloadSelected,
-                  onPressed: () => _handleBatchDownload(state),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.copy_rounded, size: 20),
-                  tooltip: l10n.copySelected,
-                  onPressed: () => _handleBatchCopy(state),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.cut_rounded, size: 20),
-                  tooltip: l10n.cutSelected,
-                  onPressed: () => _handleBatchCut(state),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete_outline, size: 20, color: Colors.red),
-                  tooltip: l10n.deleteSelected,
-                  onPressed: () => _handleBatchDelete(state),
-                ),
-              ],
-            ],
-          )
-        : AppBar(
-            automaticallyImplyLeading: false,
-            titleSpacing: widget.isDualPane ? 8.0 : null,
-            title: _isSearching
-                ? TextField(
-                    controller: _searchController,
-                    autofocus: true,
-                    decoration: InputDecoration(
-                      hintText: l10n.searchFilesHint,
-                      border: InputBorder.none,
-                    ),
-                    onChanged: (val) {
-                      ref
-                          .read(widget.provider.notifier)
-                          .setSearchQuery(val);
-                    },
-                  )
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (widget.paneTitle != null) ...[
-                        Text(
-                          '${widget.paneTitle}: ',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.outline,
+                  if (widget.isDualPane) ...[
+                    PopupMenuButton<String>(
+                      icon: const Icon(Icons.more_vert, size: 20),
+                      tooltip: l10n.moreActions,
+                      padding: EdgeInsets.zero,
+                      onSelected: (action) {
+                        switch (action) {
+                          case 'download':
+                            _handleBatchDownload(state);
+                          case 'copy':
+                            _handleBatchCopy(state);
+                          case 'cut':
+                            _handleBatchCut(state);
+                          case 'delete':
+                            _handleBatchDelete(state);
+                        }
+                      },
+                      itemBuilder: (ctx) => [
+                        PopupMenuItem(
+                          value: 'download',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.download_outlined, size: 20),
+                              const SizedBox(width: 8),
+                              Text(l10n.downloadSelected),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'copy',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.copy_rounded, size: 20),
+                              const SizedBox(width: 8),
+                              Text(l10n.copyToClipboard),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'cut',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.cut_rounded, size: 20),
+                              const SizedBox(width: 8),
+                              Text(l10n.cutToClipboard),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuDivider(),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.delete_outline, size: 20, color: Colors.red),
+                              const SizedBox(width: 8),
+                              Text(
+                                l10n.deleteSelected,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            ],
                           ),
                         ),
                       ],
-                      Flexible(
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: state.currentRemote,
-                            hint: Text(l10n.selectCloud),
-                            icon: const Icon(Icons.keyboard_arrow_down, size: 20),
-                            isDense: true,
-                            isExpanded: true,
-                            items: remotesState.remotes.map((r) {
-                              return DropdownMenuItem<String>(
-                                value: r.name,
+                    ),
+                  ] else ...[
+                    IconButton(
+                      icon: const Icon(Icons.download_outlined, size: 20),
+                      tooltip: l10n.downloadSelected,
+                      onPressed: () => _handleBatchDownload(state),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.copy_rounded, size: 20),
+                      tooltip: l10n.copySelected,
+                      onPressed: () => _handleBatchCopy(state),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.cut_rounded, size: 20),
+                      tooltip: l10n.cutSelected,
+                      onPressed: () => _handleBatchCut(state),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline, size: 20, color: Colors.red),
+                      tooltip: l10n.deleteSelected,
+                      onPressed: () => _handleBatchDelete(state),
+                    ),
+                  ],
+                ],
+              )
+            : AppBar(
+                automaticallyImplyLeading: false,
+                titleSpacing: widget.isDualPane ? 8.0 : null,
+                title: state.isSearching
+                    ? TextField(
+                        controller: _searchController,
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          hintText: l10n.searchFilesHint,
+                          border: InputBorder.none,
+                        ),
+                        onChanged: (val) {
+                          ref
+                              .read(widget.provider.notifier)
+                              .setSearchQuery(val);
+                        },
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (widget.paneTitle != null) ...[
+                            Text(
+                              '${widget.paneTitle}: ',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                          ],
+                          Flexible(
+                            child: PopupMenuButton<String>(
+                              key: const ValueKey('disk_chooser_button'),
+                              tooltip: l10n.selectCloud,
+                              enabled: remotesState.remotes.isNotEmpty,
+                              initialValue: state.currentRemote,
+                              onSelected: (val) {
+                                ref.read(widget.provider.notifier).openRemote(val);
+                              },
+                              itemBuilder: (ctx) => remotesState.remotes.map((r) {
+                                final isSelected = r.name == state.currentRemote;
+                                return PopupMenuItem<String>(
+                                  value: r.name,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        isSelected
+                                            ? Icons.check
+                                            : (r.isCrypt
+                                                ? Icons.lock_rounded
+                                                : Icons.cloud_outlined),
+                                        size: 18,
+                                        color: isSelected
+                                            ? Theme.of(ctx).colorScheme.primary
+                                            : (r.isCrypt
+                                                ? const Color(0xFF00BFA5)
+                                                : null),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Flexible(
+                                        child: Text(
+                                          r.name,
+                                          style: TextStyle(
+                                            fontWeight: isSelected
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                  vertical: 6,
+                                ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    if (r.isCrypt) ...[
+                                    if (isCurrentCrypt) ...[
                                       const Icon(
                                         Icons.lock_rounded,
                                         size: 14,
@@ -745,388 +871,370 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                                     ],
                                     Flexible(
                                       child: Text(
-                                        r.name,
+                                        state.currentRemote ?? l10n.selectCloud,
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
                                         ),
+                                        maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 2),
+                                    const Icon(Icons.keyboard_arrow_down, size: 20),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          if (isCurrentCrypt) ...[
+                            const SizedBox(width: 6),
+                            Tooltip(
+                              message: l10n.e2eActiveTooltip,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF00BFA5)
+                                      .withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: const Color(0xFF00BFA5)
+                                        .withValues(alpha: 0.4),
+                                  ),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.lock,
+                                      size: 12,
+                                      color: Color(0xFF00BFA5),
+                                    ),
+                                    SizedBox(width: 3),
+                                    Text(
+                                      'AES-256',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF00BFA5),
                                       ),
                                     ),
                                   ],
                                 ),
-                              );
-                            }).toList(),
-                            onChanged: (val) {
-                              if (val != null) {
-                                ref
-                                    .read(widget.provider.notifier)
-                                    .openRemote(val);
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                      if (isCurrentCrypt) ...[
-                        const SizedBox(width: 6),
-                        Tooltip(
-                          message: l10n.e2eActiveTooltip,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF00BFA5)
-                                  .withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: const Color(0xFF00BFA5)
-                                    .withValues(alpha: 0.4),
                               ),
                             ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
+                          ],
+                        ],
+                      ),
+                actions: [
+                  IconButton(
+                    icon: Icon(
+                      state.isSearching ? Icons.close : Icons.search,
+                      size: 20,
+                    ),
+                    tooltip: state.isSearching ? l10n.closeSearch : l10n.search,
+                    visualDensity: widget.isDualPane ? VisualDensity.compact : null,
+                    onPressed: () {
+                      final next = !state.isSearching;
+                      if (!next) {
+                        _searchController.clear();
+                      }
+                      ref.read(widget.provider.notifier).setSearching(next);
+                    },
+                  ),
+                  if (!state.isSearching) ...[
+                    if (compactActions) ...[
+                      _buildUploadButton(state),
+                      PopupMenuButton<String>(
+                        key: const ValueKey('explorer_overflow_menu'),
+                        icon: const Icon(Icons.more_vert, size: 20),
+                        tooltip: l10n.moreOptions,
+                        padding: EdgeInsets.zero,
+                        onSelected: (value) {
+                          if (value == 'toggle_view') {
+                            final next = state.viewMode == FileViewMode.list
+                                ? FileViewMode.grid
+                                : FileViewMode.list;
+                            ref.read(widget.provider.notifier).setViewMode(next);
+                          } else if (value == 'select') {
+                            ref
+                                .read(widget.provider.notifier)
+                                .enterSelectionMode();
+                          } else if (value == 'new_folder') {
+                            _showNewFolderDialog();
+                          } else if (value.startsWith('sort_')) {
+                            final sortName = value.substring(5);
+                            final mode = FileSortMode.values
+                                .firstWhere((e) => e.name == sortName);
+                            ref.read(widget.provider.notifier).setSortMode(mode);
+                          } else if (value == 'toggle_dual') {
+                            ref.read(dualPaneActiveProvider.notifier).toggle();
+                          }
+                        },
+                        itemBuilder: (ctx) => [
+                          PopupMenuItem(
+                            value: 'select',
+                            enabled: state.displayItems.isNotEmpty,
+                            child: Row(
                               children: [
-                                Icon(
-                                  Icons.lock,
-                                  size: 12,
-                                  color: Color(0xFF00BFA5),
-                                ),
-                                SizedBox(width: 3),
-                                Text(
-                                  'AES-256',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF00BFA5),
+                                const Icon(Icons.checklist_rounded, size: 20),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    l10n.multiSelection,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      ],
-                    ],
-                  ),
-            actions: [
-              IconButton(
-                icon: Icon(_isSearching ? Icons.close : Icons.search, size: 20),
-                tooltip: _isSearching ? l10n.closeSearch : l10n.search,
-                visualDensity: widget.isDualPane ? VisualDensity.compact : null,
-                onPressed: () {
-                  setState(() {
-                    if (_isSearching) {
-                      _isSearching = false;
-                      _searchController.clear();
-                      ref
-                          .read(widget.provider.notifier)
-                          .setSearchQuery('');
-                    } else {
-                      _isSearching = true;
-                    }
-                  });
-                },
-              ),
-              if (!_isSearching) ...[
-                if (widget.isDualPane) ...[
-                  PopupMenuButton<String>(
-                    icon: const Icon(Icons.upload_file_outlined, size: 20),
-                    tooltip: l10n.uploadFromDevice,
-                    padding: EdgeInsets.zero,
-                    enabled: state.currentRemote != null,
-                    onSelected: (choice) => _handleUploadChoice(choice, state),
-                    itemBuilder: (ctx) => [
-                      PopupMenuItem(
-                        value: 'files',
-                        child: Row(
-                          children: [
-                            const Icon(Icons.upload_file_outlined),
-                            const SizedBox(width: 12),
-                            Expanded(child: Text(l10n.uploadFile)),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'folder',
-                        child: Row(
-                          children: [
-                            const Icon(Icons.drive_folder_upload_outlined),
-                            const SizedBox(width: 12),
-                            Expanded(child: Text(l10n.uploadFolder)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.create_new_folder_outlined, size: 20),
-                    tooltip: l10n.newFolder,
-                    visualDensity: VisualDensity.compact,
-                    onPressed: state.currentRemote == null ? null : _showNewFolderDialog,
-                  ),
-                  PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert, size: 20),
-                    tooltip: l10n.moreOptions,
-                    padding: EdgeInsets.zero,
-                    onSelected: (value) {
-                      if (value == 'toggle_view') {
-                        final next = state.viewMode == FileViewMode.list
-                            ? FileViewMode.grid
-                            : FileViewMode.list;
-                        ref.read(widget.provider.notifier).setViewMode(next);
-                      } else if (value == 'select_all') {
-                        ref.read(widget.provider.notifier).selectAll();
-                      } else if (value.startsWith('sort_')) {
-                        final sortName = value.substring(5);
-                        final mode = FileSortMode.values.firstWhere((e) => e.name == sortName);
-                        ref.read(widget.provider.notifier).setSortMode(mode);
-                      } else if (value == 'toggle_dual') {
-                        ref.read(dualPaneActiveProvider.notifier).toggle();
-                      }
-                    },
-                    itemBuilder: (ctx) => [
-                      PopupMenuItem(
-                        value: 'toggle_view',
-                        child: Row(
-                          children: [
-                            Icon(
-                              state.viewMode == FileViewMode.list
-                                  ? Icons.grid_view_outlined
-                                  : Icons.view_list_outlined,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              state.viewMode == FileViewMode.list
-                                  ? l10n.viewGrid
-                                  : l10n.viewList,
-                            ),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'select_all',
-                        child: Row(
-                          children: [
-                            const Icon(Icons.checklist_rounded, size: 20),
-                            const SizedBox(width: 8),
-                            Text(l10n.multiSelection),
-                          ],
-                        ),
-                      ),
-                      const PopupMenuDivider(),
-                      ...FileSortMode.values.map((mode) {
-                        return PopupMenuItem(
-                          value: 'sort_${mode.name}',
-                          child: Row(
-                            children: [
-                              Icon(
-                                state.sortMode == mode
-                                    ? Icons.check
-                                    : Icons.sort,
-                                size: 18,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(_sortModeLabel(mode, l10n)),
-                            ],
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                ] else ...[
-                  IconButton(
-                    icon: const Icon(Icons.checklist_rounded, size: 20),
-                    tooltip: l10n.multiSelection,
-                    onPressed: state.displayItems.isEmpty
-                        ? null
-                        : () {
-                            ref.read(widget.provider.notifier).selectAll();
-                          },
-                  ),
-                  PopupMenuButton<FileSortMode>(
-                    icon: const Icon(Icons.sort, size: 20),
-                    tooltip: l10n.sortByTooltip,
-                    initialValue: state.sortMode,
-                    onSelected: (mode) {
-                      ref.read(widget.provider.notifier).setSortMode(mode);
-                    },
-                    itemBuilder: (ctx) => [
-                      PopupMenuItem(
-                        value: FileSortMode.nameAsc,
-                        child: Text(l10n.sortNameAsc),
-                      ),
-                      PopupMenuItem(
-                        value: FileSortMode.nameDesc,
-                        child: Text(l10n.sortNameDesc),
-                      ),
-                      PopupMenuItem(
-                        value: FileSortMode.sizeDesc,
-                        child: Text(l10n.sortSizeDesc),
-                      ),
-                      PopupMenuItem(
-                        value: FileSortMode.sizeAsc,
-                        child: Text(l10n.sortSizeAsc),
-                      ),
-                      PopupMenuItem(
-                        value: FileSortMode.dateDesc,
-                        child: Text(l10n.sortDateDesc),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      state.viewMode == FileViewMode.list
-                          ? Icons.grid_view_outlined
-                          : Icons.view_list_outlined,
-                      size: 20,
-                    ),
-                    tooltip: state.viewMode == FileViewMode.list
-                        ? l10n.viewGrid
-                        : l10n.viewList,
-                    onPressed: () {
-                      final next = state.viewMode == FileViewMode.list
-                          ? FileViewMode.grid
-                          : FileViewMode.list;
-                      ref.read(widget.provider.notifier).setViewMode(next);
-                    },
-                  ),
-                  PopupMenuButton<String>(
-                    icon: const Icon(Icons.upload_file_outlined, size: 20),
-                    tooltip: l10n.uploadFromDevice,
-                    enabled: state.currentRemote != null,
-                    onSelected: (choice) => _handleUploadChoice(choice, state),
-                    itemBuilder: (ctx) => [
-                      PopupMenuItem(
-                        value: 'files',
-                        child: Row(
-                          children: [
-                            const Icon(Icons.upload_file_outlined),
-                            const SizedBox(width: 12),
-                            Expanded(child: Text(l10n.uploadFile)),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'folder',
-                        child: Row(
-                          children: [
-                            const Icon(Icons.drive_folder_upload_outlined),
-                            const SizedBox(width: 12),
-                            Expanded(child: Text(l10n.uploadFolder)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.create_new_folder_outlined, size: 20),
-                    tooltip: l10n.newFolder,
-                    onPressed: state.currentRemote == null ? null : _showNewFolderDialog,
-                  ),
-                ],
-                if (widget.showDualPaneToggle)
-                  IconButton(
-                    icon: Icon(
-                      ref.watch(dualPaneActiveProvider)
-                          ? Icons.splitscreen
-                          : Icons.view_sidebar_outlined,
-                      size: 20,
-                    ),
-                    tooltip: ref.watch(dualPaneActiveProvider)
-                        ? l10n.disableDualPaneTooltip
-                        : l10n.enableDualPaneTooltip,
-                    visualDensity: widget.isDualPane ? VisualDensity.compact : null,
-                    onPressed: () {
-                      ref.read(dualPaneActiveProvider.notifier).toggle();
-                    },
-                  ),
-              ],
-            ],
-          );
-
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: header,
-      ),
-      body: DragTarget<PaneDragData>(
-        onWillAcceptWithDetails: (details) {
-          // Accept drops from any other pane or remote
-          return state.currentRemote != null;
-        },
-        onAcceptWithDetails: (details) {
-          _handleDroppedData(details.data);
-        },
-        builder: (context, candidateData, rejectedData) {
-          final isHovered = candidateData.isNotEmpty;
-
-          return Stack(
-            children: [
-              Column(
-                children: [
-                  BreadcrumbsBar(provider: widget.provider),
-                  _buildClipboardBanner(context, ref, state),
-                  if (state.isLoading && state.items.isNotEmpty)
-                    const LinearProgressIndicator(minHeight: 3),
-                  Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: () =>
-                          ref.read(widget.provider.notifier).refresh(),
-                      child: _buildContent(context, state),
-                    ),
-                  ),
-                ],
-              ),
-              if (isHovered)
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withValues(alpha: 0.12),
-                      border: Border.all(
-                        color: AppTheme.primaryColor,
-                        width: 3,
-                      ),
-                    ),
-                    child: Center(
-                      child: Card(
-                        elevation: 6,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.file_download_outlined,
-                                color: AppTheme.primaryColor,
-                                size: 28,
-                              ),
-                              const SizedBox(width: 10),
-                              Flexible(
-                                child: Text(
-                                  l10n.dropToCopyTo(
-                                    state.currentRemote ?? l10n.destinationFallback,
-                                  ),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+                          PopupMenuItem(
+                            value: 'toggle_view',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  state.viewMode == FileViewMode.list
+                                      ? Icons.grid_view_outlined
+                                      : Icons.view_list_outlined,
+                                  size: 20,
                                 ),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    state.viewMode == FileViewMode.list
+                                        ? l10n.viewGrid
+                                        : l10n.viewList,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: 'new_folder',
+                            enabled: state.currentRemote != null,
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.create_new_folder_outlined,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    l10n.newFolder,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (widget.showDualPaneToggle)
+                            PopupMenuItem(
+                              value: 'toggle_dual',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    ref.read(dualPaneActiveProvider)
+                                        ? Icons.splitscreen
+                                        : Icons.view_sidebar_outlined,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      ref.read(dualPaneActiveProvider)
+                                          ? l10n.disableDualPaneTooltip
+                                          : l10n.enableDualPaneTooltip,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
+                          const PopupMenuDivider(),
+                          ...FileSortMode.values.map((mode) {
+                            return PopupMenuItem(
+                              value: 'sort_${mode.name}',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    state.sortMode == mode
+                                        ? Icons.check
+                                        : Icons.sort,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      _sortModeLabel(mode, l10n),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    ] else ...[
+                      IconButton(
+                        icon: const Icon(Icons.checklist_rounded, size: 20),
+                        tooltip: l10n.multiSelection,
+                        onPressed: state.displayItems.isEmpty
+                            ? null
+                            : () {
+                                ref
+                                    .read(widget.provider.notifier)
+                                    .enterSelectionMode();
+                              },
+                      ),
+                      PopupMenuButton<FileSortMode>(
+                        icon: const Icon(Icons.sort, size: 20),
+                        tooltip: l10n.sortByTooltip,
+                        initialValue: state.sortMode,
+                        onSelected: (mode) {
+                          ref.read(widget.provider.notifier).setSortMode(mode);
+                        },
+                        itemBuilder: (ctx) => FileSortMode.values.map((mode) {
+                          return PopupMenuItem(
+                            value: mode,
+                            child: Text(_sortModeLabel(mode, l10n)),
+                          );
+                        }).toList(),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          state.viewMode == FileViewMode.list
+                              ? Icons.grid_view_outlined
+                              : Icons.view_list_outlined,
+                          size: 20,
+                        ),
+                        tooltip: state.viewMode == FileViewMode.list
+                            ? l10n.viewGrid
+                            : l10n.viewList,
+                        onPressed: () {
+                          final next = state.viewMode == FileViewMode.list
+                              ? FileViewMode.grid
+                              : FileViewMode.list;
+                          ref.read(widget.provider.notifier).setViewMode(next);
+                        },
+                      ),
+                      _buildUploadButton(state),
+                      IconButton(
+                        icon: const Icon(Icons.create_new_folder_outlined, size: 20),
+                        tooltip: l10n.newFolder,
+                        onPressed:
+                            state.currentRemote == null ? null : _showNewFolderDialog,
+                      ),
+                      if (widget.showDualPaneToggle)
+                        IconButton(
+                          icon: Icon(
+                            ref.watch(dualPaneActiveProvider)
+                                ? Icons.splitscreen
+                                : Icons.view_sidebar_outlined,
+                            size: 20,
+                          ),
+                          tooltip: ref.watch(dualPaneActiveProvider)
+                              ? l10n.disableDualPaneTooltip
+                              : l10n.enableDualPaneTooltip,
+                          visualDensity:
+                              widget.isDualPane ? VisualDensity.compact : null,
+                          onPressed: () {
+                            ref.read(dualPaneActiveProvider.notifier).toggle();
+                          },
+                        ),
+                    ],
+                  ],
+                ],
+              );
+
+        return Scaffold(
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: header,
+          ),
+          body: DragTarget<PaneDragData>(
+            onWillAcceptWithDetails: (details) {
+              // Accept drops from any other pane or remote
+              return state.currentRemote != null;
+            },
+            onAcceptWithDetails: (details) {
+              _handleDroppedData(details.data);
+            },
+            builder: (context, candidateData, rejectedData) {
+              final isHovered = candidateData.isNotEmpty;
+
+              return Stack(
+                children: [
+                  Column(
+                    children: [
+                      BreadcrumbsBar(provider: widget.provider),
+                      _buildClipboardBanner(context, ref, state),
+                      if (state.isLoading && state.items.isNotEmpty)
+                        const LinearProgressIndicator(minHeight: 3),
+                      Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: () =>
+                              ref.read(widget.provider.notifier).refresh(),
+                          child: _buildContent(context, state, longPressAction),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (isHovered)
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryColor.withValues(alpha: 0.12),
+                          border: Border.all(
+                            color: AppTheme.primaryColor,
+                            width: 3,
+                          ),
+                        ),
+                        child: Center(
+                          child: Card(
+                            elevation: 6,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.file_download_outlined,
+                                    color: AppTheme.primaryColor,
+                                    size: 28,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Flexible(
+                                    child: Text(
+                                      l10n.dropToCopyTo(
+                                        state.currentRemote ?? l10n.destinationFallback,
+                                      ),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-            ],
-          );
-        },
-      ),
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -1194,7 +1302,11 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     );
   }
 
-  Widget _buildContent(BuildContext context, FileExplorerState state) {
+  Widget _buildContent(
+    BuildContext context,
+    FileExplorerState state,
+    LongPressAction longPressAction,
+  ) {
     final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -1342,6 +1454,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
             sourcePath: state.currentPath,
             items: dragItems,
             sourceProvider: widget.provider,
+            isMove: longPressAction == LongPressAction.move,
           );
 
           final itemTile = FileContextMenuRegion(
@@ -1405,16 +1518,12 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                       );
                 }
               },
-              onLongPress: () {
-                ref
-                    .read(widget.provider.notifier)
-                    .toggleSelection(item.path);
-              },
             ),
           );
 
           final draggableItem = AdaptiveDraggable<PaneDragData>(
             data: dragData,
+            touchDragEnabled: longPressAction == LongPressAction.move,
             feedback: _buildDragFeedback(dragData),
             childWhenDragging: Opacity(
               opacity: 0.4,
@@ -1473,6 +1582,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
           sourcePath: state.currentPath,
           items: dragItems,
           sourceProvider: widget.provider,
+          isMove: longPressAction == LongPressAction.move,
         );
 
         final gridCard = FileContextMenuRegion(
@@ -1506,11 +1616,6 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                         currentPath: state.currentPath,
                       );
                 }
-              },
-              onLongPress: () {
-                ref
-                    .read(widget.provider.notifier)
-                    .toggleSelection(item.path);
               },
               child: Stack(
                 children: [
@@ -1577,6 +1682,7 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
 
         final draggableGrid = AdaptiveDraggable<PaneDragData>(
           data: dragData,
+          touchDragEnabled: longPressAction == LongPressAction.move,
           feedback: _buildDragFeedback(dragData),
           childWhenDragging: Opacity(opacity: 0.4, child: gridCard),
           child: gridCard,

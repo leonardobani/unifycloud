@@ -1,5 +1,13 @@
 import 'package:material_ui/material_ui.dart';
 
+/// Action performed when long-pressing an item in the File Explorer.
+enum LongPressAction {
+  select,
+  move,
+  contextMenu,
+  cut,
+}
+
 /// Representation of user-configurable application preferences.
 class AppSettings {
 
@@ -16,6 +24,7 @@ class AppSettings {
     this.autostartOnBoot = false,
     this.minimizeToTray = true,
     this.language = 'en',
+    this.longPressAction = LongPressAction.select,
   });
 
   factory AppSettings.fromJson(Map<String, dynamic> json) {
@@ -25,6 +34,15 @@ class AppSettings {
       mode = ThemeMode.dark;
     } else if (themeStr == 'light') {
       mode = ThemeMode.light;
+    }
+
+    LongPressAction longPressAction = LongPressAction.select;
+    final longPressStr = json['long_press_action'] as String?;
+    for (final action in LongPressAction.values) {
+      if (action.name == longPressStr) {
+        longPressAction = action;
+        break;
+      }
     }
 
     return AppSettings(
@@ -42,6 +60,7 @@ class AppSettings {
       autostartOnBoot: json['autostart_on_boot'] as bool? ?? false,
       minimizeToTray: json['minimize_to_tray'] as bool? ?? true,
       language: json['language'] as String? ?? 'en',
+      longPressAction: longPressAction,
     );
   }
   final ThemeMode themeMode;
@@ -56,6 +75,7 @@ class AppSettings {
   final bool autostartOnBoot;
   final bool minimizeToTray;
   final String language; // 'en', 'it', 'fr', 'pl', 'es', 'ar', or 'system'
+  final LongPressAction longPressAction;
 
   static const Set<String> supportedLanguageCodes = {
     'en',
@@ -96,6 +116,7 @@ class AppSettings {
     bool? autostartOnBoot,
     bool? minimizeToTray,
     String? language,
+    LongPressAction? longPressAction,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -114,6 +135,7 @@ class AppSettings {
       autostartOnBoot: autostartOnBoot ?? this.autostartOnBoot,
       minimizeToTray: minimizeToTray ?? this.minimizeToTray,
       language: language ?? this.language,
+      longPressAction: longPressAction ?? this.longPressAction,
     );
   }
 
@@ -131,6 +153,7 @@ class AppSettings {
       'autostart_on_boot': autostartOnBoot,
       'minimize_to_tray': minimizeToTray,
       'language': language,
+      'long_press_action': longPressAction.name,
     };
   }
 
@@ -149,7 +172,8 @@ class AppSettings {
         other.autoLockTimeoutMinutes == autoLockTimeoutMinutes &&
         other.autostartOnBoot == autostartOnBoot &&
         other.minimizeToTray == minimizeToTray &&
-        other.language == language;
+        other.language == language &&
+        other.longPressAction == longPressAction;
   }
 
   @override
@@ -166,5 +190,6 @@ class AppSettings {
         autostartOnBoot,
         minimizeToTray,
         language,
+        longPressAction,
       );
 }
