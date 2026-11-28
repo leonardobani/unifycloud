@@ -8,6 +8,7 @@ import "C"
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -66,7 +67,7 @@ type RemoteInfo struct {
 	Remote      string `json:"remote,omitempty"`
 }
 
-// FileItem describes a file or directory item returned by ListDirectory.
+// FileItem describes a file or directory item returned by ListDirectory or Search.
 type FileItem struct {
 	Name     string `json:"name"`
 	Path     string `json:"path"`
@@ -75,6 +76,7 @@ type FileItem struct {
 	ModTime  string `json:"mod_time"`
 	MimeType string `json:"mime_type,omitempty"`
 	ID       string `json:"id,omitempty"`
+	Remote   string `json:"remote,omitempty"`
 }
 
 // MemoryStorage implements config.Storage entirely in RAM to avoid saving plaintext files on disk.
@@ -1168,6 +1170,572 @@ func ClearCompletedTransfersInternal() Response {
 	})
 }
 
+// --- Global Cross-Cloud Search ---
+
+const defaultMaxSearchResults = 500
+const maxSearchRemoteConcurrency = 3
+
+var errMaxResultsReached = errors.New("max search results reached")
+
+// SearchRequest defines parameters for an asynchronous cross-cloud search job.
+type SearchRequest struct {
+	Remotes        []string `json:"remotes"`
+	BasePath       string   `json:"base_path"`
+	Query          string   `json:"query"`
+	Extensions     []string `json:"extensions"`
+	MinSize        int64    `json:"min_size"`
+	MaxSize        int64    `json:"max_size"`
+	ModifiedAfter  string   `json:"modified_after"`
+	ModifiedBefore string   `json:"modified_before"`
+	MaxDepth       int      `json:"max_depth"`
+	IncludeDirs    bool     `json:"include_dirs"`
+	MaxResults     int      `json:"max_results"`
+}
+
+// SearchStartResponse is returned immediately by StartSearch.
+type SearchStartResponse struct {
+	JobID  string `json:"job_id"`
+	Status string `json:"status"`
+}
+
+// SearchJobSnapshot represents the status, counters, and matched results of a search job.
+type SearchJobSnapshot struct {
+	JobID         string     `json:"job_id"`
+	Status        string     `json:"status"`
+	ScannedFiles  int64      `json:"scanned_files"`
+	ScannedDirs   int64      `json:"scanned_dirs"`
+	CurrentRemote string     `json:"current_remote"`
+	Truncated     bool       `json:"truncated"`
+	Results       []FileItem `json:"results"`
+	Warnings      []string   `json:"warnings"`
+	Error         string     `json:"error,omitempty"`
+}
+
+type searchJob struct {
+	mu            sync.RWMutex
+	jobID         string
+	status        string
+	scannedFiles  int64
+	scannedDirs   int64
+	currentRemote string
+	truncated     bool
+	userCancelled bool
+	results       []FileItem
+	warnings      []string
+	errMsg        string
+	cancel        context.CancelFunc
+}
+
+func (j *searchJob) snapshot() SearchJobSnapshot {
+	j.mu.RLock()
+	defer j.mu.RUnlock()
+
+	resultsCopy := make([]FileItem, len(j.results))
+	copy(resultsCopy, j.results)
+	warningsCopy := make([]string, len(j.warnings))
+	copy(warningsCopy, j.warnings)
+
+	return SearchJobSnapshot{
+		JobID:         j.jobID,
+		Status:        j.status,
+		ScannedFiles:  atomic.LoadInt64(&j.scannedFiles),
+		ScannedDirs:   atomic.LoadInt64(&j.scannedDirs),
+		CurrentRemote: j.currentRemote,
+		Truncated:     j.truncated,
+		Results:       resultsCopy,
+		Warnings:      warningsCopy,
+		Error:         j.errMsg,
+	}
+}
+
+type searchManager struct {
+	mu      sync.RWMutex
+	jobs    map[string]*searchJob
+	counter int64
+}
+
+var globalSearchManager = &searchManager{
+	jobs: make(map[string]*searchJob),
+}
+
+type compiledSearchFilter struct {
+	queryLower   string
+	isGlob       bool
+	extSet       map[string]struct{}
+	minSize      int64
+	maxSize      int64
+	hasModAfter  bool
+	modAfter     time.Time
+	hasModBefore bool
+	modBefore    time.Time
+	maxDepth     int
+	includeDirs  bool
+	maxResults   int
+}
+
+func compileSearchFilter(req SearchRequest) (*compiledSearchFilter, error) {
+	queryLower := strings.ToLower(strings.TrimSpace(req.Query))
+	isGlob := strings.ContainsAny(queryLower, "*?[")
+
+	extSet := make(map[string]struct{})
+	for _, rawExt := range req.Extensions {
+		e := strings.ToLower(strings.TrimSpace(rawExt))
+		if e == "" {
+			continue
+		}
+		if !strings.HasPrefix(e, ".") {
+			e = "." + e
+		}
+		extSet[e] = struct{}{}
+	}
+
+	var modAfter, modBefore time.Time
+	hasModAfter := false
+	hasModBefore := false
+	if rawAfter := strings.TrimSpace(req.ModifiedAfter); rawAfter != "" {
+		t, err := time.Parse(time.RFC3339Nano, rawAfter)
+		if err != nil {
+			t, err = time.Parse(time.RFC3339, rawAfter)
+			if err != nil {
+				return nil, fmt.Errorf("invalid modified_after timestamp %q: %w", rawAfter, err)
+			}
+		}
+		modAfter = t
+		hasModAfter = true
+	}
+	if rawBefore := strings.TrimSpace(req.ModifiedBefore); rawBefore != "" {
+		t, err := time.Parse(time.RFC3339Nano, rawBefore)
+		if err != nil {
+			t, err = time.Parse(time.RFC3339, rawBefore)
+			if err != nil {
+				return nil, fmt.Errorf("invalid modified_before timestamp %q: %w", rawBefore, err)
+			}
+		}
+		modBefore = t
+		hasModBefore = true
+	}
+
+	maxResults := req.MaxResults
+	if maxResults <= 0 {
+		maxResults = defaultMaxSearchResults
+	}
+
+	return &compiledSearchFilter{
+		queryLower:   queryLower,
+		isGlob:       isGlob,
+		extSet:       extSet,
+		minSize:      req.MinSize,
+		maxSize:      req.MaxSize,
+		hasModAfter:  hasModAfter,
+		modAfter:     modAfter,
+		hasModBefore: hasModBefore,
+		modBefore:    modBefore,
+		maxDepth:     req.MaxDepth,
+		includeDirs:  req.IncludeDirs,
+		maxResults:   maxResults,
+	}, nil
+}
+
+func (f *compiledSearchFilter) matches(item *operations.ListJSONItem, fullPath, rawRelPath string) bool {
+	if f.maxDepth > 0 {
+		trimmed := strings.Trim(rawRelPath, "/")
+		if strings.Count(trimmed, "/") > f.maxDepth {
+			return false
+		}
+	}
+
+	if item.IsDir && !f.includeDirs {
+		return false
+	}
+
+	if len(f.extSet) > 0 {
+		if item.IsDir {
+			return false
+		}
+		ext := strings.ToLower(path.Ext(item.Name))
+		if _, ok := f.extSet[ext]; !ok {
+			return false
+		}
+	}
+
+	if f.minSize > 0 {
+		if item.IsDir || item.Size < f.minSize {
+			return false
+		}
+	} else if f.minSize == 0 {
+		if item.Size < 0 {
+			return false
+		}
+	}
+
+	if f.maxSize >= 0 {
+		if item.IsDir || item.Size < 0 || item.Size > f.maxSize {
+			return false
+		}
+	}
+
+	if f.hasModAfter || f.hasModBefore {
+		if item.ModTime.When.IsZero() {
+			return false
+		}
+		if f.hasModAfter && item.ModTime.When.Before(f.modAfter) {
+			return false
+		}
+		if f.hasModBefore && item.ModTime.When.After(f.modBefore) {
+			return false
+		}
+	}
+
+	if f.queryLower != "" {
+		nameLower := strings.ToLower(item.Name)
+		pathLower := strings.ToLower(fullPath)
+		matchFullPath := strings.Contains(f.queryLower, "/")
+		if f.isGlob {
+			if matchFullPath {
+				matchedPath, errP := path.Match(f.queryLower, pathLower)
+				if errP != nil {
+					if !strings.Contains(pathLower, f.queryLower) {
+						return false
+					}
+				} else if !matchedPath {
+					return false
+				}
+			} else {
+				matchedName, errN := path.Match(f.queryLower, nameLower)
+				if errN != nil {
+					if !strings.Contains(nameLower, f.queryLower) {
+						return false
+					}
+				} else if !matchedName {
+					return false
+				}
+			}
+		} else {
+			if matchFullPath {
+				if !strings.Contains(pathLower, f.queryLower) {
+					return false
+				}
+			} else if !strings.Contains(nameLower, f.queryLower) {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
+func resolveSearchTargets(req SearchRequest) ([]string, string) {
+	rawBase := strings.TrimSpace(req.BasePath)
+	if len(req.Remotes) == 1 && strings.TrimSpace(req.Remotes[0]) == "" && rawBase != "" {
+		return []string{""}, rawBase
+	}
+
+	if len(req.Remotes) > 0 {
+		seen := make(map[string]struct{}, len(req.Remotes))
+		targets := make([]string, 0, len(req.Remotes))
+		for _, r := range req.Remotes {
+			trimmed := strings.TrimSpace(r)
+			if trimmed == "" {
+				continue
+			}
+			if _, ok := seen[trimmed]; ok {
+				continue
+			}
+			seen[trimmed] = struct{}{}
+			targets = append(targets, trimmed)
+		}
+		if len(targets) == 1 && rawBase != "" {
+			return targets, rawBase
+		}
+		return targets, ""
+	}
+
+	configured := config.GetRemotes()
+	targets := make([]string, 0, len(configured))
+	for _, r := range configured {
+		targets = append(targets, r.Name)
+	}
+	return targets, ""
+}
+
+func StartSearchInternal(requestJson string) Response {
+	req := SearchRequest{
+		MinSize:    -1,
+		MaxSize:    -1,
+		MaxResults: defaultMaxSearchResults,
+	}
+	trimmedJson := strings.TrimSpace(requestJson)
+	if trimmedJson != "" {
+		if err := json.Unmarshal([]byte(trimmedJson), &req); err != nil {
+			return ResponseError(fmt.Errorf("invalid search request JSON: %w", err))
+		}
+	}
+
+	filter, err := compileSearchFilter(req)
+	if err != nil {
+		return ResponseError(err)
+	}
+
+	targets, effectiveBase := resolveSearchTargets(req)
+	jobID := fmt.Sprintf("search_%d_%d", time.Now().UnixMilli(), atomic.AddInt64(&globalSearchManager.counter, 1))
+	ctx, cancel := context.WithCancel(context.Background())
+
+	job := &searchJob{
+		jobID:    jobID,
+		status:   "running",
+		results:  make([]FileItem, 0),
+		warnings: make([]string, 0),
+		cancel:   cancel,
+	}
+
+	globalSearchManager.mu.Lock()
+	globalSearchManager.jobs[jobID] = job
+	globalSearchManager.mu.Unlock()
+
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				job.mu.Lock()
+				job.status = "failed"
+				job.errMsg = fmt.Sprintf("panic: %v", r)
+				job.currentRemote = ""
+				job.mu.Unlock()
+			}
+			cancel()
+		}()
+
+		if len(targets) == 0 {
+			job.mu.Lock()
+			if job.userCancelled {
+				job.status = "cancelled"
+			} else {
+				job.status = "completed"
+			}
+			job.mu.Unlock()
+			return
+		}
+
+		sem := make(chan struct{}, maxSearchRemoteConcurrency)
+		var wg sync.WaitGroup
+		var failedCount int64
+
+		for _, remoteName := range targets {
+			if ctx.Err() != nil {
+				break
+			}
+			wg.Add(1)
+			go func(rName string) {
+				defer wg.Done()
+				defer func() {
+					if r := recover(); r != nil {
+						atomic.AddInt64(&failedCount, 1)
+						job.mu.Lock()
+						job.warnings = append(job.warnings, fmt.Sprintf("%s: panic: %v", rName, r))
+						job.mu.Unlock()
+					}
+				}()
+
+				select {
+				case sem <- struct{}{}:
+					defer func() { <-sem }()
+				case <-ctx.Done():
+					return
+				}
+
+				job.mu.Lock()
+				if rName != "" {
+					job.currentRemote = rName
+				} else {
+					job.currentRemote = "local"
+				}
+				job.mu.Unlock()
+
+				target := makeFsTarget(rName, effectiveBase)
+				f, err := fs.NewFs(ctx, target)
+				if err != nil {
+					if ctx.Err() == nil && !errors.Is(err, context.Canceled) {
+						atomic.AddInt64(&failedCount, 1)
+						displayRemote := rName
+						if displayRemote == "" {
+							displayRemote = "local"
+						}
+						job.mu.Lock()
+						job.warnings = append(job.warnings, fmt.Sprintf("%s: %v", displayRemote, err))
+						job.mu.Unlock()
+					}
+					return
+				}
+
+				cleanBase := strings.Trim(effectiveBase, "/")
+				opt := &operations.ListJSONOpt{
+					Recurse:    true,
+					NoMimeType: false,
+				}
+
+				listErr := operations.ListJSON(ctx, f, "", opt, func(item *operations.ListJSONItem) error {
+					if ctx.Err() != nil {
+						return ctx.Err()
+					}
+					if item.IsDir {
+						atomic.AddInt64(&job.scannedDirs, 1)
+					} else {
+						atomic.AddInt64(&job.scannedFiles, 1)
+					}
+
+					fullPath := item.Path
+					if rName == "" && strings.HasPrefix(effectiveBase, "/") {
+						trimmedBase := strings.TrimSuffix(effectiveBase, "/")
+						if trimmedBase != "" && !strings.HasPrefix(fullPath, trimmedBase+"/") {
+							fullPath = trimmedBase + "/" + fullPath
+						}
+					} else if cleanBase != "" && !strings.HasPrefix(fullPath, cleanBase+"/") && fullPath != cleanBase {
+						fullPath = cleanBase + "/" + fullPath
+					}
+
+					if !filter.matches(item, fullPath, item.Path) {
+						return nil
+					}
+
+					modTime := ""
+					if !item.ModTime.When.IsZero() {
+						modTime = item.ModTime.When.Format("2006-01-02T15:04:05Z07:00")
+					}
+
+					job.mu.Lock()
+					if len(job.results) >= filter.maxResults {
+						job.truncated = true
+						job.mu.Unlock()
+						cancel()
+						return errMaxResultsReached
+					}
+					job.results = append(job.results, FileItem{
+						Name:     item.Name,
+						Path:     fullPath,
+						IsDir:    item.IsDir,
+						Size:     item.Size,
+						ModTime:  modTime,
+						MimeType: item.MimeType,
+						ID:       item.ID,
+						Remote:   rName,
+					})
+					job.mu.Unlock()
+					return nil
+				})
+
+				if listErr != nil && !errors.Is(listErr, errMaxResultsReached) && !errors.Is(listErr, context.Canceled) && ctx.Err() == nil {
+					atomic.AddInt64(&failedCount, 1)
+					displayRemote := rName
+					if displayRemote == "" {
+						displayRemote = "local"
+					}
+					job.mu.Lock()
+					job.warnings = append(job.warnings, fmt.Sprintf("%s: %v", displayRemote, listErr))
+					job.mu.Unlock()
+				}
+			}(remoteName)
+		}
+
+		wg.Wait()
+
+		job.mu.Lock()
+		defer job.mu.Unlock()
+		job.currentRemote = ""
+		if job.userCancelled {
+			job.status = "cancelled"
+			if job.errMsg == "" {
+				job.errMsg = "Search cancelled by user"
+			}
+		} else if !job.truncated && int(failedCount) >= len(targets) {
+			job.status = "failed"
+			job.errMsg = strings.Join(job.warnings, "; ")
+		} else {
+			job.status = "completed"
+		}
+	}()
+
+	return ResponseSuccess(SearchStartResponse{
+		JobID:  jobID,
+		Status: "running",
+	})
+}
+
+func GetSearchStatusInternal(jobId string) Response {
+	id := strings.TrimSpace(jobId)
+	if id == "" {
+		return ResponseError(fmt.Errorf("jobId must not be empty"))
+	}
+
+	globalSearchManager.mu.RLock()
+	job, ok := globalSearchManager.jobs[id]
+	globalSearchManager.mu.RUnlock()
+	if !ok {
+		return ResponseError(fmt.Errorf("search job %q not found", id))
+	}
+
+	return ResponseSuccess(job.snapshot())
+}
+
+func CancelSearchInternal(jobId string) Response {
+	id := strings.TrimSpace(jobId)
+	if id == "" {
+		return ResponseError(fmt.Errorf("jobId must not be empty"))
+	}
+
+	globalSearchManager.mu.RLock()
+	job, ok := globalSearchManager.jobs[id]
+	globalSearchManager.mu.RUnlock()
+	if !ok {
+		return ResponseError(fmt.Errorf("search job %q not found", id))
+	}
+
+	job.mu.Lock()
+	if job.status == "running" {
+		job.userCancelled = true
+		job.status = "cancelled"
+		job.errMsg = "Search cancelled by user"
+		job.currentRemote = ""
+		if job.cancel != nil {
+			job.cancel()
+		}
+	}
+	status := job.status
+	job.mu.Unlock()
+
+	return ResponseSuccess(map[string]interface{}{
+		"job_id":  id,
+		"status":  status,
+		"message": "Search cancelled successfully",
+	})
+}
+
+func ClearSearchInternal(jobId string) Response {
+	id := strings.TrimSpace(jobId)
+	if id == "" {
+		return ResponseError(fmt.Errorf("jobId must not be empty"))
+	}
+
+	globalSearchManager.mu.Lock()
+	defer globalSearchManager.mu.Unlock()
+
+	job, ok := globalSearchManager.jobs[id]
+	if !ok {
+		return ResponseError(fmt.Errorf("search job %q not found", id))
+	}
+
+	job.mu.RLock()
+	isRunning := job.status == "running"
+	job.mu.RUnlock()
+	if isRunning {
+		return ResponseError(fmt.Errorf("cannot clear running search job %q", id))
+	}
+
+	delete(globalSearchManager.jobs, id)
+	return ResponseSuccess(map[string]interface{}{
+		"job_id":  id,
+		"message": "Search job cleared",
+	})
+}
+
 // --- CGO Exported Interface ---
 
 //export FreeString
@@ -1377,6 +1945,40 @@ func StartSync(srcRemote *C.char, srcPath *C.char, dstRemote *C.char, dstPath *C
 		mode = C.GoString(syncMode)
 	}
 	return cResponse(StartSyncInternal(sRem, sPath, dRem, dPath, mode))
+}
+
+//export StartSearch
+func StartSearch(requestJson *C.char) *C.char {
+	reqStr := ""
+	if requestJson != nil {
+		reqStr = C.GoString(requestJson)
+	}
+	return cResponse(StartSearchInternal(reqStr))
+}
+
+//export GetSearchStatus
+func GetSearchStatus(jobId *C.char) *C.char {
+	id := ""
+	if jobId != nil {
+		id = C.GoString(jobId)
+	}
+	return cResponse(GetSearchStatusInternal(id))
+}
+
+//export CancelSearch
+func CancelSearch(jobId *C.char) *C.char {
+	if jobId == nil {
+		return cResponse(ResponseError(fmt.Errorf("jobId must not be null")))
+	}
+	return cResponse(CancelSearchInternal(C.GoString(jobId)))
+}
+
+//export ClearSearch
+func ClearSearch(jobId *C.char) *C.char {
+	if jobId == nil {
+		return cResponse(ResponseError(fmt.Errorf("jobId must not be null")))
+	}
+	return cResponse(ClearSearchInternal(C.GoString(jobId)))
 }
 
 func main() {}

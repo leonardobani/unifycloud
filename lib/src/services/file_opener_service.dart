@@ -293,18 +293,19 @@ class FileOpenerService {
     if (item.isDir) return;
 
     final effectiveRemote = remote ?? ref?.read(fileExplorerProvider).currentRemote ?? '';
+    final isLocal = _isLocalRemote(effectiveRemote);
 
     // 1. Check if item exists directly on local disk
     String? localPath;
-    if (File(item.path).existsSync()) {
-      localPath = item.path;
-    } else if (Platform.isLinux || Platform.isMacOS) {
-      if (File('/${item.path}').existsSync()) {
-        localPath = '/${item.path}';
+    if (isLocal) {
+      if (File(item.path).existsSync()) {
+        localPath = item.path;
+      } else if (Platform.isLinux || Platform.isMacOS) {
+        if (File('/${item.path}').existsSync()) {
+          localPath = '/${item.path}';
+        }
       }
     }
-
-    final isLocal = _isLocalRemote(effectiveRemote);
 
     // If local remote and path is relative, check if it's relative to currentPath
     if (localPath == null && isLocal) {

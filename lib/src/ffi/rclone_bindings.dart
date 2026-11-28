@@ -23,6 +23,21 @@ class RcloneBindings {
     ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup,
   ) : _lookup = lookup;
 
+  ffi.Pointer<ffi.Char> CancelSearch(ffi.Pointer<ffi.Char> jobId) {
+    return _CancelSearch(jobId);
+  }
+
+  late final _CancelSearchPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>)
+        >
+      >('CancelSearch');
+  late final _CancelSearch =
+      _CancelSearchPtr.asFunction<
+        ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>)
+      >();
+
   ffi.Pointer<ffi.Char> CancelTransfer(ffi.Pointer<ffi.Char> jobId) {
     return _CancelTransfer(jobId);
   }
@@ -49,6 +64,21 @@ class RcloneBindings {
   late final _ClearCompletedTransfers =
       _ClearCompletedTransfersPtr.asFunction<
         ffi.Pointer<ffi.Char> Function()
+      >();
+
+  ffi.Pointer<ffi.Char> ClearSearch(ffi.Pointer<ffi.Char> jobId) {
+    return _ClearSearch(jobId);
+  }
+
+  late final _ClearSearchPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>)
+        >
+      >('ClearSearch');
+  late final _ClearSearch =
+      _ClearSearchPtr.asFunction<
+        ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>)
       >();
 
   ffi.Pointer<ffi.Char> CopyFile(
@@ -181,6 +211,21 @@ class RcloneBindings {
       >('GetRemoteAbout');
   late final _GetRemoteAbout =
       _GetRemoteAboutPtr.asFunction<
+        ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>)
+      >();
+
+  ffi.Pointer<ffi.Char> GetSearchStatus(ffi.Pointer<ffi.Char> jobId) {
+    return _GetSearchStatus(jobId);
+  }
+
+  late final _GetSearchStatusPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>)
+        >
+      >('GetSearchStatus');
+  late final _GetSearchStatus =
+      _GetSearchStatusPtr.asFunction<
         ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>)
       >();
 
@@ -317,37 +362,19 @@ class RcloneBindings {
         )
       >();
 
-  ffi.Pointer<ffi.Char> StartTransfer(
-    ffi.Pointer<ffi.Char> srcRemote,
-    ffi.Pointer<ffi.Char> srcPath,
-    ffi.Pointer<ffi.Char> dstRemote,
-    ffi.Pointer<ffi.Char> dstPath,
-    int isMove,
-  ) {
-    return _StartTransfer(srcRemote, srcPath, dstRemote, dstPath, isMove);
+  ffi.Pointer<ffi.Char> StartSearch(ffi.Pointer<ffi.Char> requestJson) {
+    return _StartSearch(requestJson);
   }
 
-  late final _StartTransferPtr =
+  late final _StartSearchPtr =
       _lookup<
         ffi.NativeFunction<
-          ffi.Pointer<ffi.Char> Function(
-            ffi.Pointer<ffi.Char>,
-            ffi.Pointer<ffi.Char>,
-            ffi.Pointer<ffi.Char>,
-            ffi.Pointer<ffi.Char>,
-            ffi.Int,
-          )
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>)
         >
-      >('StartTransfer');
-  late final _StartTransfer =
-      _StartTransferPtr.asFunction<
-        ffi.Pointer<ffi.Char> Function(
-          ffi.Pointer<ffi.Char>,
-          ffi.Pointer<ffi.Char>,
-          ffi.Pointer<ffi.Char>,
-          ffi.Pointer<ffi.Char>,
-          int,
-        )
+      >('StartSearch');
+  late final _StartSearch =
+      _StartSearchPtr.asFunction<
+        ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>)
       >();
 
   ffi.Pointer<ffi.Char> StartSync(
@@ -380,6 +407,39 @@ class RcloneBindings {
           ffi.Pointer<ffi.Char>,
           ffi.Pointer<ffi.Char>,
           ffi.Pointer<ffi.Char>,
+        )
+      >();
+
+  ffi.Pointer<ffi.Char> StartTransfer(
+    ffi.Pointer<ffi.Char> srcRemote,
+    ffi.Pointer<ffi.Char> srcPath,
+    ffi.Pointer<ffi.Char> dstRemote,
+    ffi.Pointer<ffi.Char> dstPath,
+    int isMove,
+  ) {
+    return _StartTransfer(srcRemote, srcPath, dstRemote, dstPath, isMove);
+  }
+
+  late final _StartTransferPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Int,
+          )
+        >
+      >('StartTransfer');
+  late final _StartTransfer =
+      _StartTransferPtr.asFunction<
+        ffi.Pointer<ffi.Char> Function(
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          ffi.Pointer<ffi.Char>,
+          int,
         )
       >();
 }

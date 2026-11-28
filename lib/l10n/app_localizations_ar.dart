@@ -2113,4 +2113,126 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get grantPermission => 'منح الإذن';
+
+  @override
+  String get refreshCurrentFolder => 'تحديث المجلد';
+
+  @override
+  String get globalSearch => 'البحث الشامل';
+
+  @override
+  String get currentFolderScope => 'المجلد الحالي';
+
+  @override
+  String get globalSearchHint => 'البحث في السحابات (مثل report أو *.pdf)...';
+
+  @override
+  String get searchAction => 'بحث';
+
+  @override
+  String get stopSearch => 'إيقاف';
+
+  @override
+  String get allClouds => 'جميع السحابات';
+
+  @override
+  String get fileTypeFilter => 'النوع';
+
+  @override
+  String get fileTypeAll => 'كل الأنواع';
+
+  @override
+  String get fileTypeDocuments => 'المستندات';
+
+  @override
+  String get fileTypeImages => 'الصور';
+
+  @override
+  String get fileTypeVideos => 'الفيديو';
+
+  @override
+  String get fileTypeAudio => 'الصوتيات';
+
+  @override
+  String get fileTypeArchives => 'الأرشيفات';
+
+  @override
+  String get fileTypeCustom => 'مخصص (.ext)';
+
+  @override
+  String get customExtensionsTitle => 'امتدادات مخصصة';
+
+  @override
+  String get customExtensionsHint => 'مثال: .pdf, .docx, .log';
+
+  @override
+  String get sizeFilter => 'الحجم';
+
+  @override
+  String get sizeAny => 'أي حجم';
+
+  @override
+  String get sizeUnder1Mb => '< 1 م.ب';
+
+  @override
+  String get size1To100Mb => '1–100 م.ب';
+
+  @override
+  String get sizeOver100Mb => '> 100 م.ب';
+
+  @override
+  String get sizeOver1Gb => '> 1 ج.ب';
+
+  @override
+  String get depthFilter => 'العمق';
+
+  @override
+  String get depthUnlimited => 'غير محدود';
+
+  @override
+  String depthLevel(int depth) {
+    return 'أقصى عمق $depth';
+  }
+
+  @override
+  String get includeFoldersChip => 'المجلدات';
+
+  @override
+  String scanningProgress(String remote, int files, int dirs) {
+    return 'جارٍ فحص $remote • $files ملف، $dirs مجلد';
+  }
+
+  @override
+  String scanningAllProgress(int files, int dirs) {
+    return 'جارٍ فحص السحابات • $files ملف، $dirs مجلد';
+  }
+
+  @override
+  String searchResultsSummary(int count, int files, int dirs) {
+    return '$count نتيجة (تم فحص $files ملف و$dirs مجلد)';
+  }
+
+  @override
+  String searchTruncatedNotice(int count) {
+    return 'عرض أول $count نتيجة. قم بتحسين البحث أو الفلاتر لتضييق النتائج.';
+  }
+
+  @override
+  String searchWarningsTitle(int count) {
+    return 'تحذيرات جزئية ($count)';
+  }
+
+  @override
+  String get globalSearchEmptyPrompt =>
+      'أدخل اسماً أو نمطاً (مثل *.pdf) أو اختر الفلاتر للبحث في جميع السحابات المتصلة.';
+
+  @override
+  String get globalSearchNoResults =>
+      'لم يتم العثور على ملفات مطابقة للبحث الشامل.';
+
+  @override
+  String get searchCancelledLabel => 'تم إيقاف البحث';
+
+  @override
+  String get openAction => 'فتح';
 }

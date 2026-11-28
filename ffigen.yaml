@@ -25,6 +25,10 @@ functions:
     - 'ClearCompletedTransfers'
     - 'CreatePublicLink'
     - 'StartSync'
+    - 'StartSearch'
+    - 'GetSearchStatus'
+    - 'CancelSearch'
+    - 'ClearSearch'
     - 'FreeString'
 preamble: |
   // AUTO GENERATED FILE, DO NOT EDIT.

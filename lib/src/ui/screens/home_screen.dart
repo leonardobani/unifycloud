@@ -9,6 +9,7 @@ import '../../models/favorite_item.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/favorites_provider.dart';
 import '../../providers/file_explorer_provider.dart';
+import '../../providers/search_provider.dart';
 import '../../services/file_opener_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/add_cloud_dialog.dart';
@@ -44,18 +45,31 @@ class HomeScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
+            key: const ValueKey('home_global_search_button'),
+            icon: const Icon(Icons.search),
+            tooltip: l10n.globalSearch,
+            onPressed: () {
+              ref.read(searchProvider.notifier).requestOpenGlobalSearch();
+              context.go('/explorer');
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: l10n.refreshCloudsTooltip,
             onPressed: () {
               ref.read(cloudAccountsProvider.notifier).loadRemotes();
             },
           ),
+          IconButton(
+            key: const ValueKey('home_settings_button'),
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: l10n.settings,
+            onPressed: () => context.push('/settings'),
+          ),
           const SizedBox(width: 8),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () => ref.read(cloudAccountsProvider.notifier).loadRemotes(),
-        child: ListView(
+      body: ListView(
           padding: const EdgeInsets.all(20),
           children: [
             // Storage Overview Card
@@ -546,7 +560,6 @@ class HomeScreen extends ConsumerWidget {
               ),
           ],
         ),
-      ),
     );
   }
 }

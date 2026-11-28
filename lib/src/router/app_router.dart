@@ -11,7 +11,6 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorHome = GlobalKey<NavigatorState>(debugLabel: 'homeNav');
 final _shellNavigatorExplorer = GlobalKey<NavigatorState>(debugLabel: 'explorerNav');
 final _shellNavigatorSync = GlobalKey<NavigatorState>(debugLabel: 'syncNav');
-final _shellNavigatorSettings = GlobalKey<NavigatorState>(debugLabel: 'settingsNav');
 
 /// GoRouter configuration with persistent stateful shell branches.
 final appRouter = GoRouter(
@@ -61,20 +60,12 @@ final appRouter = GoRouter(
             ),
           ],
         ),
-
-        // Settings Branch
-        StatefulShellBranch(
-          navigatorKey: _shellNavigatorSettings,
-          routes: [
-            GoRoute(
-              path: '/settings',
-              pageBuilder: (context, state) => const NoTransitionPage(
-                child: SettingsScreen(),
-              ),
-            ),
-          ],
-        ),
       ],
+    ),
+    GoRoute(
+      path: '/settings',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const SettingsScreen(),
     ),
   ],
 );

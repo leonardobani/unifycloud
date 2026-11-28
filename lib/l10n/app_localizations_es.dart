@@ -2141,4 +2141,126 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get grantPermission => 'Conceder';
+
+  @override
+  String get refreshCurrentFolder => 'Actualizar carpeta';
+
+  @override
+  String get globalSearch => 'Búsqueda global';
+
+  @override
+  String get currentFolderScope => 'Carpeta actual';
+
+  @override
+  String get globalSearchHint => 'Buscar en las nubes (ej. informe o *.pdf)...';
+
+  @override
+  String get searchAction => 'Buscar';
+
+  @override
+  String get stopSearch => 'Detener';
+
+  @override
+  String get allClouds => 'Todas las nubes';
+
+  @override
+  String get fileTypeFilter => 'Tipo';
+
+  @override
+  String get fileTypeAll => 'Todos los tipos';
+
+  @override
+  String get fileTypeDocuments => 'Documentos';
+
+  @override
+  String get fileTypeImages => 'Imágenes';
+
+  @override
+  String get fileTypeVideos => 'Vídeos';
+
+  @override
+  String get fileTypeAudio => 'Audio';
+
+  @override
+  String get fileTypeArchives => 'Archivos comprimidos';
+
+  @override
+  String get fileTypeCustom => 'Personalizado (.ext)';
+
+  @override
+  String get customExtensionsTitle => 'Extensiones personalizadas';
+
+  @override
+  String get customExtensionsHint => 'ej. .pdf, .docx, .log';
+
+  @override
+  String get sizeFilter => 'Tamaño';
+
+  @override
+  String get sizeAny => 'Cualquier tamaño';
+
+  @override
+  String get sizeUnder1Mb => '< 1 MB';
+
+  @override
+  String get size1To100Mb => '1–100 MB';
+
+  @override
+  String get sizeOver100Mb => '> 100 MB';
+
+  @override
+  String get sizeOver1Gb => '> 1 GB';
+
+  @override
+  String get depthFilter => 'Profundidad';
+
+  @override
+  String get depthUnlimited => 'Ilimitada';
+
+  @override
+  String depthLevel(int depth) {
+    return 'Profundidad máx. $depth';
+  }
+
+  @override
+  String get includeFoldersChip => 'Carpetas';
+
+  @override
+  String scanningProgress(String remote, int files, int dirs) {
+    return 'Escaneando $remote • $files archivos, $dirs carpetas';
+  }
+
+  @override
+  String scanningAllProgress(int files, int dirs) {
+    return 'Escaneando nubes • $files archivos, $dirs carpetas';
+  }
+
+  @override
+  String searchResultsSummary(int count, int files, int dirs) {
+    return '$count resultados ($files archivos, $dirs carpetas escaneadas)';
+  }
+
+  @override
+  String searchTruncatedNotice(int count) {
+    return 'Mostrando los primeros $count resultados. Refina tu búsqueda o filtros.';
+  }
+
+  @override
+  String searchWarningsTitle(int count) {
+    return 'Advertencias parciales ($count)';
+  }
+
+  @override
+  String get globalSearchEmptyPrompt =>
+      'Introduce un nombre, patrón glob (ej. *.pdf) o selecciona filtros para buscar en todas las nubes.';
+
+  @override
+  String get globalSearchNoResults =>
+      'Ningún archivo coincide con tu búsqueda global.';
+
+  @override
+  String get searchCancelledLabel => 'Búsqueda detenida';
+
+  @override
+  String get openAction => 'Abrir';
 }

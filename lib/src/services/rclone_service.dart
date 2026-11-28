@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../ffi/rclone_bindings.dart';
 import '../models/cloud_models.dart';
+import '../models/search_models.dart';
 import '../models/transfer_models.dart';
 
 /// Riverpod provider for [RcloneService].
@@ -286,13 +287,39 @@ class RcloneService {
   /// Copies a file from source to destination.
   ///
   /// Works across remotes (cloud-to-cloud, cloud-to-local, local-to-cloud).
+  /// Offloads execution to a background [Isolate] so the UI thread stays responsive.
   Future<void> copyFile({
     required String srcRemote,
     required String srcPath,
     required String dstRemote,
     required String dstPath,
   }) async {
-    return using((Arena arena) {
+    if (_isCustomDylib) {
+      return _copyFileInternal(
+        srcRemote: srcRemote,
+        srcPath: srcPath,
+        dstRemote: dstRemote,
+        dstPath: dstPath,
+      );
+    }
+    return Isolate.run(() {
+      final worker = RcloneService();
+      worker._copyFileInternal(
+        srcRemote: srcRemote,
+        srcPath: srcPath,
+        dstRemote: dstRemote,
+        dstPath: dstPath,
+      );
+    });
+  }
+
+  void _copyFileInternal({
+    required String srcRemote,
+    required String srcPath,
+    required String dstRemote,
+    required String dstPath,
+  }) {
+    using((Arena arena) {
       final cSrcRemote = srcRemote
           .toNativeUtf8(allocator: arena)
           .cast<ffi.Char>();
@@ -322,7 +349,20 @@ class RcloneService {
     required String remote,
     required String filePath,
   }) async {
-    return using((Arena arena) {
+    if (_isCustomDylib) {
+      return _deleteFileInternal(remote: remote, filePath: filePath);
+    }
+    return Isolate.run(() {
+      final worker = RcloneService();
+      worker._deleteFileInternal(remote: remote, filePath: filePath);
+    });
+  }
+
+  void _deleteFileInternal({
+    required String remote,
+    required String filePath,
+  }) {
+    using((Arena arena) {
       final cRemote = remote.toNativeUtf8(allocator: arena).cast<ffi.Char>();
       final cFilePath = filePath
           .toNativeUtf8(allocator: arena)
@@ -549,5 +589,114 @@ class RcloneService {
     if (!response.success) {
       throw Exception('ClearCompletedTransfers failed: ${response.error}');
     }
+  }
+
+  /// Starts an asynchronous cross-cloud global search job in Go.
+  Future<SearchJobSnapshot> startSearch(SearchRequest request) async {
+    final requestJson = jsonEncode(request.toJson());
+    if (_isCustomDylib) {
+      return _startSearchInternal(requestJson);
+    }
+    return Isolate.run(() {
+      final worker = RcloneService();
+      return worker._startSearchInternal(requestJson);
+    });
+  }
+
+  SearchJobSnapshot _startSearchInternal(String requestJson) {
+    return using((Arena arena) {
+      final cReq = requestJson.toNativeUtf8(allocator: arena).cast<ffi.Char>();
+      final raw = _invokeAndFree(() => _bindings.StartSearch(cReq));
+
+      final response = RcloneResponse.fromJson(
+        raw,
+        (data) => SearchJobSnapshot.fromJson(data as Map<String, dynamic>),
+      );
+
+      if (!response.success || response.data == null) {
+        throw Exception('StartSearch failed: ${response.error}');
+      }
+      return response.data!;
+    });
+  }
+
+  /// Polls the live status, counters, warnings, and matched items of a search job.
+  Future<SearchJobSnapshot> getSearchStatus(String jobId) async {
+    if (_isCustomDylib) {
+      return _getSearchStatusInternal(jobId);
+    }
+    return Isolate.run(() {
+      final worker = RcloneService();
+      return worker._getSearchStatusInternal(jobId);
+    });
+  }
+
+  SearchJobSnapshot _getSearchStatusInternal(String jobId) {
+    return using((Arena arena) {
+      final cJobId = jobId.toNativeUtf8(allocator: arena).cast<ffi.Char>();
+      final raw = _invokeAndFree(() => _bindings.GetSearchStatus(cJobId));
+
+      final response = RcloneResponse.fromJson(
+        raw,
+        (data) => SearchJobSnapshot.fromJson(data as Map<String, dynamic>),
+      );
+
+      if (!response.success || response.data == null) {
+        throw Exception('GetSearchStatus failed: ${response.error}');
+      }
+      return response.data!;
+    });
+  }
+
+  /// Cancels an active global search job.
+  Future<bool> cancelSearch(String jobId) async {
+    if (_isCustomDylib) {
+      return _cancelSearchInternal(jobId);
+    }
+    return Isolate.run(() {
+      final worker = RcloneService();
+      return worker._cancelSearchInternal(jobId);
+    });
+  }
+
+  bool _cancelSearchInternal(String jobId) {
+    return using((Arena arena) {
+      final cJobId = jobId.toNativeUtf8(allocator: arena).cast<ffi.Char>();
+      final raw = _invokeAndFree(() => _bindings.CancelSearch(cJobId));
+
+      final response = RcloneResponse.fromJson(
+        raw,
+        (data) => data as Map<String, dynamic>,
+      );
+
+      return response.success;
+    });
+  }
+
+  /// Removes a finished search job from Go memory.
+  Future<void> clearSearch(String jobId) async {
+    if (_isCustomDylib) {
+      return _clearSearchInternal(jobId);
+    }
+    return Isolate.run(() {
+      final worker = RcloneService();
+      return worker._clearSearchInternal(jobId);
+    });
+  }
+
+  void _clearSearchInternal(String jobId) {
+    using((Arena arena) {
+      final cJobId = jobId.toNativeUtf8(allocator: arena).cast<ffi.Char>();
+      final raw = _invokeAndFree(() => _bindings.ClearSearch(cJobId));
+
+      final response = RcloneResponse.fromJson(
+        raw,
+        (data) => data as Map<String, dynamic>,
+      );
+
+      if (!response.success) {
+        throw Exception('ClearSearch failed: ${response.error}');
+      }
+    });
   }
 }

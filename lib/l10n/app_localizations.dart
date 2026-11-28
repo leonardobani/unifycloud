@@ -3699,6 +3699,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Grant Access'**
   String get grantPermission;
+
+  /// Tooltip and menu label to manually refresh the current folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh folder'**
+  String get refreshCurrentFolder;
+
+  /// Label for cross-cloud global search mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Global search'**
+  String get globalSearch;
+
+  /// Scope toggle label for searching only the current folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Current folder'**
+  String get currentFolderScope;
+
+  /// Hint text for the global search input field.
+  ///
+  /// In en, this message translates to:
+  /// **'Search across clouds (e.g. report or *.pdf)...'**
+  String get globalSearchHint;
+
+  /// Action tooltip/button to start searching.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchAction;
+
+  /// Button label to cancel an in-progress global search.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get stopSearch;
+
+  /// Filter chip label representing all connected cloud remotes.
+  ///
+  /// In en, this message translates to:
+  /// **'All clouds'**
+  String get allClouds;
+
+  /// Prefix for file type filter chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get fileTypeFilter;
+
+  /// File type preset for all files.
+  ///
+  /// In en, this message translates to:
+  /// **'All types'**
+  String get fileTypeAll;
+
+  /// File type preset for documents.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get fileTypeDocuments;
+
+  /// File type preset for images.
+  ///
+  /// In en, this message translates to:
+  /// **'Images'**
+  String get fileTypeImages;
+
+  /// File type preset for videos.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get fileTypeVideos;
+
+  /// File type preset for audio files.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get fileTypeAudio;
+
+  /// File type preset for archive files.
+  ///
+  /// In en, this message translates to:
+  /// **'Archives'**
+  String get fileTypeArchives;
+
+  /// File type preset option for custom file extensions.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom (.ext)'**
+  String get fileTypeCustom;
+
+  /// Dialog title for entering custom file extensions.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom extensions'**
+  String get customExtensionsTitle;
+
+  /// Hint text for custom file extensions input.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. .pdf, .docx, .log'**
+  String get customExtensionsHint;
+
+  /// Prefix for file size filter chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get sizeFilter;
+
+  /// Size filter preset for any file size.
+  ///
+  /// In en, this message translates to:
+  /// **'Any size'**
+  String get sizeAny;
+
+  /// Size filter preset under 1 MB.
+  ///
+  /// In en, this message translates to:
+  /// **'< 1 MB'**
+  String get sizeUnder1Mb;
+
+  /// Size filter preset from 1 to 100 MB.
+  ///
+  /// In en, this message translates to:
+  /// **'1–100 MB'**
+  String get size1To100Mb;
+
+  /// Size filter preset over 100 MB.
+  ///
+  /// In en, this message translates to:
+  /// **'> 100 MB'**
+  String get sizeOver100Mb;
+
+  /// Size filter preset over 1 GB.
+  ///
+  /// In en, this message translates to:
+  /// **'> 1 GB'**
+  String get sizeOver1Gb;
+
+  /// Prefix for max folder depth filter chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Depth'**
+  String get depthFilter;
+
+  /// Depth filter option for unlimited depth.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited'**
+  String get depthUnlimited;
+
+  /// Depth filter option showing max folder depth.
+  ///
+  /// In en, this message translates to:
+  /// **'Max depth {depth}'**
+  String depthLevel(int depth);
+
+  /// Filter chip label to include folders in search results.
+  ///
+  /// In en, this message translates to:
+  /// **'Folders'**
+  String get includeFoldersChip;
+
+  /// Live search progress message while scanning a specific remote.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning {remote} • {files} files, {dirs} folders'**
+  String scanningProgress(String remote, int files, int dirs);
+
+  /// Live search progress message while scanning clouds.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning clouds • {files} files, {dirs} folders'**
+  String scanningAllProgress(int files, int dirs);
+
+  /// Summary of completed global search results.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} results ({files} files, {dirs} folders scanned)'**
+  String searchResultsSummary(int count, int files, int dirs);
+
+  /// Notice shown when search results reached the maximum cap.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing first {count} results. Refine your query or filters to narrow results.'**
+  String searchTruncatedNotice(int count);
+
+  /// Title for non-fatal per-remote search warnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial warnings ({count})'**
+  String searchWarningsTitle(int count);
+
+  /// Initial prompt shown in Global Search before running a search.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a name, glob pattern (e.g. *.pdf), or select filters to search across all connected clouds.'**
+  String get globalSearchEmptyPrompt;
+
+  /// Empty state shown when global search completes with zero matches.
+  ///
+  /// In en, this message translates to:
+  /// **'No files matched your global search.'**
+  String get globalSearchNoResults;
+
+  /// Badge shown when global search was stopped by the user.
+  ///
+  /// In en, this message translates to:
+  /// **'Search stopped'**
+  String get searchCancelledLabel;
+
+  /// Action label to open a file or folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get openAction;
 }
 
 class _AppLocalizationsDelegate

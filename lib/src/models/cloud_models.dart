@@ -141,6 +141,7 @@ class CloudItem {
     this.modTime,
     this.mimeType,
     this.id,
+    this.remote,
   });
 
   factory CloudItem.fromJson(Map<String, dynamic> json) {
@@ -158,6 +159,7 @@ class CloudItem {
       modTime: parsedModTime,
       mimeType: json['mime_type'] as String?,
       id: json['id'] as String?,
+      remote: json['remote'] as String?,
     );
   }
   final String name;
@@ -167,6 +169,7 @@ class CloudItem {
   final DateTime? modTime;
   final String? mimeType;
   final String? id;
+  final String? remote;
 
   Map<String, dynamic> toJson() => {
     'name': name,
@@ -176,6 +179,7 @@ class CloudItem {
     if (modTime != null) 'mod_time': modTime!.toIso8601String(),
     if (mimeType != null) 'mime_type': mimeType,
     if (id != null) 'id': id,
+    if (remote != null) 'remote': remote,
   };
 
   @override

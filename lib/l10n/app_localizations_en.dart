@@ -2114,4 +2114,126 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get grantPermission => 'Grant Access';
+
+  @override
+  String get refreshCurrentFolder => 'Refresh folder';
+
+  @override
+  String get globalSearch => 'Global search';
+
+  @override
+  String get currentFolderScope => 'Current folder';
+
+  @override
+  String get globalSearchHint =>
+      'Search across clouds (e.g. report or *.pdf)...';
+
+  @override
+  String get searchAction => 'Search';
+
+  @override
+  String get stopSearch => 'Stop';
+
+  @override
+  String get allClouds => 'All clouds';
+
+  @override
+  String get fileTypeFilter => 'Type';
+
+  @override
+  String get fileTypeAll => 'All types';
+
+  @override
+  String get fileTypeDocuments => 'Documents';
+
+  @override
+  String get fileTypeImages => 'Images';
+
+  @override
+  String get fileTypeVideos => 'Videos';
+
+  @override
+  String get fileTypeAudio => 'Audio';
+
+  @override
+  String get fileTypeArchives => 'Archives';
+
+  @override
+  String get fileTypeCustom => 'Custom (.ext)';
+
+  @override
+  String get customExtensionsTitle => 'Custom extensions';
+
+  @override
+  String get customExtensionsHint => 'e.g. .pdf, .docx, .log';
+
+  @override
+  String get sizeFilter => 'Size';
+
+  @override
+  String get sizeAny => 'Any size';
+
+  @override
+  String get sizeUnder1Mb => '< 1 MB';
+
+  @override
+  String get size1To100Mb => '1–100 MB';
+
+  @override
+  String get sizeOver100Mb => '> 100 MB';
+
+  @override
+  String get sizeOver1Gb => '> 1 GB';
+
+  @override
+  String get depthFilter => 'Depth';
+
+  @override
+  String get depthUnlimited => 'Unlimited';
+
+  @override
+  String depthLevel(int depth) {
+    return 'Max depth $depth';
+  }
+
+  @override
+  String get includeFoldersChip => 'Folders';
+
+  @override
+  String scanningProgress(String remote, int files, int dirs) {
+    return 'Scanning $remote • $files files, $dirs folders';
+  }
+
+  @override
+  String scanningAllProgress(int files, int dirs) {
+    return 'Scanning clouds • $files files, $dirs folders';
+  }
+
+  @override
+  String searchResultsSummary(int count, int files, int dirs) {
+    return '$count results ($files files, $dirs folders scanned)';
+  }
+
+  @override
+  String searchTruncatedNotice(int count) {
+    return 'Showing first $count results. Refine your query or filters to narrow results.';
+  }
+
+  @override
+  String searchWarningsTitle(int count) {
+    return 'Partial warnings ($count)';
+  }
+
+  @override
+  String get globalSearchEmptyPrompt =>
+      'Enter a name, glob pattern (e.g. *.pdf), or select filters to search across all connected clouds.';
+
+  @override
+  String get globalSearchNoResults => 'No files matched your global search.';
+
+  @override
+  String get searchCancelledLabel => 'Search stopped';
+
+  @override
+  String get openAction => 'Open';
 }
