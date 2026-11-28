@@ -16,6 +16,7 @@ import '../../providers/settings_provider.dart';
 import '../../providers/transfer_provider.dart';
 import '../../services/file_opener_service.dart';
 import '../../services/rclone_service.dart';
+import '../../services/storage_permission_service.dart';
 import '../theme/app_theme.dart';
 import 'adaptive_draggable.dart';
 import 'breadcrumbs_bar.dart';
@@ -607,6 +608,21 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
         .where((r) => r.name == state.currentRemote)
         .firstOrNull;
     final isCurrentCrypt = currentRemoteObj?.isCrypt ?? false;
+    final isLocalBacked = _isLocalBackedRemote(
+      currentRemoteObj,
+      state.currentRemote,
+      remotesState.remotes,
+    );
+    final hasStorageAccess = ref.watch(storageAccessProvider);
+
+    ref.listen<bool>(
+      storageAccessProvider,
+      (previous, next) {
+        if (previous == false && next == true && isLocalBacked) {
+          ref.read(widget.provider.notifier).refresh();
+        }
+      },
+    );
 
     ref.listen<bool>(
       widget.provider.select((s) => s.isSearching),
@@ -1174,6 +1190,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                   Column(
                     children: [
                       BreadcrumbsBar(provider: widget.provider),
+                      if (isLocalBacked && !hasStorageAccess)
+                        _buildStoragePermissionBanner(context, ref, l10n),
                       _buildClipboardBanner(context, ref, state),
                       if (state.isLoading && state.items.isNotEmpty)
                         const LinearProgressIndicator(minHeight: 3),
@@ -1236,6 +1254,70 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
           ),
         );
       },
+    );
+  }
+
+  bool _isLocalBackedRemote(
+    CloudRemote? remoteObj,
+    String? remoteName,
+    List<CloudRemote> allRemotes,
+  ) {
+    if (remoteObj != null) {
+      if (remoteObj.type.toLowerCase() == 'local') return true;
+      if (remoteObj.isCrypt && remoteObj.remote != null) {
+        final targetName = remoteObj.remote!.split(':').first.trim();
+        if (targetName.isEmpty || targetName.startsWith('/')) return true;
+        final targetObj =
+            allRemotes.where((r) => r.name == targetName).firstOrNull;
+        if (targetObj != null && targetObj.type.toLowerCase() == 'local') {
+          return true;
+        }
+      }
+    }
+    return remoteName != null && remoteName.trim().toLowerCase() == 'local';
+  }
+
+  Widget _buildStoragePermissionBanner(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    return MaterialBanner(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      backgroundColor: Colors.amber.withValues(alpha: 0.14),
+      leading: const Icon(
+        Icons.folder_off_outlined,
+        color: Colors.amber,
+      ),
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            l10n.androidStoragePermissionTitle,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            l10n.androidStoragePermissionDesc,
+            style: const TextStyle(fontSize: 12),
+          ),
+        ],
+      ),
+      actions: [
+        FilledButton.icon(
+          icon: const Icon(Icons.security, size: 16),
+          label: Text(l10n.grantPermission),
+          onPressed: () async {
+            final granted = await ref
+                .read(storageAccessProvider.notifier)
+                .requestAccess();
+            if (granted && context.mounted) {
+              await ref.read(widget.provider.notifier).refresh();
+            }
+          },
+        ),
+      ],
     );
   }
 

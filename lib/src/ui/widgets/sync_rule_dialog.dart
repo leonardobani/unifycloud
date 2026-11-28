@@ -8,6 +8,7 @@ import '../../../l10n/l10n_extension.dart';
 import '../../models/sync_rule_model.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/sync_provider.dart';
+import '../../services/storage_permission_service.dart';
 import '../theme/app_theme.dart';
 
 /// Dialog allowing users to create or edit an automated or manual sync rule.
@@ -153,6 +154,7 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
     final isDark = theme.brightness == Brightness.dark;
     final isEditing = widget.existingRule != null;
     final presets = _getSystemPresets(l10n);
+    final hasStorageAccess = ref.watch(storageAccessProvider);
 
     // Select initial remote if null and remotes exist
     if (_selectedRemote == null && cloudState.remotes.isNotEmpty) {
@@ -215,6 +217,51 @@ class _SyncRuleDialogState extends ConsumerState<SyncRuleDialog> {
                 Expanded(
                   child: ListView(
                     children: [
+                      if (!hasStorageAccess) ...[
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          margin: const EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.withValues(alpha: 0.14),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Colors.amber.withValues(alpha: 0.4),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.folder_off_outlined, color: Colors.amber),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      l10n.androidStoragePermissionTitle,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      l10n.androidStoragePermissionDesc,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              FilledButton(
+                                onPressed: () => ref
+                                    .read(storageAccessProvider.notifier)
+                                    .requestAccess(),
+                                child: Text(l10n.grantPermission),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                       // Rule Name
                       TextFormField(
                         controller: _nameController,

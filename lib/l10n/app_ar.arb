@@ -595,5 +595,8 @@
   "pinnedToHomeFeedback": "تم تثبيت \"{name}\" في الرئيسية",
   "unpinnedFromHomeFeedback": "تمت إزالة \"{name}\" من الرئيسية",
   "openContainingFolder": "فتح المجلد في المستكشف",
-  "remoteNotConnected": "السحابة \"{remote}\" لم تعد متصلة"
+  "remoteNotConnected": "السحابة \"{remote}\" لم تعد متصلة",
+  "androidStoragePermissionTitle": "مطلوب إذن الوصول إلى جميع الملفات",
+  "androidStoragePermissionDesc": "يخفي نظام Android الملفات المحلية حتى يتم منح إذن \"الوصول إلى جميع الملفات\" لتطبيق UnifyCloud. تظل المجلدات مرئية، لكن الملفات لا تظهر.",
+  "grantPermission": "منح الإذن"
 }

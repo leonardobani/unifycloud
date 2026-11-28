@@ -2130,4 +2130,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String remoteNotConnected(String remote) {
     return 'La nube \"$remote\" ya no está conectada';
   }
+
+  @override
+  String get androidStoragePermissionTitle =>
+      'Acceso a todos los archivos requerido';
+
+  @override
+  String get androidStoragePermissionDesc =>
+      'Android oculta los archivos locales hasta que concedas el permiso de \"Acceso a todos los archivos\" a UnifyCloud. Las carpetas se ven, pero los archivos no aparecen.';
+
+  @override
+  String get grantPermission => 'Conceder';
 }

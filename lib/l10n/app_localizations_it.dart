@@ -2125,4 +2125,15 @@ class AppLocalizationsIt extends AppLocalizations {
   String remoteNotConnected(String remote) {
     return 'Il cloud \"$remote\" non è più collegato';
   }
+
+  @override
+  String get androidStoragePermissionTitle =>
+      'Accesso a tutti i file richiesto';
+
+  @override
+  String get androidStoragePermissionDesc =>
+      'Android nasconde i file locali finché non concedi l\'\"Accesso a tutti i file\" a UnifyCloud. Le cartelle sono visibili, ma i file non vengono mostrati.';
+
+  @override
+  String get grantPermission => 'Consenti';
 }

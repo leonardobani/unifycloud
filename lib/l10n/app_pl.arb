@@ -595,5 +595,8 @@
   "pinnedToHomeFeedback": "Przypięto \"{name}\" do strony głównej",
   "unpinnedFromHomeFeedback": "Usunięto \"{name}\" ze strony głównej",
   "openContainingFolder": "Otwórz folder w Eksploratorze",
-  "remoteNotConnected": "Chmura \"{remote}\" nie jest już połączona"
+  "remoteNotConnected": "Chmura \"{remote}\" nie jest już połączona",
+  "androidStoragePermissionTitle": "Wymagany dostęp do wszystkich plików",
+  "androidStoragePermissionDesc": "Android ukrywa lokalne pliki, dopóki nie przyznasz UnifyCloud uprawnienia \"Dostęp do wszystkich plików\". Foldery są widoczne, ale pliki się nie pojawiają.",
+  "grantPermission": "Przyznaj"
 }

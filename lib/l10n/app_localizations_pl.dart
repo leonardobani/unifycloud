@@ -2112,4 +2112,15 @@ class AppLocalizationsPl extends AppLocalizations {
   String remoteNotConnected(String remote) {
     return 'Chmura \"$remote\" nie jest już połączona';
   }
+
+  @override
+  String get androidStoragePermissionTitle =>
+      'Wymagany dostęp do wszystkich plików';
+
+  @override
+  String get androidStoragePermissionDesc =>
+      'Android ukrywa lokalne pliki, dopóki nie przyznasz UnifyCloud uprawnienia \"Dostęp do wszystkich plików\". Foldery są widoczne, ale pliki się nie pojawiają.';
+
+  @override
+  String get grantPermission => 'Przyznaj';
 }

@@ -7,6 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../services/oauth_service.dart';
+import '../../services/storage_permission_service.dart';
 import '../../utils/token_utils.dart';
 import '../theme/app_theme.dart';
 
@@ -358,6 +359,9 @@ class _AddCloudDialogState extends ConsumerState<AddCloudDialog> {
             type: _selectedProvider,
             options: options,
           );
+      if (_selectedProvider == 'local' && !ref.read(storageAccessProvider)) {
+        await ref.read(storageAccessProvider.notifier).requestAccess();
+      }
       if (mounted) {
         Navigator.of(context).pop(true);
       }

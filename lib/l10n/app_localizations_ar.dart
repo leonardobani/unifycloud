@@ -2102,4 +2102,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String remoteNotConnected(String remote) {
     return 'السحابة \"$remote\" لم تعد متصلة';
   }
+
+  @override
+  String get androidStoragePermissionTitle =>
+      'مطلوب إذن الوصول إلى جميع الملفات';
+
+  @override
+  String get androidStoragePermissionDesc =>
+      'يخفي نظام Android الملفات المحلية حتى يتم منح إذن \"الوصول إلى جميع الملفات\" لتطبيق UnifyCloud. تظل المجلدات مرئية، لكن الملفات لا تظهر.';
+
+  @override
+  String get grantPermission => 'منح الإذن';
 }

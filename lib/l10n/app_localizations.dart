@@ -3681,6 +3681,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cloud \"{remote}\" is no longer connected'**
   String remoteNotConnected(String remote);
+
+  /// Title shown when Android storage permission is needed to list local files.
+  ///
+  /// In en, this message translates to:
+  /// **'All files access required'**
+  String get androidStoragePermissionTitle;
+
+  /// Explanation shown when Android storage permission is missing.
+  ///
+  /// In en, this message translates to:
+  /// **'Android hides local files until \"All files access\" is granted for UnifyCloud. Folders remain visible, but files won\'t appear.'**
+  String get androidStoragePermissionDesc;
+
+  /// Button label to grant Android all files access.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant Access'**
+  String get grantPermission;
 }
 
 class _AppLocalizationsDelegate

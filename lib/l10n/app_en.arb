@@ -2938,5 +2938,17 @@
         "type": "String"
       }
     }
+  },
+  "androidStoragePermissionTitle": "All files access required",
+  "@androidStoragePermissionTitle": {
+    "description": "Title shown when Android storage permission is needed to list local files."
+  },
+  "androidStoragePermissionDesc": "Android hides local files until \"All files access\" is granted for UnifyCloud. Folders remain visible, but files won't appear.",
+  "@androidStoragePermissionDesc": {
+    "description": "Explanation shown when Android storage permission is missing."
+  },
+  "grantPermission": "Grant Access",
+  "@grantPermission": {
+    "description": "Button label to grant Android all files access."
   }
 }

@@ -595,5 +595,8 @@
   "pinnedToHomeFeedback": "\"{name}\" fissato sulla Home",
   "unpinnedFromHomeFeedback": "\"{name}\" rimosso dalla Home",
   "openContainingFolder": "Apri cartella in Explorer",
-  "remoteNotConnected": "Il cloud \"{remote}\" non è più collegato"
+  "remoteNotConnected": "Il cloud \"{remote}\" non è più collegato",
+  "androidStoragePermissionTitle": "Accesso a tutti i file richiesto",
+  "androidStoragePermissionDesc": "Android nasconde i file locali finché non concedi l'\"Accesso a tutti i file\" a UnifyCloud. Le cartelle sono visibili, ma i file non vengono mostrati.",
+  "grantPermission": "Consenti"
 }

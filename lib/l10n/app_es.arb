@@ -595,5 +595,8 @@
   "pinnedToHomeFeedback": "\"{name}\" fijado en Inicio",
   "unpinnedFromHomeFeedback": "\"{name}\" quitado de Inicio",
   "openContainingFolder": "Abrir carpeta en el Explorador",
-  "remoteNotConnected": "La nube \"{remote}\" ya no está conectada"
+  "remoteNotConnected": "La nube \"{remote}\" ya no está conectada",
+  "androidStoragePermissionTitle": "Acceso a todos los archivos requerido",
+  "androidStoragePermissionDesc": "Android oculta los archivos locales hasta que concedas el permiso de \"Acceso a todos los archivos\" a UnifyCloud. Las carpetas se ven, pero los archivos no aparecen.",
+  "grantPermission": "Conceder"
 }
