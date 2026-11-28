@@ -2950,5 +2950,194 @@
   "grantPermission": "Grant Access",
   "@grantPermission": {
     "description": "Button label to grant Android all files access."
+  },
+  "refreshCurrentFolder": "Refresh folder",
+  "@refreshCurrentFolder": {
+    "description": "Tooltip and menu label to manually refresh the current folder."
+  },
+  "globalSearch": "Global search",
+  "@globalSearch": {
+    "description": "Label for cross-cloud global search mode."
+  },
+  "currentFolderScope": "Current folder",
+  "@currentFolderScope": {
+    "description": "Scope toggle label for searching only the current folder."
+  },
+  "globalSearchHint": "Search across clouds (e.g. report or *.pdf)...",
+  "@globalSearchHint": {
+    "description": "Hint text for the global search input field."
+  },
+  "searchAction": "Search",
+  "@searchAction": {
+    "description": "Action tooltip/button to start searching."
+  },
+  "stopSearch": "Stop",
+  "@stopSearch": {
+    "description": "Button label to cancel an in-progress global search."
+  },
+  "allClouds": "All clouds",
+  "@allClouds": {
+    "description": "Filter chip label representing all connected cloud remotes."
+  },
+  "fileTypeFilter": "Type",
+  "@fileTypeFilter": {
+    "description": "Prefix for file type filter chip."
+  },
+  "fileTypeAll": "All types",
+  "@fileTypeAll": {
+    "description": "File type preset for all files."
+  },
+  "fileTypeDocuments": "Documents",
+  "@fileTypeDocuments": {
+    "description": "File type preset for documents."
+  },
+  "fileTypeImages": "Images",
+  "@fileTypeImages": {
+    "description": "File type preset for images."
+  },
+  "fileTypeVideos": "Videos",
+  "@fileTypeVideos": {
+    "description": "File type preset for videos."
+  },
+  "fileTypeAudio": "Audio",
+  "@fileTypeAudio": {
+    "description": "File type preset for audio files."
+  },
+  "fileTypeArchives": "Archives",
+  "@fileTypeArchives": {
+    "description": "File type preset for archive files."
+  },
+  "fileTypeCustom": "Custom (.ext)",
+  "@fileTypeCustom": {
+    "description": "File type preset option for custom file extensions."
+  },
+  "customExtensionsTitle": "Custom extensions",
+  "@customExtensionsTitle": {
+    "description": "Dialog title for entering custom file extensions."
+  },
+  "customExtensionsHint": "e.g. .pdf, .docx, .log",
+  "@customExtensionsHint": {
+    "description": "Hint text for custom file extensions input."
+  },
+  "sizeFilter": "Size",
+  "@sizeFilter": {
+    "description": "Prefix for file size filter chip."
+  },
+  "sizeAny": "Any size",
+  "@sizeAny": {
+    "description": "Size filter preset for any file size."
+  },
+  "sizeUnder1Mb": "< 1 MB",
+  "@sizeUnder1Mb": {
+    "description": "Size filter preset under 1 MB."
+  },
+  "size1To100Mb": "1–100 MB",
+  "@size1To100Mb": {
+    "description": "Size filter preset from 1 to 100 MB."
+  },
+  "sizeOver100Mb": "> 100 MB",
+  "@sizeOver100Mb": {
+    "description": "Size filter preset over 100 MB."
+  },
+  "sizeOver1Gb": "> 1 GB",
+  "@sizeOver1Gb": {
+    "description": "Size filter preset over 1 GB."
+  },
+  "depthFilter": "Depth",
+  "@depthFilter": {
+    "description": "Prefix for max folder depth filter chip."
+  },
+  "depthUnlimited": "Unlimited",
+  "@depthUnlimited": {
+    "description": "Depth filter option for unlimited depth."
+  },
+  "depthLevel": "Max depth {depth}",
+  "@depthLevel": {
+    "description": "Depth filter option showing max folder depth.",
+    "placeholders": {
+      "depth": {
+        "type": "int"
+      }
+    }
+  },
+  "includeFoldersChip": "Folders",
+  "@includeFoldersChip": {
+    "description": "Filter chip label to include folders in search results."
+  },
+  "scanningProgress": "Scanning {remote} • {files} files, {dirs} folders",
+  "@scanningProgress": {
+    "description": "Live search progress message while scanning a specific remote.",
+    "placeholders": {
+      "remote": {
+        "type": "String"
+      },
+      "files": {
+        "type": "int"
+      },
+      "dirs": {
+        "type": "int"
+      }
+    }
+  },
+  "scanningAllProgress": "Scanning clouds • {files} files, {dirs} folders",
+  "@scanningAllProgress": {
+    "description": "Live search progress message while scanning clouds.",
+    "placeholders": {
+      "files": {
+        "type": "int"
+      },
+      "dirs": {
+        "type": "int"
+      }
+    }
+  },
+  "searchResultsSummary": "{count} results ({files} files, {dirs} folders scanned)",
+  "@searchResultsSummary": {
+    "description": "Summary of completed global search results.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "files": {
+        "type": "int"
+      },
+      "dirs": {
+        "type": "int"
+      }
+    }
+  },
+  "searchTruncatedNotice": "Showing first {count} results. Refine your query or filters to narrow results.",
+  "@searchTruncatedNotice": {
+    "description": "Notice shown when search results reached the maximum cap.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchWarningsTitle": "Partial warnings ({count})",
+  "@searchWarningsTitle": {
+    "description": "Title for non-fatal per-remote search warnings.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "globalSearchEmptyPrompt": "Enter a name, glob pattern (e.g. *.pdf), or select filters to search across all connected clouds.",
+  "@globalSearchEmptyPrompt": {
+    "description": "Initial prompt shown in Global Search before running a search."
+  },
+  "globalSearchNoResults": "No files matched your global search.",
+  "@globalSearchNoResults": {
+    "description": "Empty state shown when global search completes with zero matches."
+  },
+  "searchCancelledLabel": "Search stopped",
+  "@searchCancelledLabel": {
+    "description": "Badge shown when global search was stopped by the user."
+  },
+  "openAction": "Open",
+  "@openAction": {
+    "description": "Action label to open a file or folder."
   }
 }

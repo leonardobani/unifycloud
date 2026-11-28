@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:unifycloud/src/models/search_models.dart';
 import 'package:unifycloud/src/models/transfer_models.dart';
 import 'package:unifycloud/src/services/rclone_service.dart';
 
@@ -208,6 +209,57 @@ host = ffi.example.com
                   e.toString().contains('failed'))),
         ),
       );
+    });
+
+    test('startSearch(), getSearchStatus(), cancelSearch(), and clearSearch() work via FFI', () async {
+      final searchDir = Directory('${tempDir.path}/ffi_search_root');
+      final subDir = Directory('${searchDir.path}/nested');
+      subDir.createSync(recursive: true);
+      File('${searchDir.path}/alpha.pdf').writeAsStringSync('pdf-content');
+      File('${subDir.path}/beta_report.pdf').writeAsStringSync('nested-pdf');
+      File('${subDir.path}/notes.txt').writeAsStringSync('text');
+
+      await service.setRemoteConfig(
+        remoteName: 'SearchFfiLocal',
+        remoteType: 'local',
+        options: {'root': searchDir.path},
+      );
+
+      try {
+        final started = await service.startSearch(
+          const SearchRequest(
+            remotes: ['SearchFfiLocal'],
+            query: '*.pdf',
+            includeDirs: false,
+          ),
+        );
+        expect(started.jobId, startsWith('search_'));
+
+        var snapshot = await service.getSearchStatus(started.jobId);
+        for (var i = 0; i < 40 && snapshot.status.isActive; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 25));
+          snapshot = await service.getSearchStatus(started.jobId);
+        }
+
+        expect(snapshot.status, equals(SearchStatus.completed));
+        expect(snapshot.results.length, equals(2));
+        expect(
+          snapshot.results.every((r) => r.remote == 'SearchFfiLocal'),
+          isTrue,
+        );
+        expect(
+          snapshot.results.map((r) => r.name),
+          containsAll(['alpha.pdf', 'beta_report.pdf']),
+        );
+
+        await service.clearSearch(started.jobId);
+        expect(
+          () => service.getSearchStatus(started.jobId),
+          throwsA(isA<Exception>()),
+        );
+      } finally {
+        await service.deleteRemote('SearchFfiLocal');
+      }
     });
   });
 }

@@ -651,6 +651,322 @@ func TestSecurity_IniInjectionAndPasswordObscure(t *testing.T) {
 	}
 }
 
+func waitForSearchCompletion(t *testing.T, jobID string) SearchJobSnapshot {
+	t.Helper()
+	deadline := time.Now().Add(10 * time.Second)
+	for time.Now().Before(deadline) {
+		resp := GetSearchStatusInternal(jobID)
+		if !resp.Success {
+			t.Fatalf("GetSearchStatusInternal(%s) failed: %s", jobID, resp.Error)
+		}
+		snap, ok := resp.Data.(SearchJobSnapshot)
+		if !ok {
+			t.Fatalf("Expected SearchJobSnapshot, got %T", resp.Data)
+		}
+		if snap.Status != "running" {
+			return snap
+		}
+		time.Sleep(20 * time.Millisecond)
+	}
+	t.Fatalf("Search job %s timed out waiting for completion", jobID)
+	return SearchJobSnapshot{}
+}
+
+func TestGlobalSearchInternal_FiltersAndDepth(t *testing.T) {
+	InitRcloneInternal("")
+	tmpDir := t.TempDir()
+
+	// Create directory tree:
+	// root:
+	//   top_report.pdf (200 bytes)
+	//   notes.txt (10 bytes)
+	//   level1/
+	//     sub_report.PDF (500 bytes)
+	//     photo.png (300 bytes)
+	//     level2/
+	//       deep_report.pdf (1000 bytes)
+	//       level3/
+	//         abyss_report.pdf (50 bytes)
+	_ = os.MkdirAll(filepath.Join(tmpDir, "level1", "level2", "level3"), 0755)
+	_ = os.WriteFile(filepath.Join(tmpDir, "top_report.pdf"), make([]byte, 200), 0644)
+	_ = os.WriteFile(filepath.Join(tmpDir, "notes.txt"), make([]byte, 10), 0644)
+	_ = os.WriteFile(filepath.Join(tmpDir, "level1", "sub_report.PDF"), make([]byte, 500), 0644)
+	_ = os.WriteFile(filepath.Join(tmpDir, "level1", "photo.png"), make([]byte, 300), 0644)
+	_ = os.WriteFile(filepath.Join(tmpDir, "level1", "level2", "deep_report.pdf"), make([]byte, 1000), 0644)
+	_ = os.WriteFile(filepath.Join(tmpDir, "level1", "level2", "level3", "abyss_report.pdf"), make([]byte, 50), 0644)
+
+	rootOpts, _ := json.Marshal(map[string]string{"root": tmpDir})
+	if resp := SetRemoteConfigInternal("search_local", "local", string(rootOpts)); !resp.Success {
+		t.Fatalf("Failed to configure search_local: %s", resp.Error)
+	}
+	defer DeleteRemoteInternal("search_local")
+
+	// 1. Substring query + recursive match across all depths
+	req1, _ := json.Marshal(map[string]interface{}{
+		"remotes":      []string{"search_local"},
+		"query":        "REPORT",
+		"include_dirs": false,
+	})
+	start1 := StartSearchInternal(string(req1))
+	if !start1.Success {
+		t.Fatalf("StartSearchInternal failed: %s", start1.Error)
+	}
+	startData1 := start1.Data.(SearchStartResponse)
+	snap1 := waitForSearchCompletion(t, startData1.JobID)
+	if snap1.Status != "completed" {
+		t.Fatalf("Expected completed, got %s (err=%s)", snap1.Status, snap1.Error)
+	}
+	if len(snap1.Results) != 4 {
+		t.Fatalf("Expected 4 report files, got %d: %+v", len(snap1.Results), snap1.Results)
+	}
+	for _, it := range snap1.Results {
+		if it.Remote != "search_local" {
+			t.Errorf("Expected Remote 'search_local', got %q", it.Remote)
+		}
+	}
+	_ = ClearSearchInternal(startData1.JobID)
+
+	// 2. Glob query + extensions + min_size + max_size
+	req2, _ := json.Marshal(map[string]interface{}{
+		"remotes":      []string{"search_local"},
+		"query":        "*report*",
+		"extensions":   []string{".pdf"},
+		"min_size":     200,
+		"max_size":     600,
+		"include_dirs": false,
+	})
+	start2 := StartSearchInternal(string(req2))
+	if !start2.Success {
+		t.Fatalf("StartSearchInternal 2 failed: %s", start2.Error)
+	}
+	snap2 := waitForSearchCompletion(t, start2.Data.(SearchStartResponse).JobID)
+	if len(snap2.Results) != 2 {
+		t.Fatalf("Expected 2 matching PDFs in [200, 600], got %d: %+v", len(snap2.Results), snap2.Results)
+	}
+	_ = ClearSearchInternal(snap2.JobID)
+
+	// 3. max_depth = 1 (0 slashes or 1 slash in item.Path)
+	req3, _ := json.Marshal(map[string]interface{}{
+		"remotes":      []string{"search_local"},
+		"query":        "report",
+		"max_depth":    1,
+		"include_dirs": false,
+	})
+	start3 := StartSearchInternal(string(req3))
+	if !start3.Success {
+		t.Fatalf("StartSearchInternal 3 failed: %s", start3.Error)
+	}
+	snap3 := waitForSearchCompletion(t, start3.Data.(SearchStartResponse).JobID)
+	if len(snap3.Results) != 2 {
+		t.Fatalf("Expected 2 results with max_depth=1 (top_report.pdf and level1/sub_report.PDF), got %d: %+v", len(snap3.Results), snap3.Results)
+	}
+	_ = ClearSearchInternal(snap3.JobID)
+
+	// 4. include_dirs = true
+	req4, _ := json.Marshal(map[string]interface{}{
+		"remotes":      []string{"search_local"},
+		"query":        "level2",
+		"include_dirs": true,
+	})
+	start4 := StartSearchInternal(string(req4))
+	if !start4.Success {
+		t.Fatalf("StartSearchInternal 4 failed: %s", start4.Error)
+	}
+	snap4 := waitForSearchCompletion(t, start4.Data.(SearchStartResponse).JobID)
+	foundDir := false
+	for _, it := range snap4.Results {
+		if it.IsDir && it.Name == "level2" {
+			foundDir = true
+		}
+	}
+	if !foundDir {
+		t.Errorf("Expected level2 dir in results when include_dirs=true, got %+v", snap4.Results)
+	}
+	_ = ClearSearchInternal(snap4.JobID)
+
+	// 5. Files inside a folder matching the keyword must NOT match unless their own name matches
+	_ = os.MkdirAll(filepath.Join(tmpDir, "budget_folder"), 0755)
+	_ = os.WriteFile(filepath.Join(tmpDir, "budget_folder", "unrelated.txt"), []byte("nope"), 0644)
+	_ = os.WriteFile(filepath.Join(tmpDir, "budget_folder", "budget_2026.txt"), []byte("yes"), 0644)
+
+	req5, _ := json.Marshal(map[string]interface{}{
+		"remotes":      []string{"search_local"},
+		"query":        "budget",
+		"include_dirs": false,
+	})
+	start5 := StartSearchInternal(string(req5))
+	if !start5.Success {
+		t.Fatalf("StartSearchInternal 5 failed: %s", start5.Error)
+	}
+	snap5 := waitForSearchCompletion(t, start5.Data.(SearchStartResponse).JobID)
+	if len(snap5.Results) != 1 || snap5.Results[0].Name != "budget_2026.txt" {
+		t.Fatalf("Expected only budget_2026.txt (not budget_folder/unrelated.txt), got %+v", snap5.Results)
+	}
+	_ = ClearSearchInternal(snap5.JobID)
+
+	// Explicit path query containing '/' should still match full path
+	req6, _ := json.Marshal(map[string]interface{}{
+		"remotes":      []string{"search_local"},
+		"query":        "budget_folder/unrel",
+		"include_dirs": false,
+	})
+	start6 := StartSearchInternal(string(req6))
+	if !start6.Success {
+		t.Fatalf("StartSearchInternal 6 failed: %s", start6.Error)
+	}
+	snap6 := waitForSearchCompletion(t, start6.Data.(SearchStartResponse).JobID)
+	if len(snap6.Results) != 1 || snap6.Results[0].Name != "unrelated.txt" {
+		t.Fatalf("Expected path query 'budget_folder/unrel' to match unrelated.txt, got %+v", snap6.Results)
+	}
+	_ = ClearSearchInternal(snap6.JobID)
+}
+
+func TestGlobalSearchInternal_TruncationMultiRemoteAndCrypt(t *testing.T) {
+	InitRcloneInternal("")
+	tmpDir := t.TempDir()
+
+	dirA := filepath.Join(tmpDir, "cloudA")
+	dirB := filepath.Join(tmpDir, "cloudB")
+	_ = os.MkdirAll(dirA, 0755)
+	_ = os.MkdirAll(dirB, 0755)
+
+	for i := 0; i < 6; i++ {
+		_ = os.WriteFile(filepath.Join(dirA, "match_"+string(rune('a'+i))+".txt"), []byte("data"), 0644)
+	}
+	_ = os.WriteFile(filepath.Join(dirB, "match_b1.txt"), []byte("data"), 0644)
+
+	optsA, _ := json.Marshal(map[string]string{"root": dirA})
+	optsB, _ := json.Marshal(map[string]string{"root": dirB})
+	SetRemoteConfigInternal("cloud_a", "local", string(optsA))
+	SetRemoteConfigInternal("cloud_b", "local", string(optsB))
+	defer DeleteRemoteInternal("cloud_a")
+	defer DeleteRemoteInternal("cloud_b")
+
+	// 1. MaxResults truncation across remotes
+	reqTrunc, _ := json.Marshal(map[string]interface{}{
+		"remotes":     []string{"cloud_a", "cloud_b"},
+		"query":       "match_",
+		"max_results": 3,
+	})
+	startTrunc := StartSearchInternal(string(reqTrunc))
+	if !startTrunc.Success {
+		t.Fatalf("StartSearchInternal trunc failed: %s", startTrunc.Error)
+	}
+	snapTrunc := waitForSearchCompletion(t, startTrunc.Data.(SearchStartResponse).JobID)
+	if snapTrunc.Status != "completed" {
+		t.Fatalf("Expected completed on truncation, got %s (err=%s)", snapTrunc.Status, snapTrunc.Error)
+	}
+	if !snapTrunc.Truncated {
+		t.Errorf("Expected Truncated=true when max_results=3 and 7 files exist")
+	}
+	if len(snapTrunc.Results) != 3 {
+		t.Errorf("Expected exactly 3 results, got %d", len(snapTrunc.Results))
+	}
+	_ = ClearSearchInternal(snapTrunc.JobID)
+
+	// 2. Partial failure: one valid remote + one invalid remote -> completed with warning
+	reqWarn, _ := json.Marshal(map[string]interface{}{
+		"remotes": []string{"cloud_b", "non_existent_cloud_xyz"},
+		"query":   "match_b1",
+	})
+	startWarn := StartSearchInternal(string(reqWarn))
+	snapWarn := waitForSearchCompletion(t, startWarn.Data.(SearchStartResponse).JobID)
+	if snapWarn.Status != "completed" {
+		t.Fatalf("Expected completed when 1 of 2 remotes succeeds, got %s", snapWarn.Status)
+	}
+	if len(snapWarn.Results) != 1 || snapWarn.Results[0].Remote != "cloud_b" {
+		t.Errorf("Expected 1 result from cloud_b, got %+v", snapWarn.Results)
+	}
+	if len(snapWarn.Warnings) == 0 {
+		t.Errorf("Expected non-fatal warning for non_existent_cloud_xyz")
+	}
+	_ = ClearSearchInternal(snapWarn.JobID)
+
+	// 3. Crypt remote transparent filename decryption during search
+	vaultDir := filepath.Join(tmpDir, "vault")
+	_ = os.MkdirAll(vaultDir, 0755)
+	optsRoot, _ := json.Marshal(map[string]string{"root": tmpDir})
+	SetRemoteConfigInternal("root_local", "local", string(optsRoot))
+	defer DeleteRemoteInternal("root_local")
+	cryptOpts, _ := json.Marshal(map[string]string{
+		"remote":                    "root_local:" + vaultDir,
+		"password":                  "secretPass123",
+		"filename_encryption":       "standard",
+		"directory_name_encryption": "true",
+	})
+	SetRemoteConfigInternal("vault_crypt", "crypt", string(cryptOpts))
+	defer DeleteRemoteInternal("vault_crypt")
+
+	plainSrc := filepath.Join(tmpDir, "plain_src.txt")
+	_ = os.WriteFile(plainSrc, []byte("secret content"), 0644)
+	if up := CopyFileInternal("", plainSrc, "vault_crypt", "nested/classified_budget.pdf"); !up.Success {
+		t.Fatalf("Upload to vault_crypt failed: %s", up.Error)
+	}
+
+	reqCrypt, _ := json.Marshal(map[string]interface{}{
+		"remotes": []string{"vault_crypt"},
+		"query":   "classified_budget",
+	})
+	startCrypt := StartSearchInternal(string(reqCrypt))
+	snapCrypt := waitForSearchCompletion(t, startCrypt.Data.(SearchStartResponse).JobID)
+	if snapCrypt.Status != "completed" {
+		t.Fatalf("Crypt search failed: %s (%s)", snapCrypt.Status, snapCrypt.Error)
+	}
+	if len(snapCrypt.Results) != 1 || snapCrypt.Results[0].Name != "classified_budget.pdf" {
+		t.Fatalf("Expected decrypted classified_budget.pdf, got %+v", snapCrypt.Results)
+	}
+	_ = ClearSearchInternal(snapCrypt.JobID)
+}
+
+func TestGlobalSearchInternal_CancelAndClear(t *testing.T) {
+	InitRcloneInternal("")
+	tmpDir := t.TempDir()
+
+	// Create many nested files so cancellation can run cleanly
+	for d := 0; d < 10; d++ {
+		sub := filepath.Join(tmpDir, "dir_"+string(rune('0'+d)))
+		_ = os.MkdirAll(sub, 0755)
+		for f := 0; f < 20; f++ {
+			_ = os.WriteFile(filepath.Join(sub, "f_"+string(rune('a'+f))+".dat"), []byte("x"), 0644)
+		}
+	}
+
+	opts, _ := json.Marshal(map[string]string{"root": tmpDir})
+	SetRemoteConfigInternal("cancel_local", "local", string(opts))
+	defer DeleteRemoteInternal("cancel_local")
+
+	req, _ := json.Marshal(map[string]interface{}{
+		"remotes": []string{"cancel_local"},
+		"query":   "f_",
+	})
+	startResp := StartSearchInternal(string(req))
+	if !startResp.Success {
+		t.Fatalf("StartSearchInternal failed: %s", startResp.Error)
+	}
+	jobID := startResp.Data.(SearchStartResponse).JobID
+
+	cancelResp := CancelSearchInternal(jobID)
+	if !cancelResp.Success {
+		t.Fatalf("CancelSearchInternal failed: %s", cancelResp.Error)
+	}
+
+	snap := waitForSearchCompletion(t, jobID)
+	if snap.Status != "cancelled" && snap.Status != "completed" {
+		t.Errorf("Expected cancelled or completed status, got %s", snap.Status)
+	}
+
+	clearResp := ClearSearchInternal(jobID)
+	if !clearResp.Success {
+		t.Fatalf("ClearSearchInternal failed: %s", clearResp.Error)
+	}
+
+	afterClear := GetSearchStatusInternal(jobID)
+	if afterClear.Success {
+		t.Errorf("Expected GetSearchStatusInternal after ClearSearch to fail")
+	}
+}
+
+
 
 
 

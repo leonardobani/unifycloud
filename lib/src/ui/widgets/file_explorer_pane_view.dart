@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -12,6 +14,7 @@ import '../../providers/clipboard_provider.dart';
 import '../../providers/cloud_accounts_provider.dart';
 import '../../providers/favorites_provider.dart';
 import '../../providers/file_explorer_provider.dart';
+import '../../providers/search_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../providers/transfer_provider.dart';
 import '../../services/file_opener_service.dart';
@@ -23,6 +26,7 @@ import 'breadcrumbs_bar.dart';
 import 'expandable_error_box.dart';
 import 'file_context_menu.dart';
 import 'file_type_icon.dart';
+import 'global_search_view.dart';
 import 'share_link_dialog.dart';
 
 /// Reusable explorer pane view supporting independent navigation, selection,
@@ -50,11 +54,39 @@ class FileExplorerPaneView extends ConsumerStatefulWidget {
 
 class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
   final _searchController = TextEditingController();
+  bool _isGlobalSearch = false;
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _closeSearchMode() {
+    final wasGlobal = _isGlobalSearch;
+    _searchController.clear();
+    if (_isGlobalSearch) {
+      setState(() => _isGlobalSearch = false);
+    }
+    ref.read(widget.provider.notifier).setSearching(false);
+    if (wasGlobal) {
+      unawaited(ref.read(searchProvider.notifier).clearSearch());
+    }
+  }
+
+  void _toggleSearchScope(bool global) {
+    if (_isGlobalSearch == global) return;
+    setState(() => _isGlobalSearch = global);
+    if (global) {
+      final q = _searchController.text;
+      ref.read(searchProvider.notifier).setQuery(q);
+      if (q.trim().isNotEmpty) {
+        unawaited(ref.read(searchProvider.notifier).startSearch(queryOverride: q));
+      }
+    } else {
+      unawaited(ref.read(searchProvider.notifier).stopSearch());
+      ref.read(widget.provider.notifier).setSearchQuery(_searchController.text);
+    }
   }
 
   String _formatBytes(int bytes) {
@@ -627,14 +659,38 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     ref.listen<bool>(
       widget.provider.select((s) => s.isSearching),
       (previous, next) {
-        if (!next && _searchController.text.isNotEmpty) {
-          _searchController.clear();
+        if (!next) {
+          if (_searchController.text.isNotEmpty) {
+            _searchController.clear();
+          }
+          if (_isGlobalSearch) {
+            setState(() => _isGlobalSearch = false);
+            unawaited(ref.read(searchProvider.notifier).clearSearch());
+          }
         }
       },
     );
 
-    // Auto-select remote if none selected yet
-    if (state.currentRemote == null && remotesState.remotes.isNotEmpty) {
+    final pendingGlobalOpen = widget.provider == fileExplorerProvider &&
+        ref.watch(searchProvider.select((s) => s.pendingGlobalSearchOpen));
+
+    if (pendingGlobalOpen) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ref.read(searchProvider.notifier).consumeOpenRequest();
+        final currentQuery = ref.read(searchProvider).query;
+        _searchController.text = currentQuery;
+        setState(() => _isGlobalSearch = true);
+        ref.read(widget.provider.notifier).setSearching(true);
+      });
+    }
+
+    // Auto-select remote if none selected yet (defer while global search is active)
+    if (state.currentRemote == null &&
+        remotesState.remotes.isNotEmpty &&
+        !pendingGlobalOpen &&
+        !_isGlobalSearch &&
+        !state.isSearching) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         // If secondary pane, try picking a remote different from primary if available
         if (widget.oppositeProvider != null) {
@@ -660,7 +716,8 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final buttonExtent = widget.isDualPane ? 40.0 : kMinInteractiveDimension;
-        final expandedActionCount = 6 + (widget.showDualPaneToggle ? 1 : 0);
+        final expandedActionCount =
+            (widget.isDualPane ? 6 : 7) + (widget.showDualPaneToggle ? 1 : 0);
         final compactActions =
             expandedActionCount * buttonExtent > constraints.maxWidth * 0.5;
 
@@ -800,16 +857,35 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                 titleSpacing: widget.isDualPane ? 8.0 : null,
                 title: state.isSearching
                     ? TextField(
+                        key: const ValueKey('explorer_search_field'),
                         controller: _searchController,
                         autofocus: true,
+                        textInputAction: _isGlobalSearch
+                            ? TextInputAction.search
+                            : TextInputAction.done,
                         decoration: InputDecoration(
-                          hintText: l10n.searchFilesHint,
+                          hintText: _isGlobalSearch
+                              ? l10n.globalSearchHint
+                              : l10n.searchFilesHint,
                           border: InputBorder.none,
                         ),
                         onChanged: (val) {
-                          ref
-                              .read(widget.provider.notifier)
-                              .setSearchQuery(val);
+                          if (_isGlobalSearch) {
+                            ref.read(searchProvider.notifier).setQuery(val);
+                          } else {
+                            ref
+                                .read(widget.provider.notifier)
+                                .setSearchQuery(val);
+                          }
+                        },
+                        onSubmitted: (val) {
+                          if (_isGlobalSearch) {
+                            unawaited(
+                              ref
+                                  .read(searchProvider.notifier)
+                                  .startSearch(queryOverride: val),
+                            );
+                          }
                         },
                       )
                     : Row(
@@ -947,6 +1023,20 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                         ],
                       ),
                 actions: [
+                  if (state.isSearching && _isGlobalSearch)
+                    IconButton(
+                      key: const ValueKey('global_search_submit_button'),
+                      icon: const Icon(Icons.search, size: 20),
+                      tooltip: l10n.searchAction,
+                      visualDensity: widget.isDualPane ? VisualDensity.compact : null,
+                      onPressed: () {
+                        unawaited(
+                          ref.read(searchProvider.notifier).startSearch(
+                                queryOverride: _searchController.text,
+                              ),
+                        );
+                      },
+                    ),
                   IconButton(
                     icon: Icon(
                       state.isSearching ? Icons.close : Icons.search,
@@ -955,11 +1045,11 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                     tooltip: state.isSearching ? l10n.closeSearch : l10n.search,
                     visualDensity: widget.isDualPane ? VisualDensity.compact : null,
                     onPressed: () {
-                      final next = !state.isSearching;
-                      if (!next) {
-                        _searchController.clear();
+                      if (state.isSearching) {
+                        _closeSearchMode();
+                      } else {
+                        ref.read(widget.provider.notifier).setSearching(true);
                       }
-                      ref.read(widget.provider.notifier).setSearching(next);
                     },
                   ),
                   if (!state.isSearching) ...[
@@ -971,7 +1061,9 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                         tooltip: l10n.moreOptions,
                         padding: EdgeInsets.zero,
                         onSelected: (value) {
-                          if (value == 'toggle_view') {
+                          if (value == 'refresh') {
+                            unawaited(ref.read(widget.provider.notifier).refresh());
+                          } else if (value == 'toggle_view') {
                             final next = state.viewMode == FileViewMode.list
                                 ? FileViewMode.grid
                                 : FileViewMode.list;
@@ -992,6 +1084,22 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                           }
                         },
                         itemBuilder: (ctx) => [
+                          PopupMenuItem(
+                            value: 'refresh',
+                            enabled: state.currentRemote != null,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.refresh, size: 20),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    l10n.refreshCurrentFolder,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                           PopupMenuItem(
                             value: 'select',
                             enabled: state.displayItems.isNotEmpty,
@@ -1098,6 +1206,14 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                         ],
                       ),
                     ] else ...[
+                      if (!widget.isDualPane)
+                        IconButton(
+                          icon: const Icon(Icons.refresh, size: 20),
+                          tooltip: l10n.refreshCurrentFolder,
+                          onPressed: state.currentRemote == null
+                              ? null
+                              : () => ref.read(widget.provider.notifier).refresh(),
+                        ),
                       IconButton(
                         icon: const Icon(Icons.checklist_rounded, size: 20),
                         tooltip: l10n.multiSelection,
@@ -1189,19 +1305,71 @@ class _FileExplorerPaneViewState extends ConsumerState<FileExplorerPaneView> {
                 children: [
                   Column(
                     children: [
-                      BreadcrumbsBar(provider: widget.provider),
-                      if (isLocalBacked && !hasStorageAccess)
-                        _buildStoragePermissionBanner(context, ref, l10n),
-                      _buildClipboardBanner(context, ref, state),
-                      if (state.isLoading && state.items.isNotEmpty)
-                        const LinearProgressIndicator(minHeight: 3),
-                      Expanded(
-                        child: RefreshIndicator(
-                          onRefresh: () =>
-                              ref.read(widget.provider.notifier).refresh(),
+                      if (state.isSearching)
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surfaceContainerLow,
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Theme.of(context)
+                                    .dividerColor
+                                    .withValues(alpha: 0.12),
+                              ),
+                            ),
+                          ),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                ChoiceChip(
+                                  key: const ValueKey('search_scope_current_folder'),
+                                  avatar: const Icon(Icons.folder_outlined, size: 16),
+                                  label: Text(l10n.currentFolderScope),
+                                  selected: !_isGlobalSearch,
+                                  onSelected: (_) => _toggleSearchScope(false),
+                                ),
+                                const SizedBox(width: 8),
+                                ChoiceChip(
+                                  key: const ValueKey('search_scope_global'),
+                                  avatar: const Icon(Icons.travel_explore_rounded, size: 16),
+                                  label: Text(l10n.globalSearch),
+                                  selected: _isGlobalSearch,
+                                  onSelected: (_) => _toggleSearchScope(true),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      if (state.isSearching && _isGlobalSearch)
+                        Expanded(
+                          child: GlobalSearchView(
+                            targetProvider: widget.provider,
+                            onCloseSearch: () {
+                              _searchController.clear();
+                              setState(() => _isGlobalSearch = false);
+                              ref.read(widget.provider.notifier).setSearching(false);
+                              unawaited(
+                                ref.read(searchProvider.notifier).clearSearch(),
+                              );
+                            },
+                          ),
+                        )
+                      else ...[
+                        BreadcrumbsBar(provider: widget.provider),
+                        if (isLocalBacked && !hasStorageAccess)
+                          _buildStoragePermissionBanner(context, ref, l10n),
+                        _buildClipboardBanner(context, ref, state),
+                        if (state.isLoading && state.items.isNotEmpty)
+                          const LinearProgressIndicator(minHeight: 3),
+                        Expanded(
                           child: _buildContent(context, state, longPressAction),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                   if (isHovered)

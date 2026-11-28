@@ -59,11 +59,6 @@ class MainScaffold extends StatelessWidget {
                       selectedIcon: const Icon(Icons.sync),
                       label: Text(l10n.sync),
                     ),
-                    NavigationRailDestination(
-                      icon: const Icon(Icons.settings_outlined),
-                      selectedIcon: const Icon(Icons.settings),
-                      label: Text(l10n.settings),
-                    ),
                   ],
                 ),
                 const VerticalDivider(thickness: 1, width: 1),
@@ -116,11 +111,6 @@ class MainScaffold extends StatelessWidget {
                 icon: const Icon(Icons.sync_outlined),
                 selectedIcon: const Icon(Icons.sync),
                 label: l10n.sync,
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.settings_outlined),
-                selectedIcon: const Icon(Icons.settings),
-                label: l10n.settings,
               ),
             ],
           ),
