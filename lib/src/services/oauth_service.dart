@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:ui' show Locale;
 
 import 'package:crypto/crypto.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -40,8 +40,42 @@ class OAuthProviderConfig {
 /// Service that handles OAuth2 authorization flows for Cloud Storage providers.
 class OAuthService {
 
-  OAuthService([http.Client? httpClient]) : _httpClient = httpClient ?? http.Client();
-  final http.Client _httpClient;
+  OAuthService([http.Client? httpClient])
+      : _injectedHttpClient = httpClient,
+        _waitForForegroundOverride = null,
+        _isAppInForegroundOverride = null,
+        _isMobilePlatformOverride = null,
+        _browserLauncherOverride = null,
+        _retryDelays = _defaultRetryDelays;
+
+  @visibleForTesting
+  OAuthService.forTesting({
+    http.Client? httpClient,
+    Future<void> Function(Duration timeout)? waitForForeground,
+    bool Function()? isAppInForeground,
+    bool Function()? isMobilePlatform,
+    Future<bool> Function(Uri url)? browserLauncher,
+    List<Duration>? retryDelays,
+  })  : _injectedHttpClient = httpClient,
+        _waitForForegroundOverride = waitForForeground,
+        _isAppInForegroundOverride = isAppInForeground,
+        _isMobilePlatformOverride = isMobilePlatform,
+        _browserLauncherOverride = browserLauncher,
+        _retryDelays = retryDelays ?? _defaultRetryDelays;
+
+  final http.Client? _injectedHttpClient;
+  final Future<void> Function(Duration timeout)? _waitForForegroundOverride;
+  final bool Function()? _isAppInForegroundOverride;
+  final bool Function()? _isMobilePlatformOverride;
+  final Future<bool> Function(Uri url)? _browserLauncherOverride;
+  final List<Duration> _retryDelays;
+
+  static const List<Duration> _defaultRetryDelays = [
+    Duration(milliseconds: 400),
+    Duration(milliseconds: 900),
+    Duration(milliseconds: 1800),
+    Duration(milliseconds: 3000),
+  ];
 
   /// Official port registered with OAuth providers (OneDrive, Dropbox, Google Drive) by Rclone.
   static const int rcloneOAuthPort = 53682;
@@ -213,7 +247,150 @@ class OAuthService {
 
   /// Safely attempts to open a URL in the browser across desktop and mobile.
   Future<bool> openBrowser(Uri url) async {
+    if (_browserLauncherOverride != null) {
+      return _browserLauncherOverride(url);
+    }
     return await UrlUtils.openWebUrl(url);
+  }
+
+  /// Returns true when [error] is a transient OS/network failure (such as a DNS
+  /// lookup failure while backgrounded on Android) that may succeed on retry.
+  static bool isTransientNetworkError(Object error) {
+    if (error is SocketException ||
+        error is HandshakeException ||
+        error is TlsException ||
+        error is HttpException) {
+      return true;
+    }
+    if (error is http.ClientException) {
+      final msg = error.message.toLowerCase();
+      return msg.contains('socketexception') ||
+          msg.contains('failed host lookup') ||
+          msg.contains('connection') ||
+          msg.contains('network') ||
+          msg.contains('handshake') ||
+          msg.contains('timed out') ||
+          msg.contains('reset');
+    }
+    return false;
+  }
+
+  bool _isMobile() {
+    if (_isMobilePlatformOverride != null) {
+      return _isMobilePlatformOverride();
+    }
+    return Platform.isAndroid || Platform.isIOS;
+  }
+
+  bool _isAppInForeground() {
+    if (_isAppInForegroundOverride != null) {
+      return _isAppInForegroundOverride();
+    }
+    try {
+      final state = WidgetsBinding.instance.lifecycleState;
+      return state == null || state == AppLifecycleState.resumed;
+    } catch (_) {
+      return true;
+    }
+  }
+
+  Future<void> _waitForForeground(Duration timeout) async {
+    if (_waitForForegroundOverride != null) {
+      await _waitForForegroundOverride(timeout);
+      return;
+    }
+    if (_isAppInForeground()) return;
+
+    final WidgetsBinding binding;
+    try {
+      binding = WidgetsBinding.instance;
+    } catch (_) {
+      return;
+    }
+
+    final completer = Completer<void>();
+    final observer = _ForegroundLifecycleObserver(() {
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+    });
+
+    binding.addObserver(observer);
+    try {
+      if (_isAppInForeground() && !completer.isCompleted) {
+        completer.complete();
+      }
+      await completer.future.timeout(timeout);
+    } finally {
+      binding.removeObserver(observer);
+    }
+  }
+
+  Future<T> _executeWithNetworkRecovery<T>(
+    Future<T> Function(http.Client client) operation, {
+    required Duration timeout,
+  }) async {
+    final deadline = DateTime.now().add(timeout);
+    var retryIndex = 0;
+    var foregroundWaits = 0;
+
+    while (true) {
+      final client = _injectedHttpClient ?? http.Client();
+      try {
+        return await operation(client);
+      } catch (e) {
+        if (!isTransientNetworkError(e)) {
+          rethrow;
+        }
+
+        final remaining = deadline.difference(DateTime.now());
+        if (remaining <= Duration.zero) {
+          rethrow;
+        }
+
+        // On mobile (Android 15/16+, iOS), the OS can block DNS/sockets while
+        // the app is backgrounded during external browser login. Wait until
+        // the app returns to the foreground before retrying.
+        if (_isMobile() && !_isAppInForeground() && foregroundWaits < 2) {
+          foregroundWaits++;
+          try {
+            await _waitForForeground(remaining);
+          } on TimeoutException {
+            rethrow;
+          }
+          continue;
+        }
+
+        if (retryIndex >= _retryDelays.length) {
+          rethrow;
+        }
+
+        final delay = _retryDelays[retryIndex++];
+        final waitDuration = delay < remaining ? delay : remaining;
+        if (waitDuration > Duration.zero) {
+          await Future<void>.delayed(waitDuration);
+        }
+      } finally {
+        if (_injectedHttpClient == null) {
+          client.close();
+        }
+      }
+    }
+  }
+
+  static Future<void> _sendHtmlResponse(
+    HttpRequest request,
+    int statusCode,
+    String html,
+  ) async {
+    try {
+      request.response.statusCode = statusCode;
+      request.response.headers.contentType = ContentType.html;
+      request.response.write(html);
+      await request.response.close();
+    } catch (_) {
+      // Ignore client disconnect errors after serving the local callback page.
+    }
   }
 
   /// Initiates interactive OAuth2 authorization:
@@ -273,35 +450,39 @@ class OAuthService {
     // 3. Wait for HTTP redirect callback
     final completer = Completer<String>();
 
-    final sub = server.listen((HttpRequest request) async {
-      final uri = request.uri;
+    final sub = server.listen(
+      (HttpRequest request) async {
+        final uri = request.uri;
 
-      // Ignore browser favicon requests
-      if (uri.path == '/favicon.ico') {
-        request.response.statusCode = HttpStatus.notFound;
-        await request.response.close();
-        return;
-      }
+        // Ignore browser favicon requests
+        if (uri.path == '/favicon.ico') {
+          try {
+            request.response.statusCode = HttpStatus.notFound;
+            await request.response.close();
+          } catch (_) {}
+          return;
+        }
 
-      final code = uri.queryParameters['code'];
-      final returnedState = uri.queryParameters['state'];
-      final error = uri.queryParameters['error'];
-      final errorDesc = uri.queryParameters['error_description'];
+        final code = uri.queryParameters['code'];
+        final returnedState = uri.queryParameters['state'];
+        final error = uri.queryParameters['error'];
+        final errorDesc = uri.queryParameters['error_description'];
 
-      // Only handle OAuth callback responses that contain code or error
-      if (code == null && error == null) {
-        request.response.statusCode = HttpStatus.notFound;
-        request.response.write('Not an OAuth callback.');
-        await request.response.close();
-        return;
-      }
+        // Only handle OAuth callback responses that contain code or error
+        if (code == null && error == null) {
+          try {
+            request.response.statusCode = HttpStatus.notFound;
+            request.response.write('Not an OAuth callback.');
+            await request.response.close();
+          } catch (_) {}
+          return;
+        }
 
-      request.response.headers.contentType = ContentType.html;
-      if (code != null && state.isNotEmpty && returnedState == state) {
-        final safeTitle = const HtmlEscape().convert(strings.oauthHtmlSuccessTitle);
-        final safeHeading = const HtmlEscape().convert(strings.oauthHtmlSuccessHeading);
-        final safeBody = const HtmlEscape().convert(strings.oauthHtmlSuccessBody);
-        request.response.write('''
+        if (code != null && state.isNotEmpty && returnedState == state) {
+          final safeTitle = const HtmlEscape().convert(strings.oauthHtmlSuccessTitle);
+          final safeHeading = const HtmlEscape().convert(strings.oauthHtmlSuccessHeading);
+          final safeBody = const HtmlEscape().convert(strings.oauthHtmlSuccessBody);
+          await _sendHtmlResponse(request, HttpStatus.ok, '''
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><title>$safeTitle</title></head>
@@ -311,21 +492,19 @@ class OAuthService {
 </body>
 </html>
 ''');
-        await request.response.close();
-        if (!completer.isCompleted) {
-          completer.complete(code);
-        }
-      } else {
-        final rawErrMsg = errorDesc ??
-            error ??
-            (returnedState != state
-                ? strings.oauthInvalidState
-                : strings.oauthInvalidCode);
-        final safeErrMsg = const HtmlEscape().convert(rawErrMsg);
-        final safeErrTitle = const HtmlEscape().convert(strings.oauthHtmlErrorTitle);
-        final safeErrHeading = const HtmlEscape().convert(strings.oauthHtmlErrorHeading);
-        request.response.statusCode = HttpStatus.badRequest;
-        request.response.write('''
+          if (!completer.isCompleted) {
+            completer.complete(code);
+          }
+        } else {
+          final rawErrMsg = errorDesc ??
+              error ??
+              (returnedState != state
+                  ? strings.oauthInvalidState
+                  : strings.oauthInvalidCode);
+          final safeErrMsg = const HtmlEscape().convert(rawErrMsg);
+          final safeErrTitle = const HtmlEscape().convert(strings.oauthHtmlErrorTitle);
+          final safeErrHeading = const HtmlEscape().convert(strings.oauthHtmlErrorHeading);
+          await _sendHtmlResponse(request, HttpStatus.badRequest, '''
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><title>$safeErrTitle</title></head>
@@ -335,14 +514,17 @@ class OAuthService {
 </body>
 </html>
 ''');
-        await request.response.close();
-        if (!completer.isCompleted) {
-          completer.completeError(
-            Exception('OAuth authorization failed: $rawErrMsg'),
-          );
+          if (!completer.isCompleted) {
+            completer.completeError(
+              Exception('OAuth authorization failed: $rawErrMsg'),
+            );
+          }
         }
-      }
-    });
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        // Ignore transient OS socket resets while the local server waits in background.
+      },
+    );
 
     try {
       final code = await completer.future.timeout(timeout);
@@ -353,21 +535,35 @@ class OAuthService {
           ? clientSecret
           : (clientId == config.defaultClientId ? config.defaultClientSecret : null);
 
-      // 4. Exchange authorization code for token
-      final tokens = await exchangeCodeForTokens(
-        config: config,
-        clientId: clientId,
-        clientSecret: effectiveSecret,
-        code: code,
-        redirectUri: redirectUri,
-        codeVerifier: codeVerifier,
+      // 4. Exchange authorization code for token (recovering if OS blocked
+      // background network/DNS while the browser was still on screen).
+      final tokens = await _executeWithNetworkRecovery(
+        (client) => exchangeCodeForTokens(
+          config: config,
+          clientId: clientId,
+          clientSecret: effectiveSecret,
+          code: code,
+          redirectUri: redirectUri,
+          codeVerifier: codeVerifier,
+          client: client,
+        ),
+        timeout: timeout,
       );
 
       // 5. Automatic discovery of drive_id and drive_type for OneDrive
       if (providerType == 'onedrive') {
         final accessToken = tokens['access_token'] as String?;
         if (accessToken != null && accessToken.isNotEmpty) {
-          final driveInfo = await getOneDriveDriveInfo(accessToken: accessToken);
+          Map<String, String>? driveInfo;
+          try {
+            driveInfo = await _executeWithNetworkRecovery(
+              (client) => _fetchOneDriveDriveInfo(
+                accessToken: accessToken,
+                client: client,
+              ),
+              timeout: const Duration(seconds: 30),
+            );
+          } catch (_) {}
           if (driveInfo != null) {
             tokens['drive_id'] = driveInfo['drive_id'];
             tokens['drive_type'] = driveInfo['drive_type'];
@@ -386,46 +582,64 @@ class OAuthService {
   /// Queries Microsoft Graph API to find the user's primary drive ID and drive type.
   Future<Map<String, String>?> getOneDriveDriveInfo({
     required String accessToken,
+    http.Client? client,
   }) async {
+    final activeClient = client ?? _injectedHttpClient ?? http.Client();
     try {
-      // 1. Primary personal / business endpoint: /me/drive
-      final res = await _httpClient.get(
-        Uri.parse('https://graph.microsoft.com/v1.0/me/drive'),
-        headers: {
-          'Authorization': 'Bearer $accessToken',
-          'Accept': 'application/json',
-        },
+      return await _fetchOneDriveDriveInfo(
+        accessToken: accessToken,
+        client: activeClient,
       );
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body) as Map<String, dynamic>;
-        final id = data['id'] as String?;
-        final type = data['driveType'] as String? ?? 'personal';
+    } catch (_) {
+      return null;
+    } finally {
+      if (client == null && _injectedHttpClient == null) {
+        activeClient.close();
+      }
+    }
+  }
+
+  Future<Map<String, String>?> _fetchOneDriveDriveInfo({
+    required String accessToken,
+    required http.Client client,
+  }) async {
+    // 1. Primary personal / business endpoint: /me/drive
+    final res = await client.get(
+      Uri.parse('https://graph.microsoft.com/v1.0/me/drive'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Accept': 'application/json',
+      },
+    );
+    if (res.statusCode == 200) {
+      final data = jsonDecode(res.body) as Map<String, dynamic>;
+      final id = data['id'] as String?;
+      final type = data['driveType'] as String? ?? 'personal';
+      if (id != null && id.isNotEmpty) {
+        return {'drive_id': id, 'drive_type': type};
+      }
+    }
+
+    // 2. Fallback to /me/drives (for some business or multi-drive accounts)
+    final listRes = await client.get(
+      Uri.parse('https://graph.microsoft.com/v1.0/me/drives'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Accept': 'application/json',
+      },
+    );
+    if (listRes.statusCode == 200) {
+      final listData = jsonDecode(listRes.body) as Map<String, dynamic>;
+      final drives = listData['value'] as List<dynamic>?;
+      if (drives != null && drives.isNotEmpty) {
+        final first = drives.first as Map<String, dynamic>;
+        final id = first['id'] as String?;
+        final type = first['driveType'] as String? ?? 'business';
         if (id != null && id.isNotEmpty) {
           return {'drive_id': id, 'drive_type': type};
         }
       }
-
-      // 2. Fallback to /me/drives (for some business or multi-drive accounts)
-      final listRes = await _httpClient.get(
-        Uri.parse('https://graph.microsoft.com/v1.0/me/drives'),
-        headers: {
-          'Authorization': 'Bearer $accessToken',
-          'Accept': 'application/json',
-        },
-      );
-      if (listRes.statusCode == 200) {
-        final listData = jsonDecode(listRes.body) as Map<String, dynamic>;
-        final drives = listData['value'] as List<dynamic>?;
-        if (drives != null && drives.isNotEmpty) {
-          final first = drives.first as Map<String, dynamic>;
-          final id = first['id'] as String?;
-          final type = first['driveType'] as String? ?? 'business';
-          if (id != null && id.isNotEmpty) {
-            return {'drive_id': id, 'drive_type': type};
-          }
-        }
-      }
-    } catch (_) {}
+    }
     return null;
   }
 
@@ -437,38 +651,59 @@ class OAuthService {
     required String code,
     required String redirectUri,
     String? codeVerifier,
+    http.Client? client,
   }) async {
-    final response = await _httpClient.post(
-      Uri.parse(config.tokenEndpoint),
-      headers: {'Accept': 'application/json'},
-      body: {
-        'client_id': clientId,
-        if (clientSecret != null && clientSecret.isNotEmpty)
-          'client_secret': clientSecret,
-        'code': code,
-        'grant_type': 'authorization_code',
-        'redirect_uri': redirectUri,
-        if (codeVerifier != null && codeVerifier.isNotEmpty)
-          'code_verifier': codeVerifier,
-      },
-    );
+    final activeClient = client ?? _injectedHttpClient ?? http.Client();
+    try {
+      final response = await activeClient.post(
+        Uri.parse(config.tokenEndpoint),
+        headers: {'Accept': 'application/json'},
+        body: {
+          'client_id': clientId,
+          if (clientSecret != null && clientSecret.isNotEmpty)
+            'client_secret': clientSecret,
+          'code': code,
+          'grant_type': 'authorization_code',
+          'redirect_uri': redirectUri,
+          if (codeVerifier != null && codeVerifier.isNotEmpty)
+            'code_verifier': codeVerifier,
+        },
+      );
 
-    if (response.statusCode != 200) {
-      String summary = 'HTTP ${response.statusCode}';
-      try {
-        final decoded = jsonDecode(response.body);
-        if (decoded is Map) {
-          final err = decoded['error']?.toString();
-          final desc = decoded['error_description']?.toString();
-          if (err != null && err.isNotEmpty) {
-            summary = desc != null && desc.isNotEmpty ? '$err: $desc' : err;
+      if (response.statusCode != 200) {
+        String summary = 'HTTP ${response.statusCode}';
+        try {
+          final decoded = jsonDecode(response.body);
+          if (decoded is Map) {
+            final err = decoded['error']?.toString();
+            final desc = decoded['error_description']?.toString();
+            if (err != null && err.isNotEmpty) {
+              summary = desc != null && desc.isNotEmpty ? '$err: $desc' : err;
+            }
           }
-        }
-      } catch (_) {}
-      throw Exception('Token exchange failed ($summary)');
-    }
+        } catch (_) {}
+        throw Exception('Token exchange failed ($summary)');
+      }
 
-    final data = jsonDecode(response.body) as Map<String, dynamic>;
-    return data;
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return data;
+    } finally {
+      if (client == null && _injectedHttpClient == null) {
+        activeClient.close();
+      }
+    }
+  }
+}
+
+class _ForegroundLifecycleObserver with WidgetsBindingObserver {
+  _ForegroundLifecycleObserver(this.onResumed);
+
+  final VoidCallback onResumed;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      onResumed();
+    }
   }
 }
